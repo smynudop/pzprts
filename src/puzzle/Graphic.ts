@@ -116,7 +116,7 @@ export class Graphic {
 
 	// 盤面のCellを分ける色
 	gridcolor = "black"
-	gridcolor_type: "DARK" | "LIGHT" | "DLIGHT" | "SLIGHT" | "THIN"
+	gridcolor_type: "DARK" | "LIGHT" | "DLIGHT" | "SLIGHT" | "THIN" = "DARK"
 	gridcolor_list = {
 		// 色々なパズルで定義してた固定色
 		DARK: "rgb( 48,  48,  48)",	/* LITSでの指定 */
@@ -142,8 +142,8 @@ export class Graphic {
 	margin = 0.15
 
 	// canvasの大きさを保持する
-	canvasWidth: number = null
-	canvasHeight: number = null
+	canvasWidth: number | null = null
+	canvasHeight: number | null = null
 
 	// canvas内での盤面の左上座標
 	x0 = 0
@@ -260,7 +260,7 @@ export class Graphic {
 	// pc.resizeCanvasByCellSize() セルのサイズを指定してキャンバスのサイズを変える
 	//                             (指定なしの場合は、前のセルのサイズを用いる)
 	//---------------------------------------------------------------------------
-	resizeCanvas(cwid: number = null, chgt: number = null) {
+	resizeCanvas(cwid: number | null = null, chgt: number | null = null) {
 		var insuspend = this.suspended;
 		this.suspendAll();
 
@@ -582,8 +582,8 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	// pc.vinc()  レイヤーを返す
 	//---------------------------------------------------------------------------
-	vinc(layerid: string, rendering: string, freeze: boolean = null) {
-		var g = this.context, option = { freeze: !!freeze, rendering: null as string };
+	vinc(layerid: string, rendering: string, freeze: boolean = false) {
+		var g = this.context, option = { freeze: !!freeze, rendering: null as string | null };
 		option.rendering = rendering;
 		g.setLayer(layerid, option);
 		return g;
@@ -603,7 +603,7 @@ export class Graphic {
 		const g = this.context;
 
 		var realsize = ((this.cw * (option.ratio || this.fontsizeratio)) | 0);
-		var maxLength: number = null;
+		var maxLength: number | null = null;
 		var widtharray = option.width || this.fontwidth;
 		var widthratiopos = (text.length <= widtharray.length + 1 ? text.length - 2 : widtharray.length - 1);
 		var widthratio = (widthratiopos >= 0 ? widtharray[widthratiopos] * text.length : null);
@@ -642,8 +642,8 @@ export class Graphic {
 		this.vinc('cell_front', 'crispEdges', true);
 		this.drawCells_common("c_fullf_", this.getQuesCellColor);
 	}
-	getQuesCellColor(cell: Cell): any { // initialize()で上書きされる
-		return null;
+	getQuesCellColor(cell: Cell) {
+		return this.getQuesCellColor_ques(cell)
 	}
 	getQuesCellColor_ques(cell: Cell) {
 		if (cell.ques !== 1) { return null; }
@@ -680,10 +680,10 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	drawBGCells() {
 		this.vinc('cell_back', 'crispEdges', true);
-		this.drawCells_common("c_fullb_", this.getBGCellColor);
+		this.drawCells_common("c_fullb_", (cell) => this.getBGCellColor(cell));
 	}
-	getBGCellColor(cell: Cell): any { // initialize()で上書きされる
-		return null;
+	getBGCellColor(cell: Cell) {
+		return this.getBGCellColor_qcmp(cell)
 	}
 	getBGCellColor_error1(cell: Cell) {
 		if (cell.error === 1 || cell.qinfo === 1) { return this.errbcolor1; }
@@ -737,11 +737,11 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	// pc.drawCells_common()  drawShadedCells, drawQuesCells, drawBGCellsの共通ルーチン
 	//---------------------------------------------------------------------------
-	drawCells_common(header: string, colorfunc: (cell: Cell) => string) {
+	drawCells_common(header: string, colorfunc: (cell: Cell) => string | null) {
 		var g = this.context;
 		var clist = this.range.cells;
 		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i], color = colorfunc.call(this, cell);
+			var cell = clist[i], color = colorfunc(cell);
 			g.vid = header + cell.id;
 			if (!!color) {
 				g.fillStyle = color;
@@ -1182,8 +1182,8 @@ export class Graphic {
 		}
 	}
 
-	getBorderColor(border: Border): any { // initialize()で上書きされる
-		return null;
+	getBorderColor(border: Border) {
+		return this.getBorderColor_ques(border)
 	}
 	getBorderColor_ques(border: Border) {
 		if (border.isBorder()) { return this.quescolor; }
@@ -1347,9 +1347,9 @@ export class Graphic {
 		}
 		this.addlw = 0;
 	}
-	getLineColor(border: Border) {
+	getLineColor(border: Border | null) {
 		this.addlw = 0;
-		if (border.isLine()) {
+		if (border?.isLine()) {
 			var info = border.error || border.qinfo, puzzle = this.puzzle;
 			var isIrowake = (puzzle.execConfig('irowake') && border.path && border.path.color);
 			var isDispmove = puzzle.execConfig('dispmove');
@@ -1485,7 +1485,7 @@ export class Graphic {
 		var rsize = this.cw * 0.35;
 		var clist = this.range.cells;
 		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i], px, py;
+			var cell = clist[i], px = 0, py = 0;
 			if (cell.qsub > 0) {
 				px = cell.bx * this.bw; py = cell.by * this.bh;
 				g.strokeStyle = (!cell.trial ? this.mbcolor : "rgb(192, 192, 192)");
@@ -1542,8 +1542,8 @@ export class Graphic {
 		}
 	}
 
-	getCircleStrokeColor(cell: Cell): any { // initialize()で上書きされる
-		return null;
+	getCircleStrokeColor(cell: Cell) {
+		return this.getCircleStrokeColor_qnum(cell)
 	}
 	getCircleStrokeColor_qnum(cell: Cell) {
 		var puzzle = this.puzzle, error = cell.error || cell.qinfo;
@@ -1556,15 +1556,15 @@ export class Graphic {
 		}
 		return null;
 	}
-	getCircleStrokeColor_qnum2(cell: Cell): any {
+	getCircleStrokeColor_qnum2(cell: Cell) {
 		if (cell.qnum === 1) {
 			return (cell.error === 1 ? this.errcolor1 : this.quescolor);
 		}
 		return null;
 	}
 
-	getCircleFillColor(cell: Cell): any { // initialize()で上書きされる
-		return null;
+	getCircleFillColor(cell: Cell) {
+		return this.getCircleFillColor_qnum(cell)
 	}
 	getCircleFillColor_qnum(cell: Cell) {
 		if (cell.qnum !== -1) {
@@ -1635,7 +1635,7 @@ export class Graphic {
 				var px0 = px - bw - 0.5, px1 = px - lm, px2 = px + lm, px3 = px + bw + 0.5;
 				var py0 = py - bh - 0.5, py1 = py - lm, py2 = py + lm, py3 = py + bh + 0.5;
 
-				var flag = { 11: 15, 12: 3, 13: 12, 14: 9, 15: 5, 16: 6, 17: 10 }[qu];
+				var flag = { 11: 15, 12: 3, 13: 12, 14: 9, 15: 5, 16: 6, 17: 10 }[qu] as number;
 				g.beginPath();
 				g.moveTo(px1, py1); if (flag & 1) { g.lineTo(px1, py0); g.lineTo(px2, py0); } // top
 				g.lineTo(px2, py1); if (flag & 8) { g.lineTo(px3, py1); g.lineTo(px3, py2); } // right
@@ -1769,7 +1769,7 @@ export class Graphic {
 	}
 	drawQuesNumbersOn51_1(piece: BoardPiece) { /* cell or excell */
 		var g = this.context, val, adj, px = piece.bx * this.bw, py = piece.by * this.bh;
-		var option = { ratio: 0.45, position: null as number };
+		var option = { ratio: 0.45, position: null as number | null };
 		g.fillStyle = (piece.error === 1 || piece.qinfo === 1 ? this.errcolor1 : this.quescolor);
 
 		adj = piece.relcell(2, 0);

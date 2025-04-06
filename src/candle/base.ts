@@ -88,7 +88,7 @@ export default abstract class WrapperBase<ChildElement> {
 	abstract drawImage(image: HTMLImageElement, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number): void
 	abstract setLayer(layerid?: string, option?: any): void
 	abstract clear(): void
-	abstract fillText(text: string, x: number, y: number, maxLength: number): void
+	abstract fillText(text: string, x: number, y: number, maxLength: number | null): void
 
 	abstract closePath(): void
 }
