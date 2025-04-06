@@ -104,7 +104,7 @@ export class Board<
 		this.disrecinfo = 0;
 		this.infolist = [];
 
-		this.linegraph = this.addInfoList(LineGraph);			// 交差なし線のグラフ
+		this.linegraph = this.addInfoListInstance(this.createLineGraph());			// 交差なし線のグラフ
 		this.roommgr = this.addInfoList(AreaRoomGraph);			// 部屋情報を保持する
 		this.sblkmgr = this.addInfoList(AreaShadeGraph);		// 黒マス情報を保持する
 		this.ublkmgr = this.addInfoList(AreaUnshadeGraph);		// 白マス情報を保持する
@@ -117,6 +117,17 @@ export class Board<
 
 		this.trialstage = 0;	// TrialMode
 	}
+	createLineGraph() {
+		return new LineGraph(this.puzzle)
+	}
+
+	addInfoListInstance<T extends GraphBase>(instance: T): T {
+		if (instance.enabled) {
+			this.infolist.push(instance);
+		}
+		return instance;
+	}
+
 	addInfoList<T extends GraphBase>(Klass: { new(puzzle: Puzzle): T }): T {
 		var instance = new Klass(this.puzzle);
 		if (instance.enabled) {

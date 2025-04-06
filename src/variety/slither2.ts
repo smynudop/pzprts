@@ -23,14 +23,13 @@ class SlitherMouseEvent extends MouseEvent1 {
             }
             else if (this.btn === 'left') {
                 if (this.mousestart || this.mousemove) { this.inputLine(); }
-                else if (this.pid === 'slither' && this.mouseend && this.notInputted()) {
+                else if (this.mouseend && this.notInputted()) {
                     this.prevPos.reset();
                     this.inputpeke();
                 }
             }
             else if (this.btn === 'right') {
-                if (this.pid === 'slither' && (this.mousestart || this.mousemove)) { this.inputpeke(); }
-                else if (this.pid === 'bag') { this.inputBGcolor(true); }
+                if ((this.mousestart || this.mousemove)) { this.inputpeke(); }
             }
         }
         else if (puzzle.editmode) {
@@ -62,6 +61,9 @@ class SlitherBoard extends Board<SlitherCell> {
     borderAsLine = true
     createCell() {
         return new SlitherCell(this.puzzle);
+    }
+    createLineGraph(): LineGraph {
+        return new SlitherLineGraph(this.puzzle)
     }
 }
 class SlitherCell extends Cell {
@@ -233,6 +235,7 @@ class SlitherFailCode extends FailCode {
 
 export class SlitherLink extends Puzzle<SlitherCell> {
     pid: "slither"
+
     createMouseEvent(): MouseEvent1 {
         return new SlitherMouseEvent(this);
     }

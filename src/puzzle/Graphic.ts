@@ -683,7 +683,25 @@ export class Graphic {
 		this.drawCells_common("c_fullb_", (cell) => this.getBGCellColor(cell));
 	}
 	getBGCellColor(cell: Cell) {
-		return this.getBGCellColor_qcmp(cell)
+		switch (this.bgcellcolor_func) {
+			case "error1":
+				return this.getBGCellColor_error1(cell)
+			case "error2":
+				return this.getBGCellColor_error2(cell)
+			case "qcmp":
+				return this.getBGCellColor_qcmp(cell)
+			case "qcmp1":
+				return this.getBGCellColor_qcmp1(cell)
+			case "qsub1":
+				return this.getBGCellColor_qsub1(cell)
+			case "qsub2":
+				return this.getBGCellColor_qsub2(cell)
+			case "qsub3":
+				return this.getBGCellColor_qsub3(cell)
+			default:
+				console.warn(`bgcellcolor_func(${this.bgcellcolor_func}) is invalid`)
+				return this.getBGCellColor_error1(cell)
+		}
 	}
 	getBGCellColor_error1(cell: Cell) {
 		if (cell.error === 1 || cell.qinfo === 1) { return this.errbcolor1; }
@@ -959,18 +977,33 @@ export class Graphic {
 	}
 
 	getQuesNumberColor(cell: Cell | EXCell) {
-		return this.getQuesNumberColor_mixed(cell);
+		switch (this.numbercolor_func) {
+			case "fixed":
+				return this.getQuesNumberColor_fixed(cell)
+			case "fixed_shaded":
+				return this.getQuesNumberColor_fixed_shaded(cell)
+			case "qnum":
+				return this.getQuesNumberColor_qnum(cell)
+			case "move":
+				return this.getQuesNumberColor_move(cell)
+			case "mixed":
+				return this.getQuesNumberColor_mixed(cell)
+			default:
+				console.warn(`numbercolor_func(${this.numbercolor_func}) is invalid`)
+				return this.getQuesNumberColor_mixed(cell);
+
+		}
 	}
-	getQuesNumberColor_fixed(cell: Cell) {
+	getQuesNumberColor_fixed(cell: Cell | EXCell) {
 		return this.quescolor;
 	}
-	getQuesNumberColor_fixed_shaded(cell: Cell) {
+	getQuesNumberColor_fixed_shaded(cell: Cell | EXCell) {
 		return this.fontShadecolor;
 	}
-	getQuesNumberColor_qnum(cell: Cell) {
+	getQuesNumberColor_qnum(cell: Cell | EXCell) {
 		return ((cell.error || cell.qinfo) === 1 ? this.errcolor1 : this.quescolor);
 	}
-	getQuesNumberColor_move(cell: Cell) {
+	getQuesNumberColor_move(cell: Cell | EXCell) {
 		var puzzle = this.puzzle;
 		var info = cell.error || cell.qinfo;
 		if (info === 1 || info === 4) {
