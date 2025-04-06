@@ -804,7 +804,7 @@ export class MouseEvent1 {
 			this.mousereset();
 		}
 		else if ((this.mousestart && this.cursor.getNumOfTarget(piece) < 2) || this.mouseend) {
-			this.inputqnum_main(piece);
+			this.inputqnum_main(piece as Cell);
 			this.mousereset();
 		}
 		else {
@@ -838,7 +838,7 @@ export class MouseEvent1 {
 			this.setcursor(cross);
 		}
 		else {
-			this.inputqnum_main(cross);
+			this.inputqnum_main(cross as unknown as Cell);
 		}
 		this.mouseCell = cross;
 	}

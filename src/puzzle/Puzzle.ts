@@ -57,9 +57,6 @@ export class Puzzle<
 
 	constructor(canvas: HTMLCanvasElement, option?: IConfig) {
 
-		if (option === void 0 && (!canvas || !canvas.parentNode)) {
-			option = canvas; canvas = (void 0);
-		}
 		option = option || {};
 
 		this.instancetype = option.type || 'editor';
@@ -86,7 +83,7 @@ export class Puzzle<
 		if (option.config !== void 0) { this.config.setAll(option.config); }
 		if (option.mode !== void 0) { this.setMode(option.mode); }
 
-		if (!!canvas) { this.setCanvas(canvas); }
+		//if (!!canvas) { this.setCanvas(canvas); }
 
 		// クラス初期化
 		this.board = this.createBoard();		// 盤面オブジェクト
@@ -106,6 +103,18 @@ export class Puzzle<
 		this.emit("ready")
 	}
 
+	mount(parent: HTMLElement) {
+		this.clear()
+		this.setCanvas(parent);
+
+		document.addEventListener('keydown', (e: KeyboardEvent) => {
+			this.key.e_keydown(e);
+		});
+		document.addEventListener('keyup', (e: KeyboardEvent) => {
+			this.key.e_keyup(e);
+		});
+	}
+
 	pid: string = null		// パズルのID("creek"など)
 	info: any = {}		// VarietyInfoへの参照
 
@@ -118,7 +127,7 @@ export class Puzzle<
 	starttime = 0
 
 	canvas: HTMLElement = null	// 描画canvas本体
-	subcanvas: HTMLCanvasElement = null	// 補助canvas
+	subcanvas: HTMLElement = null	// 補助canvas
 
 	listeners: { [key: string]: { func: Handler, once: boolean }[] } = null
 
@@ -207,8 +216,8 @@ export class Puzzle<
 		var _div = document.createElement('div');
 		_div.style.width = rect.width + 'px';
 		_div.style.height = rect.height + 'px';
+		_div.setAttribute("tabindex", "1")
 		el.appendChild(_div);
-		//@ts-ignore
 		this.canvas = _div;
 
 		setCanvas_main(this, (type || this.preInitCanvasInfo.type));
@@ -274,7 +283,6 @@ export class Puzzle<
 	toBuffer(type: string, quality: number, option: any) {
 		var imageopt = parseImageOption(type, quality, option);
 		var canvas = getLocalCanvas(this, imageopt);
-		//@ts-ignore
 		var data = canvas.toBuffer(imageopt.mimetype, imageopt.quality);
 		if (!!canvas.parentNode) { canvas.parentNode.removeChild(canvas); }
 		return data;
@@ -525,7 +533,7 @@ function createSubCanvas(type: string) {
 	if (!pzpr.Candle.enable[type]) { return null; }
 	var el = document.createElement('div');
 	pzpr.Candle.start(el, type);
-	return el as unknown as HTMLCanvasElement;
+	return el;
 }
 
 //---------------------------------------------------------------------------
@@ -578,13 +586,15 @@ function setCanvasEvents(puzzle: Puzzle) {
 	puzzle.canvas.oncontextmenu = function () { return false; };
 	puzzle.canvas.style.touchAction = 'pinch-zoom';
 
-	// キー入力イベントの設定
-	ae("keydown", (e: any) => {
-		if (!!puzzle.key) { puzzle.key.e_keydown(e); }
-	});
-	ae("keyup", (e: any) => {
-		if (!!puzzle.key) { puzzle.key.e_keyup(e); }
-	});
+	// console.log(puzzle.canvas)
+	// // キー入力イベントの設定
+	// ae("keydown", (e: any) => {
+	// 	console.log("keydown!")
+	// 	if (!!puzzle.key) { puzzle.key.e_keydown(e); }
+	// });
+	// ae("keyup", (e: any) => {
+	// 	if (!!puzzle.key) { puzzle.key.e_keyup(e); }
+	// });
 }
 
 
@@ -610,7 +620,7 @@ function getLocalCanvas(puzzle: Puzzle, imageopt: any) {
 	pc2.resizeCanvasByCellSize(imageopt.cellsize);
 	pc2.unsuspend();
 
-	return imgcanvas as unknown as HTMLCanvasElement;
+	return imgcanvas;
 }
 
 //---------------------------------------------------------------------------

@@ -9,12 +9,10 @@ import { Cell, Cross, Border, EXCell, BoardPiece } from "./Piece";
 //---------------------------------------------------------------------------
 export class PieceList<T extends BoardPiece> extends Array<T> {
 
-	board: Board
 	puzzle: Puzzle
 	constructor(puzzle: Puzzle, list: T[] = null) {
 		super()
 		this.puzzle = puzzle;
-		this.board = puzzle.board;
 		if (!!list) { this.extend(list); }
 	}
 
@@ -31,9 +29,7 @@ export class PieceList<T extends BoardPiece> extends Array<T> {
 	//--------------------------------------------------------------------------------
 	add = this.push
 	extend(list: Array<T>) {
-		var len = list.length, n = this.length;
-		this.length += len;
-		for (var i = 0; i < len; i++) { this[n + i] = list[i]; }
+		this.push(...list)
 	}
 
 	//--------------------------------------------------------------------------------
@@ -80,11 +76,11 @@ export class PieceList<T extends BoardPiece> extends Array<T> {
 	// list.setinfo()  保持しているオブジェクトにqinfo値を設定する
 	//--------------------------------------------------------------------------------
 	seterr(num: number) {
-		if (!this.board.isenableSetError()) { return; }
+		if (!this.puzzle.board.isenableSetError()) { return; }
 		for (var i = 0; i < this.length; i++) { this[i].error = num; }
 	}
 	setnoerr() {
-		if (!this.board.isenableSetError()) { return; }
+		if (!this.puzzle.board.isenableSetError()) { return; }
 		for (var i = 0; i < this.length; i++) {
 			if (this[i].error === 0) { this[i].error = -1; }
 		}
@@ -127,7 +123,7 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 	//---------------------------------------------------------------------------
 	checkCmp: any = null
 	getRectSize() {
-		var bd = this.board;
+		var bd = this.puzzle.board;
 		var d = { x1: bd.maxbx + 1, x2: bd.minbx - 1, y1: bd.maxby + 1, y2: bd.minby - 1, cols: 0, rows: 0, cnt: 0 };
 		for (var i = 0; i < this.length; i++) {
 			var cell = this[i];
@@ -149,14 +145,14 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 		for (var i = 0, len = this.length; i < len; i++) {
 			if (this[i].isNum()) { return this[i]; }
 		}
-		return this.board.emptycell;
+		return this.puzzle.board.emptycell;
 	}
 
 	//--------------------------------------------------------------------------------
 	// clist.getTopCell()  指定されたClistの中で一番左上にあるセルを返す
 	//--------------------------------------------------------------------------------
 	getTopCell() {
-		var bd = this.board, tcell = null, bx = bd.maxbx, by = bd.maxby;
+		var bd = this.puzzle.board, tcell = null, bx = bd.maxbx, by = bd.maxby;
 		for (var i = 0; i < this.length; i++) {
 			var cell = this[i];
 			if (cell.bx > bx || (cell.bx === bx && cell.by >= by)) { continue; }

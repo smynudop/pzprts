@@ -61,7 +61,7 @@ export class Encode {
 					this.decodePzpr(pzl.URL_PZPRAPP);
 					break;
 				case pzl.URL_KANPEN:
-					this.fio = new FileIO(this.puzzle);
+					this.fio = this.puzzle.createFileIO();
 					this.fio.dataarray = this.outbstr.replace(/_/g, " ").split("/");
 					this.decodeKanpen();
 					this.fio = null;

@@ -44,10 +44,10 @@ export const initPzpr = function (pzpr: any) {
 	function execKeyUp(e: KeyboardEvent) {
 		if (!!keytarget && !!keytarget.key) { keytarget.key.e_keyup(e); }
 	}
-	pzpr.on('load', function addKeyEvents() {
+	pzpr.on('load', () => {
 		// キー入力イベントの設定
-		pzpr.util.addEvent(document, 'keydown', pzpr, execKeyDown);
-		pzpr.util.addEvent(document, 'keyup', pzpr, execKeyUp);
+		//pzpr.util.addEvent(document, 'keydown', pzpr, execKeyDown);
+		//pzpr.util.addEvent(document, 'keyup', pzpr, execKeyUp);
 	});
 
 	//---------------------------------------------------------------------------

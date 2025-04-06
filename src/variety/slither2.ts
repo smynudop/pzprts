@@ -210,19 +210,19 @@ class SlitherFileIO extends FileIO {
 }
 
 class SlitherAnsCheck extends AnsCheck<SlitherCell> {
-    checklist = [
-        "checkLineExist+",
-        "checkBranchLine",
-        "checkCrossLine",
+    makeCheckList(): void {
+        this.checklist = [
+            "checkLineExist+",
+            "checkBranchLine",
+            "checkCrossLine",
 
-        "checkdir4BorderLine@slither",
+            "checkdir4BorderLine",
 
-        "checkOneLoop",
-        "checkDeadendLine+",
-
-        "checkOutsideNumber@bag",
-        "checkViewOfNumber@bag"
-    ]
+            "checkOneLoop",
+            "checkDeadendLine+",
+        ]
+        super.makeCheckList()
+    }
 
     checkdir4BorderLine() {
         this.checkAllCell(function (cell) { return (cell.qnum >= 0 && cell.getdir4BorderLine1() !== cell.qnum); }, "nmLineNe");

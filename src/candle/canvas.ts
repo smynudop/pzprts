@@ -47,7 +47,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 	context: CanvasRenderingContext2D
 	currentLayerId: string
 	isedgearray: { [key: string]: boolean }
-	constructor(parent: HTMLCanvasElement) {
+	constructor(parent: HTMLElement) {
 		super(parent);
 
 		// variables for internal

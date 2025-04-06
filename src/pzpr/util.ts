@@ -171,7 +171,14 @@ export const util = {
 		var top = rect.top + scrollTop;
 		var right = rect.right + scrollLeft;
 		var bottom = rect.bottom + scrollTop;
-		return { top: top, bottom: bottom, left: left, right: right, height: (bottom - top), width: (right - left) };
+
+
+		const style = getComputedStyle(el);
+
+		const paddingX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+		const paddingY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+
+		return { top: top, bottom: bottom, left: left, right: right, height: (bottom - top - paddingY), width: (right - left - paddingX) };
 	},
 
 	//---------------------------------------------------------------------------

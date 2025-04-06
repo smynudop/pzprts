@@ -12,12 +12,12 @@ export default abstract class WrapperBase<ChildElement> {
 	font = '14px system';
 	textAlign: CanvasTextAlign = 'center';
 	textBaseline: CanvasTextBaseline | "candle-top" = 'middle';
-	canvas: HTMLCanvasElement = null;
+	canvas: HTMLElement = null;
 	canvasid = '';
 	child: ChildElement = null;
 	enableTextLengthWA = false;
 	use: any
-	constructor(parent: HTMLCanvasElement) {
+	constructor(parent: HTMLElement) {
 		// canvasに存在するプロパティ＆デフォルト値
 
 		this.canvas = parent;	// 親エレメントとなるdivエレメント
@@ -28,7 +28,7 @@ export default abstract class WrapperBase<ChildElement> {
 
 		this.enableTextLengthWA = false;
 
-		//@ts-ignore
+
 		this.canvas.getContext = (type) => this;
 
 		this.use = {};

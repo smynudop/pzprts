@@ -7,10 +7,10 @@ const editModes = ref<string[]>([])
 const playModes = ref<string[]>([])
 let puzzle: SlitherLink = null
 onMounted(() => {
-    puzzle = new SlitherLink(document.getElementById("puzzle") as any, {})
+    puzzle = new SlitherLink(document.querySelector("#puzzle"))
+    puzzle.mount(document.querySelector("#puzzle"))
 
-    puzzle.clear()
-    puzzle.on("ready", postCanvasReady)
+    //puzzle.on("ready", postCanvasReady)
     postCanvasReady(puzzle)
     puzzle.setMode("edit")
     puzzle.mouse.setInputMode("auto")
@@ -40,6 +40,21 @@ const changeMode = (newMode: string) => {
     }
 }
 
+const url = ref("")
+const exportUrl = () => {
+    url.value = puzzle.getURL(0)
+}
+
+const resultText = ref("")
+const complete = ref(false)
+const check = () => {
+    const result = puzzle.check(true)
+    resultText.value = result.text
+    if (result.complete) {
+        complete.value = true
+    }
+}
+
 </script>
 
 <template>
@@ -62,6 +77,16 @@ const changeMode = (newMode: string) => {
         </div>
 
         <div id="puzzle"></div>
+        <div class="result" :class="{ 'complete': complete }">
+            {{ resultText }}
+        </div>
+        <div class="tool">
+            <button @click="check">Check</button>
+        </div>
+        <!-- <div>
+            <button @click="exportUrl">url出力</button>
+            <input type="text" v-model="url" />
+        </div> -->
     </div>
 </template>
 
@@ -90,6 +115,7 @@ const changeMode = (newMode: string) => {
     height: 400px;
     max-width: 100%;
     border: 1px solid black;
+    padding: 4px;
 }
 
 .editplay>div,
@@ -97,7 +123,7 @@ const changeMode = (newMode: string) => {
     /*flex-basis: 100px;*/
     border: 1px solid #ccc;
     border-right-width: 0px;
-    padding: .25em .5em;
+    padding: .5em .5em;
     text-align: center;
     cursor: pointer;
     user-select: none;
@@ -127,5 +153,38 @@ const changeMode = (newMode: string) => {
 
 .active {
     background-color: aquamarine;
+}
+
+button {
+    border: 1px solid #ccc;
+    border-radius: .5em;
+    padding: 1em;
+    background-color: rgb(120, 214, 214);
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgb(163, 228, 228);
+
+}
+
+.tool {
+    display: flex;
+    justify-content: center;
+}
+
+.result {
+    text-align: center;
+}
+</style>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    font-family: "Verdana", "BIZ UDPGothic", sans-serif;
 }
 </style>

@@ -65,8 +65,9 @@ var Candle = {
 			var choice = type;
 			if (!this.enable[choice]) { choice = this.current; }
 			if (!choice || !this.enable[choice]) { throw 'No canvas environment is installed'; }
-			context = new _wrapper[choice](element);
-			context.init();
+			const wrapper = context = new _wrapper[choice](element);
+			wrapper.init();
+			context = wrapper
 		}
 		else {
 			context = element.getContext('2d');

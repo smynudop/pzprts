@@ -23,8 +23,8 @@ export class KeyEvent {
 		this.keyreset();
 	}
 	puzzle: Puzzle
-	enablemake = false
-	enableplay = false
+	enablemake = true
+	enableplay = true
 	keyup_event = false	/* keyupイベントでもパズル個別のキーイベント関数を呼び出す */
 	isCTRL: boolean
 	isMETA: boolean
@@ -192,7 +192,7 @@ export class KeyEvent {
 	keyexec(c: string) {
 		var puzzle = this.puzzle;
 		if (this.keydown && c === 'alt+c' && !puzzle.playeronly) {
-			puzzle.setMode(puzzle.playmode ? puzzle.MODE_EDITOR : puzzle.MODE_PLAYER);
+			puzzle.setMode(puzzle.playmode ? 1 : 3);
 			return false;
 		}
 		return true;
