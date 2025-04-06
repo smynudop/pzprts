@@ -1,0 +1,45 @@
+{
+  "name": "pzpr",
+  "version": "0.11.1",
+  "description": "Scripts for handling puzzle objects",
+  "main": "./index.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "puzzle",
+    "HTML5"
+  ],
+  "author": "sabo2",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sabo2/pzprjs"
+  },
+  "homepage": "https://github.com/sabo2/pzprjs",
+  "engines": {
+    "node": ">= 5.6.0"
+  },
+  "scripts": {
+    "build": "eslint --cache --quiet src && grunt default",
+    "release": "npm run clean && eslint --cache --quiet src && grunt release",
+    "clean": "del dist/* pzpr-*.{zip,tar.gz,tar.bz2,tgz}",
+    "lint": "eslint src test sample",
+    "test": "eslint --quiet src test && mocha -R progress --recursive test",
+    "prepublishOnly": "npm test"
+  },
+  "devDependencies": {
+    "del-cli": "^2.0.0",
+    "eslint": "^5.16.0",
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-newer": "^1.1.1",
+    "mocha": "^6.1.4",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.5"
+  },
+  "dependencies": {
+    "pzpr-canvas": "^0.8.2"
+  }
+}
