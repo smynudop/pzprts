@@ -67,5 +67,29 @@ export default abstract class WrapperBase<ChildElement> {
 	abstract strokeRect(x: number, y: number, w: number, h: number): void
 	abstract shapeRect(x: number, y: number, w: number, h: number): void
 	/* VectorID Functions */
-	vhide(vids: any) { }
+	vhide(vids?: any) { }
+	vid: string
+
+	abstract changeSize(width: number, height: number): void
+	abstract translate(left: number, top: number): void
+
+	abstract fill(): void
+	abstract moveTo(x: number, y: number): void
+	abstract setOffsetLinePath(...args: any[]): void
+	abstract beginPath(): void
+	abstract lineTo(x: number, y: number): void
+	abstract strokeCircle(cx: number, cy: number, r: number): void
+	abstract strokeLine(x1: number, y1: number, x2: number, y2: number): void
+	abstract strokeDashedLine(x1: number, y1: number, x2: number, y2: number, sizes: (string | number)[]): void
+	abstract stroke(): void
+	abstract strokeCross(cx: number, cy: number, l: number): void
+	abstract fillCircle(cx: number, cy: number, r: number): void
+	abstract shapeCircle(cx: number, cy: number, r: number): void
+	abstract drawImage(image: HTMLImageElement, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number): void
+	abstract setLayer(layerid?: string, option?: any): void
+	abstract clear(): void
+	abstract fillText(text: string, x: number, y: number, maxLength: number): void
+
+	abstract closePath(): void
 }
+

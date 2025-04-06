@@ -429,7 +429,6 @@ export class Board<
 		var id = null, qc = this.cols, qr = this.rows;
 		if ((bx < 0 || bx > (qc << 1) || by < 0 || by > (qr << 1)) || (!(bx & 1)) || (!(by & 1))) { }
 		else { id = (bx >> 1) + (by >> 1) * qc; }
-		console.log(`id: ${id}`)
 		return (id !== null ? this.cell[id] : this.emptycell);
 	}
 	getx(bx: number, by: number) {
@@ -511,7 +510,6 @@ export class Board<
 		for (var by = (y1 | 1); by <= y2; by += 2) {
 			for (var bx = (x1 | 1); bx <= x2; bx += 2) {
 				var cell = this.getc(bx, by);
-				console.log(`bx: ${bx}, by: ${by}`, cell)
 				if (!cell.isnull) { clist.add(cell); }
 			}
 		}

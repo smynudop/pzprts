@@ -1,5 +1,6 @@
 // util.js v3.4.0
 
+import { Puzzle } from "../puzzle/Puzzle";
 import { getEnv } from "./env";
 const env = getEnv();
 let api = env.API,
@@ -74,18 +75,17 @@ export const util = {
 	//----------------------------------------------------------------------
 	// pzpr.util.addEvent()          addEventListener()を呼び出す
 	//----------------------------------------------------------------------
-	addEvent: function (el: HTMLElement, type: string, self: any, callback: any, capt: any = false) {
+	addEvent: function (el: HTMLElement, type: string, self: Puzzle, callback: (e: any) => void, capt: any = false) {
 		var types = [type];
 		if (type === "mousedown") { types = eventMouseDown; }
 		else if (type === "mousemove") { types = eventMouseMove; }
 		else if (type === "mouseup") { types = eventMouseUp; }
 		else if (type === "mousecancel") { types = eventMouseCancel; }
 
-		function executer(e: Event) { callback.call(self, e); }
-		types.forEach(function (type) { el.addEventListener(type, executer, !!capt); });
+		types.forEach(function (type) { el.addEventListener(type, callback, !!capt); });
 
 		return function remover() {
-			types.forEach(function (type) { el.removeEventListener(type, executer, !!capt); });
+			types.forEach(function (type) { el.removeEventListener(type, callback, !!capt); });
 		};
 	},
 

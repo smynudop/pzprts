@@ -34,7 +34,9 @@ class SlitherMouseEvent extends MouseEvent1 {
             }
         }
         else if (puzzle.editmode) {
-            if (this.mousestart) { this.inputqnum(); }
+            if (this.mousestart) {
+                this.inputqnum();
+            }
         }
     }
 
@@ -63,8 +65,12 @@ class SlitherBoard extends Board<SlitherCell> {
     }
 }
 class SlitherCell extends Cell {
-    maxnum = () => 3
-    minnum = () => 0
+    maxnum() {
+        return 3
+    }
+    minnum() {
+        return 0;
+    }
 
     getdir4BorderLine1() {
         var adb = this.adjborder, cnt = 0;

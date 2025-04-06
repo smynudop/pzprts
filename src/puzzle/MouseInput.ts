@@ -9,7 +9,7 @@ import { Puzzle } from "./Puzzle";
 import { RawAddress, Address, Position } from "./Address";
 import { TargetCursor } from "./KeyInput";
 import { CellList, CrossList } from "./PieceList";
-import { Cell, Cross, EXCell } from "./Piece";
+import { BoardPiece, Cell, Cross, EXCell } from "./Piece";
 import { pzpr } from "../pzpr/core";
 
 type IMode = "edit" | "play"
@@ -491,6 +491,7 @@ export class MouseEvent1 {
 	// mv.inputqnum_main() Cellのqnum(数字データ)に数字を入力する(メイン処理)
 	//---------------------------------------------------------------------------
 	inputqnum() {
+
 		var cell = this.getcell();
 		if (cell.isnull || cell === this.mouseCell) { return; }
 
@@ -505,7 +506,7 @@ export class MouseEvent1 {
 		}
 		this.mouseCell = cell;
 	}
-	inputqnum_main(cell: any) { // todo
+	inputqnum_main(cell: Cell) { // todo
 		var cell0 = cell, puzzle = this.puzzle;
 		if (puzzle.playmode && cell.qnum !== Cell.qnumDefault && puzzle.pid !== 'factors') { return; }
 
@@ -533,7 +534,6 @@ export class MouseEvent1 {
 		if (puzzle.execConfig('dispmove') && cell.noNum()) {
 			cell.eraseMovedLines();		/* 丸数字がなくなったら付属する線も消去する */
 		}
-
 		cell0.draw();
 	}
 	getNewNumber(cell: Cell, num: number) {
@@ -722,7 +722,7 @@ export class MouseEvent1 {
 		if (this.inputData === null) { this.decIC(cell); }
 
 		this.mouseCell = cell;
-		var clist = cell.room.clist;
+		var clist = cell.room.clist as CellList;
 		for (var i = 0; i < clist.length; i++) {
 			var cell2 = clist[i];
 			if (this.inputData === 1 || cell2.qsub !== 3) {

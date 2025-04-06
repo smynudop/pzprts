@@ -6,6 +6,7 @@ import { CellList, CrossList, BorderList, EXCellList } from "./PieceList";
 import { BoardPiece, Border, Cell, EXCell } from "./Piece";
 import { pzpr } from "../pzpr/core";
 import { getEnv } from "../pzpr/env";
+import { WrapperBase } from "../candle";
 
 
 var CENTER = 1,
@@ -49,7 +50,7 @@ export class Graphic {
 		this.initFont();
 	}
 
-	context: any = null
+	context: WrapperBase<any> = null
 	subcontext: any = null
 
 	fgcellcolor_func = "ques"		// getQuesCellColor()の種類
@@ -202,6 +203,7 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	initCanvas() {
 		var puzzle = this.puzzle;
+		//@ts-ignore
 		var g = this.context = (!!puzzle.canvas ? (puzzle.canvas as HTMLCanvasElement).getContext("2d") : null);
 		//@ts-ignore
 		if (g.use.canvas) {
@@ -480,7 +482,7 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	// pc.copyBufferData()    Bufferに描画したデータを盤面へコピーする
 	//---------------------------------------------------------------------------
-	copyBufferData(g: CanvasRenderingContext2D, g2: any, x1: number, y1: number, x2: number, y2: number) {
+	copyBufferData(g: CanvasRenderingContext2D | WrapperBase<any>, g2: any, x1: number, y1: number, x2: number, y2: number) {
 		// source側はtaranslateのぶん足されていないので、加算しておきます
 		var sx1 = this.x0 + x1 * this.bw - 1, sy1 = this.y0 + y1 * this.bh - 1,
 			sx2 = this.x0 + x2 * this.bw + 2, sy2 = this.y0 + y2 * this.bh + 2;
@@ -598,15 +600,15 @@ export class Graphic {
 
 	disptext(text: string, px: number, py: number, option: any = null) {
 		option = option || {};
-		var g = this.context;
+		const g = this.context;
 
 		var realsize = ((this.cw * (option.ratio || this.fontsizeratio)) | 0);
-		var maxLength: number = void 0;
+		var maxLength: number = null;
 		var widtharray = option.width || this.fontwidth;
 		var widthratiopos = (text.length <= widtharray.length + 1 ? text.length - 2 : widtharray.length - 1);
 		var widthratio = (widthratiopos >= 0 ? widtharray[widthratiopos] * text.length : null);
 		if (this.isSupportMaxWidth) {	// maxLengthサポートブラウザ
-			maxLength = (!!widthratio ? (realsize * widthratio) : void 0);
+			maxLength = (!!widthratio ? (realsize * widthratio) : null);
 		}
 		else {						// maxLength非サポートブラウザ
 			if (!!widthratio) { realsize = (realsize * widthratio * 1.5 / text.length) | 0; }
@@ -894,7 +896,12 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	drawQuesNumbers() {
 		this.vinc('cell_number', 'auto');
-		this.drawNumbers_com(this.getQuesNumberText, this.getQuesNumberColor, 'cell_text_', this.textoption);
+		this.drawNumbers_com(
+			(cell) => this.getQuesNumberText(cell),
+			(cell) => this.getQuesNumberColor(cell),
+			'cell_text_',
+			this.textoption
+		);
 	}
 	drawAnsNumbers() {
 		this.vinc('cell_ans_number', 'auto');
@@ -905,15 +912,20 @@ export class Graphic {
 		this.vinc('cell_number', 'auto');
 		this.drawNumbers_com(getQuesHatenaText, this.getQuesNumberColor_qnum, 'cell_text_', this.textoption);
 	}
-	drawNumbers_com(textfunc: (cell: Cell) => string, colorfunc: (cell: Cell) => string, header: string, textoption: any) {
+	drawNumbers_com(
+		textfunc: (cell: Cell) => string,
+		colorfunc: (cell: Cell) => string,
+		header: string,
+		textoption: any
+	) {
 		var g = this.context;
 		var clist = this.range.cells;
 		for (var i = 0; i < clist.length; i++) {
 			var cell = clist[i];
-			var text = textfunc.call(this, cell);
+			var text = textfunc(cell);
 			g.vid = header + cell.id;
 			if (!!text) {
-				g.fillStyle = colorfunc.call(this, cell);
+				g.fillStyle = colorfunc(cell);
 				this.disptext(text, cell.bx * this.bw, cell.by * this.bh, textoption);
 			}
 			else { g.vhide(); }
@@ -946,8 +958,8 @@ export class Graphic {
 		return text;
 	}
 
-	getQuesNumberColor(cell: Cell | EXCell): any { // initialize()で上書きされる
-		return null;
+	getQuesNumberColor(cell: Cell | EXCell) {
+		return this.getQuesNumberColor_mixed(cell);
 	}
 	getQuesNumberColor_fixed(cell: Cell) {
 		return this.quescolor;
@@ -969,7 +981,7 @@ export class Graphic {
 		}
 		return this.quescolor;
 	}
-	getQuesNumberColor_mixed(cell: Cell) {
+	getQuesNumberColor_mixed(cell: Cell | EXCell) {
 		var info = cell.error || cell.qinfo;
 		if ((cell.ques >= 1 && cell.ques <= 5) || cell.qans === 1) {
 			return this.fontShadecolor;

@@ -67,7 +67,7 @@ const S_HEIGHT = (() => {
 /* ----------------- */
 class SVGWrapper extends WrapperBase<SVGSVGElement> {
 	vid: string
-	elements: Record<string, any>;
+	elements: Record<string, SVGSVGElement>;
 	_textcache: Record<string, any>;
 	target: any;
 	layers: Record<string, any>;
@@ -400,7 +400,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		else if (!!el) { this.hide(el); }
 		this.vid = '';
 	}
-	fillText_main(el: SVGElement, text: string, x: number, y: number, maxLength: number) {
+	fillText_main(el: SVGSVGElement, text: string, x: number, y: number, maxLength: number) {
 		var newel = !el, _cache = (!!this.vid ? this._textcache[this.vid] || {} : {});
 		if (newel) { el = newEL('text'); }
 		else { this.show(el); }
@@ -416,9 +416,9 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 			if (el.getAttribute('x') !== x.toString()) { el.setAttribute('x', x.toString()); }
 			if (el.getAttribute('y') !== top.toString()) { el.setAttribute('y', top.toString()); }
 			if (el.getAttribute('text-anchor') !== anchor) { el.setAttribute('text-anchor', anchor); }
-			if ((el.getAttribute('textLength') || '') !== maxLength.toString()) {
+			if ((el.getAttribute('textLength') || '') !== maxLength?.toString()) {
 				if (!!maxLength) {
-					el.setAttribute('textLength', maxLength.toString());
+					el.setAttribute('textLength', maxLength?.toString());
 					el.setAttribute('lengthAdjust', 'spacingAndGlyphs');
 				}
 				else {
@@ -484,7 +484,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		else if (!!el) { this.hide(el); }
 		this.vid = '';
 	}
-	drawImage_main(el: SVGElement, image: HTMLImageElement, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) {
+	drawImage_main(el: SVGSVGElement, image: HTMLImageElement, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) {
 		var newel = !el;
 		if (newel) { el = newEL('use'); }
 		else { this.show(el); }
@@ -516,7 +516,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		this.vid = '';
 		return el2;
 	}
-	addVectorElement_main(el: SVGElement, isfill: boolean, isstroke: boolean) {
+	addVectorElement_main(el: SVGSVGElement, isfill: boolean, isstroke: boolean) {
 		var newel = !el;
 		if (newel) {
 			el = newEL('path');

@@ -23,6 +23,7 @@ export class BoardPiece extends Position {
 	qdir = 0  // cell  :(数字につく矢印の向き)
 	// border:(アイスバーンの矢印/マイナリズムの不等号)
 	qnum = -1	// cell  :(セルの数字/○△□/マカロ以外の単体矢印/白丸黒丸/カックロの右側
+
 	static qnumDefault = -1
 
 	// cross :(交点の数字)
@@ -77,6 +78,7 @@ export class BoardPiece extends Position {
 	}
 
 	room: any
+	pureObject: BoardPiece = null
 
 	//---------------------------------------------------------------------------
 	// initAdjacent()   隣接セルの情報を設定する
@@ -167,8 +169,15 @@ export class BoardPiece extends Position {
 	//---------------------------------------------------------------------------
 	// propclear() 指定されたプロパティの値をクリアする
 	//---------------------------------------------------------------------------
-	propclear(prop: any, isrec: boolean) {
-		var def = this.constructor.prototype[prop];
+	propclear(prop: string, isrec: boolean) {
+
+		//todo
+		if (this.pureObject == null) {
+			this.pureObject = new BoardPiece(this.puzzle)
+		}
+
+		//@ts-ignore
+		var def = this.pureObject[prop];
 		//@ts-ignore
 		const now = this[prop]
 		if (now !== def) {

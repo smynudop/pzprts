@@ -26,6 +26,9 @@ type IConfig = {
 	config?: any
 }
 
+const MODE_EDITOR = 1
+const MODE_PLAYER = 3
+
 //---------------------------------------------------------------------------
 // ★Puzzleクラス ぱずぷれv3のベース処理やその他の処理を行う
 //---------------------------------------------------------------------------
@@ -124,8 +127,7 @@ export class Puzzle<
 	metadata: MetaData = null	// 作者やコメントなどの情報
 
 	// モード設定用定数
-	MODE_EDITOR = 1
-	MODE_PLAYER = 3
+
 
 	createKeyEvent() {
 		return new KeyEvent(this);
@@ -411,10 +413,10 @@ export class Puzzle<
 	setMode(newval: string | number) {
 		if (this.playeronly) { return; }
 		if (typeof newval === 'string') {
-			newval = { edit: 1, play: 3 }[newval.substr(0, 4)];
+			newval = { edit: 1, play: 3 }[newval.substring(0, 4)];
 			if (newval === void 0) { return; }
 		}
-		this.editmode = (newval === this.MODE_EDITOR);
+		this.editmode = (newval === MODE_EDITOR);
 		this.playmode = !this.editmode;
 
 		this.cursor.adjust_modechange();
