@@ -51,7 +51,7 @@ export class Graphic {
 	}
 
 	context: WrapperBase<any> = null
-	subcontext: any = null
+	subcontext: WrapperBase<any> = null
 
 	fgcellcolor_func = "ques"		// getQuesCellColor()の種類
 	bgcellcolor_func = "error1"	// getBGCellColor()の種類
@@ -203,9 +203,8 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	initCanvas() {
 		var puzzle = this.puzzle;
-		//@ts-ignore
-		var g = this.context = (!!puzzle.canvas ? (puzzle.canvas as HTMLCanvasElement).getContext("2d") : null);
-		//@ts-ignore
+		this.context = (!!puzzle.canvas ? puzzle.canvas.getContext("2d") : null);
+		const g = this.context
 		if (g.use.canvas) {
 			this.subcontext = (!!puzzle.subcanvas ? puzzle.subcanvas.getContext("2d") : null);
 			this.useBuffer = !!this.subcontext;

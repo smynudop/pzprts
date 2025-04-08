@@ -3,7 +3,7 @@
 import { Puzzle } from "./Puzzle"
 import { FileIO } from "./FileData"
 import { pzpr } from "../pzpr/core"
-import { URLData } from "../pzpr/parser"
+import { Parser, URLData } from "../pzpr/parser"
 
 //---------------------------------------------------------------------------
 // ★Encodeクラス URLのエンコード/デコードを扱う
@@ -46,8 +46,7 @@ export class Encode {
 	// enc.encodePzpr()  各パズルのURL出力用(オーバーライド用)
 	//---------------------------------------------------------------------------
 	decodeURL(url: string) {
-		var pzl = pzpr.parser.parseURL(url), puzzle = this.puzzle, bd = puzzle.board;
-
+		var pzl = Parser.parseURL(url), puzzle = this.puzzle, bd = puzzle.board;
 		bd.initBoardSize(pzl.cols, pzl.rows);
 
 		if (!!pzl.body) {

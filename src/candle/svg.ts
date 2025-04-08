@@ -109,9 +109,10 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		root.setAttribute('xmlns:xlink', XLINKNS);
 		root.setAttribute('font-size', "10px");
 		root.setAttribute('font-family', "sans-serif");
-		root.setAttribute('width', rect.width.toString());
-		root.setAttribute('height', rect.height.toString());
-		root.setAttribute('viewBox', [0, 0, rect.width, rect.height].join(' '));
+		//root.style.maxWidth = `${rect.width}px`
+		// root.setAttribute('width', rect.width.toString());
+		// root.setAttribute('height', rect.height.toString());
+		root.setAttribute('viewBox', [0, 0, 500, 500].join(' '));
 		if (!!this.canvas.appendChild) {
 			this.canvas.appendChild(root);
 		}
@@ -186,12 +187,12 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 
 	changeSize(width: number, height: number) {
 		if (isBrowser) {
-			this.canvas.style.width = width + 'px';
-			this.canvas.style.height = height + 'px';
+			// this.canvas.style.width = width + 'px';
+			// this.canvas.style.height = height + 'px';
 		}
 		var child = this.child;
-		child.setAttribute('width', width.toString());
-		child.setAttribute('height', height.toString());
+		// child.setAttribute('width', width.toString());
+		// child.setAttribute('height', height.toString());
 		var m = child.getAttribute('viewBox').split(/ /);
 		child.setAttribute('viewBox', [m[0], m[1], width, height].join(' '));
 	}

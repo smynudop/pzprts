@@ -165,7 +165,18 @@ export class MouseEvent1 {
 		var pix = { px: NaN, py: NaN };
 		var g = pc.context;
 		if (!g) { return { bx: null, by: null }; }
-		if (!pzpr.env.API.touchevent || pzpr.env.API.pointerevent || pzpr.env.OS.iOS) {
+		if (this.puzzle.canvas.children[0] instanceof SVGSVGElement) {
+			const svg = this.puzzle.canvas.children[0]
+			// SVGの座標系でのポイントを作成
+			const pt = svg.createSVGPoint();
+			pt.x = e.clientX;
+			pt.y = e.clientY;
+
+			// スクリーン座標からSVG座標へ変換
+			const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+			pix = { px: svgP.x + pc.x0, py: svgP.y + pc.y0 }
+		}
+		else if (!pzpr.env.API.touchevent || pzpr.env.API.pointerevent || pzpr.env.OS.iOS) {
 			if (!isNaN(e.offsetX)) { pix = { px: e.offsetX, py: e.offsetY }; }
 			else { pix = { px: e.layerX, py: e.layerY }; }  // Firefox 39以前, iOSはこちら
 		}

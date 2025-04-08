@@ -17,38 +17,36 @@ const URL_AUTO = 0,
 	FILE_PBOX_XML = 3;
 
 export class Parser {
-	constructor(data: any, variety: string) {
-		this.parse(data, variety)
-	}
+
 	// 定数(URL形式)
-	URL_AUTO = URL_AUTO
-	URL_PZPRV3 = URL_PZPRV3
-	URL_PZPRAPP = URL_PZPRAPP
-	URL_KANPEN = URL_KANPEN
-	URL_KANPENP = URL_KANPENP
-	URL_HEYAAPP = URL_HEYAAPP
+	static URL_AUTO = URL_AUTO
+	static URL_PZPRV3 = URL_PZPRV3
+	static URL_PZPRAPP = URL_PZPRAPP
+	static URL_KANPEN = URL_KANPEN
+	static URL_KANPENP = URL_KANPENP
+	static URL_HEYAAPP = URL_HEYAAPP
 
 	// 定数(ファイル形式)
-	FILE_AUTO = FILE_AUTO
-	FILE_PZPR = FILE_PZPR
-	FILE_PBOX = FILE_PBOX
-	FILE_PBOX_XML = FILE_PBOX_XML
+	static FILE_AUTO = FILE_AUTO
+	static FILE_PZPR = FILE_PZPR
+	static FILE_PBOX = FILE_PBOX
+	static FILE_PBOX_XML = FILE_PBOX_XML
 
 	/* 入力された文字列を、URLおよびファイルデータとして解析し返します        */
 	/* ただし最初から解析済みのデータが渡された場合は、それをそのまま返します */
-	parse(data: any, variety: string) {
+	static parse(data: any, variety: string) {
 		if (data instanceof URLData || data instanceof FileData) { return data; }
 
 		return this.parseFile(data, variety) || this.parseURL(data);
 	}
 
-	parseURL(url: URLData | string) {
+	static parseURL(url: URLData | string) {
 		if (url instanceof URLData) { return url; }
 
 		url = url.replace(/(\r|\n)/g, ""); // textarea上の改行が実際の改行扱いになるUAに対応(Operaとか)
 		return (new URLData(url)).parse();
 	}
-	parseFile(fstr: FileData | string, variety: string) {
+	static parseFile(fstr: FileData | string, variety: string) {
 		if (fstr instanceof FileData) { return fstr; }
 
 		if (!fstr.match(/^\<\?xml/)) {

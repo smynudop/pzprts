@@ -55,13 +55,12 @@ export class Puzzle<
 	faillist: FailCode
 
 
-	constructor(canvas: HTMLCanvasElement, option?: IConfig) {
+	constructor(option?: IConfig) {
 
 		option = option || {};
 
 		this.instancetype = option.type || 'editor';
-		//@ts-ignore
-		var modeid = { player: 1, viewer: 2 }[this.instancetype || 0] || 0;
+		var modeid = { editor: 0, player: 1, viewer: 2 }[this.instancetype];
 		this.playeronly = !!modeid;			// 回答モードのみで動作する
 		this.editmode = !this.playeronly;	// 問題配置モード
 		this.playmode = !this.editmode;		// 回答モード
@@ -122,7 +121,7 @@ export class Puzzle<
 	editmode = false	// 問題配置モード
 	playmode = false// 回答モード
 	playeronly = false	// 回答モードのみで動作する
-	instancetype = ''	// editpr/player/viewerのいずれか
+	instancetype: "editor" | "player" | "viewer"	// editpr/player/viewerのいずれか
 
 	starttime = 0
 
@@ -214,9 +213,8 @@ export class Puzzle<
 
 		var rect = pzpr.util.getRect(el);
 		var _div = document.createElement('div');
-		_div.style.width = rect.width + 'px';
-		_div.style.height = rect.height + 'px';
-		_div.setAttribute("tabindex", "1")
+		// _div.style.width = rect.width + 'px';
+		// _div.style.height = rect.height + 'px';
 		el.appendChild(_div);
 		this.canvas = _div;
 
@@ -297,6 +295,10 @@ export class Puzzle<
 	}
 	getFileData(type: number, option: any) {
 		return this.createFileIO().fileencode(type, option);
+	}
+
+	readURL(url: string) {
+		return this.createEncoder().decodeURL(url);
 	}
 
 	//---------------------------------------------------------------------------

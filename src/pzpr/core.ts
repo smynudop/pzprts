@@ -17,7 +17,6 @@ export const pzpr = {
 	version: '<%= pkg.version %>',
 	lang: getLang(),
 	env: getEnv(),
-	parser: null as Parser,
 	Metadata: MetaData,
 	Candle: Candle,
 	util: util,// CoreClass保存用
