@@ -2,14 +2,14 @@
 // ★ FileData() ファイルデータのencode/decodeのためのオブジェクト
 //---------------------------------------------------------------------------
 import * as Constants from "./constants"
-import { MetaData } from "./metadata";
+import * as MetaData from "./metadata";
 import { pzpr } from "./core";
 
 export class FileData {
     constructor(fstr: string, variety: string) {
         this.pid = (!!variety ? variety : '');
         this.fstr = fstr;
-        this.metadata = new MetaData();
+        this.metadata = MetaData.createEmtpyMetaData();
     }
 
     pid = ''
@@ -21,7 +21,7 @@ export class FileData {
     rows = 0
     body: any = ""
     history: any = {}
-    metadata: MetaData = null
+    metadata: MetaData.IMetaData
     xmldoc: any = null
 
     isurl = false
@@ -151,7 +151,7 @@ export class FileData {
             if (!!JSON) {
                 if (isinfo && (str.substr(0, 5) === "info:")) {
                     var info = JSON.parse(str.substr(5));
-                    this.metadata.update(info.metadata);
+                    this.metadata = MetaData.update(this.metadata, info.metadata);
                     this.history = info.history || '';
                 }
                 else if (str.substr(0, 8) === "history:") {
@@ -209,8 +209,8 @@ export class FileData {
 
         /* 履歴・メタデータ出力がある形式ならば出力する */
         if ((pzl.type === Constants.FILE_PZPR) && !!JSON) {
-            if (!pzl.metadata.empty()) {
-                var info = { metadata: pzl.metadata.getvaliddata(), history: pzl.history || undefined };
+            if (!MetaData.isEmpty(this.metadata)) {
+                var info = { metadata: MetaData.getvaliddata(pzl.metadata), history: pzl.history || undefined };
                 out.push("info:" + JSON.stringify(info, null, 1));
             }
             else if (pzl.history) {

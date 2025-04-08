@@ -12,6 +12,8 @@ import { pzpr } from "../pzpr/core";
 import { Parser } from "../pzpr/parser";
 import { FileData } from "../pzpr/fileData";
 import * as Constants from "../pzpr/constants"
+import * as MetaData from "../pzpr/metadata"
+
 type IDecodeFunc<TValue, TPiece extends BoardPiece = BoardPiece> = (piece: TPiece, str: TValue) => void
 type IEncodeFunc<TValue, TPiece extends BoardPiece = BoardPiece> = (piece: TPiece) => TValue
 // FileData.js
@@ -67,7 +69,7 @@ export class FileIO {
 				break;
 		}
 
-		puzzle.metadata.update(pzl.metadata);
+		puzzle.metadata = MetaData.update(puzzle.metadata, pzl.metadata);
 		if (pzl.history && (filetype === Constants.FILE_PZPR)) {
 			puzzle.opemgr.decodeHistory(pzl.history);
 		}
@@ -124,7 +126,7 @@ export class FileIO {
 		else {
 			pzl.body = this.xmldoc;
 		}
-		pzl.metadata.update(puzzle.metadata);
+		pzl.metadata = MetaData.update(pzl.metadata, puzzle.metadata);
 		if (option.history && (filetype === Constants.FILE_PZPR)) {
 			pzl.history = puzzle.opemgr.encodeHistory({ time: !!option.time });
 		}

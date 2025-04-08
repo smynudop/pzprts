@@ -3,7 +3,6 @@ import { getEnv, getLang } from "./env";
 import { initPzpr } from "./event";
 import { createVariety } from "./variety";
 import { Parser } from "./parser";
-import { MetaData } from "./metadata";
 import { util } from "./util";
 import { Puzzle } from "../puzzle/Puzzle";
 import Candle from "../candle";
@@ -17,7 +16,6 @@ export const pzpr = {
 	version: '<%= pkg.version %>',
 	lang: getLang(),
 	env: getEnv(),
-	Metadata: MetaData,
 	Candle: Candle,
 	util: util,// CoreClass保存用
 	custom: { '': {} },	// パズル別クラス保存用

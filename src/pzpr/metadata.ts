@@ -4,27 +4,33 @@
 //  MetaData構造体  作者やコメントなどの情報を保持する
 //---------------------------------------------------------------------------
 
-export class MetaData {
-	author = ''
-	source = ''
-	hard = ''
-	comment = ''
-	items = ["author", "source", "hard", "comment"] as const
+export type IMetaData = {
+	author: string
+	source: string
+	hard: string
+	comment: string
+}
 
-	update(metadata: MetaData) {
-		if (!metadata) { return; }
-		for (var i of this.items) { if (typeof metadata[i] === 'string') { this[i] = metadata[i]; } }
+export const update = (oldData: IMetaData, newData: IMetaData): IMetaData => {
+	if (!newData) return oldData;
+	return {
+		...oldData,
+		...newData
 	}
-	getvaliddata() {
-		var obj = {} as { [Key in typeof this.items[number]]: string };
-		for (var i of this.items) { if (!!this[i]) { obj[i] = this[i]; } }
-		return obj;
+}
+
+export const getvaliddata = (data: IMetaData) => {
+	return data;
+}
+
+export const createEmtpyMetaData = (): IMetaData => {
+	return {
+		author: "",
+		source: "",
+		hard: "",
+		comment: "",
 	}
-	reset() {
-		for (var i of this.items) { this[i] = ''; }
-	}
-	empty() {
-		for (var i of this.items) { if (!!this[i]) { return false; } }
-		return true;
-	}
-};
+}
+export const isEmpty = (data: IMetaData) => {
+	return !!data.author || !!data.comment || !!data.hard || !!data.source;
+}

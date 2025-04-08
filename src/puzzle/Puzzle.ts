@@ -8,7 +8,7 @@ import { KeyEvent, TargetCursor } from './KeyInput';
 import { Graphic } from './Graphic';
 import { Encode } from './Encode.js';
 import { FileIO } from './FileData.js';
-import { MetaData } from '../pzpr/metadata.js';
+import * as MetaData from '../pzpr/metadata.js';
 import type { Cell, Cross, Border, EXCell } from "./Piece"
 
 import { WrapperBase } from '../candle/';
@@ -76,7 +76,7 @@ export class Puzzle<
 
 		this.listeners = {};
 
-		this.metadata = new MetaData();
+		this.metadata = MetaData.createEmtpyMetaData();
 
 		this.config = new this.Config(this);
 		if (option.config !== void 0) { this.config.setAll(option.config); }
@@ -132,7 +132,7 @@ export class Puzzle<
 
 	config: Config = null
 
-	metadata: MetaData = null	// 作者やコメントなどの情報
+	metadata: MetaData.IMetaData	// 作者やコメントなどの情報
 
 	// モード設定用定数
 
