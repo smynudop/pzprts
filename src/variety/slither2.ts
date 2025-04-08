@@ -1,4 +1,4 @@
-import { AnsCheck, FailCode } from "../puzzle/Answer";
+import { AnsCheck } from "../puzzle/Answer";
 import { Board } from "../puzzle/Board";
 import { Encode } from "../puzzle/Encode";
 import { FileIO } from "../puzzle/FileData";
@@ -229,9 +229,6 @@ class SlitherAnsCheck extends AnsCheck<SlitherCell> {
     }
 }
 
-class SlitherFailCode extends FailCode {
-    nmLineNe = ["数字の周りにある線の本数が違います。", "The number is not equal to the number of lines around it."]
-}
 
 export class SlitherLink extends Puzzle<SlitherCell> {
     pid: "slither"
@@ -252,8 +249,10 @@ export class SlitherLink extends Puzzle<SlitherCell> {
         return new SlitherBoard(this);
     }
 
-    createFailCode(): FailCode {
-        return new SlitherFailCode();
+    createFailCode() {
+        const map = super.createFailCode()
+        map.set("nmLineNe", ["数字の周りにある線の本数が違います。", "The number is not equal to the number of lines around it."])
+        return map;
     }
 
     createEncoder(): Encode {

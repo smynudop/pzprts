@@ -1,7 +1,8 @@
 // Puzzle.js v3.6.0
 import { Config } from './Config.js';
 import { Board, IGroup } from './Board';
-import { AnsCheck, FailCode } from './Answer';
+import { AnsCheck } from './Answer';
+import { createFailCode } from './FailCode.js';
 import { OperationManager } from './Operation';
 import { MouseEvent1 } from './MouseInput';
 import { KeyEvent, TargetCursor } from './KeyInput';
@@ -52,7 +53,7 @@ export class Puzzle<
 	mouse: MouseEvent1
 	key: KeyEvent
 	opemgr: OperationManager
-	faillist: FailCode
+	faillist: Map<string, [string, string]>
 
 
 	constructor(option?: IConfig) {
@@ -158,7 +159,7 @@ export class Puzzle<
 	}
 
 	createFailCode() {
-		return new FailCode();
+		return createFailCode()
 	}
 
 	createEncoder() {
