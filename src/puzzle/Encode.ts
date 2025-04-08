@@ -3,8 +3,9 @@
 import { Puzzle } from "./Puzzle"
 import { FileIO } from "./FileData"
 import { pzpr } from "../pzpr/core"
-import { Parser, URLData } from "../pzpr/parser"
-
+import { Parser } from "../pzpr/parser"
+import { URLData } from "../pzpr/urlData"
+import * as Constants from "../pzpr/constants"
 //---------------------------------------------------------------------------
 // ★Encodeクラス URLのエンコード/デコードを扱う
 //---------------------------------------------------------------------------
@@ -53,19 +54,19 @@ export class Encode {
 			this.pflag = pzl.pflag;
 			this.outbstr = pzl.body;
 			switch (pzl.type) {
-				case pzl.URL_PZPRV3: case pzl.URL_KANPENP:
-					this.decodePzpr(pzl.URL_PZPRV3);
+				case Constants.URL_PZPRV3: case Constants.URL_KANPENP:
+					this.decodePzpr(Constants.URL_PZPRV3);
 					break;
-				case pzl.URL_PZPRAPP:
-					this.decodePzpr(pzl.URL_PZPRAPP);
+				case Constants.URL_PZPRAPP:
+					this.decodePzpr(Constants.URL_PZPRAPP);
 					break;
-				case pzl.URL_KANPEN:
+				case Constants.URL_KANPEN:
 					this.fio = this.puzzle.createFileIO();
 					this.fio.dataarray = this.outbstr.replace(/_/g, " ").split("/");
 					this.decodeKanpen();
 					this.fio = null;
 					break;
-				case pzl.URL_HEYAAPP:
+				case Constants.URL_HEYAAPP:
 					this.decodeHeyaApp();
 					break;
 			}
@@ -77,8 +78,8 @@ export class Encode {
 		var puzzle = this.puzzle, pid = puzzle.pid, bd = puzzle.board;
 		var pzl = new URLData('');
 
-		type = type || pzl.URL_PZPRV3; /* type===pzl.URL_AUTO(0)もまとめて変換する */
-		if (type === pzl.URL_KANPEN && pid === 'lits') { type = pzl.URL_KANPENP; }
+		type = type || Constants.URL_PZPRV3; /* type===pzl.URL_AUTO(0)もまとめて変換する */
+		if (type === Constants.URL_KANPEN && pid === 'lits') { type = Constants.URL_KANPENP; }
 
 		this.outpflag = null;
 		this.outcols = bd.cols;
@@ -86,27 +87,27 @@ export class Encode {
 		this.outbstr = '';
 
 		switch (type) {
-			case pzl.URL_PZPRV3:
-				this.encodePzpr(pzl.URL_PZPRV3);
+			case Constants.URL_PZPRV3:
+				this.encodePzpr(Constants.URL_PZPRV3);
 				break;
 
-			case pzl.URL_PZPRAPP:
+			case Constants.URL_PZPRAPP:
 				throw "no Implemention";
 
-			case pzl.URL_KANPENP:
+			case Constants.URL_KANPENP:
 				if (!puzzle.info.exists.kanpen) { throw "no Implemention"; }
-				this.encodePzpr(pzl.URL_PZPRAPP);
+				this.encodePzpr(Constants.URL_PZPRAPP);
 				this.outpflag = this.outpflag || "";
 				break;
 
-			case pzl.URL_KANPEN:
+			case Constants.URL_KANPEN:
 				this.fio = new FileIO(this.puzzle);
 				this.encodeKanpen();
 				this.outbstr = this.fio.datastr.replace(/\r?\n/g, "/").replace(/ /g, "_");
 				this.fio = null;
 				break;
 
-			case pzl.URL_HEYAAPP:
+			case Constants.URL_HEYAAPP:
 				this.encodeHeyaApp();
 				break;
 
