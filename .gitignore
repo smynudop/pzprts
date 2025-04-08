@@ -3,3 +3,4 @@ pzpr-*
 node_modules
 .DS_Store
 .eslintcache
+stats.html
