@@ -23,9 +23,12 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "lint": "biome lint",
+    "lint-fix": "biome lint --write"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@vitejs/plugin-vue": "^5.2.3",
     "rollup-plugin-visualizer": "^5.14.0",
     "typescript": "^5.8.2",

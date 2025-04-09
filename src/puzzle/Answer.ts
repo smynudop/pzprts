@@ -1,11 +1,11 @@
 // Answer.js v3.4.1
 
 import { CellList } from "./PieceList";
-import { Puzzle } from "./Puzzle";
+import type { Puzzle } from "./Puzzle";
 import { BorderList } from "./PieceList";
-import { BoardPiece, Cell, EXCell, Border, Cross } from "./Piece";
-import { GraphBase, GraphComponent } from "./GraphBase";
-import { AreaGraphBase, AreaRoomGraph } from "./AreaManager";
+import type { BoardPiece, Cell, EXCell, Border, Cross } from "./Piece";
+import type { GraphBase, GraphComponent } from "./GraphBase";
+import type { AreaGraphBase, AreaRoomGraph } from "./AreaManager";
 import { pzpr } from "../pzpr/core";
 
 //---------------------------------------------------------------------------
@@ -30,7 +30,7 @@ type IPathSeg = {
 	dir2: number				// dir2 到達地点から見た、到達した線の方向
 }
 
-import { type Board } from "./Board";
+import type { Board } from "./Board";
 
 
 export class AnsCheck<
@@ -51,7 +51,7 @@ export class AnsCheck<
 
 		this.makeCheckList();
 	}
-	failcodemode: boolean = (void 0)
+	failcodemode = (void 0)
 	failcode: CheckInfo = (void 0)
 	_info: any = (void 0)
 	checklist: any = []

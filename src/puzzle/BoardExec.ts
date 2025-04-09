@@ -1,11 +1,11 @@
 // BoardExec.js v3.4.1
 
-import { Puzzle } from "./Puzzle";
-import { Board, IGroup } from "./Board";
+import type { Puzzle } from "./Puzzle";
+import type { Board, IGroup } from "./Board";
 import { Address } from "./Address";
 import { BorderList } from "./PieceList";
 import { BoardFlipOperation, BoardAdjustOperation } from "./Operation";
-import { BoardPiece, Border, Cell } from "./Piece";
+import { type BoardPiece, type Border, Cell } from "./Piece";
 
 // 拡大縮小・回転反転用定数
 const UP = 0x01,

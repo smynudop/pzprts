@@ -1,8 +1,8 @@
 // LineManager.js
-import { GraphBase, GraphComponent } from "./GraphBase";
+import { GraphBase, type GraphComponent } from "./GraphBase";
 import { CellList, BorderList } from "./PieceList";
-import { Puzzle } from "./Puzzle";
-import { Border, Cell } from "./Piece";
+import type { Puzzle } from "./Puzzle";
+import type { Border, Cell } from "./Piece";
 import { IGroup } from "./Board";
 import { pzpr } from "../pzpr/core";
 //---------------------------------------------------------------------------
@@ -18,7 +18,7 @@ export class LineGraph extends GraphBase {
 	relation: Record<string, string> = { 'border.line': 'link' }
 
 	pointgroup: 'cell' | "cross" = 'cell'
-	linkgroup: "border" = 'border'
+	linkgroup = 'border' as const
 
 	isLineCross = false	// 線が交差するパズル
 

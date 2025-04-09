@@ -1,6 +1,6 @@
 // Config.js v3.4.1
 
-import { Puzzle } from "./Puzzle";
+import type { Puzzle } from "./Puzzle";
 import { pzpr } from "../pzpr/core";
 
 

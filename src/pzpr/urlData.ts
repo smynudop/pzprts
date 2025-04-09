@@ -139,8 +139,8 @@ export class URLData {
             row = +size[1];
         }
         else {
-            col = +inp.shift()! || NaN;
-            row = +inp.shift()! || NaN;
+            col = +inp.shift()! || Number.NaN;
+            row = +inp.shift()! || Number.NaN;
         }
         this.rows = row;
         this.cols = col;
@@ -154,20 +154,20 @@ export class URLData {
     // ★ outputURLData() qdataを生成する
     //---------------------------------------------------------------------------
     outputURLData() {
-        var pzl = this, col = pzl.cols, row = pzl.rows, out = [] as any[];
+        var col = this.cols, row = this.rows, out = [] as any[];
 
         /* URLにつけるオプション */
-        if (pzl.type !== Constants.URL_KANPEN && pzl.type !== Constants.URL_HEYAAPP) {
-            if (pzl.type === Constants.URL_KANPENP || !!pzl.pflag) { out.push(pzl.pflag); }
+        if (this.type !== Constants.URL_KANPEN && this.type !== Constants.URL_HEYAAPP) {
+            if (this.type === Constants.URL_KANPENP || !!this.pflag) { out.push(this.pflag); }
         }
 
         /* サイズを表す文字列 */
-        if (pzl.type === Constants.URL_KANPEN) {
-            if (pzl.pid === "kakuro") {
+        if (this.type === Constants.URL_KANPEN) {
+            if (this.pid === "kakuro") {
                 out.push(row + 1);
                 out.push(col + 1);
             }
-            else if (pzl.pid === "sudoku") {
+            else if (this.pid === "sudoku") {
                 out.push(col);
             }
             else {
@@ -175,7 +175,7 @@ export class URLData {
                 out.push(col);
             }
         }
-        else if (pzl.type === Constants.URL_HEYAAPP) {
+        else if (this.type === Constants.URL_HEYAAPP) {
             out.push([col, row].join("x"));
         }
         else {
@@ -184,7 +184,7 @@ export class URLData {
         }
 
         /* サイズ以降のデータを設定 */
-        out.push(pzl.body);
+        out.push(this.body);
 
         /* 末尾が0-9,a-z,A-Z以外の時にt.coで情報が欠落しないよう/を追加 */
         var body = out.join("/");
@@ -229,7 +229,7 @@ export class URLData {
                     for (var i = 0; i < this.body.length; i++) {
                         var ca = this.body.charAt(i);
                         if (ca.match(/\w/)) {
-                            cc += parseInt(ca, 36);
+                            cc += Number.parseInt(ca, 36);
                             if (cc < len) { this.pid = 'kramman'; break; }
                         }
                         else if (ca === '.') { cc += 36; }

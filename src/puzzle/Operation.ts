@@ -1,10 +1,10 @@
 // Operation.js v3.4.1
 
 import { Position } from "./Address";
-import { IGroup, IGroup2 } from "./Board";
-import { BoardPiece } from "./Piece";
-import { Puzzle } from "./Puzzle";
-import { IBoardOperation } from "./BoardExec";
+import { IGroup, type IGroup2 } from "./Board";
+import type { BoardPiece } from "./Piece";
+import type { Puzzle } from "./Puzzle";
+import type { IBoardOperation } from "./BoardExec";
 
 // 入力情報管理クラス
 // Operationクラス

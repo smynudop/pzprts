@@ -1,4 +1,4 @@
-import { WrapperBase } from "../candle";
+import type { WrapperBase } from "../candle";
 
 declare global {
     interface HTMLCanvasElement {

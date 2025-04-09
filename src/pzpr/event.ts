@@ -1,5 +1,5 @@
 // event.js v3.4.1
-import { Puzzle } from "../puzzle/Puzzle";
+import type { Puzzle } from "../puzzle/Puzzle";
 export const initPzpr = function (pzpr: any) {
 	//---------------------------------------------------------------
 	// 起動時関連関数

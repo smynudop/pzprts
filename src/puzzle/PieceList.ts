@@ -1,7 +1,7 @@
 // PieceList.js v3.4.1
-import { Puzzle } from "./Puzzle";
+import type { Puzzle } from "./Puzzle";
 import { Board } from "./Board";
-import { Cell, Cross, Border, EXCell, BoardPiece } from "./Piece";
+import type { Cell, Cross, Border, EXCell, BoardPiece } from "./Piece";
 
 
 //----------------------------------------------------------------------------

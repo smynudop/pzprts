@@ -178,7 +178,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 
 		var child = this.child;
 		if (isBrowser) {
-			var left = parseInt(child.style.left), top = parseInt(child.style.top);
+			var left = Number.parseInt(child.style.left), top = Number.parseInt(child.style.top);
 			width += (left < 0 ? -left : 0);
 			height += (top < 0 ? -top : 0);
 			child.style.width = width + 'px';

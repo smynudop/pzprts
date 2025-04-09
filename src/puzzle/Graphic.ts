@@ -1,12 +1,12 @@
 // Graphic.js v3.4.1
 
 import { Position } from "./Address";
-import { Puzzle } from "./Puzzle";
+import type { Puzzle } from "./Puzzle";
 import { CellList, CrossList, BorderList, EXCellList } from "./PieceList";
-import { BoardPiece, Border, Cell, EXCell } from "./Piece";
+import type { BoardPiece, Border, Cell, EXCell } from "./Piece";
 import { pzpr } from "../pzpr/core";
 import { getEnv } from "../pzpr/env";
-import { WrapperBase } from "../candle";
+import type { WrapperBase } from "../candle";
 
 
 var CENTER = 1,
@@ -581,7 +581,7 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	// pc.vinc()  レイヤーを返す
 	//---------------------------------------------------------------------------
-	vinc(layerid: string, rendering: string, freeze: boolean = false) {
+	vinc(layerid: string, rendering: string, freeze = false) {
 		var g = this.context, option = { freeze: !!freeze, rendering: null as string | null };
 		option.rendering = rendering;
 		g.setLayer(layerid, option);

@@ -1,6 +1,6 @@
 // util.js v3.4.0
 
-import { Puzzle } from "../puzzle/Puzzle";
+import type { Puzzle } from "../puzzle/Puzzle";
 import { getEnv } from "./env";
 const env = getEnv();
 let api = env.API,
@@ -175,8 +175,8 @@ export const util = {
 
 		const style = getComputedStyle(el);
 
-		const paddingX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
-		const paddingY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+		const paddingX = Number.parseFloat(style.paddingLeft) + Number.parseFloat(style.paddingRight);
+		const paddingY = Number.parseFloat(style.paddingTop) + Number.parseFloat(style.paddingBottom);
 
 		return { top: top, bottom: bottom, left: left, right: right, height: (bottom - top - paddingY), width: (right - left - paddingX) };
 	},

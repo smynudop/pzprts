@@ -1,13 +1,13 @@
-import { Puzzle } from "./Puzzle";
+import type { Puzzle } from "./Puzzle";
 import {
 	ObjectOperation,
-	Operation,
+	type Operation,
 	TrialEnterOperation,
 	OperationList
 
 } from "./Operation";
-import { BoardPiece, Cell } from "./Piece";
-import { Board, IGroup, IGroup2 } from "./Board";
+import type { BoardPiece, Cell } from "./Piece";
+import { Board, IGroup, type IGroup2 } from "./Board";
 import { pzpr } from "../pzpr/core";
 import { Parser } from "../pzpr/parser";
 import { FileData } from "../pzpr/fileData";

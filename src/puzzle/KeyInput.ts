@@ -1,7 +1,7 @@
 // KeyInput.js v3.4.1
-import { Address, Position } from "./Address.js";
-import { Puzzle } from "./Puzzle.js";
-import { BoardPiece, Cell, EXCell } from "./Piece.js";
+import { Address, type Position } from "./Address.js";
+import type { Puzzle } from "./Puzzle.js";
+import { type BoardPiece, Cell, EXCell } from "./Piece.js";
 //---------------------------------------------------------------------------
 // ★KeyEventクラス キーボード入力に関する情報の保持とイベント処理を扱う
 //---------------------------------------------------------------------------
@@ -351,7 +351,7 @@ export class KeyEvent {
 		}
 		else if ('a' <= ca && ca <= 'z' && ca.length === 1 && cell.numberAsLetter) {
 			if (ca.length > 1 && ca !== 'BS') { return null; }
-			var num = parseInt(ca, 36) - 10;
+			var num = Number.parseInt(ca, 36) - 10;
 			if (cur > 0 && (cur - 1) % 26 === num) { // Same alphabet
 				val = ((cur <= 26) ? cur + 26 : -1);
 			}

@@ -180,21 +180,21 @@ export class FileData {
     // ★ outputFileData() パズル種類, URL種類, fstrからファイルのデータを生成する
     //---------------------------------------------------------------------------
     outputFileData() {
-        var pzl = this, col = pzl.cols, row = pzl.rows, out = [] as any[];
+        var col = this.cols, row = this.rows, out = [] as any[];
         var puzzlenode = (this.type === Constants.FILE_PBOX_XML ? this.body.querySelector('puzzle') : null);
 
         /* サイズを表す文字列 */
-        if (pzl.type === Constants.FILE_PBOX_XML) {
+        if (this.type === Constants.FILE_PBOX_XML) {
             var sizenode = puzzlenode.querySelector('size');
             if (sizenode) { puzzlenode.removeChild(sizenode); }
-            if (pzl.pid === "slither" || pzl.pid === 'kakuro') { row++; col++; }
+            if (this.pid === "slither" || this.pid === 'kakuro') { row++; col++; }
             puzzlenode.appendChild(this.createXMLNode('size', { row: row, col: col }));
         }
-        else if (pzl.type === Constants.FILE_PBOX && pzl.pid === "kakuro") {
+        else if (this.type === Constants.FILE_PBOX && this.pid === "kakuro") {
             out.push(row + 1);
             out.push(col + 1);
         }
-        else if (pzl.pid === "sudoku") {
+        else if (this.pid === "sudoku") {
             out.push(col);
         }
         else {
@@ -203,25 +203,25 @@ export class FileData {
         }
 
         /* サイズ以降のデータを設定 */
-        if (pzl.type !== Constants.FILE_PBOX_XML) {
-            out.push(pzl.body);
+        if (this.type !== Constants.FILE_PBOX_XML) {
+            out.push(this.body);
         }
 
         /* 履歴・メタデータ出力がある形式ならば出力する */
-        if ((pzl.type === Constants.FILE_PZPR) && !!JSON) {
+        if ((this.type === Constants.FILE_PZPR) && !!JSON) {
             if (!MetaData.isEmpty(this.metadata)) {
-                var info = { metadata: MetaData.getvaliddata(pzl.metadata), history: pzl.history || undefined };
+                var info = { metadata: MetaData.getvaliddata(this.metadata), history: this.history || undefined };
                 out.push("info:" + JSON.stringify(info, null, 1));
             }
-            else if (pzl.history) {
-                out.push("history:" + JSON.stringify(pzl.history, null, 1));
+            else if (this.history) {
+                out.push("history:" + JSON.stringify(this.history, null, 1));
             }
         }
-        else if (pzl.type === Constants.FILE_PBOX_XML) {
+        else if (this.type === Constants.FILE_PBOX_XML) {
             var propnode = puzzlenode!.querySelector('property')!;
             if (propnode) { puzzlenode!.removeChild(propnode); }
             propnode = this.createXMLNode('property');
-            var meta = pzl.metadata;
+            var meta = this.metadata;
             propnode.appendChild(this.createXMLNode('author', { value: meta.author }));
             propnode.appendChild(this.createXMLNode('source', { value: meta.source }));
             propnode.appendChild(this.createXMLNode('difficulty', { value: meta.hard }));
@@ -238,7 +238,7 @@ export class FileData {
         }
 
         var outputdata;
-        if (pzl.type !== Constants.FILE_PBOX_XML) {
+        if (this.type !== Constants.FILE_PBOX_XML) {
             outputdata = out.join("\n");
         }
         else {

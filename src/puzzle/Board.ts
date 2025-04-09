@@ -1,5 +1,5 @@
 // Board.js v3.4.1
-import { Puzzle } from './Puzzle';
+import type { Puzzle } from './Puzzle';
 import {
 	CellList,
 	CrossList,
@@ -21,8 +21,8 @@ import {
 	AreaUnshadeGraph,
 	AreaNumberGraph
 } from './AreaManager';
-import { GraphBase } from './GraphBase';
-import { BoardExec, IBoardOperation } from './BoardExec';
+import type { GraphBase } from './GraphBase';
+import { BoardExec, type IBoardOperation } from './BoardExec';
 import { BoardClearOperation } from "./Operation"
 //---------------------------------------------------------------------------
 // ★Boardクラス 盤面の情報を保持する。Cell, Cross, Borderのオブジェクトも保持する
@@ -64,7 +64,7 @@ export class Board<
 	nblkmgr: AreaNumberGraph
 	exec: BoardExec
 	trialstage: number
-	falling: boolean = false
+	falling = false
 
 
 	constructor(puzzle: Puzzle) {
@@ -405,7 +405,7 @@ export class Board<
 		return isclear;
 	}
 
-	trialclear(forcemode: boolean = false) {
+	trialclear(forcemode = false) {
 		if (this.trialstage > 0 || !!forcemode) {
 			this.cell.trialclear();
 			this.cross.trialclear();

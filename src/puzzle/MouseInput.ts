@@ -5,11 +5,11 @@
 //---------------------------------------------------------------------------
 // パズル共通 マウス入力部
 // MouseEventクラスを定義
-import { Puzzle } from "./Puzzle";
-import { RawAddress, Address, Position } from "./Address";
-import { TargetCursor } from "./KeyInput";
+import type { Puzzle } from "./Puzzle";
+import { RawAddress, Address, type Position } from "./Address";
+import type { TargetCursor } from "./KeyInput";
 import { CellList, CrossList } from "./PieceList";
-import { BoardPiece, Cell, Cross, EXCell } from "./Piece";
+import { BoardPiece, Cell, type Cross, type EXCell } from "./Piece";
 import { pzpr } from "../pzpr/core";
 
 type IMode = "edit" | "play"
@@ -66,7 +66,7 @@ export class MouseEvent1 {
 	use = false	// 黒マスの入力方法選択
 	bgcolor = false	// 背景色の入力を可能にする
 
-	inputMode: string = 'auto'	// 現在のinputMode
+	inputMode = 'auto'	// 現在のinputMode
 	savedInputMode: { edit: any, play: any } = { edit: null, play: null }	// モード変更時の保存値
 	inputModes: { edit: string[], play: string[] } = { edit: [], play: [] }	// 現在のパズル種類にてauto以外で有効なinputModeの配列
 
@@ -162,7 +162,7 @@ export class MouseEvent1 {
 	}
 	getBoardAddress(e: MouseEvent) {
 		var puzzle = this.puzzle, pc = puzzle.painter;
-		var pix = { px: NaN, py: NaN };
+		var pix = { px: Number.NaN, py: Number.NaN };
 		var g = pc.context;
 		if (!g) { return { bx: null, by: null }; }
 		if (this.puzzle.canvas.children[0] instanceof SVGSVGElement) {
@@ -658,7 +658,7 @@ export class MouseEvent1 {
 		cell.draw();
 		this.mouseCell = cell;
 	}
-	inputBGcolor(isforceforward: boolean = false) {
+	inputBGcolor(isforceforward = false) {
 		var cell = this.getcell();
 		if (cell.isnull || cell.is51cell() || cell === this.mouseCell) { return; }
 		if (this.inputData !== null) { }

@@ -5,7 +5,7 @@ import env from './env.js';
 import SVGWrapper from './svg.js';
 import CanvasWrapper from './canvas';
 import metrics from './metrics.js';
-import WrapperBase from './base.js';
+import type WrapperBase from './base.js';
 
 /* ------------- */
 /*   variables   */
@@ -83,16 +83,16 @@ const isCanvasElement = (element: any): element is HTMLCanvasElement => {
 
 class TypeList {
 	constructor(type: string) {
-		for (let wrapperType of _order) {
+		for (const wrapperType of _order) {
 			//@ts-ignore
 			this[wrapperType] = (wrapperType === type);
 		}
 	}
 }
 
-for (let wrapper of [SVGWrapper, CanvasWrapper]) {
+for (const wrapper of [SVGWrapper, CanvasWrapper]) {
 	if (wrapper.isWrapperEnable) {
-		let type = wrapper.wrapperType;
+		const type = wrapper.wrapperType;
 		_order.push(type);
 		Candle.enable[type] = true;
 		if (!Candle.current) { Candle.current = type; }

@@ -1,6 +1,6 @@
 // Puzzle.js v3.6.0
 import { Config } from './Config.js';
-import { Board, IGroup } from './Board';
+import { Board, type IGroup } from './Board';
 import { AnsCheck } from './Answer';
 import { createFailCode } from './FailCode.js';
 import { OperationManager } from './Operation';
@@ -12,7 +12,7 @@ import { FileIO } from './FileData.js';
 import * as MetaData from '../pzpr/metadata.js';
 import type { Cell, Cross, Border, EXCell } from "./Piece"
 
-import { WrapperBase } from '../candle/';
+import type { WrapperBase } from '../candle/';
 
 import { pzpr } from '../pzpr/core.js';
 

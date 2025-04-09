@@ -1,9 +1,9 @@
 // GraphBase.js
 
-import { Puzzle } from "./Puzzle"
-import { CellList } from "./PieceList"
-import { BoardPiece, Border, Cell } from "./Piece"
-import { Board, IGroup } from "./Board"
+import type { Puzzle } from "./Puzzle"
+import type { CellList } from "./PieceList"
+import type { BoardPiece, Border, Cell } from "./Piece"
+import { Board, type IGroup } from "./Board"
 
 //---------------------------------------------------------------------------
 // ★GraphBaseクラス 線や領域情報を管理する

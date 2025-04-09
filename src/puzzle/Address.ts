@@ -1,9 +1,9 @@
 // Address.js v3.4.1
 
-import { Board } from "./Board"
-import { Puzzle } from "./Puzzle"
+import type { Board } from "./Board"
+import type { Puzzle } from "./Puzzle"
 
-import { IDir } from "./Piece"
+import type { IDir } from "./Piece"
 //----------------------------------------------------------------------------
 // ★Positionクラス Address, Pieceクラスのベースクラス
 //---------------------------------------------------------------------------

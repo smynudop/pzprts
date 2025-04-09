@@ -1,6 +1,6 @@
 // Encode.js v3.4.1
 
-import { Puzzle } from "./Puzzle"
+import type { Puzzle } from "./Puzzle"
 import { FileIO } from "./FileData"
 import { pzpr } from "../pzpr/core"
 import { Parser } from "../pzpr/parser"
@@ -55,10 +55,10 @@ export const cell4 = {
 		var c = 0, i = 0, bd = puzzle.board
 		for (i = 0; i < bstr.length; i++) {
 			var cell = bd.cell[c], ca = bstr.charAt(i);
-			if (include(ca, "0", "4")) { cell.qnum = parseInt(ca, 16); }
-			else if (include(ca, "5", "9")) { cell.qnum = parseInt(ca, 16) - 5; c++; }
-			else if (include(ca, "a", "e")) { cell.qnum = parseInt(ca, 16) - 10; c += 2; }
-			else if (include(ca, "g", "z")) { c += (parseInt(ca, 36) - 16); }
+			if (include(ca, "0", "4")) { cell.qnum = Number.parseInt(ca, 16); }
+			else if (include(ca, "5", "9")) { cell.qnum = Number.parseInt(ca, 16) - 5; c++; }
+			else if (include(ca, "a", "e")) { cell.qnum = Number.parseInt(ca, 16) - 10; c += 2; }
+			else if (include(ca, "g", "z")) { c += (Number.parseInt(ca, 36) - 16); }
 			else if (ca === ".") { cell.qnum = -2; }
 
 			c++;
@@ -97,10 +97,10 @@ const cross4 = {
 		var c = 0, i = 0, bd = puzzle.board;
 		for (i = 0; i < bstr.length; i++) {
 			var cross = bd.cross[c], ca = bstr.charAt(i);
-			if (include(ca, "0", "4")) { cross.qnum = parseInt(ca, 16); }
-			else if (include(ca, "5", "9")) { cross.qnum = parseInt(ca, 16) - 5; c++; }
-			else if (include(ca, "a", "e")) { cross.qnum = parseInt(ca, 16) - 10; c += 2; }
-			else if (include(ca, "g", "z")) { c += (parseInt(ca, 36) - 16); }
+			if (include(ca, "0", "4")) { cross.qnum = Number.parseInt(ca, 16); }
+			else if (include(ca, "5", "9")) { cross.qnum = Number.parseInt(ca, 16) - 5; c++; }
+			else if (include(ca, "a", "e")) { cross.qnum = Number.parseInt(ca, 16) - 10; c += 2; }
+			else if (include(ca, "g", "z")) { c += (Number.parseInt(ca, 36) - 16); }
 			else if (ca === ".") { cross.qnum = -2; }
 
 			c++;
@@ -141,8 +141,8 @@ const number10 = {
 			var cell = bd.cell[c], ca = bstr.charAt(i);
 
 			if (ca === '.') { cell.qnum = -2; }
-			else if (include(ca, "0", "9")) { cell.qnum = parseInt(ca, 10); }
-			else if (include(ca, "a", "z")) { c += (parseInt(ca, 36) - 10); }
+			else if (include(ca, "0", "9")) { cell.qnum = Number.parseInt(ca, 10); }
+			else if (include(ca, "a", "z")) { c += (Number.parseInt(ca, 36) - 10); }
 
 			c++;
 			if (!bd.cell[c]) { break; }
@@ -177,13 +177,13 @@ const number16 = {
 		for (i = 0; i < bstr.length; i++) {
 			var cell = bd.cell[c], ca = bstr.charAt(i);
 
-			if (include(ca, "0", "9") || include(ca, "a", "f")) { cell.qnum = parseInt(ca, 16); }
-			else if (ca === '-') { cell.qnum = parseInt(bstr.substr(i + 1, 2), 16); i += 2; }
-			else if (ca === '+') { cell.qnum = parseInt(bstr.substr(i + 1, 3), 16); i += 3; }
-			else if (ca === '=') { cell.qnum = parseInt(bstr.substr(i + 1, 3), 16) + 4096; i += 3; }
-			else if (ca === '%') { cell.qnum = parseInt(bstr.substr(i + 1, 3), 16) + 8192; i += 3; }
+			if (include(ca, "0", "9") || include(ca, "a", "f")) { cell.qnum = Number.parseInt(ca, 16); }
+			else if (ca === '-') { cell.qnum = Number.parseInt(bstr.substr(i + 1, 2), 16); i += 2; }
+			else if (ca === '+') { cell.qnum = Number.parseInt(bstr.substr(i + 1, 3), 16); i += 3; }
+			else if (ca === '=') { cell.qnum = Number.parseInt(bstr.substr(i + 1, 3), 16) + 4096; i += 3; }
+			else if (ca === '%') { cell.qnum = Number.parseInt(bstr.substr(i + 1, 3), 16) + 8192; i += 3; }
 			else if (ca === '.') { cell.qnum = -2; }
-			else if (ca >= 'g' && ca <= 'z') { c += (parseInt(ca, 36) - 16); }
+			else if (ca >= 'g' && ca <= 'z') { c += (Number.parseInt(ca, 36) - 16); }
 
 			c++;
 			if (!bd.cell[c]) { break; }
@@ -222,14 +222,14 @@ const roomNumber16 = {
 		for (i = 0; i < bstr.length; i++) {
 			var ca = bstr.charAt(i), top = bd.roommgr.components[r].top;
 
-			if (include(ca, "0", "9") || include(ca, "a", "f")) { top.qnum = parseInt(ca, 16); }
-			else if (ca === '-') { top.qnum = parseInt(bstr.substr(i + 1, 2), 16); i += 2; }
-			else if (ca === '+') { top.qnum = parseInt(bstr.substr(i + 1, 3), 16); i += 3; }
-			else if (ca === '=') { top.qnum = parseInt(bstr.substr(i + 1, 3), 16) + 4096; i += 3; }
-			else if (ca === '%') { top.qnum = parseInt(bstr.substr(i + 1, 3), 16) + 8192; i += 3; }
-			else if (ca === '*') { top.qnum = parseInt(bstr.substr(i + 1, 4), 16) + 12240; i += 4; }
-			else if (ca === '$') { top.qnum = parseInt(bstr.substr(i + 1, 5), 16) + 77776; i += 5; }
-			else if (ca >= 'g' && ca <= 'z') { r += (parseInt(ca, 36) - 16); }
+			if (include(ca, "0", "9") || include(ca, "a", "f")) { top.qnum = Number.parseInt(ca, 16); }
+			else if (ca === '-') { top.qnum = Number.parseInt(bstr.substr(i + 1, 2), 16); i += 2; }
+			else if (ca === '+') { top.qnum = Number.parseInt(bstr.substr(i + 1, 3), 16); i += 3; }
+			else if (ca === '=') { top.qnum = Number.parseInt(bstr.substr(i + 1, 3), 16) + 4096; i += 3; }
+			else if (ca === '%') { top.qnum = Number.parseInt(bstr.substr(i + 1, 3), 16) + 8192; i += 3; }
+			else if (ca === '*') { top.qnum = Number.parseInt(bstr.substr(i + 1, 4), 16) + 12240; i += 4; }
+			else if (ca === '$') { top.qnum = Number.parseInt(bstr.substr(i + 1, 5), 16) + 77776; i += 5; }
+			else if (ca >= 'g' && ca <= 'z') { r += (Number.parseInt(ca, 36) - 16); }
 
 			r++;
 			if (r >= bd.roommgr.components.length) { break; }
@@ -272,21 +272,21 @@ const arrowNumber16 = {
 
 			if (include(ca, "0", "4")) {
 				var ca1 = bstr.charAt(i + 1);
-				cell.qdir = parseInt(ca, 16);
-				cell.qnum = (ca1 !== "." ? parseInt(ca1, 16) : -2);
+				cell.qdir = Number.parseInt(ca, 16);
+				cell.qnum = (ca1 !== "." ? Number.parseInt(ca1, 16) : -2);
 				i++;
 			}
 			else if (include(ca, "5", "9")) {
-				cell.qdir = parseInt(ca, 16) - 5;
-				cell.qnum = parseInt(bstr.substr(i + 1, 2), 16);
+				cell.qdir = Number.parseInt(ca, 16) - 5;
+				cell.qnum = Number.parseInt(bstr.substr(i + 1, 2), 16);
 				i += 2;
 			}
 			else if (ca === "-") {
-				cell.qdir = parseInt(bstr.substr(i + 1, 1), 16);
-				cell.qnum = parseInt(bstr.substr(i + 2, 3), 16);
+				cell.qdir = Number.parseInt(bstr.substr(i + 1, 1), 16);
+				cell.qnum = Number.parseInt(bstr.substr(i + 2, 3), 16);
 				i += 4;
 			}
-			else if (ca >= 'a' && ca <= 'z') { c += (parseInt(ca, 36) - 10); }
+			else if (ca >= 'a' && ca <= 'z') { c += (Number.parseInt(ca, 36) - 10); }
 
 			c++;
 			if (!bd.cell[c]) { break; }
@@ -329,7 +329,7 @@ const border = {
 
 		id = 0;
 		for (var i = 0; i < pos1; i++) {
-			var ca = parseInt(bstr.charAt(i), 32);
+			var ca = Number.parseInt(bstr.charAt(i), 32);
 			for (var w = 0; w < 5; w++) {
 				if (id < (bd.cols - 1) * bd.rows) {
 					bd.border[id].ques = ((ca & twi[w]) ? 1 : 0);
@@ -340,7 +340,7 @@ const border = {
 
 		id = (bd.cols - 1) * bd.rows;
 		for (let i = pos1; i < pos2; i++) {
-			var ca = parseInt(bstr.charAt(i), 32);
+			var ca = Number.parseInt(bstr.charAt(i), 32);
 			for (var w = 0; w < 5; w++) {
 				var border = bd.border[id];
 				if (!!border && border.inside) {
@@ -387,7 +387,7 @@ const crossMark = {
 			var ca = bstr.charAt(i);
 
 			if (include(ca, "0", "9") || include(ca, "a", "z")) {
-				cc += parseInt(ca, 36);
+				cc += Number.parseInt(ca, 36);
 				var bx = ((cc % cols + (1 - cp)) << 1);
 				var by = ((((cc / cols) | 0) + (1 - cp)) << 1);
 
@@ -432,7 +432,7 @@ const circle = {
 		var c = 0, tri = [9, 3, 1];
 		var pos = (bstr ? Math.min(((bd.cols * bd.rows + 2) / 3) | 0, bstr.length) : 0);
 		for (var i = 0; i < pos; i++) {
-			var ca = parseInt(bstr.charAt(i), 27);
+			var ca = Number.parseInt(bstr.charAt(i), 27);
 			for (var w = 0; w < 3; w++) {
 				if (!!bd.cell[c]) {
 					var val = ((ca / tri[w]) | 0) % 3;
@@ -467,7 +467,7 @@ const ice = {
 
 		var c = 0, twi = [16, 8, 4, 2, 1];
 		for (var i = 0; i < bstr.length; i++) {
-			var num = parseInt(bstr.charAt(i), 32);
+			var num = Number.parseInt(bstr.charAt(i), 32);
 			for (var w = 0; w < 5; w++) {
 				if (!!bd.cell[c]) {
 					bd.cell[c].ques = (num & twi[w] ? 6 : 0);

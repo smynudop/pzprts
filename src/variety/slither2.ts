@@ -7,7 +7,7 @@ import { KeyEvent } from "../puzzle/KeyInput";
 import { LineGraph } from "../puzzle/LineManager";
 import { MouseEvent1 } from "../puzzle/MouseInput";
 import { Border, Cell, Cross } from "../puzzle/Piece";
-import { BorderList } from "../puzzle/PieceList";
+import type { BorderList } from "../puzzle/PieceList";
 import { Puzzle } from "../puzzle/Puzzle";
 
 class SlitherMouseEvent extends MouseEvent1 {

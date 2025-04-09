@@ -1,10 +1,10 @@
 // AreaManager.js
 import { GraphBase, GraphNode } from './GraphBase';
-import { Puzzle } from './Puzzle';
+import type { Puzzle } from './Puzzle';
 import { CellList } from './PieceList';
-import { BoardPiece, Border, Cell } from './Piece'
-import { GraphComponent } from "./GraphBase"
-import { IGroup } from './Board';
+import { BoardPiece, type Border, type Cell } from './Piece'
+import type { GraphComponent } from "./GraphBase"
+import type { IGroup } from './Board';
 //--------------------------------------------------------------------------------
 // ★AreaGraphBaseクラス セルの部屋情報などを保持するクラス
 //   ※このクラスで管理しているroomsは左上からの順番に並ばないので

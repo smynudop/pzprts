@@ -1,7 +1,7 @@
 // Piece.js v3.4.1
 import { Position } from "./Address";
-import { Board, IGroup, IGroup2 } from "./Board";
-import { Puzzle } from "./Puzzle";
+import { Board, type IGroup, type IGroup2 } from "./Board";
+import type { Puzzle } from "./Puzzle";
 import { ObjectOperation } from "./Operation";
 import { CellList } from "./PieceList";
 //---------------------------------------------------------------------------
