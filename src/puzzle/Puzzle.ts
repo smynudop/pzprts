@@ -7,7 +7,7 @@ import { OperationManager } from './Operation';
 import { MouseEvent1 } from './MouseInput';
 import { KeyEvent, TargetCursor } from './KeyInput';
 import { Graphic } from './Graphic';
-import { Encode } from './Encode.js';
+import { decodeURL, encodeURL, type Converter } from './Encode.js';
 import { FileIO } from './FileData.js';
 import * as MetaData from '../pzpr/metadata.js';
 import type { Cell, Cross, Border, EXCell } from "./Piece"
@@ -54,6 +54,7 @@ export class Puzzle<
 	key: KeyEvent
 	opemgr: OperationManager
 	faillist: Map<string, [string, string]>
+	converters: Converter[]
 
 
 	constructor(option?: IConfig) {
@@ -82,6 +83,9 @@ export class Puzzle<
 		this.config = new this.Config(this);
 		if (option.config !== void 0) { this.config.setAll(option.config); }
 		if (option.mode !== void 0) { this.setMode(option.mode); }
+
+		this.converters = []
+		this.initConverters()
 
 		//if (!!canvas) { this.setCanvas(canvas); }
 
@@ -162,12 +166,15 @@ export class Puzzle<
 		return createFailCode()
 	}
 
-	createEncoder() {
-		return new Encode(this);
-	}
-
 	createFileIO() {
 		return new FileIO(this);
+	}
+
+	/**
+	 * override用
+	 */
+	initConverters() {
+
 	}
 
 	//---------------------------------------------------------------------------
@@ -292,14 +299,14 @@ export class Puzzle<
 	// owner.getFileData() ファイルデータを取得する
 	//---------------------------------------------------------------------------
 	getURL(type: number) {
-		return this.createEncoder().encodeURL(type);
+		return encodeURL(this, this.converters);
 	}
 	getFileData(type: number, option: any) {
 		return this.createFileIO().fileencode(type, option);
 	}
 
 	readURL(url: string) {
-		return this.createEncoder().decodeURL(url);
+		return decodeURL(this, url, this.converters);
 	}
 
 	//---------------------------------------------------------------------------

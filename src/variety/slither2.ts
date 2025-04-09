@@ -1,6 +1,6 @@
 import { AnsCheck } from "../puzzle/Answer";
 import { Board } from "../puzzle/Board";
-import { Encode } from "../puzzle/Encode";
+import { cell4 } from "../puzzle/Encode";
 import { FileIO } from "../puzzle/FileData";
 import { Graphic } from "../puzzle/Graphic";
 import { KeyEvent } from "../puzzle/KeyInput";
@@ -116,21 +116,6 @@ class SlitherLineGraph extends LineGraph {
     enabled = true
 }
 
-class SlitherEncode extends Encode {
-    decodePzpr(type: any) {
-        this.decode4Cell();
-    }
-    encodePzpr(type: any) {
-        this.encode4Cell();
-    }
-
-    decodeKanpen() {
-        this.fio.decodeCellQnum_kanpen();
-    }
-    encodeKanpen() {
-        this.fio.encodeCellQnum_kanpen();
-    }
-}
 
 class SlitherFileIO extends FileIO {
     decodeData() {
@@ -255,16 +240,16 @@ export class SlitherLink extends Puzzle<SlitherCell> {
         return map;
     }
 
-    createEncoder(): Encode {
-        return new SlitherEncode(this);
-    }
-
     createFileIO(): FileIO {
         return new SlitherFileIO(this);
     }
 
     createAnsCheck() {
         return new SlitherAnsCheck(this);
+    }
+
+    initConverters(): void {
+        this.converters.push(cell4)
     }
 
 }

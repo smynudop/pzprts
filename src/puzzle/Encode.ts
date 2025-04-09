@@ -6,161 +6,68 @@ import { pzpr } from "../pzpr/core"
 import { Parser } from "../pzpr/parser"
 import { URLData } from "../pzpr/urlData"
 import * as Constants from "../pzpr/constants"
+
+export type Converter = {
+	decode: (puzzle: Puzzle, str: string) => string
+	encode: (puzzle: Puzzle) => string
+}
+
+export const decodeURL = (puzzle: Puzzle, url: string, converters: Converter[]) => {
+	var pzl = Parser.parseURL(url)
+	const bd = puzzle.board;
+	bd.initBoardSize(pzl.cols, pzl.rows);
+
+	let bstr = pzl.body
+	for (const cnv of converters) {
+		bstr += cnv.decode(puzzle, bstr)
+	}
+
+	bd.rebuildInfo();
+}
+
+export const encodeURL = (puzzle: Puzzle, converters: Converter[]) => {
+	var pid = puzzle.pid, bd = puzzle.board;
+	var pzl = new URLData('');
+
+	let bstr = ""
+	for (const cnv of converters) {
+		bstr += cnv.encode(puzzle)
+	}
+
+	pzl.pid = pid;
+	pzl.type = Constants.URL_PZPRV3;
+	pzl.cols = bd.cols;
+	pzl.rows = bd.rows;
+	pzl.body = bstr;
+
+	return pzl.generate();
+}
+
 //---------------------------------------------------------------------------
-// ★Encodeクラス URLのエンコード/デコードを扱う
-//---------------------------------------------------------------------------
-// URLエンコード/デコード
-// Encodeクラス
+// enc.include()    文字列caはbottomとupの間にあるか
+//----------------------------------------------------------------------------
+const include = (ca: string, bottom: string, up: string) => {
+	return (bottom <= ca && ca <= up);
+}
 
-//---------------------------------------------------------
-export class Encode {
-	constructor(puzzle: Puzzle) {
-		this.puzzle = puzzle
-	}
-	puzzle: Puzzle
-
-	pflag = ""
-	outpflag = ''
-	outcols: number = null
-	outrows: number = null
-	outbstr = ''
-	fio: FileIO
-
-	//---------------------------------------------------------------------------
-	// enc.checkpflag()   pflagに指定した文字列が含まれているか調べる
-	//---------------------------------------------------------------------------
-	// ぱずぷれApplet->v3でURLの仕様が変わったパズル:
-	//     creek, gokigen, lits (Applet+c===v3, Applet===v3+d)
-	// 何回かURL形式を変更したパズル:
-	//     icebarn (v3, Applet+c, Applet), slalom (v3+p, v3+d, v3/Applet)
-	// v3になって以降pidを分離したパズルのうち元パズルのURL形式を変更して短くしたパズル:
-	//     bonsan, kramma (cを付加)
-	// URL形式は同じで表示形式の情報をもたせているパズル:
-	//     bosanowa, pipelink, yajilin
-	checkpflag(ca: string) { return (this.pflag.indexOf(ca) >= 0); }
-
-	//---------------------------------------------------------------------------
-	// enc.decodeURL()   parseURL()を行い、各種各パズルのdecode関数を呼び出す
-	// enc.encodeURL()   各種各パズルのencode関数を呼び出し、URLを出力する
-	// 
-	// enc.decodePzpr()  各パズルのURL入力用(オーバーライド用)
-	// enc.encodePzpr()  各パズルのURL出力用(オーバーライド用)
-	//---------------------------------------------------------------------------
-	decodeURL(url: string) {
-		var pzl = Parser.parseURL(url), puzzle = this.puzzle, bd = puzzle.board;
-		bd.initBoardSize(pzl.cols, pzl.rows);
-
-		if (!!pzl.body) {
-			this.pflag = pzl.pflag;
-			this.outbstr = pzl.body;
-			switch (pzl.type) {
-				case Constants.URL_PZPRV3: case Constants.URL_KANPENP:
-					this.decodePzpr(Constants.URL_PZPRV3);
-					break;
-				case Constants.URL_PZPRAPP:
-					this.decodePzpr(Constants.URL_PZPRAPP);
-					break;
-				case Constants.URL_KANPEN:
-					this.fio = this.puzzle.createFileIO();
-					this.fio.dataarray = this.outbstr.replace(/_/g, " ").split("/");
-					this.decodeKanpen();
-					this.fio = null;
-					break;
-				case Constants.URL_HEYAAPP:
-					this.decodeHeyaApp();
-					break;
-			}
-		}
-
-		bd.rebuildInfo();
-	}
-	encodeURL(type: number) {
-		var puzzle = this.puzzle, pid = puzzle.pid, bd = puzzle.board;
-		var pzl = new URLData('');
-
-		type = type || Constants.URL_PZPRV3; /* type===pzl.URL_AUTO(0)もまとめて変換する */
-		if (type === Constants.URL_KANPEN && pid === 'lits') { type = Constants.URL_KANPENP; }
-
-		this.outpflag = null;
-		this.outcols = bd.cols;
-		this.outrows = bd.rows;
-		this.outbstr = '';
-
-		switch (type) {
-			case Constants.URL_PZPRV3:
-				this.encodePzpr(Constants.URL_PZPRV3);
-				break;
-
-			case Constants.URL_PZPRAPP:
-				throw "no Implemention";
-
-			case Constants.URL_KANPENP:
-				if (!puzzle.info.exists.kanpen) { throw "no Implemention"; }
-				this.encodePzpr(Constants.URL_PZPRAPP);
-				this.outpflag = this.outpflag || "";
-				break;
-
-			case Constants.URL_KANPEN:
-				this.fio = new FileIO(this.puzzle);
-				this.encodeKanpen();
-				this.outbstr = this.fio.datastr.replace(/\r?\n/g, "/").replace(/ /g, "_");
-				this.fio = null;
-				break;
-
-			case Constants.URL_HEYAAPP:
-				this.encodeHeyaApp();
-				break;
-
-			default:
-				throw "invalid URL Type";
-		}
-
-		pzl.pid = pid;
-		pzl.type = type;
-		pzl.pflag = this.outpflag;
-		pzl.cols = this.outcols;
-		pzl.rows = this.outrows;
-		pzl.body = this.outbstr;
-
-		return pzl.generate();
-	}
-
-	// オーバーライド用
-	decodePzpr(type: number) { throw "no Implemention"; }
-	encodePzpr(type: number) { throw "no Implemention"; }
-	decodeKanpen() { throw "no Implemention"; }
-	encodeKanpen() { throw "no Implemention"; }
-	decodeHeyaApp() { throw "no Implemention"; }
-	encodeHeyaApp() { throw "no Implemention"; }
-
-	//---------------------------------------------------------------------------
-	// enc.include()    文字列caはbottomとupの間にあるか
-	//---------------------------------------------------------------------------
-	include(ca: string, bottom: string, up: string) {
-		return (bottom <= ca && ca <= up);
-	}
-
-	//---------------------------------------------------------------------------
-	// enc.decode4Cell()  quesが0～4までの場合、デコードする
-	// enc.encode4Cell()  quesが0～4までの場合、問題部をエンコードする
-	//---------------------------------------------------------------------------
-	decode4Cell() {
-		var c = 0, i = 0, bstr = this.outbstr, bd = this.puzzle.board;
+export const cell4 = {
+	decode: (puzzle: Puzzle, bstr: string): string => {
+		var c = 0, i = 0, bd = puzzle.board
 		for (i = 0; i < bstr.length; i++) {
 			var cell = bd.cell[c], ca = bstr.charAt(i);
-			if (this.include(ca, "0", "4")) { cell.qnum = parseInt(ca, 16); }
-			else if (this.include(ca, "5", "9")) { cell.qnum = parseInt(ca, 16) - 5; c++; }
-			else if (this.include(ca, "a", "e")) { cell.qnum = parseInt(ca, 16) - 10; c += 2; }
-			else if (this.include(ca, "g", "z")) { c += (parseInt(ca, 36) - 16); }
+			if (include(ca, "0", "4")) { cell.qnum = parseInt(ca, 16); }
+			else if (include(ca, "5", "9")) { cell.qnum = parseInt(ca, 16) - 5; c++; }
+			else if (include(ca, "a", "e")) { cell.qnum = parseInt(ca, 16) - 10; c += 2; }
+			else if (include(ca, "g", "z")) { c += (parseInt(ca, 36) - 16); }
 			else if (ca === ".") { cell.qnum = -2; }
 
 			c++;
 			if (!bd.cell[c]) { break; }
 		}
-		this.outbstr = bstr.substr(i + 1);
-	}
-	encode4Cell() {
-		var count = 0, cm = "", bd = this.puzzle.board;
+		return bstr.substring(i + 1);
+	},
+	encode: (puzzle: Puzzle): string => {
+		var count = 0, cm = "", bd = puzzle.board;
 		for (var c = 0; c < bd.cell.length; c++) {
 			var pstr = "", qn = bd.cell[c].qnum;
 
@@ -177,30 +84,32 @@ export class Encode {
 		}
 		if (count > 0) { cm += ((count + 15).toString(36)); }
 
-		this.outbstr += cm;
+		return cm
 	}
+}
 
+const cross4 = {
 	//---------------------------------------------------------------------------
 	// enc.decode4Cross()  quesが0～4までの場合、デコードする
 	// enc.encode4Cross()  quesが0～4までの場合、問題部をエンコードする
 	//---------------------------------------------------------------------------
-	decode4Cross() {
-		var c = 0, i = 0, bstr = this.outbstr, bd = this.puzzle.board;
+	decode: (puzzle: Puzzle, bstr: string): string => {
+		var c = 0, i = 0, bd = puzzle.board;
 		for (i = 0; i < bstr.length; i++) {
 			var cross = bd.cross[c], ca = bstr.charAt(i);
-			if (this.include(ca, "0", "4")) { cross.qnum = parseInt(ca, 16); }
-			else if (this.include(ca, "5", "9")) { cross.qnum = parseInt(ca, 16) - 5; c++; }
-			else if (this.include(ca, "a", "e")) { cross.qnum = parseInt(ca, 16) - 10; c += 2; }
-			else if (this.include(ca, "g", "z")) { c += (parseInt(ca, 36) - 16); }
+			if (include(ca, "0", "4")) { cross.qnum = parseInt(ca, 16); }
+			else if (include(ca, "5", "9")) { cross.qnum = parseInt(ca, 16) - 5; c++; }
+			else if (include(ca, "a", "e")) { cross.qnum = parseInt(ca, 16) - 10; c += 2; }
+			else if (include(ca, "g", "z")) { c += (parseInt(ca, 36) - 16); }
 			else if (ca === ".") { cross.qnum = -2; }
 
 			c++;
 			if (!bd.cross[c]) { break; }
 		}
-		this.outbstr = bstr.substr(i + 1);
-	}
-	encode4Cross() {
-		var count = 0, cm = "", bd = this.puzzle.board;
+		return bstr.substring(i + 1);
+	},
+	encode: (puzzle: Puzzle): string => {
+		var count = 0, cm = "", bd = puzzle.board;
 		for (var c = 0; c < bd.cross.length; c++) {
 			var pstr = "", qn = bd.cross[c].qnum;
 
@@ -217,29 +126,31 @@ export class Encode {
 		}
 		if (count > 0) { cm += ((count + 15).toString(36)); }
 
-		this.outbstr += cm;
+		return cm;
 	}
+}
 
+const number10 = {
 	//---------------------------------------------------------------------------
 	// enc.decodeNumber10()  quesが0～9までの場合、デコードする
 	// enc.encodeNumber10()  quesが0～9までの場合、問題部をエンコードする
 	//---------------------------------------------------------------------------
-	decodeNumber10() {
-		var c = 0, i = 0, bstr = this.outbstr, bd = this.puzzle.board;
+	decode: (puzzle: Puzzle, bstr: string): string => {
+		var c = 0, i = 0, bd = puzzle.board;
 		for (i = 0; i < bstr.length; i++) {
 			var cell = bd.cell[c], ca = bstr.charAt(i);
 
 			if (ca === '.') { cell.qnum = -2; }
-			else if (this.include(ca, "0", "9")) { cell.qnum = parseInt(ca, 10); }
-			else if (this.include(ca, "a", "z")) { c += (parseInt(ca, 36) - 10); }
+			else if (include(ca, "0", "9")) { cell.qnum = parseInt(ca, 10); }
+			else if (include(ca, "a", "z")) { c += (parseInt(ca, 36) - 10); }
 
 			c++;
 			if (!bd.cell[c]) { break; }
 		}
-		this.outbstr = bstr.substr(i + 1);
-	}
-	encodeNumber10() {
-		var cm = "", count = 0, bd = this.puzzle.board;
+		return bstr.substring(i + 1);
+	},
+	encode: (puzzle: Puzzle): string => {
+		var cm = "", count = 0, bd = puzzle.board;
 		for (var c = 0; c < bd.cell.length; c++) {
 			var pstr = "", qn = bd.cell[c].qnum;
 
@@ -252,19 +163,21 @@ export class Encode {
 		}
 		if (count > 0) { cm += (9 + count).toString(36); }
 
-		this.outbstr += cm;
+		return cm;
 	}
+}
 
+const number16 = {
 	//---------------------------------------------------------------------------
 	// enc.decodeNumber16()  quesが0～8192?までの場合、デコードする
 	// enc.encodeNumber16()  quesが0～8192?までの場合、問題部をエンコードする
 	//---------------------------------------------------------------------------
-	decodeNumber16() {
-		var c = 0, i = 0, bstr = this.outbstr, bd = this.puzzle.board;
+	decode: (puzzle: Puzzle, bstr: string): string => {
+		var c = 0, i = 0, bd = puzzle.board;
 		for (i = 0; i < bstr.length; i++) {
 			var cell = bd.cell[c], ca = bstr.charAt(i);
 
-			if (this.include(ca, "0", "9") || this.include(ca, "a", "f")) { cell.qnum = parseInt(ca, 16); }
+			if (include(ca, "0", "9") || include(ca, "a", "f")) { cell.qnum = parseInt(ca, 16); }
 			else if (ca === '-') { cell.qnum = parseInt(bstr.substr(i + 1, 2), 16); i += 2; }
 			else if (ca === '+') { cell.qnum = parseInt(bstr.substr(i + 1, 3), 16); i += 3; }
 			else if (ca === '=') { cell.qnum = parseInt(bstr.substr(i + 1, 3), 16) + 4096; i += 3; }
@@ -275,10 +188,10 @@ export class Encode {
 			c++;
 			if (!bd.cell[c]) { break; }
 		}
-		this.outbstr = bstr.substr(i + 1);
-	}
-	encodeNumber16() {
-		var count = 0, cm = "", bd = this.puzzle.board;
+		return bstr.substring(i + 1);
+	},
+	encode: (puzzle: Puzzle): string => {
+		var count = 0, cm = "", bd = puzzle.board;
 		for (var c = 0; c < bd.cell.length; c++) {
 			var pstr = "", qn = bd.cell[c].qnum;
 
@@ -295,20 +208,21 @@ export class Encode {
 		}
 		if (count > 0) { cm += (15 + count).toString(36); }
 
-		this.outbstr += cm;
+		return cm;
 	}
-
+}
+const roomNumber16 = {
 	//---------------------------------------------------------------------------
 	// enc.decodeRoomNumber16()  部屋＋部屋の一つのquesが0～8192?までの場合、デコードする
 	// enc.encodeRoomNumber16()  部屋＋部屋の一つのquesが0～8192?までの場合、問題部をエンコードする
 	//---------------------------------------------------------------------------
-	decodeRoomNumber16() {
-		var r = 0, i = 0, bstr = this.outbstr, bd = this.puzzle.board;
+	decode: (puzzle: Puzzle, bstr: string): string => {
+		var r = 0, i = 0, bd = puzzle.board;
 		bd.roommgr.rebuild();
 		for (i = 0; i < bstr.length; i++) {
 			var ca = bstr.charAt(i), top = bd.roommgr.components[r].top;
 
-			if (this.include(ca, "0", "9") || this.include(ca, "a", "f")) { top.qnum = parseInt(ca, 16); }
+			if (include(ca, "0", "9") || include(ca, "a", "f")) { top.qnum = parseInt(ca, 16); }
 			else if (ca === '-') { top.qnum = parseInt(bstr.substr(i + 1, 2), 16); i += 2; }
 			else if (ca === '+') { top.qnum = parseInt(bstr.substr(i + 1, 3), 16); i += 3; }
 			else if (ca === '=') { top.qnum = parseInt(bstr.substr(i + 1, 3), 16) + 4096; i += 3; }
@@ -320,10 +234,10 @@ export class Encode {
 			r++;
 			if (r >= bd.roommgr.components.length) { break; }
 		}
-		this.outbstr = bstr.substr(i + 1);
-	}
-	encodeRoomNumber16() {
-		var count = 0, cm = "", bd = this.puzzle.board;
+		return bstr.substring(i + 1);
+	},
+	encode: (puzzle: Puzzle): string => {
+		var count = 0, cm = "", bd = puzzle.board;
 		bd.roommgr.rebuild();
 		for (var r = 0; r < bd.roommgr.components.length; r++) {
 			var pstr = "", qn = bd.roommgr.components[r].top.qnum;
@@ -342,25 +256,27 @@ export class Encode {
 		}
 		if (count > 0) { cm += (15 + count).toString(36); }
 
-		this.outbstr += cm;
+		return cm;
 	}
+}
 
+const arrowNumber16 = {
 	//---------------------------------------------------------------------------
 	// enc.decodeArrowNumber16()  矢印付きquesが0～8192?までの場合、デコードする
 	// enc.encodeArrowNumber16()  矢印付きquesが0～8192?までの場合、問題部をエンコードする
 	//---------------------------------------------------------------------------
-	decodeArrowNumber16() {
-		var c = 0, i = 0, bstr = this.outbstr, bd = this.puzzle.board;
+	decode: (puzzle: Puzzle, bstr: string): string => {
+		var c = 0, i = 0, bd = puzzle.board;
 		for (i = 0; i < bstr.length; i++) {
 			var ca = bstr.charAt(i), cell = bd.cell[c];
 
-			if (this.include(ca, "0", "4")) {
+			if (include(ca, "0", "4")) {
 				var ca1 = bstr.charAt(i + 1);
 				cell.qdir = parseInt(ca, 16);
 				cell.qnum = (ca1 !== "." ? parseInt(ca1, 16) : -2);
 				i++;
 			}
-			else if (this.include(ca, "5", "9")) {
+			else if (include(ca, "5", "9")) {
 				cell.qdir = parseInt(ca, 16) - 5;
 				cell.qnum = parseInt(bstr.substr(i + 1, 2), 16);
 				i += 2;
@@ -375,10 +291,10 @@ export class Encode {
 			c++;
 			if (!bd.cell[c]) { break; }
 		}
-		this.outbstr = bstr.substr(i + 1);
-	}
-	encodeArrowNumber16() {
-		var cm = "", count = 0, bd = this.puzzle.board;
+		return bstr.substring(i + 1);
+	},
+	encode: (puzzle: Puzzle): string => {
+		var cm = "", count = 0, bd = puzzle.board;
 		for (var c = 0; c < bd.cell.length; c++) {
 			var pstr = "", dir = bd.cell[c].qdir, qn = bd.cell[c].qnum;
 			if (qn === -2) { pstr = (dir) + "."; }
@@ -392,16 +308,18 @@ export class Encode {
 		}
 		if (count > 0) { cm += (count + 9).toString(36); }
 
-		this.outbstr += cm;
+		return cm;
 	}
+}
 
+const border = {
 	//---------------------------------------------------------------------------
 	// enc.decodeBorder() 問題の境界線をデコードする
 	// enc.encodeBorder() 問題の境界線をエンコードする
 	//---------------------------------------------------------------------------
-	decodeBorder() {
-		var pos1, pos2, bstr = this.outbstr, id, twi = [16, 8, 4, 2, 1];
-		var bd = this.puzzle.board;
+	decode: (puzzle: Puzzle, bstr: string): string => {
+		var pos1, pos2, id, twi = [16, 8, 4, 2, 1];
+		var bd = puzzle.board;
 
 		if (bstr) {
 			pos1 = Math.min(((((bd.cols - 1) * bd.rows + 4) / 5) | 0), bstr.length);
@@ -433,11 +351,11 @@ export class Encode {
 		}
 
 		bd.roommgr.rebuild();
-		this.outbstr = bstr.substr(pos2);
-	}
-	encodeBorder() {
+		return bstr.substring(pos2);
+	},
+	encode: (puzzle: Puzzle): string => {
 		var cm = "", twi = [16, 8, 4, 2, 1], num = 0, pass = 0;
-		var bd = this.puzzle.board;
+		var bd = puzzle.board;
 
 		for (var id = 0; id < (bd.cols - 1) * bd.rows; id++) {
 			pass += (bd.border[id].ques * twi[num]); num++;
@@ -452,21 +370,23 @@ export class Encode {
 		}
 		if (num > 0) { cm += pass.toString(32); }
 
-		this.outbstr += cm;
+		return cm;
 	}
+}
 
+const crossMark = {
 	//---------------------------------------------------------------------------
 	// enc.decodeCrossMark() 黒点をデコードする
 	// enc.encodeCrossMark() 黒点をエンコードする
 	//---------------------------------------------------------------------------
-	decodeCrossMark() {
-		var cc = 0, i = 0, bstr = this.outbstr, bd = this.puzzle.board;
+	decode: (puzzle: Puzzle, bstr: string): string => {
+		var cc = 0, i = 0, bd = puzzle.board;
 		var cp = (bd.hascross === 2 ? 1 : 0), cp2 = (cp << 1);
 		var rows = (bd.rows - 1 + cp2), cols = (bd.cols - 1 + cp2);
 		for (i = 0; i < bstr.length; i++) {
 			var ca = bstr.charAt(i);
 
-			if (this.include(ca, "0", "9") || this.include(ca, "a", "z")) {
+			if (include(ca, "0", "9") || include(ca, "a", "z")) {
 				cc += parseInt(ca, 36);
 				var bx = ((cc % cols + (1 - cp)) << 1);
 				var by = ((((cc / cols) | 0) + (1 - cp)) << 1);
@@ -479,10 +399,10 @@ export class Encode {
 			cc++;
 			if (cc >= cols * rows) { i++; break; }
 		}
-		this.outbstr = bstr.substr(i);
-	}
-	encodeCrossMark() {
-		var cm = "", count = 0, bd = this.puzzle.board;
+		return bstr.substring(i);
+	},
+	encode: (puzzle: Puzzle): string => {
+		var cm = "", count = 0, bd = puzzle.board;
 		var cp = (bd.hascross === 2 ? 1 : 0), cp2 = (cp << 1);
 		var rows = (bd.rows - 1 + cp2), cols = (bd.cols - 1 + cp2);
 		for (var c = 0, max = cols * rows; c < max; c++) {
@@ -498,16 +418,18 @@ export class Encode {
 		}
 		if (count > 0) { cm += count.toString(36); }
 
-		this.outbstr += cm;
+		return cm;
 	}
+}
 
+const circle = {
 	//---------------------------------------------------------------------------
 	// enc.decodeCircle() 白丸・黒丸をデコードする
 	// enc.encodeCircle() 白丸・黒丸をエンコードする
 	//---------------------------------------------------------------------------
-	decodeCircle() {
-		var bd = this.puzzle.board;
-		var bstr = this.outbstr, c = 0, tri = [9, 3, 1];
+	decode: (puzzle: Puzzle, bstr: string): string => {
+		var bd = puzzle.board;
+		var c = 0, tri = [9, 3, 1];
 		var pos = (bstr ? Math.min(((bd.cols * bd.rows + 2) / 3) | 0, bstr.length) : 0);
 		for (var i = 0; i < pos; i++) {
 			var ca = parseInt(bstr.charAt(i), 27);
@@ -519,10 +441,10 @@ export class Encode {
 				}
 			}
 		}
-		this.outbstr = bstr.substr(pos);
-	}
-	encodeCircle() {
-		var bd = this.puzzle.board;
+		return bstr.substring(pos);
+	},
+	encode: (puzzle: Puzzle): string => {
+		var bd = puzzle.board;
 		var cm = "", num = 0, pass = 0, tri = [9, 3, 1];
 		for (var c = 0; c < bd.cell.length; c++) {
 			if (bd.cell[c].qnum > 0) { pass += (bd.cell[c].qnum * tri[num]); }
@@ -531,15 +453,17 @@ export class Encode {
 		}
 		if (num > 0) { cm += pass.toString(27); }
 
-		this.outbstr += cm;
+		return cm;
 	}
+}
 
+const ice = {
 	//---------------------------------------------------------------------------
 	// enc.decodeIce() cell.ques===6をデコードする
 	// enc.encodeIce() cell.ques===6をエンコードする
 	//---------------------------------------------------------------------------
-	decodeIce() {
-		var bstr = this.outbstr, bd = this.puzzle.board;
+	decode: (puzzle: Puzzle, bstr: string): string => {
+		var bd = puzzle.board;
 
 		var c = 0, twi = [16, 8, 4, 2, 1];
 		for (var i = 0; i < bstr.length; i++) {
@@ -552,32 +476,16 @@ export class Encode {
 			}
 			if (!bd.cell[c]) { break; }
 		}
-		this.outbstr = bstr.substr(i + 1);
-	}
-	encodeIce() {
-		var cm = "", num = 0, pass = 0, twi = [16, 8, 4, 2, 1], bd = this.puzzle.board;
+		return bstr.substring(i + 1);
+	},
+	encode: (puzzle: Puzzle): string => {
+		var cm = "", num = 0, pass = 0, twi = [16, 8, 4, 2, 1], bd = puzzle.board;
 		for (var c = 0; c < bd.cell.length; c++) {
 			if (bd.cell[c].ques === 6) { pass += twi[num]; } num++;
 			if (num === 5) { cm += pass.toString(32); num = 0; pass = 0; }
 		}
 		if (num > 0) { cm += pass.toString(32); }
 
-		this.outbstr += cm;
-	}
-
-	//---------------------------------------------------------------------------
-	// enc.decodecross_old() Crossの問題部をデコードする(旧形式)
-	//---------------------------------------------------------------------------
-	decodecross_old() {
-		var bstr = this.outbstr, c = 0, bd = this.puzzle.board;
-		for (var i = 0; i < bstr.length; i++) {
-			var ca = bstr.charAt(i);
-			if (this.include(ca, "0", "4")) { bd.cross[c].qnum = parseInt(ca, 10); }
-
-			c++;
-			if (!bd.cross[c]) { i++; break; }
-		}
-
-		this.outbstr = bstr.substr(i);
+		return cm;
 	}
 }
