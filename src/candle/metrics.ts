@@ -25,7 +25,7 @@ export default {
 		}
 	},
 	getoffsetHeight(text: string, font: string) {
-		let top;
+		let top: number;
 		if (font.match(/(.+\s)?([0-9]+)px (.+)$/)) {
 			top = +RegExp.$2;
 		}

@@ -4,7 +4,7 @@ import type { Puzzle } from "./Puzzle";
 import type { Board, IGroup } from "./Board";
 import { Address } from "./Address";
 import { BorderList } from "./PieceList";
-import { BoardFlipOperation, BoardAdjustOperation } from "./Operation";
+import { BoardFlipOperation, BoardAdjustOperation, type Operation } from "./Operation";
 import { type BoardPiece, type Border, Cell } from "./Piece";
 
 // 拡大縮小・回転反転用定数
@@ -174,7 +174,7 @@ export class BoardExec {
 	addOpe(d: ID, name: IBoardOperation) {
 		const key = this.boardtype[name][1];
 		const puzzle = this.puzzle;
-		let ope;
+		let ope: Operation;
 		if (key & this.TURNFLIP) { ope = new BoardFlipOperation(this.puzzle, d, name); }
 		else { ope = new BoardAdjustOperation(this.puzzle, name); }
 		puzzle.opemgr.add(ope);
@@ -447,7 +447,7 @@ export class BoardExec {
 			const blist = this.board.borderinside(d.x1, d.y1, d.x2, d.y2);
 			for (let i = 0; i < blist.length; i++) {
 				const border = blist[i];
-				let val;
+				let val: number;
 				val = trans[border.qdir]; if (!!val) { border.setQdir(val); }
 			}
 		}
@@ -494,7 +494,7 @@ export class BoardExec {
 		const yy = (d.y1 + d.y2);
 		const bx1 = (d.x1 | 1);
 		const by1 = (d.y1 | 1);
-		let idx;
+		let idx: number;
 
 		const bd = this.board;
 		bd.disableInfo();
@@ -572,8 +572,8 @@ export class BoardExec {
 		const yy = (d.y1 + d.y2);
 		const bx1 = piece.bx;
 		const by1 = piece.by;
-		let bx2;
-		let by2;
+		let bx2: number;
+		let by2: number;
 		switch (key) {
 			case this.FLIPY: bx2 = bx1; by2 = yy - by1; break;
 			case this.FLIPX: bx2 = xx - bx1; by2 = by1; break;

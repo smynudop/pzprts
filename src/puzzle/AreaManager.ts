@@ -234,8 +234,8 @@ export class AreaRoomGraph extends AreaGraphBase {
 	//--------------------------------------------------------------------------------
 	setTopOfRoom_combine(cell1: Cell, cell2: Cell) {
 		if (!cell1.room || !cell2.room || cell1.room === cell2.room) { return; }
-		let merged;
-		let keep;
+		let merged: Cell;
+		let keep: Cell;
 		const tcell1 = cell1.room.top;
 		const tcell2 = cell2.room.top;
 		if (tcell1.bx > tcell2.bx || (tcell1.bx === tcell2.bx && tcell1.by > tcell2.by)) { merged = tcell1; keep = tcell2; }
@@ -257,7 +257,8 @@ export class AreaRoomGraph extends AreaGraphBase {
 	// roommgr.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
 	setExtraData(component: GraphComponent) {
-		const clist = component.clist = new CellList(this.puzzle, component.getnodeobjs());
+		component.clist = new CellList(this.puzzle, component.getnodeobjs());
+		const clist = component.clist;
 		if (this.hastop) {
 			component.top = clist.getTopCell();
 

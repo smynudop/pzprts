@@ -9,7 +9,7 @@ import {
 import type { BoardPiece, Cell } from "./Piece";
 import { Board, IGroup, type IGroup2 } from "./Board";
 import { pzpr } from "../pzpr/core";
-import { Parser } from "../pzpr/parser";
+import { parseFile } from "../pzpr/parser";
 import { FileData } from "../pzpr/fileData";
 import * as Constants from "../pzpr/constants"
 import * as MetaData from "../pzpr/metadata"
@@ -41,8 +41,9 @@ export class FileIO {
 	filedecode(datastr: string) {
 		const puzzle = this.puzzle;
 		const bd = puzzle.board;
-		const pzl = Parser.parseFile(datastr, puzzle.pid);
-		const filetype = this.currentType = pzl.type;
+		const pzl = parseFile(datastr, puzzle.pid);
+		this.currentType = pzl.type
+		const filetype = this.currentType;
 
 		bd.initBoardSize(pzl.cols, pzl.rows);
 
@@ -201,9 +202,10 @@ export class FileIO {
 
 	getItemList(rows: number) {
 		const item = [];
-		let line;
+		let line: string;
 		for (let i = 0; i < rows; i++) {
-			if (!(line = this.readLine())) { continue; }
+			line = this.readLine()
+			if (!line) { continue; }
 			const array1 = line.split(" ");
 			for (let c = 0; c < array1.length; c++) {
 				if (array1[c] !== "") { item.push(array1[c]); }
@@ -379,7 +381,7 @@ export class FileIO {
 			for (let bx = 1 - ADJ; bx <= bd.maxbx; bx += 2) {
 				const piece = bd.getobj(bx, by);
 				const nodename = func(piece);
-				let node;
+				let node: HTMLElement;
 				if (nodename.match(/n(\d\d+)/) || nodename.match(/n(\-\d+)/)) {
 					node = this.createXMLNode('n', { v: RegExp.$1 });
 				}
@@ -411,7 +413,7 @@ export class FileIO {
 		this.encodeCell(function (cell) {
 			if (cell.qnum >= 0) { return `${cell.qnum} `; }
 			if (cell.qnum === -2) { return "- "; }
-			return ". "; 
+			return ". ";
 		});
 	}
 	//---------------------------------------------------------------------------
@@ -428,7 +430,7 @@ export class FileIO {
 		this.encodeCell(function (cell) {
 			if (cell.qnum >= 0) { return `${cell.qnum} `; }
 			if (cell.qnum === -2) { return "5 "; }
-			return ". "; 
+			return ". ";
 		});
 	}
 	//---------------------------------------------------------------------------
@@ -449,7 +451,7 @@ export class FileIO {
 			if (cell.qnum === -2) { return "- "; }
 			if (cell.qans === 1) { return "# "; }
 			if (cell.qsub === 1) { return "+ "; }
-			return ". "; 
+			return ". ";
 		});
 	}
 	//---------------------------------------------------------------------------
@@ -472,7 +474,7 @@ export class FileIO {
 				const ca2 = (cell.qnum !== -2 ? `${cell.qnum}` : "-");
 				return [ca1, ",", ca2, " "].join('');
 			}
-			return ". "; 
+			return ". ";
 		});
 	}
 	//---------------------------------------------------------------------------
@@ -489,7 +491,7 @@ export class FileIO {
 		this.encodeCell(function (cell) {
 			if (cell.qans === 1) { return "# "; }
 			if (cell.qsub === 1) { return "+ "; }
-			return ". "; 
+			return ". ";
 		});
 	}
 	//---------------------------------------------------------------------------
@@ -512,7 +514,7 @@ export class FileIO {
 			if (cell.qsub === 2) { return "- "; }
 			if (cell.qsub === 3) { return "= "; }
 			if (cell.qsub === 4) { return "% "; }
-			return ". "; 
+			return ". ";
 		});
 	}
 	//---------------------------------------------------------------------------
@@ -576,7 +578,7 @@ export class FileIO {
 	encodeCellQsub() {
 		this.encodeCell(function (cell) {
 			if (cell.qsub > 0) { return `${cell.qsub} `; }
-			return "0 "; 
+			return "0 ";
 		});
 	}
 	//---------------------------------------------------------------------------
@@ -593,7 +595,7 @@ export class FileIO {
 		this.encodeCross(function (cross) {
 			if (cross.qnum >= 0) { return `${cross.qnum} `; }
 			if (cross.qnum === -2) { return "- "; }
-			return ". "; 
+			return ". ";
 		});
 	}
 	//---------------------------------------------------------------------------
@@ -626,7 +628,7 @@ export class FileIO {
 			if (border.qans === 1 && border.qsub === 1) { return "2 "; }
 			if (border.qans === 1) { return "1 "; }
 			if (border.qsub === 1) { return "-1 "; }
-			return "0 "; 
+			return "0 ";
 		});
 	}
 	//---------------------------------------------------------------------------
@@ -643,7 +645,7 @@ export class FileIO {
 		this.encodeBorder(function (border) {
 			if (border.line > 0) { return `${border.line} `; }
 			if (border.qsub === 2) { return "-1 "; }
-			return "0 "; 
+			return "0 ";
 		});
 	}
 	//---------------------------------------------------------------------------
@@ -750,7 +752,7 @@ export class FileIO {
 		this.encodeCell(function (cell) {
 			if (cell.qnum !== -1) { return ". "; }
 			if (cell.anum === -1) { return "0 "; }
-			return `${cell.anum} `; 
+			return `${cell.anum} `;
 		});
 	}
 	//---------------------------------------------------------------------------
@@ -771,7 +773,7 @@ export class FileIO {
 			if (cell.qnum === -2) { return "? "; }
 			if (cell.qans === 1) { return "# "; }
 			if (cell.qsub === 1) { return "+ "; }
-			return ". "; 
+			return ". ";
 		});
 	}
 

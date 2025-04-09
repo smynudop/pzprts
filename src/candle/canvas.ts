@@ -27,12 +27,12 @@ const CTOP_OFFSET = (() => {
 	if (UA.match(/Trident/)) {
 		return -0.74;
 	}
-	/* if(UA.match(/Gecko/)) */ 
-		if (UA.match(/Win/)) {
-			return -0.7;
-		}
-		
-			return -0.76;
+	/* if(UA.match(/Gecko/)) */
+	if (UA.match(/Win/)) {
+		return -0.7;
+	}
+
+	return -0.76;
 })();
 
 /* -------------------- */
@@ -69,7 +69,8 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 
 	/* extend functions (initialize) */
 	initElement() {
-		const root = this.child = _doc.createElement('canvas')
+		this.child = _doc.createElement('canvas')
+		const root = this.child
 		if (isBrowser) {
 			this.canvas.style.overflow = 'hidden';
 		}
@@ -86,7 +87,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 	initFunction() {
 		function atob(base64: string) {
 			if (isBrowser) { return window.atob(base64); }
-			return new Buffer(RegExp.$2, 'base64').toString('binary'); 
+			return new Buffer(RegExp.$2, 'base64').toString('binary');
 		}
 
 		const root = this.child;
@@ -113,7 +114,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 			if (env.node) {
 				return new Buffer(dataurl, 'base64');
 			}
-			let data;
+			let data: Uint8Array | string;
 			if (typeof Uint8Array !== 'undefined') {
 				const binary = atob(dataurl);
 				data = new Uint8Array(binary.length);
@@ -141,7 +142,8 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 
 	/* layer functions */
 	setLayer(layerid: string = null, option: any = null) {
-		const layer = this.currentLayerId = (!!layerid ? layerid : '_empty');
+		this.currentLayerId = (!!layerid ? layerid : '_empty');
+		const layer = this.currentLayerId
 		this.isedge = this.isedgearray[(this.isedgearray[layer] !== void 0) ? layer : "_empty"];
 		this.setEdgeStyle();
 
@@ -265,8 +267,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 	}
 
 	/* extended functions */
-	setLinePath() {
-		const _args = arguments;
+	setLinePath(..._args: any[]) {
 		const _len = _args.length;
 		const len = _len - ((_len | 1) ? 1 : 2);
 		const a = [];
@@ -275,8 +276,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 		this.setLinePath_com.call(this, a);
 		if (_args[_len - 1]) { this.context.closePath(); }
 	}
-	setOffsetLinePath() {
-		const _args = arguments;
+	setOffsetLinePath(..._args: any[]) {
 		const _len = _args.length;
 		const len = _len - ((_len | 1) ? 1 : 2) - 2;
 		const a = [];
@@ -370,7 +370,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 
 	/* Canvas API functions (for image) */
 	drawImage(image: CanvasImageSource, dx: number, dy: number) {
-		if (!arguments[0]) { return; }
+		if (!image) { return; }
 		this.context.drawImage(image, dx, dy);
 	}
 

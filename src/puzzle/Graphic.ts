@@ -340,8 +340,10 @@ export class Graphic {
 		if (!!g2) { g2.changeSize(cwid | 0, chgt | 0); }
 
 		// 盤面のセルID:0が描画される左上の位置の設定 (Canvas左上からのオフセット)
-		const x0 = this.x0 = (((cwid - this.cw * this.getBoardCols()) / 2 + this.cw * this.getOffsetCols()) | 0) + 0.5;
-		const y0 = this.y0 = (((chgt - this.ch * this.getBoardRows()) / 2 + this.ch * this.getOffsetRows()) | 0) + 0.5;
+		this.x0 = (((cwid - this.cw * this.getBoardCols()) / 2 + this.cw * this.getOffsetCols()) | 0) + 0.5;
+		this.y0 = (((chgt - this.ch * this.getBoardRows()) / 2 + this.ch * this.getOffsetRows()) | 0) + 0.5;
+		const x0 = this.x0
+		const y0 = this.y0
 
 		// CanvasのOffset位置変更 (SVGの時、小数点以下の端数調整を行う)
 		if (!g.use.canvas) {
@@ -523,7 +525,7 @@ export class Graphic {
 	getNewLineColor() {
 		let loopcount = 0;
 
-		while (1) {
+		while (true) {
 			let Rdeg = ((Math.random() * 384) | 0) - 64; if (Rdeg < 0) { Rdeg = 0; } if (Rdeg > 255) { Rdeg = 255; }
 			let Gdeg = ((Math.random() * 384) | 0) - 64; if (Gdeg < 0) { Gdeg = 0; } if (Gdeg > 255) { Gdeg = 255; }
 			let Bdeg = ((Math.random() * 384) | 0) - 64; if (Bdeg < 0) { Bdeg = 0; } if (Bdeg > 255) { Bdeg = 255; }
@@ -835,10 +837,10 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	drawCellArrows() {
 		const g = this.vinc('cell_arrow', 'auto');
-		let al;
-		let aw;
-		let tl;
-		let tw;
+		let al: number;
+		let aw: number;
+		let tl: number;
+		let tw: number;
 
 		if (this.pid !== "nagare") {
 			al = this.cw * 0.4;		// ArrowLength
@@ -904,7 +906,7 @@ export class Graphic {
 			if (cell.qans !== 0) {
 				const info = cell.error || cell.qinfo;
 				let addwidth = 0;
-				let color;
+				let color: string;
 				if (this.pid === 'gokigen' || this.pid === 'wagiri') {
 					if (cell.trial && this.puzzle.execConfig('irowake')) { addwidth = -basewidth / 2; }
 					else if (info === 1 || info === 3) { addwidth = basewidth / 2; }
@@ -1877,8 +1879,8 @@ export class Graphic {
 	}
 	drawQuesNumbersOn51_1(piece: BoardPiece) { /* cell or excell */
 		const g = this.context;
-		let val;
-		let adj;
+		let val: number;
+		let adj: Cell;
 		const px = piece.bx * this.bw;
 		const py = piece.by * this.bh;
 		const option = { ratio: 0.45, position: null as number | null };
@@ -1925,8 +1927,8 @@ export class Graphic {
 
 		const px = cursor.bx * this.bw;
 		const py = cursor.by * this.bh;
-		let w;
-		let size;
+		let w: number;
+		let size: number;
 		if (islarge !== false) { w = (Math.max(this.cw / 16, 2)) | 0; size = this.bw - 0.5; }
 		else { w = (Math.max(this.cw / 24, 1)) | 0; size = this.bw * 0.56; }
 

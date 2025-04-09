@@ -3,7 +3,7 @@
 import type { Puzzle } from "./Puzzle"
 import { FileIO } from "./FileData"
 import { pzpr } from "../pzpr/core"
-import { Parser } from "../pzpr/parser"
+import { parseURL } from "../pzpr/parser"
 import { URLData } from "../pzpr/urlData"
 import * as Constants from "../pzpr/constants"
 
@@ -13,7 +13,7 @@ export type Converter = {
 }
 
 export const decodeURL = (puzzle: Puzzle, url: string, converters: Converter[]) => {
-	const pzl = Parser.parseURL(url)
+	const pzl = parseURL(url)
 	const bd = puzzle.board;
 	bd.initBoardSize(pzl.cols, pzl.rows);
 
@@ -356,9 +356,9 @@ const border = {
 	// enc.encodeBorder() 問題の境界線をエンコードする
 	//---------------------------------------------------------------------------
 	decode: (puzzle: Puzzle, bstr: string): string => {
-		let pos1;
-		let pos2;
-		let id;
+		let pos1: number;
+		let pos2: number;
+		let id: number;
 		const twi = [16, 8, 4, 2, 1];
 		const bd = puzzle.board;
 

@@ -669,13 +669,13 @@ export class AnsCheck<
 	checkRowsColsPartly(evalfunc: (clist: CellList, info: any) => boolean, termfunc: CellCheck, code: string) {
 		let result = true;
 		const bd = this.puzzle.board;
-		let info;
+		let info: any;
 		allloop: do {
 			/* 横方向サーチ */
 			info = { keycell: null as BoardPiece, key51num: -1, isvert: false };
 			for (let by = 1; by <= bd.maxby; by += 2) {
 				for (let bx = 1; bx <= bd.maxbx; bx += 2) {
-					let txx = 0;
+					let txx: number;
 					for (let tx = bx; tx <= bd.maxbx; tx += 2) { txx = tx; if (termfunc(bd.getc(tx, by))) { break; } }
 					info.keycell = bd.getobj(bx - 2, by);
 					info.key51num = info.keycell.qnum;
@@ -690,7 +690,7 @@ export class AnsCheck<
 			info = { keycell: null as BoardPiece, key51num: -1, isvert: true };
 			for (let bx = 1; bx <= bd.maxbx; bx += 2) {
 				for (let by = 1; by <= bd.maxby; by += 2) {
-					let tyy;
+					let tyy: number;
 					for (let ty = by; ty <= bd.maxby; ty += 2) { tyy = ty; if (termfunc(bd.getc(bx, ty))) { break; } }
 					info.keycell = bd.getobj(bx, by - 2);
 					info.key51num = info.keycell.qnum2;
@@ -786,8 +786,8 @@ export class AnsCheck<
 				if (!!pathseg) { pathsegs.push(pathseg); }
 			}
 		}
-
-		return (this._info.num = pathsegs);
+		this._info.num = pathsegs
+		return pathsegs;
 	}
 	serachLineShapeInfo(cell1: Cell, dir: number, passed: boolean[]): IPathSeg {
 		const pathseg = {

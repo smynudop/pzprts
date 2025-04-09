@@ -31,6 +31,9 @@
       "style": {
         "noParameterAssign": "off",
         "noNonNullAssertion": "off"
+      },
+      "correctness": {
+        "noConstantCondition": "off"
       }
     }
   },

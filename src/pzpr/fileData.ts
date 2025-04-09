@@ -141,7 +141,7 @@ export class FileData {
             /* 履歴部分の読み込み */
             if (historypos !== null && !!JSON) {
                 let count = 0;
-                let cnt;
+                let cnt: number;
                 for (let i = historypos; i < lines.length; i++) {
                     str += lines[i];
 
@@ -245,7 +245,7 @@ export class FileData {
             puzzlenode?.appendChild(puzzlenode?.querySelector('answer')!);
         }
 
-        let outputdata;
+        let outputdata: string;
         if (this.type !== Constants.FILE_PBOX_XML) {
             outputdata = out.join("\n");
         }

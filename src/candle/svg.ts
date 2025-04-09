@@ -49,12 +49,12 @@ const S_HEIGHT = (() => {
 	if (UA.match(/Trident/)) {
 		return { 'candle-top': -0.74, top: -1.02, hanging: -1.02, middle: -0.32, alphabetic: 0, bottom: 0.45 };
 	}
-	/* if(UA.match(/Gecko/)) */ 
-		if (UA.match(/Win/)) {
-			return { 'candle-top': -0.7, top: -0.85, hanging: -0.85, middle: -0.34, alphabetic: 0, bottom: 0.15 };
-		}
-		
-			return { 'candle-top': -0.76, top: -0.9, hanging: -0.9, middle: -0.38, alphabetic: 0, bottom: 0.08 };
+	/* if(UA.match(/Gecko/)) */
+	if (UA.match(/Win/)) {
+		return { 'candle-top': -0.7, top: -0.85, hanging: -0.85, middle: -0.34, alphabetic: 0, bottom: 0.15 };
+	}
+
+	return { 'candle-top': -0.76, top: -0.9, hanging: -0.9, middle: -0.38, alphabetic: 0, bottom: 0.08 };
 })();
 
 /* ----------------- */
@@ -99,7 +99,8 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 			this.canvas.style.overflow = 'hidden';
 		}
 		const rect = metrics.getRectSize(this.canvas);
-		const root = this.child = _doc.createElementNS(SVGNS, 'svg');
+		this.child = _doc.createElementNS(SVGNS, 'svg');
+		const root = this.child
 		root.setAttribute('xmlns', SVGNS);
 		root.setAttribute('xmlns:xlink', XLINKNS);
 		root.setAttribute('font-size', "10px");
@@ -116,7 +117,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		function btoa(bin: string) {
 			if (isBrowser) { return window.btoa(bin); }
 			if (Buffer.isBuffer(bin)) { return bin.toString('base64'); }
-			return new Buffer(bin.toString(), 'binary').toString('base64'); 
+			return new Buffer(bin.toString(), 'binary').toString('base64');
 		}
 		const xmldeclare = '<?xml version="1.0" encoding="UTF-8"?>\n';
 		function getOuterHTML(el: SVGSVGElement) { return el.outerHTML; }
@@ -224,10 +225,10 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		this.lastpath = S_PATH_CLOSE;
 	}
 	arc(cx: number, cy: number, r: number, startRad: number, endRad: number, antiClockWise: boolean) {
-		let sx;
-		let sy;
-		let ex;
-		let ey;
+		let sx: number;
+		let sy: number;
+		let ex: number;
+		let ey: number;
 		if (endRad - startRad >= _2PI) { sx = cx + r; sy = cy; ex = cx + r; ey = cy; }
 		else {
 			sx = cx + r * Math.cos(startRad); sy = cy + r * Math.sin(startRad);
@@ -270,8 +271,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 	}
 
 	/* extended functions */
-	setLinePath() {
-		const _args = arguments;
+	setLinePath(..._args: any[]) {
 		const _len = _args.length;
 		const len = _len - ((_len | 1) ? 1 : 2);
 		const a = [];
@@ -280,8 +280,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		this.setLinePath_com.call(this, a);
 		if (_args[_len - 1]) { this.cpath.push(S_PATH_CLOSE); }
 	}
-	setOffsetLinePath() {
-		const _args = arguments;
+	setOffsetLinePath(..._args: any[]) {
 		const _len = _args.length;
 		const len = _len - ((_len | 1) ? 1 : 2);
 		const a = [];
