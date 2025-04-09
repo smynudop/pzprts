@@ -129,7 +129,7 @@ export class Board<
 	}
 
 	addInfoList<T extends GraphBase>(Klass: { new(puzzle: Puzzle): T }): T {
-		var instance = new Klass(this.puzzle);
+		const instance = new Klass(this.puzzle);
 		if (instance.enabled) {
 			this.infolist.push(instance);
 		}
@@ -150,7 +150,7 @@ export class Board<
 	// bd.initBoardSize() 指定されたサイズで盤面の初期化を行う
 	//---------------------------------------------------------------------------
 	initBoardSize(col: number = undefined, row: number = undefined) {
-		if (col === (void 0) || isNaN(col)) { col = this.cols; row = this.rows; }
+		if (col === (void 0) || Number.isNaN(col)) { col = this.cols; row = this.rows; }
 
 		this.allclear(false); // initGroupで、新Objectに対しては別途allclearが呼ばれます
 
@@ -190,17 +190,18 @@ export class Board<
 	// bd.newObject()     指定されたタイプの新しいオブジェクトを返す
 	//---------------------------------------------------------------------------
 	initGroup(group: IGroup, col: number, row: number) {
-		var groups = this.getGroup(group);
-		var len = this.estimateSize(group, col, row), clen = groups.length;
+		const groups = this.getGroup(group);
+		const len = this.estimateSize(group, col, row);
+		const clen = groups.length;
 		// 既存のサイズより小さくなるならdeleteする
 		if (clen > len) {
-			for (var id = clen - 1; id >= len; id--) { groups.pop(); }
+			for (let id = clen - 1; id >= len; id--) { groups.pop(); }
 		}
 		// 既存のサイズより大きくなるなら追加する
 		else if (clen < len) {
-			var groups2 = groups.clone();
-			for (var id = clen; id < len; id++) {
-				var piece = this.newObject(group, id);
+			const groups2 = groups.clone();
+			for (let id = clen; id < len; id++) {
+				const piece = this.newObject(group, id);
 				groups.add(piece);
 				groups2.add(piece);
 			}
@@ -211,26 +212,26 @@ export class Board<
 	}
 	getGroup(group: IGroup): PieceList<BoardPiece> {
 		if (group === 'cell') { return this.cell; }
-		else if (group === 'cross') { return this.cross; }
-		else if (group === 'border') { return this.border; }
-		else if (group === 'excell') { return this.excell; }
+		if (group === 'cross') { return this.cross; }
+		if (group === 'border') { return this.border; }
+		if (group === 'excell') { return this.excell; }
 		return new PieceList(this.puzzle);
 	}
 	estimateSize(group: IGroup, col: number, row: number) {
 		if (group === 'cell') { return col * row; }
-		else if (group === 'cross') { return (col + 1) * (row + 1); }
-		else if (group === 'border') {
+		if (group === 'cross') { return (col + 1) * (row + 1); }
+		if (group === 'border') {
 			if (this.hasborder === 1) { return 2 * col * row - (col + row); }
-			else if (this.hasborder === 2) { return 2 * col * row + (col + row); }
+			if (this.hasborder === 2) { return 2 * col * row + (col + row); }
 		}
 		else if (group === 'excell') {
-			if (this.hasexcell === 1) { return col + row + (this.emptyexcell.ques === 51 ? 1 : 0); } /* 左上角のEXCellを追加 */
-			else if (this.hasexcell === 2) { return 2 * (col + row); }
+			if (this.hasexcell === 1) { return col + row + (this.emptyexcell.ques === 51 ? 1 : 0); }
+			if (this.hasexcell === 2) { return 2 * (col + row); }
 		}
 		return 0;
 	}
 	newObject(group: IGroup, id: number): BoardPiece {
-		var piece: BoardPiece = this.nullobj
+		let piece: BoardPiece = this.nullobj
 		if (group === 'cell') { piece = this.createCell(); }
 		else if (group === 'cross') { piece = this.createCross(); }
 		else if (group === 'border') { piece = this.createBorder(); }
@@ -264,9 +265,9 @@ export class Board<
 	}
 
 	setposCells() {
-		var qc = this.cols;
-		for (var id = 0; id < this.cell.length; id++) {
-			var cell = this.cell[id];
+		const qc = this.cols;
+		for (let id = 0; id < this.cell.length; id++) {
+			const cell = this.cell[id];
 			cell.id = id;
 			cell.isnull = false;
 
@@ -278,9 +279,9 @@ export class Board<
 		}
 	}
 	setposCrosses() {
-		var qc = this.cols;
-		for (var id = 0; id < this.cross.length; id++) {
-			var cross = this.cross[id];
+		const qc = this.cols;
+		for (let id = 0; id < this.cross.length; id++) {
+			const cross = this.cross[id];
 			cross.id = id;
 			cross.isnull = false;
 
@@ -291,10 +292,12 @@ export class Board<
 		}
 	}
 	setposBorders() {
-		var qc = this.cols, qr = this.rows;
-		var bdinside = (2 * qc * qr - qc - qr);
-		for (var id = 0; id < this.border.length; id++) {
-			var border = this.border[id], i = id;
+		const qc = this.cols;
+		const qr = this.rows;
+		const bdinside = (2 * qc * qr - qc - qr);
+		for (let id = 0; id < this.border.length; id++) {
+			const border = this.border[id];
+			let i = id;
 			border.id = id;
 			border.isnull = false;
 
@@ -313,9 +316,11 @@ export class Board<
 		}
 	}
 	setposEXcells() {
-		var qc = this.cols, qr = this.rows;
-		for (var id = 0; id < this.excell.length; id++) {
-			var excell = this.excell[id], i = id;
+		const qc = this.cols;
+		const qr = this.rows;
+		for (let id = 0; id < this.excell.length; id++) {
+			const excell = this.excell[id];
+			let i = id;
 			excell.id = id;
 			excell.isnull = false;
 
@@ -339,8 +344,8 @@ export class Board<
 	// bd.setminmax()   盤面のbx,byの最小値/最大値をセットする
 	//---------------------------------------------------------------------------
 	setminmax() {
-		var extUL = (this.hasexcell > 0);
-		var extDR = (this.hasexcell === 2);
+		const extUL = (this.hasexcell > 0);
+		const extDR = (this.hasexcell === 2);
 		this.minbx = (!extUL ? 0 : -2);
 		this.minby = (!extUL ? 0 : -2);
 		this.maxbx = (!extDR ? 2 * this.cols : 2 * this.cols + 2);
@@ -366,7 +371,7 @@ export class Board<
 	}
 	// 呼び出し元：回答消去ボタン押した時
 	ansclear() {
-		var opemgr = this.puzzle.opemgr;
+		const opemgr = this.puzzle.opemgr;
 		opemgr.newOperation();
 		opemgr.add(new BoardClearOperation(this.puzzle));
 
@@ -393,7 +398,7 @@ export class Board<
 	}
 
 	errclear() {
-		var isclear = this.haserror || this.hasinfo;
+		const isclear = this.haserror || this.hasinfo;
 		if (isclear) {
 			this.cell.errclear();
 			this.cross.errclear();
@@ -420,7 +425,7 @@ export class Board<
 	// bd.getObjectPos()  (X,Y)の位置にあるオブジェクトを計算して返す
 	//---------------------------------------------------------------------------
 	getObjectPos(group: IGroup2, bx: number, by: number) {
-		var obj = this.nullobj;
+		let obj = this.nullobj;
 		if (group === 'cell') { obj = this.getc(bx, by); }
 		else if (group === 'cross') { obj = this.getx(bx, by); }
 		else if (group === 'border') { obj = this.getb(bx, by); }
@@ -437,13 +442,17 @@ export class Board<
 	// bd.getobj() (X,Y)の位置にある何らかのオブジェクトを返す
 	//---------------------------------------------------------------------------
 	getc(bx: number, by: number): TCell {
-		var id = null, qc = this.cols, qr = this.rows;
+		let id = null;
+		const qc = this.cols;
+		const qr = this.rows;
 		if ((bx < 0 || bx > (qc << 1) || by < 0 || by > (qr << 1)) || (!(bx & 1)) || (!(by & 1))) { }
 		else { id = (bx >> 1) + (by >> 1) * qc; }
 		return (id !== null ? this.cell[id] : this.emptycell);
 	}
 	getx(bx: number, by: number) {
-		var id = null, qc = this.cols, qr = this.rows;
+		let id = null;
+		const qc = this.cols;
+		const qr = this.rows;
 		if ((bx < 0 || bx > (qc << 1) || by < 0 || by > (qr << 1)) || (!!(bx & 1)) || (!!(by & 1))) { }
 		else { id = (bx >> 1) + (by >> 1) * (qc + 1); }
 
@@ -453,7 +462,9 @@ export class Board<
 		return this.emptycross;
 	}
 	getb(bx: number, by: number) {
-		var id = null, qc = this.cols, qr = this.rows;
+		let id = null;
+		const qc = this.cols;
+		const qr = this.rows;
 		if (!!this.hasborder && (bx >= 1 && bx <= 2 * qc - 1 && by >= 1 && by <= 2 * qr - 1)) {
 			if (!(bx & 1) && (by & 1)) { id = ((bx >> 1) - 1) + (by >> 1) * (qc - 1); }
 			else if ((bx & 1) && !(by & 1)) { id = (bx >> 1) + ((by >> 1) - 1) * qc + (qc - 1) * qr; }
@@ -468,7 +479,9 @@ export class Board<
 		return (id !== null ? this.border[id] : this.emptyborder);
 	}
 	getex(bx: number, by: number) {
-		var id = null, qc = this.cols, qr = this.rows;
+		let id = null;
+		const qc = this.cols;
+		const qr = this.rows;
 		if (this.hasexcell === 1) {
 			if (this.emptyexcell.ques === 51 && bx === -1 && by === -1) { id = qc + qr; }	/* 左上角のEXCellを追加 */
 			else if (by === -1 && bx > 0 && bx < 2 * qc) { id = (bx >> 1); }
@@ -486,9 +499,9 @@ export class Board<
 
 	getobj(bx: number, by: number) {
 		if ((bx + by) & 1) { return this.getb(bx, by); }
-		else if (!(bx & 1) && !(by & 1)) { return this.getx(bx, by); }
+		if (!(bx & 1) && !(by & 1)) { return this.getx(bx, by); }
 
-		var cell = this.getc(bx, by);
+		const cell = this.getc(bx, by);
 		return ((cell !== this.emptycell || !this.hasexcell) ? cell : this.getex(bx, by));
 	}
 
@@ -504,9 +517,9 @@ export class Board<
 	//---------------------------------------------------------------------------
 	objectinside(group: IGroup, x1: number, y1: number, x2: number, y2: number) {
 		if (group === 'cell') { return this.cellinside(x1, y1, x2, y2); }
-		else if (group === 'cross') { return this.crossinside(x1, y1, x2, y2); }
-		else if (group === 'border') { return this.borderinside(x1, y1, x2, y2); }
-		else if (group === 'excell') { return this.excellinside(x1, y1, x2, y2); }
+		if (group === 'cross') { return this.crossinside(x1, y1, x2, y2); }
+		if (group === 'border') { return this.borderinside(x1, y1, x2, y2); }
+		if (group === 'excell') { return this.excellinside(x1, y1, x2, y2); }
 		return new PieceList(this.puzzle);
 	}
 
@@ -517,21 +530,21 @@ export class Board<
 	// bd.excellinside() 座標(x1,y1)-(x2,y2)に含まれるExcellのリストを取得する
 	//---------------------------------------------------------------------------
 	cellinside(x1: number, y1: number, x2: number, y2: number) {
-		var clist = new CellList<TCell>(this.puzzle);
-		for (var by = (y1 | 1); by <= y2; by += 2) {
-			for (var bx = (x1 | 1); bx <= x2; bx += 2) {
-				var cell = this.getc(bx, by);
+		const clist = new CellList<TCell>(this.puzzle);
+		for (let by = (y1 | 1); by <= y2; by += 2) {
+			for (let bx = (x1 | 1); bx <= x2; bx += 2) {
+				const cell = this.getc(bx, by);
 				if (!cell.isnull) { clist.add(cell); }
 			}
 		}
 		return clist;
 	}
 	crossinside(x1: number, y1: number, x2: number, y2: number) {
-		var clist = new CrossList(this.puzzle);
+		const clist = new CrossList(this.puzzle);
 		if (!!this.hascross) {
-			for (var by = y1 + (y1 & 1); by <= y2; by += 2) {
-				for (var bx = x1 + (x1 & 1); bx <= x2; bx += 2) {
-					var cross = this.getx(bx, by);
+			for (let by = y1 + (y1 & 1); by <= y2; by += 2) {
+				for (let bx = x1 + (x1 & 1); bx <= x2; bx += 2) {
+					const cross = this.getx(bx, by);
 					if (!cross.isnull) { clist.add(cross); }
 				}
 			}
@@ -539,11 +552,11 @@ export class Board<
 		return clist;
 	}
 	borderinside(x1: number, y1: number, x2: number, y2: number) {
-		var blist = new BorderList(this.puzzle);
+		const blist = new BorderList(this.puzzle);
 		if (!!this.hasborder) {
-			for (var by = y1; by <= y2; by++) {
-				for (var bx = x1 + (((x1 + by) & 1) ^ 1); bx <= x2; bx += 2) {
-					var border = this.getb(bx, by);
+			for (let by = y1; by <= y2; by++) {
+				for (let bx = x1 + (((x1 + by) & 1) ^ 1); bx <= x2; bx += 2) {
+					const border = this.getb(bx, by);
 					if (!border.isnull) { blist.add(border); }
 				}
 			}
@@ -551,12 +564,12 @@ export class Board<
 		return blist;
 	}
 	excellinside(x1: number, y1: number, x2: number, y2: number) {
-		var exlist = new EXCellList(this.puzzle);
+		const exlist = new EXCellList(this.puzzle);
 		if (!!this.hasexcell) {
 			if (y1 < -1) { y1 = -1; }
-			for (var by = (y1 | 1); by <= y2; by += 2) {
-				for (var bx = (x1 | 1); bx <= x2; bx += 2) {
-					var excell = this.getex(bx, by);
+			for (let by = (y1 | 1); by <= y2; by += 2) {
+				for (let bx = (x1 | 1); bx <= x2; bx += 2) {
+					const excell = this.getex(bx, by);
 					if (!excell.isnull) { exlist.add(excell); }
 				}
 			}
@@ -590,8 +603,8 @@ export class Board<
 	}
 	modifyInfo(obj: BoardPiece, type: string) {
 		if (!this.isenableInfo()) { return; }
-		for (var i = 0; i < this.infolist.length; ++i) {
-			var info = this.infolist[i];
+		for (let i = 0; i < this.infolist.length; ++i) {
+			const info = this.infolist[i];
 			if (!!info.relation[type]) { info.modifyInfo(obj, type); }
 		}
 	}
@@ -600,8 +613,8 @@ export class Board<
 	// bd.irowakeRemake() 「色分けしなおす」ボタンを押した時などに色分けしなおす
 	//---------------------------------------------------------------------------
 	irowakeRemake() {
-		for (var i = 0; i < this.infolist.length; ++i) {
-			var info = this.infolist[i];
+		for (let i = 0; i < this.infolist.length; ++i) {
+			const info = this.infolist[i];
 			if (info.coloring) { info.newIrowake(); }
 		}
 	}
@@ -626,7 +639,7 @@ export class Board<
 			border: [] as any[],
 			excell: [] as any[]
 		} as const;
-		for (var g in bd2) {
+		for (const g in bd2) {
 			const group = g as keyof typeof bd2;
 			for (let c = 0; c < this[group].length; c++) {
 				bd2[group].push(this[group][c].getprops());
@@ -635,10 +648,10 @@ export class Board<
 		return bd2;
 	}
 	compareData(bd2: { [key in IGroup]: any[] }, callback: (group: IGroup, id: number, prop: string) => void) {
-		for (var g in bd2) {
+		for (const g in bd2) {
 			const group = g as IGroup
 			if (!this[group]) { continue; }
-			for (var c = 0; c < bd2[group].length; c++) {
+			for (let c = 0; c < bd2[group].length; c++) {
 				if (!this[group][c]) { continue; }
 				this[group][c].compare(bd2[group][c], callback);
 			}

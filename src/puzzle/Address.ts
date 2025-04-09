@@ -68,7 +68,7 @@ export class Position {
 	// pos.isinside() この場所が盤面内かどうか判断する
 	//---------------------------------------------------------------------------
 	isinside() {
-		var bd = this.board;
+		const bd = this.board;
 		return (this.bx >= bd.minbx && this.bx <= bd.maxbx &&
 			this.by >= bd.minby && this.by <= bd.maxby);
 	}
@@ -78,17 +78,18 @@ export class Position {
 	// pos.getvert() 指定されたPositionが縦か横か判定する
 	//---------------------------------------------------------------------------
 	getdir(pos: Address, diff: number) {
-		var dx = (pos.bx - this.bx), dy = (pos.by - this.by);
+		const dx = (pos.bx - this.bx);
+		const dy = (pos.by - this.by);
 		if (dx === 0 && dy === -diff) { return this.UP; }
-		else if (dx === 0 && dy === diff) { return this.DN; }
-		else if (dx === -diff && dy === 0) { return this.LT; }
-		else if (dx === diff && dy === 0) { return this.RT; }
+		if (dx === 0 && dy === diff) { return this.DN; }
+		if (dx === -diff && dy === 0) { return this.LT; }
+		if (dx === diff && dy === 0) { return this.RT; }
 		return this.NDIR;
 	}
 	getvert(pos: Address, diff: number) {
-		var dir = this.getdir(pos, diff);
+		const dir = this.getdir(pos, diff);
 		if (dir === this.UP || dir === this.DN) { return true; }
-		else if (dir === this.LT || dir === this.RT) { return false; }
+		if (dir === this.LT || dir === this.RT) { return false; }
 		return void 0;
 	}
 
@@ -98,9 +99,9 @@ export class Position {
 	//---------------------------------------------------------------------------
 	getnb(pos: Position) {
 		if (pos.bx - this.bx === 0 && pos.by - this.by === -2) { return this.relbd(0, -1); }
-		else if (pos.bx - this.bx === 0 && pos.by - this.by === 2) { return this.relbd(0, 1); }
-		else if (pos.bx - this.bx === -2 && pos.by - this.by === 0) { return this.relbd(-1, 0); }
-		else if (pos.bx - this.bx === 2 && pos.by - this.by === 0) { return this.relbd(1, 0); }
+		if (pos.bx - this.bx === 0 && pos.by - this.by === 2) { return this.relbd(0, 1); }
+		if (pos.bx - this.bx === -2 && pos.by - this.by === 0) { return this.relbd(-1, 0); }
+		if (pos.bx - this.bx === 2 && pos.by - this.by === 0) { return this.relbd(1, 0); }
 		return this.board.emptyborder;
 	}
 	getborderobj(pos: Address) {

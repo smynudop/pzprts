@@ -23,7 +23,7 @@ export default abstract class WrapperBase<ChildElement> {
 		this.canvas = parent;	// 親エレメントとなるdivエレメント
 
 		// variables for internal
-		this.canvasid = "_candle_" + (++_counter);
+		this.canvasid = `_candle_${++_counter}`;
 		this.child = null;	// 親エレメントの直下にあるエレメント
 
 		this.enableTextLengthWA = false;

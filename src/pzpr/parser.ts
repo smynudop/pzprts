@@ -9,7 +9,7 @@ export class Parser {
 	static parse(data: any, variety: string) {
 		if (data instanceof URLData || data instanceof FileData) { return data; }
 
-		return this.parseFile(data, variety) || this.parseURL(data);
+		return Parser.parseFile(data, variety) || Parser.parseURL(data);
 	}
 
 	static parseURL(url: URLData | string) {

@@ -8,15 +8,14 @@ import { BoardFlipOperation, BoardAdjustOperation } from "./Operation";
 import { type BoardPiece, type Border, Cell } from "./Piece";
 
 // 拡大縮小・回転反転用定数
-const UP = 0x01,
-	DN = 0x02,
-	LT = 0x03,
-	RT = 0x04,
-
-	EXPAND = 0x10,
-	REDUCE = 0x20,
-	TURN = 0x40,
-	FLIP = 0x80;
+const UP = 0x01;
+const DN = 0x02;
+const LT = 0x03;
+const RT = 0x04;
+const EXPAND = 0x10;
+const REDUCE = 0x20;
+const TURN = 0x40;
+const FLIP = 0x80;
 
 export type IBoardOperation =
 	"expandup" |
@@ -111,7 +110,8 @@ export class BoardExec {
 	execadjust(name: IBoardOperation) {
 		if (!this.boardtype[name]) { return; }
 
-		var puzzle = this.puzzle, bd = this.board;
+		const puzzle = this.puzzle;
+		const bd = this.board;
 		if (name.indexOf("reduce") === 0) {
 			if (name === "reduceup" || name === "reducedn") {
 				if (bd.rows <= 1) { return; }
@@ -126,7 +126,7 @@ export class BoardExec {
 		puzzle.painter.suspendAll();
 
 		// undo/redo時はexecadjust_mainを直接呼びます
-		var d = { x1: 0, y1: 0, x2: 2 * bd.cols, y2: 2 * bd.rows }; // TURNFLIPには範囲が必要
+		const d = { x1: 0, y1: 0, x2: 2 * bd.cols, y2: 2 * bd.rows }; // TURNFLIPには範囲が必要
 		this.execadjust_main(this.boardtype[name][1], d);
 		this.addOpe(d, name);
 
@@ -139,12 +139,12 @@ export class BoardExec {
 		puzzle.painter.unsuspend();
 	}
 	execadjust_main(key: number, d: ID) {
-		var bd = this.board;
+		const bd = this.board;
 		this.adjustBoardData(key, d);
 		if (bd.roommgr.hastop && (key & REDUCE)) { this.reduceRoomNumber(key, d); }
 
 		if (key & TURN) {
-			var tmp = bd.cols; bd.cols = bd.rows; bd.rows = tmp;
+			const tmp = bd.cols; bd.cols = bd.rows; bd.rows = tmp;
 			d = { x1: 0, y1: 0, x2: 2 * bd.cols, y2: 2 * bd.rows };
 		}
 		else if (key & EXPAND) {
@@ -172,7 +172,9 @@ export class BoardExec {
 	// bd.exec.addOpe() 指定された盤面(拡大・縮小, 回転・反転)操作を追加する
 	//------------------------------------------------------------------------------
 	addOpe(d: ID, name: IBoardOperation) {
-		var key = this.boardtype[name][1], puzzle = this.puzzle, ope;
+		const key = this.boardtype[name][1];
+		const puzzle = this.puzzle;
+		let ope;
 		if (key & this.TURNFLIP) { ope = new BoardFlipOperation(this.puzzle, d, name); }
 		else { ope = new BoardAdjustOperation(this.puzzle, name); }
 		puzzle.opemgr.add(ope);
@@ -184,13 +186,13 @@ export class BoardExec {
 	// bd.exec.isdel()        消去されるオブジェクトかどうか判定する
 	//------------------------------------------------------------------------------
 	expandGroup(group: IGroup, key: number) {
-		var bd = this.board;
-		var margin = bd.initGroup(group, bd.cols, bd.rows);
-		var groups = bd.getGroup(group);
-		var groups2 = groups.clone();
+		const bd = this.board;
+		let margin = bd.initGroup(group, bd.cols, bd.rows);
+		const groups = bd.getGroup(group);
+		const groups2 = groups.clone();
 		bd.setposGroup(group);
-		for (var i = groups.length - 1; i >= 0; i--) {
-			var piece = groups[i];
+		for (let i = groups.length - 1; i >= 0; i--) {
+			let piece = groups[i];
 			if (this.isdel(key, piece)) {
 				piece = bd.newObject(group, i);
 				groups[i] = piece;
@@ -204,12 +206,14 @@ export class BoardExec {
 		if (group === 'border') { this.expandborder(key); }
 	}
 	reduceGroup(group: IGroup, key: number) {
-		var bd = this.board;
+		const bd = this.board;
 		if (group === 'border') { this.reduceborder(key); }
 
-		var margin = 0, groups = bd.getGroup(group), groups2 = groups.clone();
-		for (var i = 0; i < groups.length; i++) {
-			var piece = groups[i];
+		let margin = 0;
+		const groups = bd.getGroup(group);
+		const groups2 = groups.clone();
+		for (let i = 0; i < groups.length; i++) {
+			const piece = groups[i];
 			if (this.isdel(key, piece)) {
 				piece.id = i;
 				groups2.add(piece);
@@ -217,13 +221,13 @@ export class BoardExec {
 			}
 			else if (margin > 0) { groups[i - margin] = groups[i]; }
 		}
-		var opemgr = this.puzzle.opemgr;
+		const opemgr = this.puzzle.opemgr;
 		if (!opemgr.undoExec && !opemgr.redoExec) {
 			opemgr.forceRecord = true;
 			groups2.allclear(true);
 			opemgr.forceRecord = false;
 		}
-		for (var i = 0; i < margin; i++) { groups.pop(); }
+		for (let i = 0; i < margin; i++) { groups.pop(); }
 	}
 	isdel(key: number, piece: BoardPiece): boolean {
 		//@ts-ignore
@@ -234,10 +238,10 @@ export class BoardExec {
 	// bd.exec.turnflipGroup() execadjust_main()から内部的に呼ばれる回転反転実行部
 	//------------------------------------------------------------------------------
 	turnflipGroup(group: IGroup, key: number, d: ID) {
-		var bd = this.board;
+		const bd = this.board;
 		if (group === 'excell') {
 			if (bd.hasexcell === 1 && (key & this.FLIP)) {
-				var d2 = { x1: d.x1, y1: d.y1, x2: d.x2, y2: d.y2 };
+				const d2 = { x1: d.x1, y1: d.y1, x2: d.x2, y2: d.y2 };
 				if (key === this.FLIPY) { d2.x1 = d2.x2 = -1; }
 				else if (key === this.FLIPX) { d2.y1 = d2.y2 = -1; }
 				d = d2;
@@ -247,10 +251,13 @@ export class BoardExec {
 			}
 		}
 
-		var objlist = bd.objectinside(group, d.x1, d.y1, d.x2, d.y2);
-		var converted: Record<number, any> = {}, xx = (d.x1 + d.x2), yy = (d.y1 + d.y2);
-		for (var i = 0; i < objlist.length; i++) {
-			var obj = objlist[i], id = null;
+		const objlist = bd.objectinside(group, d.x1, d.y1, d.x2, d.y2);
+		const converted: Record<number, any> = {};
+		const xx = (d.x1 + d.x2);
+		const yy = (d.y1 + d.y2);
+		for (let i = 0; i < objlist.length; i++) {
+			const obj = objlist[i];
+			let id = null;
 			switch (key) {
 				case this.FLIPY: id = bd.getObjectPos(group, obj.bx, yy - obj.by).id; break;
 				case this.FLIPX: id = bd.getObjectPos(group, xx - obj.bx, obj.by).id; break;
@@ -260,22 +267,22 @@ export class BoardExec {
 			converted[id] = obj;
 		}
 
-		var groups = bd.getGroup(group);
-		for (var n in converted) { groups[+n] = converted[n]; }
+		const groups = bd.getGroup(group);
+		for (const n in converted) { groups[+n] = converted[n]; }
 	}
 
 	//---------------------------------------------------------------------------
 	// bd.exec.distObj()      上下左右いずれかの外枠との距離を求める
 	//---------------------------------------------------------------------------
 	distObj(key: number, piece: BoardPiece) {
-		var bd = this.board;
+		const bd = this.board;
 		if (piece.isnull) { return -1; }
 
 		key &= 0x0F;
 		if (key === this.UP) { return piece.by; }
-		else if (key === this.DN) { return 2 * bd.rows - piece.by; }
-		else if (key === this.LT) { return piece.bx; }
-		else if (key === this.RT) { return 2 * bd.cols - piece.bx; }
+		if (key === this.DN) { return 2 * bd.rows - piece.by; }
+		if (key === this.LT) { return piece.bx; }
+		if (key === this.RT) { return 2 * bd.cols - piece.bx; }
 		return -1;
 	}
 
@@ -284,19 +291,20 @@ export class BoardExec {
 	// bd.exec.reduceborder() 盤面の縮小時、線を移動する
 	//---------------------------------------------------------------------------
 	expandborder(key: number) {
-		var bd = this.board, bdAsLine = bd.borderAsLine;
+		const bd = this.board;
+		const bdAsLine = bd.borderAsLine;
 		// borderAsLineじゃないUndo時は、後でオブジェクトを代入するので下の処理はパス
 		if (bdAsLine || !bd.puzzle.opemgr.undoExec) {
-			var group2 = new BorderList(this.puzzle);
+			const group2 = new BorderList(this.puzzle);
 			// 直前のexpandGroupで、bx,byプロパティが不定なままなので設定する
 			bd.setposBorders();
 
-			var dist = (bdAsLine ? 2 : 1);
-			for (var id = 0; id < bd.border.length; id++) {
-				var border = bd.border[id];
+			const dist = (bdAsLine ? 2 : 1);
+			for (let id = 0; id < bd.border.length; id++) {
+				const border = bd.border[id];
 				if (this.distObj(key, border) !== dist) { continue; }
 
-				var source = (bdAsLine ? this.outerBorder(id, key) : this.innerBorder(id, key));
+				const source = (bdAsLine ? this.outerBorder(id, key) : this.innerBorder(id, key));
 				this.copyBorder(border, source);
 				group2.add(source);
 			}
@@ -304,13 +312,13 @@ export class BoardExec {
 		}
 	}
 	reduceborder(key: number) {
-		var bd = this.board;
+		const bd = this.board;
 		if (bd.borderAsLine) {
-			for (var id = 0; id < bd.border.length; id++) {
-				var border = bd.border[id];
+			for (let id = 0; id < bd.border.length; id++) {
+				const border = bd.border[id];
 				if (this.distObj(key, border) !== 0) { continue; }
 
-				var source = this.innerBorder(id, key);
+				const source = this.innerBorder(id, key);
 				this.copyBorder(border, source);
 			}
 		}
@@ -330,21 +338,21 @@ export class BoardExec {
 		}
 	}
 	innerBorder(id: number, key: number) {
-		var border = this.board.border[id];
+		const border = this.board.border[id];
 		key &= 0x0F;
 		if (key === this.UP) { return border.relbd(0, 2); }
-		else if (key === this.DN) { return border.relbd(0, -2); }
-		else if (key === this.LT) { return border.relbd(2, 0); }
-		else if (key === this.RT) { return border.relbd(-2, 0); }
+		if (key === this.DN) { return border.relbd(0, -2); }
+		if (key === this.LT) { return border.relbd(2, 0); }
+		if (key === this.RT) { return border.relbd(-2, 0); }
 		return null;
 	}
 	outerBorder(id: number, key: number) {
-		var border = this.board.border[id];
+		const border = this.board.border[id];
 		key &= 0x0F;
 		if (key === this.UP) { return border.relbd(0, -2); }
-		else if (key === this.DN) { return border.relbd(0, 2); }
-		else if (key === this.LT) { return border.relbd(-2, 0); }
-		else if (key === this.RT) { return border.relbd(2, 0); }
+		if (key === this.DN) { return border.relbd(0, 2); }
+		if (key === this.LT) { return border.relbd(-2, 0); }
+		if (key === this.RT) { return border.relbd(2, 0); }
 		return null;
 	}
 
@@ -352,10 +360,10 @@ export class BoardExec {
 	// bd.exec.reduceRoomNumber()   盤面縮小時に数字つき部屋の処理を行う
 	//---------------------------------------------------------------------------
 	reduceRoomNumber(key: number, d: ID) {
-		var qnums = [];
-		var bd = this.board;
-		for (var c = 0; c < bd.cell.length; c++) {
-			var cell = bd.cell[c];
+		const qnums = [];
+		const bd = this.board;
+		for (let c = 0; c < bd.cell.length; c++) {
+			const cell = bd.cell[c];
 			if (!!this.insex.cell[this.distObj(key, cell)]) {
 				if (cell.qnum !== -1) {
 					qnums.push({ cell: cell, area: cell.room, pos: [cell.bx, cell.by], val: cell.qnum });
@@ -364,11 +372,12 @@ export class BoardExec {
 				cell.room.clist.remove(cell);
 			}
 		}
-		for (var i = 0; i < qnums.length; i++) {
-			var data = qnums[i], area = data.area;
-			var tcell = area.clist.getTopCell();
+		for (let i = 0; i < qnums.length; i++) {
+			const data = qnums[i];
+			const area = data.area;
+			const tcell = area.clist.getTopCell();
 			if (tcell.isnull) {
-				var opemgr = this.puzzle.opemgr;
+				const opemgr = this.puzzle.opemgr;
 				if (!opemgr.undoExec && !opemgr.redoExec) {
 					opemgr.forceRecord = true;
 					data.cell.addOpe('qnum', data.val, -1);
@@ -415,35 +424,36 @@ export class BoardExec {
 		}
 	}
 	adjustCellQdirArrow(key: number, d: ID) {
-		var trans = this.getTranslateDir(key);
-		var clist = this.board.cellinside(d.x1, d.y1, d.x2, d.y2);
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i];
-			var val = trans[cell.qdir]; if (!!val) { cell.setQdir(val); }
+		const trans = this.getTranslateDir(key);
+		const clist = this.board.cellinside(d.x1, d.y1, d.x2, d.y2);
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			const val = trans[cell.qdir]; if (!!val) { cell.setQdir(val); }
 		}
 	}
 	adjustCellQnumArrow(key: number, d: ID) {
-		var trans = this.getTranslateDir(key);
-		var clist = this.board.cellinside(d.x1, d.y1, d.x2, d.y2);
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i];
-			var val = trans[cell.qnum]; if (!!val) { cell.setQnum(val); }
-			var val = trans[cell.anum]; if (!!val) { cell.setAnum(val); }
+		const trans = this.getTranslateDir(key);
+		const clist = this.board.cellinside(d.x1, d.y1, d.x2, d.y2);
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			const val = trans[cell.qnum]; if (!!val) { cell.setQnum(val); }
+			const vala = trans[cell.anum]; if (!!vala) { cell.setAnum(vala); }
 		}
 	}
 
 	adjustBorderArrow(key: number, d: ID) {
 		if (key & this.TURNFLIP) {
-			var trans = this.getTranslateDir(key);
-			var blist = this.board.borderinside(d.x1, d.y1, d.x2, d.y2);
-			for (var i = 0; i < blist.length; i++) {
-				var border = blist[i], val;
+			const trans = this.getTranslateDir(key);
+			const blist = this.board.borderinside(d.x1, d.y1, d.x2, d.y2);
+			for (let i = 0; i < blist.length; i++) {
+				const border = blist[i];
+				let val;
 				val = trans[border.qdir]; if (!!val) { border.setQdir(val); }
 			}
 		}
 	}
 	getTranslateDir(key: number): Record<number, number> {
-		var trans = {};
+		let trans = {};
 		switch (key) {
 			case this.FLIPY: trans = { 1: 2, 2: 1 }; break;			// 上下反転
 			case this.FLIPX: trans = { 3: 4, 4: 3 }; break;			// 左右反転
@@ -458,87 +468,92 @@ export class BoardExec {
 	// bd.exec.adjustQues51_2()     回転・反転終了後の[＼]セルの調整
 	//------------------------------------------------------------------------------
 	adjustQues51_1(key: number, d: ID) {
-		var bx1 = (d.x1 | 1), by1 = (d.y1 | 1);
+		const bx1 = (d.x1 | 1);
+		const by1 = (d.y1 | 1);
 		this.qnumw = [];
 		this.qnumh = [];
 
-		var bd = this.board;
-		for (var by = by1; by <= d.y2; by += 2) {
+		const bd = this.board;
+		for (let by = by1; by <= d.y2; by += 2) {
 			this.qnumw[by] = [bd.getex(-1, by).qnum];
-			for (var bx = bx1; bx <= d.x2; bx += 2) {
-				var cell = bd.getc(bx, by);
+			for (let bx = bx1; bx <= d.x2; bx += 2) {
+				const cell = bd.getc(bx, by);
 				if (cell.is51cell()) { this.qnumw[by].push(cell.qnum); }
 			}
 		}
-		for (var bx = bx1; bx <= d.x2; bx += 2) {
+		for (let bx = bx1; bx <= d.x2; bx += 2) {
 			this.qnumh[bx] = [bd.getex(bx, -1).qnum2];
-			for (var by = by1; by <= d.y2; by += 2) {
-				var cell = bd.getc(bx, by);
+			for (let by = by1; by <= d.y2; by += 2) {
+				const cell = bd.getc(bx, by);
 				if (cell.is51cell()) { this.qnumh[bx].push(cell.qnum2); }
 			}
 		}
 	}
 	adjustQues51_2(key: number, d: ID) {
-		var xx = (d.x1 + d.x2), yy = (d.y1 + d.y2), bx1 = (d.x1 | 1), by1 = (d.y1 | 1), idx;
+		const xx = (d.x1 + d.x2);
+		const yy = (d.y1 + d.y2);
+		const bx1 = (d.x1 | 1);
+		const by1 = (d.y1 | 1);
+		let idx;
 
-		var bd = this.board;
+		const bd = this.board;
 		bd.disableInfo();
 		switch (key) {
 			case this.FLIPY: // 上下反転
-				for (var bx = bx1; bx <= d.x2; bx += 2) {
+				for (let bx = bx1; bx <= d.x2; bx += 2) {
 					idx = 1; this.qnumh[bx] = this.qnumh[bx].reverse();
 					bd.getex(bx, -1).setQnum2(this.qnumh[bx][0]);
-					for (var by = by1; by <= d.y2; by += 2) {
-						var cell = bd.getc(bx, by);
+					for (let by = by1; by <= d.y2; by += 2) {
+						const cell = bd.getc(bx, by);
 						if (cell.is51cell()) { cell.setQnum2(this.qnumh[bx][idx]); idx++; }
 					}
 				}
 				break;
 
 			case this.FLIPX: // 左右反転
-				for (var by = by1; by <= d.y2; by += 2) {
+				for (let by = by1; by <= d.y2; by += 2) {
 					idx = 1; this.qnumw[by] = this.qnumw[by].reverse();
 					bd.getex(-1, by).setQnum(this.qnumw[by][0]);
-					for (var bx = bx1; bx <= d.x2; bx += 2) {
-						var cell = bd.getc(bx, by);
+					for (let bx = bx1; bx <= d.x2; bx += 2) {
+						const cell = bd.getc(bx, by);
 						if (cell.is51cell()) { cell.setQnum(this.qnumw[by][idx]); idx++; }
 					}
 				}
 				break;
 
 			case this.TURNR: // 右90°反転
-				for (var by = by1; by <= d.y2; by += 2) {
+				for (let by = by1; by <= d.y2; by += 2) {
 					idx = 1; this.qnumh[by] = this.qnumh[by].reverse();
 					bd.getex(-1, by).setQnum(this.qnumh[by][0]);
-					for (var bx = bx1; bx <= d.x2; bx += 2) {
-						var cell = bd.getc(bx, by);
+					for (let bx = bx1; bx <= d.x2; bx += 2) {
+						const cell = bd.getc(bx, by);
 						if (cell.is51cell()) { cell.setQnum(this.qnumh[by][idx]); idx++; }
 					}
 				}
-				for (var bx = bx1; bx <= d.x2; bx += 2) {
+				for (let bx = bx1; bx <= d.x2; bx += 2) {
 					idx = 1;
 					bd.getex(bx, -1).setQnum2(this.qnumw[xx - bx][0]);
-					for (var by = by1; by <= d.y2; by += 2) {
-						var cell = bd.getc(bx, by);
+					for (let by = by1; by <= d.y2; by += 2) {
+						const cell = bd.getc(bx, by);
 						if (cell.is51cell()) { cell.setQnum2(this.qnumw[xx - bx][idx]); idx++; }
 					}
 				}
 				break;
 
 			case this.TURNL: // 左90°反転
-				for (var by = by1; by <= d.y2; by += 2) {
+				for (let by = by1; by <= d.y2; by += 2) {
 					idx = 1;
 					bd.getex(-1, by).setQnum(this.qnumh[yy - by][0]);
-					for (var bx = bx1; bx <= d.x2; bx += 2) {
-						var cell = bd.getc(bx, by);
+					for (let bx = bx1; bx <= d.x2; bx += 2) {
+						const cell = bd.getc(bx, by);
 						if (cell.is51cell()) { cell.setQnum(this.qnumh[yy - by][idx]); idx++; }
 					}
 				}
-				for (var bx = bx1; bx <= d.x2; bx += 2) {
+				for (let bx = bx1; bx <= d.x2; bx += 2) {
 					idx = 1; this.qnumw[bx] = this.qnumw[bx].reverse();
 					bd.getex(bx, -1).setQnum2(this.qnumw[bx][0]);
-					for (var by = by1; by <= d.y2; by += 2) {
-						var cell = bd.getc(bx, by);
+					for (let by = by1; by <= d.y2; by += 2) {
+						const cell = bd.getc(bx, by);
 						if (cell.is51cell()) { cell.setQnum2(this.qnumw[bx][idx]); idx++; }
 					}
 				}
@@ -551,8 +566,14 @@ export class BoardExec {
 	// bd.exec.getAfterPos()  回転・反転開始前のIN/OUTなどの位置の調整
 	//------------------------------------------------------------------------------
 	getAfterPos(key: number, d: ID, piece: BoardPiece) {
-		var puzzle = this.puzzle, bd = puzzle.board;
-		var xx = (d.x1 + d.x2), yy = (d.y1 + d.y2), bx1 = piece.bx, by1 = piece.by, bx2, by2;
+		const puzzle = this.puzzle;
+		const bd = puzzle.board;
+		const xx = (d.x1 + d.x2);
+		const yy = (d.y1 + d.y2);
+		const bx1 = piece.bx;
+		const by1 = piece.by;
+		let bx2;
+		let by2;
 		switch (key) {
 			case this.FLIPY: bx2 = bx1; by2 = yy - by1; break;
 			case this.FLIPX: bx2 = xx - bx1; by2 = by1; break;

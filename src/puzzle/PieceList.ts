@@ -66,7 +66,7 @@ export class PieceList<T extends BoardPiece> extends Array<T> {
 	// indexOf : Array.prototype.indexOf,
 	// include : function(target){ return this.indexOf(target)>=0;},
 	remove(piece: T) {
-		var idx = this.indexOf(piece);
+		const idx = this.indexOf(piece);
 		if (idx >= 0) { this.splice(idx, 1); }
 	}
 
@@ -77,16 +77,16 @@ export class PieceList<T extends BoardPiece> extends Array<T> {
 	//--------------------------------------------------------------------------------
 	seterr(num: number) {
 		if (!this.puzzle.board.isenableSetError()) { return; }
-		for (var i = 0; i < this.length; i++) { this[i].error = num; }
+		for (let i = 0; i < this.length; i++) { this[i].error = num; }
 	}
 	setnoerr() {
 		if (!this.puzzle.board.isenableSetError()) { return; }
-		for (var i = 0; i < this.length; i++) {
+		for (let i = 0; i < this.length; i++) {
 			if (this[i].error === 0) { this[i].error = -1; }
 		}
 	}
 	setinfo(num: number) {
-		for (var i = 0; i < this.length; i++) { this[i].qinfo = num; }
+		for (let i = 0; i < this.length; i++) { this[i].qinfo = num; }
 	}
 
 	//---------------------------------------------------------------------------
@@ -104,10 +104,10 @@ export class PieceList<T extends BoardPiece> extends Array<T> {
 	errclear() { this.propsclear(['info'], false); }
 	trialclear() { this.propsclear(['trial'], false); }
 	propsclear(target: ("ques" | "ans" | "sub" | "info" | "trial")[], isrec: boolean) {
-		var props = (this.length > 0 ? this[0].getproplist(target) : []);
-		for (var i = 0; i < this.length; i++) {
-			var piece = this[i];
-			for (var j = 0; j < props.length; j++) {
+		const props = (this.length > 0 ? this[0].getproplist(target) : []);
+		for (let i = 0; i < this.length; i++) {
+			const piece = this[i];
+			for (let j = 0; j < props.length; j++) {
 				piece.propclear(props[j], isrec);
 			}
 		}
@@ -123,10 +123,10 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 	//---------------------------------------------------------------------------
 	checkCmp: any = null
 	getRectSize() {
-		var bd = this.puzzle.board;
-		var d = { x1: bd.maxbx + 1, x2: bd.minbx - 1, y1: bd.maxby + 1, y2: bd.minby - 1, cols: 0, rows: 0, cnt: 0 };
-		for (var i = 0; i < this.length; i++) {
-			var cell = this[i];
+		const bd = this.puzzle.board;
+		const d = { x1: bd.maxbx + 1, x2: bd.minbx - 1, y1: bd.maxby + 1, y2: bd.minby - 1, cols: 0, rows: 0, cnt: 0 };
+		for (let i = 0; i < this.length; i++) {
+			const cell = this[i];
 			if (d.x1 > cell.bx) { d.x1 = cell.bx; }
 			if (d.x2 < cell.bx) { d.x2 = cell.bx; }
 			if (d.y1 > cell.by) { d.y1 = cell.by; }
@@ -142,7 +142,7 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 	// clist.getQnumCell()  指定されたClistの中で一番左上にある数字のあるセルを返す
 	//--------------------------------------------------------------------------------
 	getQnumCell() {
-		for (var i = 0, len = this.length; i < len; i++) {
+		for (let i = 0, len = this.length; i < len; i++) {
 			if (this[i].isNum()) { return this[i]; }
 		}
 		return this.puzzle.board.emptycell;
@@ -152,9 +152,12 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 	// clist.getTopCell()  指定されたClistの中で一番左上にあるセルを返す
 	//--------------------------------------------------------------------------------
 	getTopCell() {
-		var bd = this.puzzle.board, tcell = null, bx = bd.maxbx, by = bd.maxby;
-		for (var i = 0; i < this.length; i++) {
-			var cell = this[i];
+		const bd = this.puzzle.board;
+		let tcell = null;
+		let bx = bd.maxbx;
+		let by = bd.maxby;
+		for (let i = 0; i < this.length; i++) {
+			const cell = this[i];
 			if (cell.bx > bx || (cell.bx === bx && cell.by >= by)) { continue; }
 			tcell = this[i];
 			bx = cell.bx;
@@ -167,9 +170,9 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 	// clist.eraseLines()  Clistに含まれるlineを消去します
 	//---------------------------------------------------------------------------
 	eraseLines() {
-		var count = 0;
-		for (var i = 0, len = this.length; i < len; i++) {
-			for (var j = i + 1; j < len; j++) {
+		const count = 0;
+		for (let i = 0, len = this.length; i < len; i++) {
+			for (let j = i + 1; j < len; j++) {
 				//todo
 				// var border = this.puzzle.mouse.getnb(this[i].getaddr(), this[j].getaddr());
 				// if (!border.isnull) { border.removeLine(); count++; }
@@ -182,7 +185,7 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 	// clist.draw()   盤面に自分の周囲を描画する
 	//---------------------------------------------------------------------------
 	draw() {
-		var d = this.getRectSize();
+		const d = this.getRectSize();
 		this.puzzle.painter.paintRange(d.x1 - 1, d.y1 - 1, d.x2 + 1, d.y2 + 1);
 	}
 }
@@ -201,18 +204,24 @@ export class BorderList extends PieceList<Border> {
 	// blist.crossinside() 線が重なる交点のリストを取得する
 	//---------------------------------------------------------------------------
 	cellinside() {
-		var clist = new CellList(this.puzzle), pushed = [];
-		for (var i = 0; i < this.length; i++) {
-			var border = this[i], cell1 = border.sidecell[0], cell2 = border.sidecell[1];
+		const clist = new CellList(this.puzzle);
+		const pushed = [];
+		for (let i = 0; i < this.length; i++) {
+			const border = this[i];
+			const cell1 = border.sidecell[0];
+			const cell2 = border.sidecell[1];
 			if (!cell1.isnull && pushed[cell1.id] !== true) { clist.add(cell1 as Cell); pushed[cell1.id] = true; }
 			if (!cell2.isnull && pushed[cell2.id] !== true) { clist.add(cell2 as Cell); pushed[cell2.id] = true; }
 		}
 		return clist;
 	}
 	crossinside() {
-		var clist = new CrossList(this.puzzle), pushed = [];
-		for (var i = 0; i < this.length; i++) {
-			var border = this[i], cross1 = border.sidecross[0], cross2 = border.sidecross[1];
+		const clist = new CrossList(this.puzzle);
+		const pushed = [];
+		for (let i = 0; i < this.length; i++) {
+			const border = this[i];
+			const cross1 = border.sidecross[0];
+			const cross2 = border.sidecross[1];
 			if (!cross1.isnull && pushed[cross1.id] !== true) { clist.add(cross1); pushed[cross1.id] = true; }
 			if (!cross2.isnull && pushed[cross2.id] !== true) { clist.add(cross2); pushed[cross2.id] = true; }
 		}

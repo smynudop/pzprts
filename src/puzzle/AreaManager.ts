@@ -11,9 +11,6 @@ import type { IGroup } from './Board';
 //     回答チェックやURL出力前には一旦resetRoomNumber()等が必要です。
 //--------------------------------------------------------------------------------
 export class AreaGraphBase extends GraphBase {
-	constructor(puzzle: Puzzle) {
-		super(puzzle)
-	}
 	pointgroup: IGroup = 'cell'
 
 	isedgevalidbynodeobj(cell1: Cell, cell2: Cell) {
@@ -41,11 +38,13 @@ export class AreaGraphBase extends GraphBase {
 	//---------------------------------------------------------------------------
 	removeEdgeByNodeObj(cell: Cell) {
 		// Edgeの除去
-		var sidenodeobj = this.getSideObjByNodeObj(cell);
-		var node1 = this.getObjNodeList(cell)[0];
-		var preedges = node1.nodes.length, component = node1.component, endetach = (this.modifyNodes.length === 0);
-		for (var i = 0; i < sidenodeobj.length; i++) {
-			var node2 = this.getObjNodeList(sidenodeobj[i])[0];
+		const sidenodeobj = this.getSideObjByNodeObj(cell);
+		const node1 = this.getObjNodeList(cell)[0];
+		const preedges = node1.nodes.length;
+		const component = node1.component;
+		const endetach = (this.modifyNodes.length === 0);
+		for (let i = 0; i < sidenodeobj.length; i++) {
+			const node2 = this.getObjNodeList(sidenodeobj[i])[0];
 			if (!!node1 && !!node2) {
 				this.removeEdge(node1, node2);
 
@@ -66,15 +65,15 @@ export class AreaGraphBase extends GraphBase {
 	}
 	addEdgeByNodeObj(cell: Cell) {
 		// Nodeを付加する
-		for (var i = 0, len = this.calcNodeCount(cell); i < len; i++) { this.createNode(cell); }
+		for (let i = 0, len = this.calcNodeCount(cell); i < len; i++) { this.createNode(cell); }
 
 		// Edgeの付加
-		var sidenodeobj = this.getSideObjByNodeObj(cell);
-		var node1 = this.getObjNodeList(cell)[0];
-		var enattach = (this.modifyNodes.length === 0);
-		for (var i = 0; i < sidenodeobj.length; i++) {
+		const sidenodeobj = this.getSideObjByNodeObj(cell);
+		const node1 = this.getObjNodeList(cell)[0];
+		const enattach = (this.modifyNodes.length === 0);
+		for (let i = 0; i < sidenodeobj.length; i++) {
 			if (!this.isedgevalidbynodeobj(cell, sidenodeobj[i])) { continue; }
-			var node2 = this.getObjNodeList(sidenodeobj[i])[0];
+			const node2 = this.getObjNodeList(sidenodeobj[i])[0];
 			if (!!node1 && !!node2) {
 				this.addEdge(node1, node2);
 
@@ -105,9 +104,6 @@ export class AreaGraphBase extends GraphBase {
 // ☆AreaNumberGraphクラス 数字情報オブジェクトのクラス
 //--------------------------------------------------------------------------------
 export class AreaShadeGraph extends AreaGraphBase {
-	constructor(puzzle: Puzzle) {
-		super(puzzle)
-	}
 	relation = { 'cell.qans': 'node' }
 	setComponentRefs(obj: any, component: any) { obj.sblk = component; }
 	getObjNodeList(nodeobj: any) { return nodeobj.sblknodes; }
@@ -129,8 +125,8 @@ export class AreaShadeGraph extends AreaGraphBase {
 	// sblkmgr.repaintNodes() ブロックを再描画する
 	//--------------------------------------------------------------------------------
 	repaintNodes(components: GraphComponent[]) {
-		var clist_all = new CellList(this.puzzle);
-		for (var i = 0; i < components.length; i++) {
+		const clist_all = new CellList(this.puzzle);
+		for (let i = 0; i < components.length; i++) {
 			clist_all.extend(components[i].getnodeobjs());
 		}
 		this.puzzle.painter.repaintBlocks(clist_all);
@@ -138,9 +134,6 @@ export class AreaShadeGraph extends AreaGraphBase {
 }
 
 export class AreaUnshadeGraph extends AreaGraphBase {
-	constructor(puzzle: Puzzle) {
-		super(puzzle)
-	}
 	relation = { 'cell.qans': 'node' }
 	setComponentRefs(obj: any, component: GraphComponent) { obj.ublk = component; }
 	getObjNodeList(nodeobj: any) { return nodeobj.ublknodes; }
@@ -150,9 +143,6 @@ export class AreaUnshadeGraph extends AreaGraphBase {
 }
 
 export class AreaNumberGraph extends AreaGraphBase {
-	constructor(puzzle: Puzzle) {
-		super(puzzle)
-	}
 	relation = { 'cell.qnum': 'node', 'cell.anum': 'node', 'cell.qsub': 'node' }
 	setComponentRefs(obj: any, component: GraphComponent) { obj.nblk = component; }
 	getObjNodeList(nodeobj: any) { return nodeobj.nblknodes; }
@@ -165,9 +155,6 @@ export class AreaNumberGraph extends AreaGraphBase {
 // ☆AreaRoomGraphクラス 部屋情報オブジェクトのクラス
 //--------------------------------------------------------------------------------
 export class AreaRoomGraph extends AreaGraphBase {
-	constructor(puzzle: Puzzle) {
-		super(puzzle)
-	}
 	relation = { 'cell.ques': 'node', 'border.ques': 'separator', 'border.qans': 'separator' }
 
 	hastop = false
@@ -193,22 +180,25 @@ export class AreaRoomGraph extends AreaGraphBase {
 	// roomgraph.incdecBorderCount() 線が引かれたり消された時に、lcnt変数を生成し直す
 	//---------------------------------------------------------------------------
 	resetBorderCount() {
-		var bd = this.puzzle.board, borders = bd.border;
+		const bd = this.puzzle.board;
+		const borders = bd.border;
 		/* 外枠のカウントをあらかじめ足しておく */
-		for (var c = 0; c < bd.cross.length; c++) {
-			var cross = bd.cross[c], bx = cross.bx, by = cross.by;
-			var ischassis = (bd.hasborder === 1 ? (bx === 0 || bx === bd.cols * 2 || by === 0 || by === bd.rows * 2) : false);
+		for (let c = 0; c < bd.cross.length; c++) {
+			const cross = bd.cross[c];
+			const bx = cross.bx;
+			const by = cross.by;
+			const ischassis = (bd.hasborder === 1 ? (bx === 0 || bx === bd.cols * 2 || by === 0 || by === bd.rows * 2) : false);
 			cross.lcnt = (ischassis ? 2 : 0);
 		}
-		for (var id = 0; id < borders.length; id++) {
+		for (let id = 0; id < borders.length; id++) {
 			if (!this.isedgevalidbylinkobj(borders[id])) {
 				this.incdecBorderCount(borders[id], true);
 			}
 		}
 	}
 	incdecBorderCount(border: Border, isset: boolean) {
-		for (var i = 0; i < 2; i++) {
-			var cross = border.sidecross[i];
+		for (let i = 0; i < 2; i++) {
+			const cross = border.sidecross[i];
 			if (!cross.isnull) {
 				if (isset) { cross.lcnt++; } else { cross.lcnt--; }
 			}
@@ -220,7 +210,7 @@ export class AreaRoomGraph extends AreaGraphBase {
 	// roommgr.removeEdgeBySeparator() 指定されたオブジェクトの場所からEdgeを除去する
 	//---------------------------------------------------------------------------
 	addEdgeBySeparator(border: Border) { // 境界線を消した時の処理
-		var sidenodes = this.getSideNodesBySeparator(border);
+		const sidenodes = this.getSideNodesBySeparator(border);
 		if (!sidenodes) { return; }
 		this.addEdge(sidenodes[0], sidenodes[1]);
 		if (border.sidecross[0].lcnt === 0 || border.sidecross[1].lcnt === 0) {
@@ -231,7 +221,7 @@ export class AreaRoomGraph extends AreaGraphBase {
 		}
 	}
 	removeEdgeBySeparator(border: Border) { // 境界線を引いた時の処理
-		var sidenodes = this.getSideNodesBySeparator(border);
+		const sidenodes = this.getSideNodesBySeparator(border);
 		if (!sidenodes) { return; }
 		this.removeEdge(sidenodes[0], sidenodes[1]);
 		if (border.sidecross[0].lcnt === 1 || border.sidecross[1].lcnt === 1) {
@@ -244,9 +234,10 @@ export class AreaRoomGraph extends AreaGraphBase {
 	//--------------------------------------------------------------------------------
 	setTopOfRoom_combine(cell1: Cell, cell2: Cell) {
 		if (!cell1.room || !cell2.room || cell1.room === cell2.room) { return; }
-		var merged, keep;
-		var tcell1 = cell1.room.top;
-		var tcell2 = cell2.room.top;
+		let merged;
+		let keep;
+		const tcell1 = cell1.room.top;
+		const tcell2 = cell2.room.top;
 		if (tcell1.bx > tcell2.bx || (tcell1.bx === tcell2.bx && tcell1.by > tcell2.by)) { merged = tcell1; keep = tcell2; }
 		else { merged = tcell2; keep = tcell1; }
 
@@ -266,14 +257,15 @@ export class AreaRoomGraph extends AreaGraphBase {
 	// roommgr.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
 	setExtraData(component: GraphComponent) {
-		var clist = component.clist = new CellList(this.puzzle, component.getnodeobjs());
+		const clist = component.clist = new CellList(this.puzzle, component.getnodeobjs());
 		if (this.hastop) {
 			component.top = clist.getTopCell();
 
 			if (this.rebuildmode) {
-				var val = -1, clist = clist, top = component.top;
-				for (var i = 0, len = clist.length; i < len; i++) {
-					var cell = clist[i];
+				let val = -1;
+				const top = component.top;
+				for (let i = 0, len = clist.length; i < len; i++) {
+					const cell = clist[i];
 					if (cell.room === component && cell.qnum !== -1) {
 						if (val === -1) { val = cell.qnum; }
 						if (top !== cell) { cell.qnum = -1; }
@@ -293,14 +285,17 @@ export class AreaRoomGraph extends AreaGraphBase {
 	// roommgr.getSideAreaInfo()  接しているが異なる領域部屋の情報を取得する
 	//---------------------------------------------------------------------------
 	getSideAreaInfo() {
-		var sides = [], len = this.components.length, adjs: Record<string, boolean> = {}, bd = this.puzzle.board;
-		for (var r = 0; r < this.components.length; r++) { this.components[r].id = r; }
-		for (var id = 0; id < bd.border.length; id++) {
-			var room1 = this.getComponentRefs(bd.border[id].sidecell[0]);
-			var room2 = this.getComponentRefs(bd.border[id].sidecell[1]);
+		const sides = [];
+		const len = this.components.length;
+		const adjs: Record<string, boolean> = {};
+		const bd = this.puzzle.board;
+		for (let r = 0; r < this.components.length; r++) { this.components[r].id = r; }
+		for (let id = 0; id < bd.border.length; id++) {
+			const room1 = this.getComponentRefs(bd.border[id].sidecell[0]);
+			const room2 = this.getComponentRefs(bd.border[id].sidecell[1]);
 			if (room1 === room2 || !room1 || !room2) { continue; }
 
-			var key = (room1.id < room2.id ? room1.id * len + room2.id : room2.id * len + room1.id);
+			const key = (room1.id < room2.id ? room1.id * len + room2.id : room2.id * len + room1.id);
 			if (!!adjs[key]) { continue; }
 			adjs[key] = true;
 

@@ -39,8 +39,8 @@ export class URLData {
     //---------------------------------------------------------------------------
     parseURLType() {
         /* URLからパズルの種類・URLの種類を判定する */
-        var url = this.url;
-        delete this.url;
+        const url = this.url;
+        this.url = undefined;
         // カンペンの場合
         if (url.match(/www\.kanpen\.net/) || url.match(/www\.geocities(\.co)?\.jp\/pencil_applet/)) {
             url.match(/([0-9a-z]+)\.html/);
@@ -74,7 +74,7 @@ export class URLData {
         }
         // ぱずぷれv3の場合
         else {
-            var qs = url.indexOf("/", url.indexOf("?"));
+            const qs = url.indexOf("/", url.indexOf("?"));
             if (qs > -1) {
                 this.pid = url.substring(url.indexOf("?") + 1, qs);
                 this.qdata = url.substr(qs + 1);
@@ -92,11 +92,13 @@ export class URLData {
     //---------------------------------------------------------------------------
     outputURLType() {
         /* URLの種類からURLを取得する */
-        var domain = (!pzpr.env.node ? document.domain : ''), url = "", pid = this.pid;
+        let domain = (!pzpr.env.node ? document.domain : '');
+        let url = "";
+        const pid = this.pid;
         if (!!domain) { domain += location.pathname; }
         else { domain = "pzv.jp/p.html"; }
         switch (this.type) {
-            case Constants.URL_PZPRV3: url = "http://" + domain + "?%PID%/"; break;
+            case Constants.URL_PZPRV3: url = `http://${domain}?%PID%/`; break;
             case Constants.URL_KANPEN: url = "http://www.kanpen.net/%KID%.html?problem="; break;
             case Constants.URL_KANPENP: url = "http://www.kanpen.net/%KID%.html?pzpr="; break;
             case Constants.URL_HEYAAPP: url = "http://www.geocities.co.jp/heyawake/?problem="; break;
@@ -111,11 +113,13 @@ export class URLData {
     //                   qdata -> [(pflag)/](cols)/(rows)/(bstr)
     //---------------------------------------------------------------------------
     parseURLData() {
-        var inp = this.qdata.split("/"), col = 0, row = 0;
-        delete this.qdata;
+        const inp = this.qdata.split("/");
+        let col = 0;
+        let row = 0;
+        this.qdata = undefined;
         /* URLにつけるオプション */
         if (this.type !== Constants.URL_KANPEN && this.type !== Constants.URL_HEYAAPP) {
-            if (!!inp[0] && !isNaN(+inp[0])) { inp.unshift(""); }
+            if (!!inp[0] && !Number.isNaN(+inp[0])) { inp.unshift(""); }
             this.pflag = inp.shift();
         }
 
@@ -134,7 +138,7 @@ export class URLData {
             }
         }
         else if (this.type === Constants.URL_HEYAAPP) {
-            var size = inp.shift()!.split("x");
+            const size = inp.shift()?.split("x");
             col = +size[0];
             row = +size[1];
         }
@@ -154,7 +158,9 @@ export class URLData {
     // ★ outputURLData() qdataを生成する
     //---------------------------------------------------------------------------
     outputURLData() {
-        var col = this.cols, row = this.rows, out = [] as any[];
+        const col = this.cols;
+        const row = this.rows;
+        const out = [] as any[];
 
         /* URLにつけるオプション */
         if (this.type !== Constants.URL_KANPEN && this.type !== Constants.URL_HEYAAPP) {
@@ -187,7 +193,7 @@ export class URLData {
         out.push(this.body);
 
         /* 末尾が0-9,a-z,A-Z以外の時にt.coで情報が欠落しないよう/を追加 */
-        var body = out.join("/");
+        let body = out.join("/");
         if (!body.charAt(body.length - 1).match(/[a-zA-Z0-9]/)) { body += '/'; }
         return body;
     }
@@ -217,7 +223,8 @@ export class URLData {
                 break;
             case 'bonsan':
                 if (this.pflag.indexOf('c') < 0) {
-                    var col = this.cols, row = this.rows;
+                    const col = this.cols;
+                    const row = this.rows;
                     if (this.body.substr(0, ((((col - 1) * row + 4) / 5) | 0) + (((col * (row - 1) + 4) / 5) | 0) || 0).match(/[^0]/)) {
                         this.pid = 'heyabon';
                     }
@@ -225,9 +232,10 @@ export class URLData {
                 break;
             case 'kramma':
                 if (this.pflag.indexOf('c') < 0) {
-                    var len = (this.cols - 1) * (this.rows - 1), cc = 0;
-                    for (var i = 0; i < this.body.length; i++) {
-                        var ca = this.body.charAt(i);
+                    const len = (this.cols - 1) * (this.rows - 1);
+                    let cc = 0;
+                    for (let i = 0; i < this.body.length; i++) {
+                        const ca = this.body.charAt(i);
                         if (ca.match(/\w/)) {
                             cc += Number.parseInt(ca, 36);
                             if (cc < len) { this.pid = 'kramman'; break; }

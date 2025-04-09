@@ -62,7 +62,7 @@ export class Puzzle<
 		option = option || {};
 
 		this.instancetype = option.type || 'editor';
-		var modeid = { editor: 0, player: 1, viewer: 2 }[this.instancetype];
+		const modeid = { editor: 0, player: 1, viewer: 2 }[this.instancetype];
 		this.playeronly = !!modeid;			// 回答モードのみで動作する
 		this.editmode = !this.playeronly;	// 問題配置モード
 		this.playmode = !this.editmode;		// 回答モード
@@ -202,11 +202,11 @@ export class Puzzle<
 		this.listeners[eventname].push({ func: func, once: !!once });
 	}
 	emit(eventname: string, ...args: any[]) {
-		var evlist = this.listeners[eventname];
+		const evlist = this.listeners[eventname];
 		if (!!evlist) {
 			args.unshift(this);
-			for (var i = 0; i < evlist.length; i++) {
-				var ev = evlist[i];
+			for (let i = 0; i < evlist.length; i++) {
+				const ev = evlist[i];
 				if (evlist[i].once) { evlist.splice(i, 1); i--; }
 				ev.func(this, ...args);
 			}
@@ -219,8 +219,8 @@ export class Puzzle<
 	setCanvas(el: HTMLElement, type: string = null) {
 		if (!el) { return; }
 
-		var rect = pzpr.util.getRect(el);
-		var _div = document.createElement('div');
+		const rect = pzpr.util.getRect(el);
+		const _div = document.createElement('div');
 		// _div.style.width = rect.width + 'px';
 		// _div.style.height = rect.height + 'px';
 		el.appendChild(_div);
@@ -272,24 +272,24 @@ export class Puzzle<
 	// owner.toBuffer()  盤面画像をファイルデータそのままで出力する
 	//---------------------------------------------------------------------------
 	toDataURL(type: string, quality: number, option: any) {
-		var imageopt = parseImageOption(type, quality, option);
-		var canvas = getLocalCanvas(this, imageopt);
-		var dataurl = canvas.toDataURL(imageopt.mimetype, imageopt.quality);
+		const imageopt = parseImageOption(type, quality, option);
+		const canvas = getLocalCanvas(this, imageopt);
+		const dataurl = canvas.toDataURL(imageopt.mimetype, imageopt.quality);
 		if (!!canvas.parentNode) { canvas.parentNode.removeChild(canvas); }
 		return dataurl;
 	}
 	toBlob(callback: (blob: Blob) => void, type: string, quality: number, option: any) {
-		var imageopt = parseImageOption(type, quality, option);
-		var canvas = getLocalCanvas(this, imageopt);
+		const imageopt = parseImageOption(type, quality, option);
+		const canvas = getLocalCanvas(this, imageopt);
 		canvas.toBlob(function (blob) {
 			callback(blob);
 			if (!!canvas.parentNode) { canvas.parentNode.removeChild(canvas); }
 		}, imageopt.mimetype, imageopt.quality);
 	}
 	toBuffer(type: string, quality: number, option: any) {
-		var imageopt = parseImageOption(type, quality, option);
-		var canvas = getLocalCanvas(this, imageopt);
-		var data = canvas.toBuffer(imageopt.mimetype, imageopt.quality);
+		const imageopt = parseImageOption(type, quality, option);
+		const canvas = getLocalCanvas(this, imageopt);
+		const data = canvas.toBuffer(imageopt.mimetype, imageopt.quality);
 		if (!!canvas.parentNode) { canvas.parentNode.removeChild(canvas); }
 		return data;
 	}
@@ -408,7 +408,7 @@ export class Puzzle<
 		this.redraw();
 	}
 	errclear() {
-		var isclear = this.board.errclear();
+		const isclear = this.board.errclear();
 		if (isclear) {
 			this.redraw(true);	/* 描画キャッシュを破棄して描画し直す */
 		}
@@ -527,9 +527,9 @@ function setCanvas_main(puzzle: Puzzle, type: string) {
 		pzpr.util.unselectable(g.canvas);
 		g.child.style.pointerEvents = 'none';
 		if (g.use.canvas && !puzzle.subcanvas) {
-			var canvas = puzzle.subcanvas = createSubCanvas('canvas');
+			const canvas = puzzle.subcanvas = createSubCanvas('canvas');
 			if (!!document.body) {
-				canvas.id = "_" + (new Date()).getTime() + type; /* 何か他とかぶらないようなID */
+				canvas.id = `_${(new Date()).getTime()}${type}`; /* 何か他とかぶらないようなID */
 				canvas.style.position = 'absolute';
 				canvas.style.left = '-10000px';
 				canvas.style.top = '0px';
@@ -541,7 +541,7 @@ function setCanvas_main(puzzle: Puzzle, type: string) {
 }
 function createSubCanvas(type: string) {
 	if (!pzpr.Candle.enable[type]) { return null; }
-	var el = document.createElement('div');
+	const el = document.createElement('div');
 	pzpr.Candle.start(el, type);
 	return el;
 }
@@ -550,7 +550,8 @@ function createSubCanvas(type: string) {
 //  postCanvasReady()  Canvas設定＆ready後の初期化処理を行う
 //---------------------------------------------------------------------------
 export function postCanvasReady(puzzle: Puzzle) {
-	const pc = puzzle.painter, opt = puzzle.preInitCanvasInfo;
+	const pc = puzzle.painter;
+	const opt = puzzle.preInitCanvasInfo;
 
 	if (puzzle.preInitCanvasInfo) {
 		if (puzzle.instancetype !== 'viewer') {
@@ -567,7 +568,7 @@ export function postCanvasReady(puzzle: Puzzle) {
 				pc.resizeCanvasByCellSize(opt.cellsize);
 			}
 		}
-		delete puzzle.preInitCanvasInfo;
+		puzzle.preInitCanvasInfo = undefined;
 	}
 
 	pc.initCanvas();
@@ -617,9 +618,9 @@ function setCanvasEvents(puzzle: Puzzle) {
 //  generateLocalCanvas()  toDataURL, toBlobの共通処理
 //---------------------------------------------------------------------------
 function getLocalCanvas(puzzle: Puzzle, imageopt: any) {
-	var imgcanvas = createSubCanvas(imageopt.type);
+	const imgcanvas = createSubCanvas(imageopt.type);
 
-	var pc2 = new Graphic(puzzle);
+	const pc2 = new Graphic(puzzle);
 	pc2.context = imgcanvas.getContext("2d");
 	pc2.context.enableTextLengthWA = false;
 	pc2.outputImage = true;		/* 一部画像出力時に描画しないオブジェクトがあるパズル向け設定 */
@@ -637,9 +638,10 @@ function getLocalCanvas(puzzle: Puzzle, imageopt: any) {
 //  generateLocalCanvas()  toDataURL, toBlobの入力オプション解析処理
 //---------------------------------------------------------------------------
 function parseImageOption(type: string, quality: number, option: any) { // (type,quality,option)のはず
-	var imageopt = {} as any;
+	const imageopt = {} as any;
 
-	var cellsize = null, bgcolor = null
+	let cellsize = null
+	let bgcolor = null
 	if (quality > 1.01) {
 		cellsize = quality
 		quality = null;
@@ -650,7 +652,7 @@ function parseImageOption(type: string, quality: number, option: any) { // (type
 
 
 	imageopt.type = ((type || pzpr.Candle.current).match(/svg/) ? 'svg' : 'canvas');
-	imageopt.mimetype = (imageopt.type !== 'svg' ? 'image/' + type : 'image/svg+xml');
+	imageopt.mimetype = (imageopt.type !== 'svg' ? `image/${type}` : 'image/svg+xml');
 	if (quality !== null && quality !== void 0) { imageopt.quality = quality; }
 
 	if (cellsize !== null) { imageopt.cellsize = cellsize; }

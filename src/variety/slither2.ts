@@ -16,7 +16,7 @@ class SlitherMouseEvent extends MouseEvent1 {
         play: ['line', 'peke', 'bgcolor', 'bgcolor1', 'bgcolor2', 'clear', 'info-line']
     }
     mouseinput_auto() {
-        var puzzle = this.puzzle;
+        const puzzle = this.puzzle;
         if (puzzle.playmode) {
             if (this.checkInputBGcolor()) {
                 this.inputBGcolor();
@@ -40,7 +40,7 @@ class SlitherMouseEvent extends MouseEvent1 {
     }
 
     checkInputBGcolor() {
-        var inputbg = (this.pid === 'bag' || this.puzzle.execConfig('bgcolor'));
+        let inputbg = (this.pid === 'bag' || this.puzzle.execConfig('bgcolor'));
         if (inputbg) {
             if (this.mousestart) { inputbg = this.getpos(0.25).oncell(); }
             else if (this.mousemove) { inputbg = (this.inputData >= 10); }
@@ -75,7 +75,8 @@ class SlitherCell extends Cell {
     }
 
     getdir4BorderLine1() {
-        var adb = this.adjborder, cnt = 0;
+        const adb = this.adjborder;
+        let cnt = 0;
         if (adb.top.isLine()) { cnt++; }
         if (adb.bottom.isLine()) { cnt++; }
         if (adb.left.isLine()) { cnt++; }
@@ -162,8 +163,9 @@ class SlitherFileIO extends FileIO {
     PBOX_ADJUST = 1
     decodeBorderLine_slither_XMLAnswer() {
         this.decodeCellXMLArow(function (cross, name) {
-            var val = 0;
-            var bdh = cross.relbd(0, 1), bdv = cross.relbd(1, 0);
+            let val = 0;
+            const bdh = cross.relbd(0, 1);
+            const bdv = cross.relbd(1, 0);
             if (name.charAt(0) === 'n') { val = +name.substr(1); }
             else {
                 if (name.match(/h/)) { val += 1; }
@@ -177,8 +179,10 @@ class SlitherFileIO extends FileIO {
     }
     encodeBorderLine_slither_XMLAnswer() {
         this.encodeCellXMLArow(function (cross) {
-            var val = 0, nodename = '';
-            var bdh = cross.relbd(0, 1), bdv = cross.relbd(1, 0);
+            let val = 0;
+            let nodename = '';
+            const bdh = cross.relbd(0, 1);
+            const bdv = cross.relbd(1, 0);
             if (bdh.line === 1) { val += 1; }
             if (bdv.line === 1) { val += 2; }
             if (bdh.qsub === 2) { val += 4; }
@@ -188,7 +192,7 @@ class SlitherFileIO extends FileIO {
             else if (val === 1) { nodename = 'h'; }
             else if (val === 2) { nodename = 'v'; }
             else if (val === 3) { nodename = 'hv'; }
-            else { nodename = 'n' + val; }
+            else { nodename = `n${val}`; }
             return nodename;
         });
     }

@@ -104,9 +104,9 @@ export class ObjectOperation extends Operation<number> {
 		return true;
 	}
 	toString() {
-		var prefix = '';
-		for (var i in this.STRGROUP) { if (this.group === this.STRGROUP[i as keyof typeof this.STRGROUP]) { prefix += i; break; } }
-		for (var i in this.STRPROP) { if (this.property === this.STRPROP[i as keyof typeof this.STRPROP]) { prefix += i; break; } }
+		let prefix = '';
+		for (const i in this.STRGROUP) { if (this.group === this.STRGROUP[i as keyof typeof this.STRGROUP]) { prefix += i; break; } }
+		for (const i in this.STRPROP) { if (this.property === this.STRPROP[i as keyof typeof this.STRPROP]) { prefix += i; break; } }
 		if (prefix === 'CB' && this.pos !== null) { prefix += this.pos; }
 		return [prefix, this.bx, this.by, this.old, this.num].join(',');
 	}
@@ -116,7 +116,7 @@ export class ObjectOperation extends Operation<number> {
 	//---------------------------------------------------------------------------
 	isModify(lastope: ObjectOperation) {
 		// 前回と同じ場所なら前回の更新のみ
-		var property = this.property;
+		const property = this.property;
 		if (lastope.group === this.group &&
 			lastope.property === this.property &&
 			lastope.num === this.old &&
@@ -138,7 +138,8 @@ export class ObjectOperation extends Operation<number> {
 	// ope.exec()  操作opeを反映する。ope.undo(),ope.redo()から内部的に呼ばれる
 	//---------------------------------------------------------------------------
 	exec(num: any, d: any = null) {
-		var bd = this.puzzle.board, piece = bd.getObjectPos(this.group, this.bx, this.by);
+		const bd = this.puzzle.board;
+		const piece = bd.getObjectPos(this.group, this.bx, this.by);
 		if (this.group !== piece.group) { return true; }
 
 		if (this.pos === null) {
@@ -159,9 +160,6 @@ export class ObjectOperation extends Operation<number> {
 
 // BoardClearOperationクラス
 export class BoardClearOperation extends Operation<any> {
-	constructor(puzzle: Puzzle) {
-		super(puzzle);
-	}
 	prefix = 'AC'
 	reqReset = true
 
@@ -209,15 +207,17 @@ export class BoardAdjustOperation extends Operation<IBoardOperation, number> {
 	// ope.exec()  操作opeを反映する。ope.undo(),ope.redo()から内部的に呼ばれる
 	//---------------------------------------------------------------------------
 	undo() {
-		var key_undo = this.puzzle.board.exec.boardtype[this.old][0];
+		const key_undo = this.puzzle.board.exec.boardtype[this.old][0];
 		this.exec(key_undo);
 	}
 	redo() {
-		var key_redo = this.puzzle.board.exec.boardtype[this.num][1];
+		const key_redo = this.puzzle.board.exec.boardtype[this.num][1];
 		this.exec(key_redo);
 	}
 	exec(num: number, d: any = null) {
-		var puzzle = this.puzzle, bd = puzzle.board, d = d || { x1: 0, y1: 0, x2: 2 * bd.cols, y2: 2 * bd.rows };
+		const puzzle = this.puzzle;
+		const bd = puzzle.board;
+		d = d || { x1: 0, y1: 0, x2: 2 * bd.cols, y2: 2 * bd.rows };
 		bd.exec.execadjust_main(num, d);
 		puzzle.redraw();
 	}
@@ -256,7 +256,7 @@ export class BoardFlipOperation extends Operation<IBoardOperation, number> {
 		return true;
 	}
 	toString() {
-		var d = this.area;
+		const d = this.area;
 		return [this.prefix, this.num, d.x1, d.y1, d.x2, d.y2].join(',');
 	}
 
@@ -267,19 +267,21 @@ export class BoardFlipOperation extends Operation<IBoardOperation, number> {
 	//---------------------------------------------------------------------------
 	undo() {
 		// とりあえず盤面全部の対応だけ
-		var d0 = this.area, d = { x1: d0.x1, y1: d0.y1, x2: d0.x2, y2: d0.y2 };
-		var key_undo = this.puzzle.board.exec.boardtype[this.old][0];
-		if (key_undo & this.TURN) { var tmp = d.x1; d.x1 = d.y1; d.y1 = tmp; }
+		const d0 = this.area;
+		const d = { x1: d0.x1, y1: d0.y1, x2: d0.x2, y2: d0.y2 };
+		const key_undo = this.puzzle.board.exec.boardtype[this.old][0];
+		if (key_undo & this.TURN) { const tmp = d.x1; d.x1 = d.y1; d.y1 = tmp; }
 		this.exec(key_undo, d);
 	}
 	redo() {
 		// とりあえず盤面全部の対応だけ
-		var d0 = this.area, d = { x1: d0.x1, y1: d0.y1, x2: d0.x2, y2: d0.y2 };
-		var key_redo = this.puzzle.board.exec.boardtype[this.num][1];
+		const d0 = this.area;
+		const d = { x1: d0.x1, y1: d0.y1, x2: d0.x2, y2: d0.y2 };
+		const key_redo = this.puzzle.board.exec.boardtype[this.num][1];
 		this.exec(key_redo, d);
 	}
 	exec(num: number, d: any) {
-		var puzzle = this.puzzle;
+		const puzzle = this.puzzle;
 		puzzle.board.exec.execadjust_main(num, d);
 		puzzle.redraw();
 	}
@@ -345,7 +347,7 @@ class TrialFinalizeOperation extends Operation<any> {
 		return true;
 	}
 	toString() {
-		return 'TF,[' + this.old.join(',') + ']';
+		return `TF,[${this.old.join(',')}]`;
 	}
 }
 
@@ -479,7 +481,7 @@ export class OperationManager {
 	//---------------------------------------------------------------------------
 	removeDescendant() {
 		if (this.position < this.initpos) { this.broken = true; }
-		for (var i = this.history.length - 1; i >= this.position; i--) { this.history.pop(); }
+		for (let i = this.history.length - 1; i >= this.position; i--) { this.history.pop(); }
 		this.position = this.history.length;
 		this.chainflag = false;
 	}
@@ -494,7 +496,7 @@ export class OperationManager {
 		if (this.enableRedo) { this.removeDescendant(); }
 
 		/* 前の履歴を更新するかどうか判定 */
-		var puzzle = this.puzzle;
+		const puzzle = this.puzzle;
 		if (this.disCombine || !this.lastope ||
 			!newope.isModify || !newope.isModify(this.lastope)) {
 			/* 履歴を追加する */
@@ -526,20 +528,21 @@ export class OperationManager {
 
 		this.initpos = this.position = historyinfo.current || 0;
 		this.history = [];
-		var datas = historyinfo.datas || [];
-		for (var i = 0, len = datas.length; i < len; i++) {
-			var opelist = new OperationList(this.puzzle);
+		const datas = historyinfo.datas || [];
+		for (let i = 0, len = datas.length; i < len; i++) {
+			const opelist = new OperationList(this.puzzle);
 			this.history.push(opelist);
-			var array = datas[i];
+			let array = datas[i];
 			if (array.time !== void 0) {
 				opelist.time = array.time;
 				array = array.ope;
 			}
-			for (var j = 0, len2 = array.length; j < len2; j++) {
-				var strs = array[j].split(/,/);
-				var ope = null, List = this.operationlist;
-				for (var k = 0; k < List.length; k++) {
-					var ope1 = new List[k]();
+			for (let j = 0, len2 = array.length; j < len2; j++) {
+				const strs = array[j].split(/,/);
+				let ope = null;
+				const List = this.operationlist;
+				for (let k = 0; k < List.length; k++) {
+					const ope1 = new List[k]();
 					if (ope1.decode(strs)) { ope = ope1; break; }
 				}
 				if (!!ope) {
@@ -560,7 +563,7 @@ export class OperationManager {
 	encodeHistory(extoption: any) {
 		extoption = extoption || {};
 		this.initpos = this.position;
-		var historyinfo = {
+		const historyinfo = {
 			type: 'pzpr',
 			version: 0.4,
 			time: null as number,
@@ -576,9 +579,9 @@ export class OperationManager {
 			if (this.trialpos.length > 0) {
 				historyinfo.trialpos = this.trialpos;
 			}
-			var history = [];
-			for (var i = 0; i < this.history.length; ++i) {
-				var array = Array.prototype.slice.call(this.history[i]);
+			const history = [];
+			for (let i = 0; i < this.history.length; ++i) {
+				const array = Array.prototype.slice.call(this.history[i]);
 				if (!extoption.time) {
 					history.push(array);
 				}
@@ -597,7 +600,7 @@ export class OperationManager {
 	//---------------------------------------------------------------------------
 	undo() {
 		if (!this.enableUndo) { return false; }
-		var opes = this.history[this.position - 1];
+		const opes = this.history[this.position - 1];
 		this.reqReset = this.checkReqReset(opes);
 		this.preproc();
 		this.undoCore();
@@ -606,7 +609,7 @@ export class OperationManager {
 	}
 	redo() {
 		if (!this.enableRedo) { return false; }
-		var opes = this.history[this.position];
+		const opes = this.history[this.position];
 		this.reqReset = this.checkReqReset(opes);
 		this.preproc();
 		this.redoCore();
@@ -621,8 +624,8 @@ export class OperationManager {
 	//---------------------------------------------------------------------------
 	undoCore() {
 		this.undoExec = true;
-		var opes = this.history[this.position - 1];
-		for (var i = opes.length - 1; i >= 0; i--) {
+		const opes = this.history[this.position - 1];
+		for (let i = opes.length - 1; i >= 0; i--) {
 			if (!!opes[i]) { opes[i].undo(); }
 		}
 		this.position--;
@@ -630,8 +633,8 @@ export class OperationManager {
 	}
 	redoCore() {
 		this.redoExec = true;
-		var opes = this.history[this.position];
-		for (var i = 0; i < opes.length; ++i) {
+		const opes = this.history[this.position];
+		for (let i = 0; i < opes.length; ++i) {
 			if (!!opes[i]) { opes[i].redo(); }
 		}
 		this.position++;
@@ -652,7 +655,8 @@ export class OperationManager {
 		return opes.some(function (ope) { return ope.reqReset; });
 	}
 	preproc(opes: any = null) {
-		var puzzle = this.puzzle, bd = puzzle.board;
+		const puzzle = this.puzzle;
+		const bd = puzzle.board;
 		this.disableRecord();
 
 		puzzle.painter.suspend();
@@ -662,7 +666,8 @@ export class OperationManager {
 		}
 	}
 	postproc() {
-		var puzzle = this.puzzle, bd = puzzle.board;
+		const puzzle = this.puzzle;
+		const bd = puzzle.board;
 		if (this.reqReset) {
 			bd.setposAll();
 			bd.setminmax();
@@ -716,7 +721,7 @@ export class OperationManager {
 		if (this.trialpos.length === 0) { return; }
 		this.disableRecord();
 		if (rejectall || this.trialpos.length === 1) {
-			var pos = this.trialpos[0];
+			const pos = this.trialpos[0];
 			this.puzzle.board.trialclear();
 			this.trialpos = [];
 			this.limitTrialUndo = false;
@@ -735,7 +740,7 @@ export class OperationManager {
 	resumeTrial() {
 		if (this.trialpos.length > 0) {
 			this.disEmitTrial++;
-			var pos = this.position;
+			const pos = this.position;
 			this.checkenable();
 			this.resumeGoto(this.trialpos[0]);
 			this.puzzle.board.trialclear(true);

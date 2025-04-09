@@ -30,7 +30,7 @@ export class GraphBase {
 	// graph.removeFromArray()    Arrayからitemを取り除く
 	//--------------------------------------------------------------------------------
 	removeFromArray<T>(array: T[], item: T) {
-		var idx = array.indexOf(item);
+		const idx = array.indexOf(item);
 		if (idx >= 0) { array.splice(idx, 1); }
 	}
 
@@ -55,7 +55,7 @@ export class GraphBase {
 	isedgevalidbylinkobj(linkobj: BoardPiece) { return true; }
 	isedgevalidbynodeobj(nodeobj1: Cell, nodeobj2: Cell) { return true; }
 	isedgeexistsbylinkobj(linkobj: Border) {
-		var sidenodes = this.getSideNodesBySeparator(linkobj);
+		const sidenodes = this.getSideNodesBySeparator(linkobj);
 		if (!sidenodes) { return false; }
 		return sidenodes[0].nodes.indexOf(sidenodes[1]) >= 0;
 	}
@@ -85,20 +85,21 @@ export class GraphBase {
 		this.rebuildmode = false;
 	}
 	rebuild2() {
-		var nodeobjs = this.puzzle.board[this.pointgroup], linkobjs = this.puzzle.board[this.linkgroup];
-		for (var c = 0; c < nodeobjs.length; c++) {
+		const nodeobjs = this.puzzle.board[this.pointgroup];
+		const linkobjs = this.puzzle.board[this.linkgroup];
+		for (let c = 0; c < nodeobjs.length; c++) {
 			this.setComponentRefs(nodeobjs[c], null);
 			this.resetObjNodeList(nodeobjs[c]);
 			if (this.isnodevalid(nodeobjs[c])) { this.createNode(nodeobjs[c]); }
 		}
 		if (this.linkgroup) {
-			for (var id = 0; id < linkobjs.length; id++) {
+			for (let id = 0; id < linkobjs.length; id++) {
 				this.setComponentRefs(linkobjs[id], null);
 				if (this.isedgevalidbylinkobj(linkobjs[id])) { this.addEdgeByLinkObj(linkobjs[id]); }
 			}
 		}
 		else {
-			for (var c = 0; c < nodeobjs.length; c++) {
+			for (let c = 0; c < nodeobjs.length; c++) {
 				if (this.isnodevalid(nodeobjs[c])) { this.setEdgeByNodeObj(nodeobjs[c]); }
 			}
 		}
@@ -115,12 +116,12 @@ export class GraphBase {
 	// graph.deleteComponent()  GraphComponentオブジェクトを削除してNodeをmodifyNodesに戻す
 	//---------------------------------------------------------------------------
 	createComponent() {
-		var component = new GraphComponent(this.puzzle);
+		const component = new GraphComponent(this.puzzle);
 		this.components.push(component);
 		return component;
 	}
 	deleteComponent(component: GraphComponent) {
-		for (var i = 0; i < component.nodes.length; i++) {
+		for (let i = 0; i < component.nodes.length; i++) {
 			this.modifyNodes.push(component.nodes[i]);
 			this.setComponentRefs(component.nodes[i].obj, null);
 			component.nodes[i].component = null;
@@ -133,19 +134,19 @@ export class GraphBase {
 	// graph.deleteNode()    GraphNodeオブジェクトをグラフから削除する (先にEdgeを0本にしてください)
 	//---------------------------------------------------------------------------
 	createNode(cell: BoardPiece) {
-		var node = new GraphNode(cell);
+		const node = new GraphNode(cell);
 		this.getObjNodeList(cell).push(node);
 		this.modifyNodes.push(node);
 		return node;
 	}
 	deleteNode(node: GraphNode) {
-		var cell = node.obj;
+		const cell = node.obj;
 		this.setComponentRefs(cell, null);
 		this.removeFromArray(this.getObjNodeList(cell), node);
 
 		// rebuildmode中にはこの関数は呼ばれません
 		this.removeFromArray(this.modifyNodes, node);
-		var component = node.component;
+		const component = node.component;
 		if (component !== null) {
 			this.removeFromArray(component.nodes, node);
 			this.resetExtraData(cell);
@@ -166,7 +167,7 @@ export class GraphBase {
 		}
 	}
 	deleteNodeIfEmpty(nodeobj: Cell) {
-		var nodes = this.getObjNodeList(nodeobj);
+		const nodes = this.getObjNodeList(nodeobj);
 
 		// 周囲のNodeが消えるかもしれないのでチェック＆remove
 		if (nodes[0].nodes.length === 0 && !this.isnodevalid(nodeobj)) {
@@ -207,9 +208,10 @@ export class GraphBase {
 		return border.sideobj;
 	}
 	getSideObjByNodeObj(cell: Cell) {
-		var list = cell.getdir4clist(), cells = [];
-		for (var i = 0; i < list.length; i++) {
-			var cell2 = list[i][0];
+		const list = cell.getdir4clist();
+		const cells = [];
+		for (let i = 0; i < list.length; i++) {
+			const cell2 = list[i][0];
 			if (this.isnodevalid(cell2)) { cells.push(cell2); }
 		}
 		return cells;
@@ -220,9 +222,12 @@ export class GraphBase {
 	// graph.getSideNodesBySeparator() borderからEdgeに接続するNodeを取得する
 	//---------------------------------------------------------------------------
 	getSideNodesByLinkObj(border: Border) {
-		var sidenodes = [], sidenodeobj = this.getSideObjByLinkObj(border);
-		for (var i = 0; i < sidenodeobj.length; i++) {
-			var cell = sidenodeobj[i], nodes = this.getObjNodeList(cell), node = nodes[0];
+		const sidenodes = [];
+		const sidenodeobj = this.getSideObjByLinkObj(border);
+		for (let i = 0; i < sidenodeobj.length; i++) {
+			const cell = sidenodeobj[i];
+			const nodes = this.getObjNodeList(cell);
+			let node = nodes[0];
 			// 交差あり盤面の特殊処理 border.isvertはfalseの時タテヨコ線
 			if (!!nodes[1] && border.isvert) { node = nodes[1]; }
 			sidenodes.push(node);
@@ -230,9 +235,10 @@ export class GraphBase {
 		return sidenodes;
 	}
 	getSideNodesBySeparator(border: Border) {
-		var sidenodes = [], sidenodeobj = border.sideobj;
-		for (var i = 0; i < sidenodeobj.length; i++) {
-			var nodes = this.getObjNodeList(sidenodeobj[i]);
+		const sidenodes = [];
+		const sidenodeobj = border.sideobj;
+		for (let i = 0; i < sidenodeobj.length; i++) {
+			const nodes = this.getObjNodeList(sidenodeobj[i]);
 			if (!!nodes && !!nodes[0]) { sidenodes.push(nodes[0]); }
 		}
 		return (sidenodes.length >= 2 ? sidenodes : null);
@@ -243,7 +249,7 @@ export class GraphBase {
 	//---------------------------------------------------------------------------
 	modifyInfo(obj: any, type: string) {
 		if (!this.enabled) { return; }
-		var relation = this.relation[type] as string;
+		const relation = this.relation[type] as string;
 		if (!relation) { return; }
 
 		this.modifyNodes = [];
@@ -265,7 +271,7 @@ export class GraphBase {
 	// graph.setEdgeBySeparator() 境界線が引かれたり消された時に、lcnt変数や線の情報を生成しなおす
 	//---------------------------------------------------------------------------
 	setEdgeBySeparator(border: Border) {
-		var isset = this.isedgevalidbylinkobj(border);
+		const isset = this.isedgevalidbylinkobj(border);
 		if (isset === this.isedgeexistsbylinkobj(border)) { return; }
 
 		if (!!this.incdecBorderCount) {
@@ -285,12 +291,12 @@ export class GraphBase {
 	// graph.removeEdgeBySeparator() 指定されたオブジェクトの場所からEdgeを除去する
 	//---------------------------------------------------------------------------
 	addEdgeBySeparator(border: Border) { // 境界線を消した時の処理
-		var sidenodes = this.getSideNodesBySeparator(border);
+		const sidenodes = this.getSideNodesBySeparator(border);
 		if (!sidenodes) { return; }
 		this.addEdge(sidenodes[0], sidenodes[1]);
 	}
 	removeEdgeBySeparator(border: Border) { // 境界線を引いた時の処理
-		var sidenodes = this.getSideNodesBySeparator(border);
+		const sidenodes = this.getSideNodesBySeparator(border);
 		if (!sidenodes) { return; }
 		this.removeEdge(sidenodes[0], sidenodes[1]);
 		if (this.linkgroup) {
@@ -315,7 +321,7 @@ export class GraphBase {
 	//---------------------------------------------------------------------------
 	remakeComponent() {
 		// subgraph中にcomponentが何種類あるか調べる
-		var remakeComponents = this.getAffectedComponents();
+		const remakeComponents = this.getAffectedComponents();
 
 		// Component数が1ならsubgraphが分断していないかどうかチェック
 		if (remakeComponents.length === 1) {
@@ -329,9 +335,9 @@ export class GraphBase {
 		}
 	}
 	getAffectedComponents() {
-		var remakeComponents = [];
-		for (var i = 0; i < this.modifyNodes.length; i++) {
-			var component = this.modifyNodes[i].component;
+		const remakeComponents = [];
+		for (let i = 0; i < this.modifyNodes.length; i++) {
+			const component = this.modifyNodes[i].component;
 			if (component !== null) {
 				if (!component.isremake) {
 					remakeComponents.push(component);
@@ -343,18 +349,18 @@ export class GraphBase {
 	}
 	checkDividedComponent(component: GraphComponent) {
 		// 1つだけsubgraphを生成してみる
-		for (var i = 0, len = this.modifyNodes.length; i < len; i++) {
-			var node = this.modifyNodes[i];
+		for (let i = 0, len = this.modifyNodes.length; i < len; i++) {
+			const node = this.modifyNodes[i];
 			node.component = null;
 			this.setComponentRefs(node.obj, null);
 			this.removeFromArray(component.nodes, node);
 		}
-		var pseudoComponent = new GraphComponent(this.puzzle);
+		const pseudoComponent = new GraphComponent(this.puzzle);
 		this.searchSingle(this.modifyNodes[0], pseudoComponent);
 		// subgraphがひとつながりならComponentに属していないNodeをそのComponentに割り当てる
 		if (pseudoComponent.nodes.length === this.modifyNodes.length) {
-			for (var i = 0; i < this.modifyNodes.length; i++) {
-				var node = this.modifyNodes[i];
+			for (let i = 0; i < this.modifyNodes.length; i++) {
+				const node = this.modifyNodes[i];
 				node.component = component;
 				component.nodes.push(node);
 			}
@@ -365,11 +371,11 @@ export class GraphBase {
 		// subgraphがひとつながりでないなら再探索ルーチンを回す
 	}
 	remakeMaximalComonents(remakeComponents: GraphComponent[]) {
-		var longColor = (this.coloring ? this.getLongColor(remakeComponents) : null);
-		for (var p = 0; p < remakeComponents.length; p++) {
+		const longColor = (this.coloring ? this.getLongColor(remakeComponents) : null);
+		for (let p = 0; p < remakeComponents.length; p++) {
 			this.deleteComponent(remakeComponents[p]);
 		}
-		var newComponents = this.searchGraph();
+		const newComponents = this.searchGraph();
 		if (this.coloring) { this.setLongColor(newComponents, longColor); }
 	}
 
@@ -378,14 +384,14 @@ export class GraphBase {
 	// graph.searchSingle() 初期idを含む一つの領域内のareaidを指定されたものにする
 	//---------------------------------------------------------------------------
 	searchGraph() {
-		var partslist = this.modifyNodes;
-		var newcomponents = [];
-		for (var i = 0, len = partslist.length; i < len; i++) {
+		const partslist = this.modifyNodes;
+		const newcomponents = [];
+		for (let i = 0, len = partslist.length; i < len; i++) {
 			partslist[i].component = null;
 		}
-		for (var i = 0, len = partslist.length; i < len; i++) {
+		for (let i = 0, len = partslist.length; i < len; i++) {
 			if (partslist[i].component !== null) { continue; }	// 既にidがついていたらスルー
-			var component = this.createComponent();
+			const component = this.createComponent();
 			this.searchSingle(partslist[i], component);
 			this.setComponentInfo(component);
 			newcomponents.push(component);
@@ -394,15 +400,15 @@ export class GraphBase {
 		return newcomponents;
 	}
 	searchSingle(startparts: GraphNode, component: GraphComponent) {
-		var stack = [startparts];
+		const stack = [startparts];
 		while (stack.length > 0) {
-			var node = stack.pop();
+			const node = stack.pop();
 			if (node.component !== null) { continue; }
 
 			node.component = component;
 			component.nodes.push(node);
 
-			for (var i = 0; i < node.nodes.length; i++) { stack.push(node.nodes[i]); }
+			for (let i = 0; i < node.nodes.length; i++) { stack.push(node.nodes[i]); }
 		}
 	}
 
@@ -410,9 +416,9 @@ export class GraphBase {
 	// graph.setComponentInfo() Componentオブジェクトのデータを設定する
 	//--------------------------------------------------------------------------------
 	setComponentInfo(component: GraphComponent) {
-		var edges = 0;
-		for (var i = 0; i < component.nodes.length; i++) {
-			var node = component.nodes[i];
+		let edges = 0;
+		for (let i = 0; i < component.nodes.length; i++) {
+			const node = component.nodes[i];
 			edges += node.nodes.length;
 
 			this.setComponentRefs(node.obj, component);
@@ -436,28 +442,28 @@ export class GraphBase {
 	//--------------------------------------------------------------------------------
 	getLongColor(components: GraphComponent[]) {
 		// 周りで一番大きな線は？
-		var largeComponent = components[0];
-		for (var i = 1; i < components.length; i++) {
+		let largeComponent = components[0];
+		for (let i = 1; i < components.length; i++) {
 			if (largeComponent.nodes.length < components[i].nodes.length) { largeComponent = components[i]; }
 		}
 		return (!!largeComponent ? largeComponent.color : null);
 	}
 	setLongColor(components: GraphComponent[], longColor: string) {
 		if (components.length === 0) { return; }
-		var puzzle = this.puzzle;
+		const puzzle = this.puzzle;
 
 		// できた線の中でもっとも長いものを取得する
-		var largeComponent = null;
+		let largeComponent = null;
 		if (!!longColor) {
 			largeComponent = components[0];
-			for (var i = 1; i < components.length; i++) {
+			for (let i = 1; i < components.length; i++) {
 				if (largeComponent.nodes.length < components[i].nodes.length) { largeComponent = components[i]; }
 			}
 		}
 
 		// 新しい色の設定
-		for (var i = 0; i < components.length; i++) {
-			var path = components[i];
+		for (let i = 0; i < components.length; i++) {
+			const path = components[i];
 			path.color = (path === largeComponent ? longColor : path.color);
 		}
 
@@ -471,8 +477,8 @@ export class GraphBase {
 	// graph.newIrowake()  線の情報が再構築された際、線に色をつける
 	//---------------------------------------------------------------------------
 	newIrowake() {
-		var paths = this.components;
-		for (var i = 0; i < paths.length; i++) {
+		const paths = this.components;
+		for (let i = 0; i < paths.length; i++) {
 			paths[i].color = this.puzzle.painter.getNewLineColor();
 		}
 	}
@@ -502,7 +508,10 @@ export class GraphComponent {
 	// component.getLinkObjByNodes()  node間のオブジェクトを取得する
 	//---------------------------------------------------------------------------
 	getLinkObjByNodes(node1: GraphNode, node2: GraphNode) {
-		var bx1 = node1.obj.bx, by1 = node1.obj.by, bx2 = node2.obj.bx, by2 = node2.obj.by;
+		const bx1 = node1.obj.bx;
+		const by1 = node1.obj.by;
+		const bx2 = node2.obj.bx;
+		const by2 = node2.obj.by;
 		if (bx1 > bx2 || ((bx1 === bx2) && (by1 > by2))) { return null; }
 		return this.puzzle.board.getobj(((bx1 + bx2) >> 1), ((by1 + by2) >> 1));
 	}
@@ -512,16 +521,16 @@ export class GraphComponent {
 	// component.getedgeobjs()  edgeのオブジェクトリストを取得する
 	//---------------------------------------------------------------------------
 	getnodeobjs() {
-		var objs = (this.puzzle.board.getGroup(this.nodes[0].obj.group).clone)();
-		for (var i = 0; i < this.nodes.length; i++) { objs.add(this.nodes[i].obj); }
+		const objs = (this.puzzle.board.getGroup(this.nodes[0].obj.group).clone)();
+		for (let i = 0; i < this.nodes.length; i++) { objs.add(this.nodes[i].obj); }
 		return objs as CellList;
 	}
 	getedgeobjs() {
-		var objs = [];
-		for (var i = 0; i < this.nodes.length; i++) {
-			var node = this.nodes[i];
-			for (var n = 0; n < node.nodes.length; n++) {
-				var obj = this.getLinkObjByNodes(node, node.nodes[n]);
+		const objs = [];
+		for (let i = 0; i < this.nodes.length; i++) {
+			const node = this.nodes[i];
+			for (let n = 0; n < node.nodes.length; n++) {
+				const obj = this.getLinkObjByNodes(node, node.nodes[n]);
 				if (!!obj) { objs.push(obj); }
 			}
 		}
@@ -532,7 +541,7 @@ export class GraphComponent {
 	// component.checkAutoCmp()  autocmp設定有効時に条件を満たしているかチェックして背景を描画する
 	//---------------------------------------------------------------------------
 	checkAutoCmp() {
-		var iscmp = (!!this.clist.checkCmp ? this.clist.checkCmp() : false);
+		const iscmp = (!!this.clist.checkCmp ? this.clist.checkCmp() : false);
 		if (this.cmp !== iscmp) {
 			this.cmp = iscmp;
 			if (this.puzzle.execConfig('autocmp')) {
@@ -546,12 +555,12 @@ export class GraphComponent {
 	// component.setedgeinfo()  edgeにqinfo値を設定する
 	//---------------------------------------------------------------------------
 	setedgeerr(val: number) {
-		var objs = this.getedgeobjs();
-		for (var i = 0; i < objs.length; i++) { objs[i].seterr(val); }
+		const objs = this.getedgeobjs();
+		for (let i = 0; i < objs.length; i++) { objs[i].seterr(val); }
 	}
 	setedgeinfo(val: number) {
-		var objs = this.getedgeobjs();
-		for (var i = 0; i < objs.length; i++) { objs[i].setinfo(val); }
+		const objs = this.getedgeobjs();
+		for (let i = 0; i < objs.length; i++) { objs[i].setinfo(val); }
 	}
 }
 export class GraphNode {

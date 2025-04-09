@@ -9,11 +9,11 @@ import { getEnv } from "../pzpr/env";
 import type { WrapperBase } from "../candle";
 
 
-var CENTER = 1,
-	BOTTOMLEFT = 2,
-	BOTTOMRIGHT = 3,
-	TOPRIGHT = 4,
-	TOPLEFT = 5;
+const CENTER = 1;
+const BOTTOMLEFT = 2;
+const BOTTOMRIGHT = 3;
+const TOPRIGHT = 4;
+const TOPLEFT = 5;
 
 //---------------------------------------------------------------------------
 // ★Graphicクラス Canvasに描画する
@@ -202,7 +202,7 @@ export class Graphic {
 	// pc.initCanvas()       このオブジェクトで使用するキャンバスを設定する
 	//---------------------------------------------------------------------------
 	initCanvas() {
-		var puzzle = this.puzzle;
+		const puzzle = this.puzzle;
 		this.context = (!!puzzle.canvas ? puzzle.canvas.getContext("2d") : null);
 		const g = this.context
 		if (g.use.canvas) {
@@ -211,7 +211,7 @@ export class Graphic {
 		}
 
 		if (this.canvasWidth === null || this.canvasHeight === null) {
-			var rect = pzpr.util.getRect(puzzle.canvas);
+			const rect = pzpr.util.getRect(puzzle.canvas);
 			this.resizeCanvas(rect.width, rect.height);
 		}
 
@@ -227,8 +227,8 @@ export class Graphic {
 	// pc.setColor()    描画色の設定を行う
 	//---------------------------------------------------------------------------
 	initColor() {
-		var configlist = this.puzzle.config.list;
-		for (var key in configlist) {
+		const configlist = this.puzzle.config.list;
+		for (const key in configlist) {
 			if (key.substr(0, 6) === "color_") { this.setColor(key.substr(6), configlist[key].val); }
 		}
 	}
@@ -244,7 +244,7 @@ export class Graphic {
 	// pc.initFont()  数字を記入するためのフォントを設定する
 	//---------------------------------------------------------------------------
 	initFont() {
-		var isgothic = this.puzzle.getConfig('font') === 1;
+		const isgothic = this.puzzle.getConfig('font') === 1;
 		const env = getEnv()
 		if (env.OS.Android) {
 			this.fontfamily = (isgothic ? 'Helvetica, Verdana, Arial, ' : '"Times New Roman", ');
@@ -260,7 +260,7 @@ export class Graphic {
 	//                             (指定なしの場合は、前のセルのサイズを用いる)
 	//---------------------------------------------------------------------------
 	resizeCanvas(cwid: number | null = null, chgt: number | null = null) {
-		var insuspend = this.suspended;
+		const insuspend = this.suspended;
 		this.suspendAll();
 
 		this.canvasWidth = cwid || this.canvasWidth;
@@ -270,7 +270,7 @@ export class Graphic {
 		if (!insuspend) { this.unsuspend(); }
 	}
 	resizeCanvasByCellSize(cellsize: number) {
-		var insuspend = this.suspended;
+		const insuspend = this.suspended;
 		this.suspendAll();
 
 		this.cw = cellsize || this.cw;
@@ -308,9 +308,12 @@ export class Graphic {
 	}
 
 	setParameter() {
-		var cwid = this.canvasWidth, chgt = this.canvasHeight;
-		var cols = this.getCanvasCols(), rows = this.getCanvasRows();
-		var cw = (cwid / cols) | 0, ch = (chgt / rows) | 0;
+		const cwid = this.canvasWidth;
+		const chgt = this.canvasHeight;
+		const cols = this.getCanvasCols();
+		const rows = this.getCanvasRows();
+		const cw = (cwid / cols) | 0;
+		const ch = (chgt / rows) | 0;
 
 		if (this.puzzle.getConfig('squarecell')) {
 			this.cw = this.ch = Math.min(cw, ch);
@@ -326,20 +329,22 @@ export class Graphic {
 		this.lm = this.lw / 2;
 	}
 	setOffset() {
-		var g = this.context, g2 = this.subcontext;
-		var cwid = this.canvasWidth, chgt = this.canvasHeight;
+		const g = this.context;
+		const g2 = this.subcontext;
+		const cwid = this.canvasWidth;
+		const chgt = this.canvasHeight;
 
 		// canvas要素のサイズを変更する
 		g.changeSize(cwid | 0, chgt | 0);
 		if (!!g2) { g2.changeSize(cwid | 0, chgt | 0); }
 
 		// 盤面のセルID:0が描画される左上の位置の設定 (Canvas左上からのオフセット)
-		var x0 = this.x0 = (((cwid - this.cw * this.getBoardCols()) / 2 + this.cw * this.getOffsetCols()) | 0) + 0.5;
-		var y0 = this.y0 = (((chgt - this.ch * this.getBoardRows()) / 2 + this.ch * this.getOffsetRows()) | 0) + 0.5;
+		const x0 = this.x0 = (((cwid - this.cw * this.getBoardCols()) / 2 + this.cw * this.getOffsetCols()) | 0) + 0.5;
+		const y0 = this.y0 = (((chgt - this.ch * this.getBoardRows()) / 2 + this.ch * this.getOffsetRows()) | 0) + 0.5;
 
 		// CanvasのOffset位置変更 (SVGの時、小数点以下の端数調整を行う)
 		if (!g.use.canvas) {
-			var rect = pzpr.util.getRect(g.canvas);
+			const rect = pzpr.util.getRect(g.canvas);
 			g.translate(x0 - (rect.left % 1), y0 - (rect.top % 1));
 		}
 		else {
@@ -367,11 +372,11 @@ export class Graphic {
 	}
 
 	getBoardCols() {
-		var bd = this.puzzle.board;
+		const bd = this.puzzle.board;
 		return (bd.maxbx - bd.minbx) / 2;
 	}
 	getBoardRows() {
-		var bd = this.puzzle.board;
+		const bd = this.puzzle.board;
 		return (bd.maxby - bd.minby) / 2;
 	}
 
@@ -402,7 +407,7 @@ export class Graphic {
 		this.resize_canvas_main();
 
 		if (this.suspendedAll) {
-			var bd = this.puzzle.board;
+			const bd = this.puzzle.board;
 			this.setRange(bd.minbx - 2, bd.minby - 2, bd.maxbx + 2, bd.maxby + 2);
 			this.suspendedAll = false;
 		}
@@ -426,9 +431,12 @@ export class Graphic {
 		this.isSupportMaxWidth = ((this.context.use.svg && pzpr.env.API.svgTextLength) ||
 			(this.context.use.canvas && pzpr.env.API.maxWidth));
 
-		var bd = this.puzzle.board, bm = 2 * this.margin,
-			x1 = this.range.x1, y1 = this.range.y1,
-			x2 = this.range.x2, y2 = this.range.y2;
+		const bd = this.puzzle.board;
+		const bm = 2 * this.margin;
+		const x1 = this.range.x1;
+		const y1 = this.range.y1;
+		const x2 = this.range.x2;
+		const y2 = this.range.y2;
 		if (x1 > x2 || y1 > y2 || x1 >= bd.maxbx + bm || y1 >= bd.maxby + bm || x2 <= bd.minbx - bm || y2 <= bd.minby - (bm + (this.pid === 'starbattle' ? 2 : 0))) {
 			/* 入力が範囲外ならば何もしない */
 		}
@@ -438,7 +446,8 @@ export class Graphic {
 			this.paint();
 		}
 		else {
-			var g = this.context, g2 = this.subcontext;
+			const g = this.context;
+			const g2 = this.subcontext;
 			this.context = g2;
 			this.setRangeObject(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
 			this.flushCanvas();
@@ -458,14 +467,15 @@ export class Graphic {
 		if (this.range.y2 < y2) { this.range.y2 = y2; }
 	}
 	setRangeObject(x1: number, y1: number, x2: number, y2: number) {
-		var bd = this.puzzle.board;
+		const bd = this.puzzle.board;
 		this.range.cells = bd.cellinside(x1, y1, x2, y2);
 		this.range.crosses = bd.crossinside(x1, y1, x2, y2);
 		this.range.borders = bd.borderinside(x1, y1, x2, y2);
 		this.range.excells = bd.excellinside(x1, y1, x2, y2);
 	}
 	resetRange() {
-		var puzzle = this.puzzle, bd = puzzle.board
+		const puzzle = this.puzzle
+		const bd = puzzle.board
 		this.range = {
 			x1: bd.maxbx + 1,
 			y1: bd.maxby + 1,
@@ -483,8 +493,10 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	copyBufferData(g: CanvasRenderingContext2D | WrapperBase<any>, g2: any, x1: number, y1: number, x2: number, y2: number) {
 		// source側はtaranslateのぶん足されていないので、加算しておきます
-		var sx1 = this.x0 + x1 * this.bw - 1, sy1 = this.y0 + y1 * this.bh - 1,
-			sx2 = this.x0 + x2 * this.bw + 2, sy2 = this.y0 + y2 * this.bh + 2;
+		let sx1 = this.x0 + x1 * this.bw - 1;
+		let sy1 = this.y0 + y1 * this.bh - 1;
+		let sx2 = this.x0 + x2 * this.bw + 2;
+		let sy2 = this.y0 + y2 * this.bh + 2;
 		if (sx1 < 0) { sx1 = 0; } if (sx2 > g2.child.width) { sx2 = g2.child.width; }
 		if (sy1 < 0) { sy1 = 0; } if (sy2 > g2.child.height) { sy2 = g2.child.height; }
 		g.drawImage(g2.child, sx1, sy1, (sx2 - sx1), (sy2 - sy1), sx1 - this.x0, sy1 - this.y0, (sx2 - sx1), (sy2 - sy1));
@@ -500,7 +512,7 @@ export class Graphic {
 	}
 	paintAll() {
 		if (this.suspended) { this.suspendedAll = true; }
-		var bd = this.puzzle.board;
+		const bd = this.puzzle.board;
 		this.paintRange(bd.minbx - 2, bd.minby - 2, bd.maxbx + 2, bd.maxby + 2);
 	}
 
@@ -508,20 +520,20 @@ export class Graphic {
 	// pc.getNewLineColor() 新しい色を返す
 	//---------------------------------------------------------------------------
 	getNewLineColor() {
-		var loopcount = 0;
+		let loopcount = 0;
 
 		while (1) {
-			var Rdeg = ((Math.random() * 384) | 0) - 64; if (Rdeg < 0) { Rdeg = 0; } if (Rdeg > 255) { Rdeg = 255; }
-			var Gdeg = ((Math.random() * 384) | 0) - 64; if (Gdeg < 0) { Gdeg = 0; } if (Gdeg > 255) { Gdeg = 255; }
-			var Bdeg = ((Math.random() * 384) | 0) - 64; if (Bdeg < 0) { Bdeg = 0; } if (Bdeg > 255) { Bdeg = 255; }
+			let Rdeg = ((Math.random() * 384) | 0) - 64; if (Rdeg < 0) { Rdeg = 0; } if (Rdeg > 255) { Rdeg = 255; }
+			let Gdeg = ((Math.random() * 384) | 0) - 64; if (Gdeg < 0) { Gdeg = 0; } if (Gdeg > 255) { Gdeg = 255; }
+			let Bdeg = ((Math.random() * 384) | 0) - 64; if (Bdeg < 0) { Bdeg = 0; } if (Bdeg > 255) { Bdeg = 255; }
 
 			// HLSの各組成値を求める
-			var Cmax = Math.max(Rdeg, Math.max(Gdeg, Bdeg));
-			var Cmin = Math.min(Rdeg, Math.min(Gdeg, Bdeg));
+			const Cmax = Math.max(Rdeg, Math.max(Gdeg, Bdeg));
+			const Cmin = Math.min(Rdeg, Math.min(Gdeg, Bdeg));
 
-			var Hdeg = 0;
-			var Ldeg = (Cmax + Cmin) * 0.5 / 255;
-			var Sdeg = (Cmax === Cmin ? 0 : (Cmax - Cmin) / ((Ldeg <= 0.5) ? (Cmax + Cmin) : (2 * 255 - Cmax - Cmin)));
+			let Hdeg = 0;
+			const Ldeg = (Cmax + Cmin) * 0.5 / 255;
+			const Sdeg = (Cmax === Cmin ? 0 : (Cmax - Cmin) / ((Ldeg <= 0.5) ? (Cmax + Cmin) : (2 * 255 - Cmax - Cmin)));
 
 			if (Cmax === Cmin) { Hdeg = 0; }
 			else if (Rdeg >= Gdeg && Rdeg >= Bdeg) { Hdeg = (60 * (Gdeg - Bdeg) / (Cmax - Cmin) + 360) % 360; }
@@ -529,18 +541,18 @@ export class Graphic {
 			else if (Bdeg >= Gdeg && Bdeg >= Rdeg) { Hdeg = (240 + 60 * (Rdeg - Gdeg) / (Cmax - Cmin) + 360) % 360; }
 
 			// YCbCrのYを求める
-			var Ydeg = (0.29891 * Rdeg + 0.58661 * Gdeg + 0.11448 * Bdeg) / 255;
+			const Ydeg = (0.29891 * Rdeg + 0.58661 * Gdeg + 0.11448 * Bdeg) / 255;
 
 			if ((this.minYdeg < Ydeg && Ydeg < this.maxYdeg) && (Math.abs(this.lastYdeg - Ydeg) > 0.15) && (Sdeg < 0.02 || 0.40 < Sdeg) &&
 				(((360 + this.lastHdeg - Hdeg) % 360 >= 45) && ((360 + this.lastHdeg - Hdeg) % 360 <= 315))) {
 				this.lastHdeg = Hdeg;
 				this.lastYdeg = Ydeg;
 				//alert("rgb("+Rdeg+", "+Gdeg+", "+Bdeg+")\nHLS("+(Hdeg|0)+", "+(""+((Ldeg*1000)|0)*0.001).slice(0,5)+", "+(""+((Sdeg*1000|0))*0.001).slice(0,5)+")\nY("+(""+((Ydeg*1000)|0)*0.001).slice(0,5)+")");
-				return "rgb(" + Rdeg + "," + Gdeg + "," + Bdeg + ")";
+				return `rgb(${Rdeg},${Gdeg},${Bdeg})`;
 			}
 
 			loopcount++;
-			if (loopcount > 100) { return "rgb(" + Rdeg + "," + Gdeg + "," + Bdeg + ")"; }
+			if (loopcount > 100) { return `rgb(${Rdeg},${Gdeg},${Bdeg})`; }
 		}
 	}
 
@@ -565,13 +577,15 @@ export class Graphic {
 	// pc.flushCanvas()    指定された領域を白で塗りつぶす
 	//---------------------------------------------------------------------------
 	flushCanvas() {
-		var g = this.vinc('background', 'crispEdges', true);
-		var bw = this.bw, bh = this.bh, fm = (this.margin > 0.15 ? this.margin : 0);
-		var bd = this.puzzle.board;
-		var minbx = bd.minbx - fm;
-		var minby = bd.minby - fm;
-		var bwidth = bd.maxbx + fm - minbx;
-		var bheight = bd.maxby + fm - minby;
+		const g = this.vinc('background', 'crispEdges', true);
+		const bw = this.bw;
+		const bh = this.bh;
+		const fm = (this.margin > 0.15 ? this.margin : 0);
+		const bd = this.puzzle.board;
+		const minbx = bd.minbx - fm;
+		const minby = bd.minby - fm;
+		const bwidth = bd.maxbx + fm - minbx;
+		const bheight = bd.maxby + fm - minby;
 
 		g.vid = "BG";
 		g.fillStyle = this.bgcolor;
@@ -582,7 +596,8 @@ export class Graphic {
 	// pc.vinc()  レイヤーを返す
 	//---------------------------------------------------------------------------
 	vinc(layerid: string, rendering: string, freeze = false) {
-		var g = this.context, option = { freeze: !!freeze, rendering: null as string | null };
+		const g = this.context;
+		const option = { freeze: !!freeze, rendering: null as string | null };
 		option.rendering = rendering;
 		g.setLayer(layerid, option);
 		return g;
@@ -601,11 +616,11 @@ export class Graphic {
 		option = option || {};
 		const g = this.context;
 
-		var realsize = ((this.cw * (option.ratio || this.fontsizeratio)) | 0);
-		var maxLength: number | null = null;
-		var widtharray = option.width || this.fontwidth;
-		var widthratiopos = (text.length <= widtharray.length + 1 ? text.length - 2 : widtharray.length - 1);
-		var widthratio = (widthratiopos >= 0 ? widtharray[widthratiopos] * text.length : null);
+		let realsize = ((this.cw * (option.ratio || this.fontsizeratio)) | 0);
+		let maxLength: number | null = null;
+		const widtharray = option.width || this.fontwidth;
+		const widthratiopos = (text.length <= widtharray.length + 1 ? text.length - 2 : widtharray.length - 1);
+		const widthratio = (widthratiopos >= 0 ? widtharray[widthratiopos] * text.length : null);
 		if (this.isSupportMaxWidth) {	// maxLengthサポートブラウザ
 			maxLength = (!!widthratio ? (realsize * widthratio) : null);
 		}
@@ -613,12 +628,12 @@ export class Graphic {
 			if (!!widthratio) { realsize = (realsize * widthratio * 1.5 / text.length) | 0; }
 		}
 
-		var style = (option.style ? option.style + " " : "");
-		g.font = style + realsize + "px " + this.fontfamily;
+		const style = (option.style ? `${option.style} ` : "");
+		g.font = `${style + realsize}px ${this.fontfamily}`;
 
-		var hoffset = this.bw * (option.hoffset || 0.9);
-		var voffset = this.bh * (option.voffset || 0.82);
-		var position = option.position || CENTER;
+		const hoffset = this.bw * (option.hoffset || 0.9);
+		const voffset = this.bh * (option.voffset || 0.82);
+		const position = option.position || CENTER;
 		switch (position) {
 			case CENTER: g.textAlign = 'center'; break;
 			case BOTTOMLEFT: case TOPLEFT: g.textAlign = 'left'; px -= hoffset; break;
@@ -665,11 +680,11 @@ export class Graphic {
 	}
 	getShadedCellColor(cell: Cell) {
 		if (cell.qans !== 1) { return null; }
-		var info = cell.error || cell.qinfo;
+		const info = cell.error || cell.qinfo;
 		if (info === 1) { return this.errcolor1; }
-		else if (info === 2) { return this.errcolor2; }
-		else if (cell.trial) { return this.trialcolor; }
-		else if (this.puzzle.execConfig('irowakeblk')) { return cell.sblk.color; }
+		if (info === 2) { return this.errcolor2; }
+		if (cell.trial) { return this.trialcolor; }
+		if (this.puzzle.execConfig('irowakeblk')) { return cell.sblk.color; }
 		return this.shadecolor;
 	}
 
@@ -707,47 +722,47 @@ export class Graphic {
 		return null;
 	}
 	getBGCellColor_error2(cell: Cell) {
-		var info = cell.error || cell.qinfo;
+		const info = cell.error || cell.qinfo;
 		if (info === 1) { return this.errbcolor1; }
-		else if (info === 2) { return this.errbcolor2; }
+		if (info === 2) { return this.errbcolor2; }
 		return null;
 	}
 	getBGCellColor_qcmp(cell: Cell) {
 		if (cell.error === 1 || cell.qinfo === 1) { return this.errbcolor1; }
-		else if (this.puzzle.execConfig('autocmp') && !!cell.room && cell.room.cmp) { return this.qcmpbgcolor; }
+		if (this.puzzle.execConfig('autocmp') && !!cell.room && cell.room.cmp) { return this.qcmpbgcolor; }
 		return null;
 	}
 	getBGCellColor_qcmp1(cell: Cell) {
 		if (cell.error === 1 || cell.qinfo === 1) { return this.errbcolor1; }
-		else if (cell.qsub === 1) { return this.bcolor; }
-		else if (this.puzzle.execConfig('autocmp') && !!cell.room && cell.room.cmp) { return this.qcmpbgcolor; }
+		if (cell.qsub === 1) { return this.bcolor; }
+		if (this.puzzle.execConfig('autocmp') && !!cell.room && cell.room.cmp) { return this.qcmpbgcolor; }
 		return null;
 	}
 	getBGCellColor_qsub1(cell: Cell) {
 		if ((cell.error || cell.qinfo) === 1) { return this.errbcolor1; }
-		else if (cell.qsub === 1) { return this.bcolor; }
+		if (cell.qsub === 1) { return this.bcolor; }
 		return null;
 	}
 	getBGCellColor_qsub2(cell: Cell) {
 		this.bcolor = "silver"; /* 数字入力で背景が消えないようにする応急処置 */
 		if ((cell.error || cell.qinfo) === 1) { return this.errbcolor1; }
-		else if (cell.qsub === 1) { return this.qsubcolor1; }
-		else if (cell.qsub === 2) { return this.qsubcolor2; }
+		if (cell.qsub === 1) { return this.qsubcolor1; }
+		if (cell.qsub === 2) { return this.qsubcolor2; }
 		return null;
 	}
 	getBGCellColor_qsub3(cell: Cell) {
 		if ((cell.error || cell.qinfo) === 1) { return this.errbcolor1; }
-		else if (cell.qsub === 1) { return this.qsubcolor1; }
-		else if (cell.qsub === 2) { return this.qsubcolor2; }
-		else if (cell.qsub === 3) { return this.qsubcolor3; }
+		if (cell.qsub === 1) { return this.qsubcolor1; }
+		if (cell.qsub === 2) { return this.qsubcolor2; }
+		if (cell.qsub === 3) { return this.qsubcolor3; }
 		return null;
 	}
 	getBGCellColor_icebarn(cell: Cell) {
 		if (cell.error === 1 || cell.qinfo === 1) {
 			if (cell.ques === 6) { return this.erricecolor; }
-			else { return this.errbcolor1; }
+			return this.errbcolor1; 
 		}
-		else if (cell.ques === 6) { return this.icecolor; }
+		if (cell.ques === 6) { return this.icecolor; }
 		return null;
 	}
 
@@ -755,10 +770,11 @@ export class Graphic {
 	// pc.drawCells_common()  drawShadedCells, drawQuesCells, drawBGCellsの共通ルーチン
 	//---------------------------------------------------------------------------
 	drawCells_common(header: string, colorfunc: (cell: Cell) => string | null) {
-		var g = this.context;
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i], color = colorfunc(cell);
+		const g = this.context;
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			const color = colorfunc(cell);
 			g.vid = header + cell.id;
 			if (!!color) {
 				g.fillStyle = color;
@@ -773,13 +789,14 @@ export class Graphic {
 	// pc.getBGEXcellColor() 背景色の設定・描画判定する
 	//---------------------------------------------------------------------------
 	drawBGEXcells() {
-		var g = this.vinc('excell_back', 'crispEdges', true);
+		const g = this.vinc('excell_back', 'crispEdges', true);
 
-		var exlist = this.range.excells;
-		for (var i = 0; i < exlist.length; i++) {
-			var excell = exlist[i], color = this.getBGEXcellColor(excell);
+		const exlist = this.range.excells;
+		for (let i = 0; i < exlist.length; i++) {
+			const excell = exlist[i];
+			const color = this.getBGEXcellColor(excell);
 
-			g.vid = "ex_full_" + excell.id;
+			g.vid = `ex_full_${excell.id}`;
 			if (!!color) {
 				g.fillStyle = color;
 				g.fillRectCenter(excell.bx * this.bw, excell.by * this.bh, this.bw + 0.5, this.bh + 0.5);
@@ -796,14 +813,14 @@ export class Graphic {
 	// pc.drawDotCells()  ・だけをCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawDotCells() {
-		var g = this.vinc('cell_dot', 'auto', true);
+		const g = this.vinc('cell_dot', 'auto', true);
 
-		var dsize = Math.max(this.cw * 0.06, 2);
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i];
+		const dsize = Math.max(this.cw * 0.06, 2);
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
 
-			g.vid = "c_dot_" + cell.id;
+			g.vid = `c_dot_${cell.id}`;
 			if (cell.qsub === 1) {
 				g.fillStyle = (!cell.trial ? this.qanscolor : this.trialcolor);
 				g.fillCircle(cell.bx * this.bw, cell.by * this.bh, dsize);
@@ -816,8 +833,11 @@ export class Graphic {
 	// pc.drawCellArrows() 矢印だけをCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawCellArrows() {
-		var g = this.vinc('cell_arrow', 'auto');
-		var al, aw, tl, tw;
+		const g = this.vinc('cell_arrow', 'auto');
+		let al;
+		let aw;
+		let tl;
+		let tw;
 
 		if (this.pid !== "nagare") {
 			al = this.cw * 0.4;		// ArrowLength
@@ -835,16 +855,18 @@ export class Graphic {
 		aw = (aw >= 1 ? aw : 1);
 		tw = (tw >= 5 ? tw : 5);
 
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i], dir = (!cell.numberAsObject ? cell.qdir : cell.getNum());
-			var color = ((dir >= 1 && dir <= 4) ? this.getCellArrowColor(cell) : null);
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			const dir = (!cell.numberAsObject ? cell.qdir : cell.getNum());
+			const color = ((dir >= 1 && dir <= 4) ? this.getCellArrowColor(cell) : null);
 
-			g.vid = "c_arrow_" + cell.id;
+			g.vid = `c_arrow_${cell.id}`;
 			if (!!color) {
 				g.fillStyle = color;
 				g.beginPath();
-				var px = cell.bx * this.bw, py = cell.by * this.bh;
+				const px = cell.bx * this.bw;
+				const py = cell.by * this.bh;
 				switch (dir) {
 					case cell.UP: g.setOffsetLinePath(px, py, 0, -al, -tw, -tl, -aw, -tl, -aw, al, aw, al, aw, -tl, tw, -tl, true); break;
 					case cell.DN: g.setOffsetLinePath(px, py, 0, al, -tw, tl, -aw, tl, -aw, -al, aw, -al, aw, tl, tw, tl, true); break;
@@ -857,10 +879,10 @@ export class Graphic {
 		}
 	}
 	getCellArrowColor(cell: Cell) {
-		var dir = (!cell.numberAsObject ? cell.qdir : cell.getNum());
+		const dir = (!cell.numberAsObject ? cell.qdir : cell.getNum());
 		if (dir >= 1 && dir <= 4) {
 			if (!cell.numberAsObject || cell.qnum !== -1) { return this.quescolor; }
-			else { return (!cell.trial ? this.qanscolor : this.trialcolor); }
+			return (!cell.trial ? this.qanscolor : this.trialcolor); 
 		}
 		return null;
 	}
@@ -869,17 +891,19 @@ export class Graphic {
 	// pc.drawSlashes() 斜線をCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawSlashes() {
-		var g = this.vinc('cell_slash', 'auto');
+		const g = this.vinc('cell_slash', 'auto');
 
-		var basewidth = Math.max(this.bw / 4, 2);
-		var irowake = this.puzzle.execConfig('irowake');
+		const basewidth = Math.max(this.bw / 4, 2);
+		const irowake = this.puzzle.execConfig('irowake');
 
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i];
-			g.vid = "c_slash_" + cell.id;
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			g.vid = `c_slash_${cell.id}`;
 			if (cell.qans !== 0) {
-				var info = cell.error || cell.qinfo, addwidth = 0, color;
+				const info = cell.error || cell.qinfo;
+				let addwidth = 0;
+				let color;
 				if (this.pid === 'gokigen' || this.pid === 'wagiri') {
 					if (cell.trial && this.puzzle.execConfig('irowake')) { addwidth = -basewidth / 2; }
 					else if (info === 1 || info === 3) { addwidth = basewidth / 2; }
@@ -895,7 +919,8 @@ export class Graphic {
 				g.lineWidth = basewidth + addwidth;
 				g.strokeStyle = color;
 				g.beginPath();
-				var px = cell.bx * this.bw, py = cell.by * this.bh;
+				const px = cell.bx * this.bw;
+				const py = cell.by * this.bh;
 				if (cell.qans === 31) { g.setOffsetLinePath(px, py, -this.bw, -this.bh, this.bw, this.bh, true); }
 				else if (cell.qans === 32) { g.setOffsetLinePath(px, py, this.bw, -this.bh, -this.bw, this.bh, true); }
 				g.stroke();
@@ -935,11 +960,11 @@ export class Graphic {
 		header: string,
 		textoption: any
 	) {
-		var g = this.context;
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i];
-			var text = textfunc(cell);
+		const g = this.context;
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			const text = textfunc(cell);
 			g.vid = header + cell.id;
 			if (!!text) {
 				g.fillStyle = colorfunc(cell);
@@ -958,16 +983,15 @@ export class Graphic {
 		if (!(cell as Cell).numberAsLetter) {
 			return this.getNumberTextCore(num);
 		}
-		else {
+		
 			return this.getNumberTextCore_letter(num);
-		}
 	}
 	getNumberTextCore(num: number) {
-		var hideHatena = (this.pid !== "yajirin" ? this.hideHatena : this.puzzle.getConfig('disptype_yajilin') === 2);
-		return (num >= 0 ? "" + num : ((!hideHatena && num === -2) ? "?" : ""));
+		const hideHatena = (this.pid !== "yajirin" ? this.hideHatena : this.puzzle.getConfig('disptype_yajilin') === 2);
+		return (num >= 0 ? `${num}` : ((!hideHatena && num === -2) ? "?" : ""));
 	}
 	getNumberTextCore_letter(num: number) {
-		var text = "" + num;
+		let text = `${num}`;
 		if (num === -1) { text = ""; }
 		else if (num === -2) { text = "?"; }
 		else if (num > 0 && num <= 26) { text = (num + 9).toString(36).toUpperCase(); }
@@ -1003,22 +1027,22 @@ export class Graphic {
 		return ((cell.error || cell.qinfo) === 1 ? this.errcolor1 : this.quescolor);
 	}
 	getQuesNumberColor_move(cell: Cell | EXCell) {
-		var puzzle = this.puzzle;
-		var info = cell.error || cell.qinfo;
+		const puzzle = this.puzzle;
+		const info = cell.error || cell.qinfo;
 		if (info === 1 || info === 4) {
 			return this.errcolor1;
 		}
-		else if (puzzle.execConfig('dispmove') && puzzle.mouse.mouseCell === cell) {
+		if (puzzle.execConfig('dispmove') && puzzle.mouse.mouseCell === cell) {
 			return this.movecolor;
 		}
 		return this.quescolor;
 	}
 	getQuesNumberColor_mixed(cell: Cell | EXCell) {
-		var info = cell.error || cell.qinfo;
+		const info = cell.error || cell.qinfo;
 		if ((cell.ques >= 1 && cell.ques <= 5) || cell.qans === 1) {
 			return this.fontShadecolor;
 		}
-		else if (info === 1 || info === 4) {
+		if (info === 1 || info === 4) {
 			return this.errcolor1;
 		}
 		return this.quescolor;
@@ -1035,14 +1059,14 @@ export class Graphic {
 	// pc.drawNumbersEXcell()  EXCellの数字をCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawNumbersEXcell() {
-		var g = this.vinc('excell_number', 'auto');
+		const g = this.vinc('excell_number', 'auto');
 
-		var exlist = this.range.excells;
-		for (var i = 0; i < exlist.length; i++) {
-			var excell = exlist[i];
-			var text = this.getQuesNumberText(excell);
+		const exlist = this.range.excells;
+		for (let i = 0; i < exlist.length; i++) {
+			const excell = exlist[i];
+			const text = this.getQuesNumberText(excell);
 
-			g.vid = "excell_text_" + excell.id;
+			g.vid = `excell_text_${excell.id}`;
 			if (!!text) {
 				g.fillStyle = this.getQuesNumberColor(excell);
 				this.disptext(text, excell.bx * this.bw, excell.by * this.bh);
@@ -1055,15 +1079,15 @@ export class Graphic {
 	// pc.drawSubNumbers()  Cellの補助数字をCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawSubNumbers() {
-		var g = this.vinc('cell_subnumber', 'auto');
-		var posarray = [5, 4, 2, 3];
+		const g = this.vinc('cell_subnumber', 'auto');
+		const posarray = [5, 4, 2, 3];
 
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i];
-			for (var n = 0; n < 4; n++) {
-				var text = (!cell.numberAsLetter ? this.getNumberTextCore(cell.snum[n]) : this.getNumberTextCore_letter(cell.snum[n]));
-				g.vid = "cell_subtext_" + cell.id + "_" + n;
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			for (let n = 0; n < 4; n++) {
+				const text = (!cell.numberAsLetter ? this.getNumberTextCore(cell.snum[n]) : this.getNumberTextCore_letter(cell.snum[n]));
+				g.vid = `cell_subtext_${cell.id}_${n}`;
 				if (!!text) {
 					g.fillStyle = (!cell.trial ? this.subcolor : this.trialcolor);
 					this.disptext(text, cell.bx * this.bw, cell.by * this.bh, { position: posarray[n], ratio: 0.33, hoffset: 0.8 });
@@ -1077,28 +1101,30 @@ export class Graphic {
 	// pc.drawArrowNumbers() Cellの数字と矢印をCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawArrowNumbers() {
-		var g = this.vinc('cell_arrownumber', 'auto');
+		const g = this.vinc('cell_arrownumber', 'auto');
 
-		var al = this.cw * 0.4;		// ArrowLength
-		var aw = this.cw * 0.03;		// ArrowWidth
-		var tl = this.cw * 0.16;		// 矢じりの長さの座標(中心-長さ)
-		var tw = this.cw * 0.12;		// 矢じりの幅
-		var dy = -this.bh * 0.6;
-		var dx = [this.bw * 0.6, this.bw * 0.7, this.bw * 0.8, this.bw * 0.85];
+		const al = this.cw * 0.4;		// ArrowLength
+		const aw = this.cw * 0.03;		// ArrowWidth
+		const tl = this.cw * 0.16;		// 矢じりの長さの座標(中心-長さ)
+		const tw = this.cw * 0.12;		// 矢じりの幅
+		const dy = -this.bh * 0.6;
+		const dx = [this.bw * 0.6, this.bw * 0.7, this.bw * 0.8, this.bw * 0.85];
 
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i], dir = cell.qdir;
-			var text = this.getQuesNumberText(cell);
-			var px = cell.bx * this.bw, py = cell.by * this.bh;
-			var digit = text.length - 1;
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			const dir = cell.qdir;
+			const text = this.getQuesNumberText(cell);
+			let px = cell.bx * this.bw;
+			let py = cell.by * this.bh;
+			const digit = text.length - 1;
 
 			if (!!text) {
 				g.fillStyle = this.getQuesNumberColor(cell);
 			}
 
 			// 矢印の描画
-			g.vid = "cell_arrow_" + cell.id;
+			g.vid = `cell_arrow_${cell.id}`;
 			if (!!text && dir !== cell.NDIR) {
 				g.beginPath();
 				switch (dir) {
@@ -1112,9 +1138,9 @@ export class Graphic {
 			else { g.vhide(); }
 
 			// 数字の描画
-			g.vid = "cell_arnum_" + cell.id;
+			g.vid = `cell_arnum_${cell.id}`;
 			if (!!text) {
-				var option = { ratio: 0.8 };
+				const option = { ratio: 0.8 };
 				if (dir !== cell.NDIR) { option.ratio = 0.7; }
 
 				if (dir === cell.UP || dir === cell.DN) { px -= this.cw * 0.1; }
@@ -1141,18 +1167,20 @@ export class Graphic {
 	// pc.drawCrossMarks() Cross上の黒点をCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawCrosses() {
-		var g = this.vinc('cross_base', 'auto', true);
+		const g = this.vinc('cross_base', 'auto', true);
 
-		var csize = this.cw * this.crosssize + 1;
+		const csize = this.cw * this.crosssize + 1;
 		g.lineWidth = 1;
 
-		var option = { ratio: 0.6 };
-		var clist = this.range.crosses;
-		for (var i = 0; i < clist.length; i++) {
-			var cross = clist[i], px = cross.bx * this.bw, py = cross.by * this.bh;
+		const option = { ratio: 0.6 };
+		const clist = this.range.crosses;
+		for (let i = 0; i < clist.length; i++) {
+			const cross = clist[i];
+			const px = cross.bx * this.bw;
+			const py = cross.by * this.bh;
 
 			// ○の描画
-			g.vid = "x_cp_" + cross.id;
+			g.vid = `x_cp_${cross.id}`;
 			if (cross.qnum !== -1) {
 				g.fillStyle = (cross.error === 1 || cross.qinfo === 1 ? this.errcolor1 : "white");
 				g.strokeStyle = "black";
@@ -1161,23 +1189,23 @@ export class Graphic {
 			else { g.vhide(); }
 
 			// 数字の描画
-			g.vid = "cross_text_" + cross.id;
+			g.vid = `cross_text_${cross.id}`;
 			if (cross.qnum >= 0) {
 				g.fillStyle = this.quescolor;
-				this.disptext("" + cross.qnum, px, py, option);
+				this.disptext(`${cross.qnum}`, px, py, option);
 			}
 			else { g.vhide(); }
 		}
 	}
 	drawCrossMarks() {
-		var g = this.vinc('cross_mark', 'auto', true);
+		const g = this.vinc('cross_mark', 'auto', true);
 
-		var csize = this.cw * this.crosssize;
-		var clist = this.range.crosses;
-		for (var i = 0; i < clist.length; i++) {
-			var cross = clist[i];
+		const csize = this.cw * this.crosssize;
+		const clist = this.range.crosses;
+		for (let i = 0; i < clist.length; i++) {
+			const cross = clist[i];
 
-			g.vid = "x_cm_" + cross.id;
+			g.vid = `x_cm_${cross.id}`;
 			if (cross.qnum === 1) {
 				g.fillStyle = (cross.error === 1 || cross.qinfo === 1 ? this.errcolor1 : this.quescolor);
 				g.fillCircle(cross.bx * this.bw, cross.by * this.bh, csize);
@@ -1196,16 +1224,18 @@ export class Graphic {
 		this.drawBorders_common("b_bd_");
 	}
 	drawBorders_common(header: string) {
-		var g = this.context;
+		const g = this.context;
 
-		var blist = this.range.borders;
-		for (var i = 0; i < blist.length; i++) {
-			var border = blist[i], color = this.getBorderColor(border);
+		const blist = this.range.borders;
+		for (let i = 0; i < blist.length; i++) {
+			const border = blist[i];
+			const color = this.getBorderColor(border);
 
 			g.vid = header + border.id;
 			if (!!color) {
-				var px = border.bx * this.bw, py = border.by * this.bh;
-				var lm = (this.lw + this.addlw) / 2;
+				const px = border.bx * this.bw;
+				const py = border.by * this.bh;
+				const lm = (this.lw + this.addlw) / 2;
 				g.fillStyle = color;
 				if (border.isVert()) { g.fillRectCenter(px, py, lm, this.bh + lm); }
 				else { g.fillRectCenter(px, py, this.bw + lm, lm); }
@@ -1222,17 +1252,18 @@ export class Graphic {
 		return null;
 	}
 	getBorderColor_qans(border: Border) {
-		var err = border.error || border.qinfo;
+		const err = border.error || border.qinfo;
 		if (border.isBorder()) {
 			if (err === 1) { return this.errcolor1; }
-			else if (err === -1) { return this.noerrcolor; }
-			else if (border.trial) { return this.trialcolor; }
-			else { return this.qanscolor; }
+			if (err === -1) { return this.noerrcolor; }
+			if (border.trial) { return this.trialcolor; }
+			return this.qanscolor; 
 		}
 		return null;
 	}
 	getBorderColor_ice(border: Border) {
-		var cell1 = border.sidecell[0], cell2 = border.sidecell[1];
+		const cell1 = border.sidecell[0];
+		const cell2 = border.sidecell[1];
 		if (border.inside && !cell1.isnull && !cell2.isnull && ((cell1.ice() ? 1 : 0) ^ (cell2.ice() ? 1 : 0))) {
 			return this.quescolor;
 		}
@@ -1270,16 +1301,17 @@ export class Graphic {
 	// pc.drawBoxBorders()  境界線と黒マスの間の線を描画する
 	//---------------------------------------------------------------------------
 	drawBorderQsubs() {
-		var g = this.vinc('border_qsub', 'crispEdges', true);
+		const g = this.vinc('border_qsub', 'crispEdges', true);
 
-		var m = this.cw * 0.15; //Margin
-		var blist = this.range.borders;
-		for (var i = 0; i < blist.length; i++) {
-			var border = blist[i];
+		const m = this.cw * 0.15; //Margin
+		const blist = this.range.borders;
+		for (let i = 0; i < blist.length; i++) {
+			const border = blist[i];
 
-			g.vid = "b_qsub1_" + border.id;
+			g.vid = `b_qsub1_${border.id}`;
 			if (border.qsub === 1) {
-				var px = border.bx * this.bw, py = border.by * this.bh;
+				const px = border.bx * this.bw;
+				const py = border.by * this.bh;
 				g.fillStyle = (!border.trial ? this.pekecolor : this.trialcolor);
 				if (border.isHorz()) { g.fillRectCenter(px, py, 0.5, this.bh - m); }
 				else { g.fillRectCenter(px, py, this.bw - m, 0.5); }
@@ -1290,41 +1322,51 @@ export class Graphic {
 
 	// 外枠がない場合は考慮していません
 	drawBoxBorders(tileflag: boolean) {
-		var g = this.vinc('boxborder', 'crispEdges');
+		const g = this.vinc('boxborder', 'crispEdges');
 
-		var lm = this.lm;
-		var cw = this.cw;
-		var ch = this.ch;
+		const lm = this.lm;
+		const cw = this.cw;
+		const ch = this.ch;
 
 		g.strokeStyle = this.bbcolor;
 		g.lineWidth = 1;
 
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i], isdraw = (cell.qans === 1);
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			let isdraw = (cell.qans === 1);
 			if (this.pid === 'stostone' && this.puzzle.board.falling) { isdraw = false; }
 
-			g.vid = "c_bb_" + cell.id;
+			g.vid = `c_bb_${cell.id}`;
 			if (isdraw) {
-				var px = (cell.bx - 1) * this.bw, py = (cell.by - 1) * this.bh;
-				var px0 = px - 0.5, px1 = px + lm + 0.5, px2 = px + cw - lm - 0.5, px3 = px + cw + 0.5;
-				var py0 = py - 0.5, py1 = py + lm + 0.5, py2 = py + ch - lm - 0.5, py3 = py + ch + 0.5;
+				const px = (cell.bx - 1) * this.bw;
+				const py = (cell.by - 1) * this.bh;
+				const px0 = px - 0.5;
+				const px1 = px + lm + 0.5;
+				const px2 = px + cw - lm - 0.5;
+				const px3 = px + cw + 0.5;
+				const py0 = py - 0.5;
+				const py1 = py + lm + 0.5;
+				const py2 = py + ch - lm - 0.5;
+				const py3 = py + ch + 0.5;
 
 				// この関数を呼ぶ場合は全てhasborder===1なので
 				// 外枠用の考慮部分を削除しています。
-				var adb = cell.adjborder;
-				var UPin = (cell.by > 2), DNin = (cell.by < 2 * this.puzzle.board.rows - 2);
-				var LTin = (cell.bx > 2), RTin = (cell.bx < 2 * this.puzzle.board.cols - 2);
+				const adb = cell.adjborder;
+				const UPin = (cell.by > 2);
+				const DNin = (cell.by < 2 * this.puzzle.board.rows - 2);
+				const LTin = (cell.bx > 2);
+				const RTin = (cell.bx < 2 * this.puzzle.board.cols - 2);
 
-				var isUP = (!UPin || adb.top.ques === 1);
-				var isDN = (!DNin || adb.bottom.ques === 1);
-				var isLT = (!LTin || adb.left.ques === 1);
-				var isRT = (!RTin || adb.right.ques === 1);
+				const isUP = (!UPin || adb.top.ques === 1);
+				const isDN = (!DNin || adb.bottom.ques === 1);
+				const isLT = (!LTin || adb.left.ques === 1);
+				const isRT = (!RTin || adb.right.ques === 1);
 
-				var isUL = (!UPin || !LTin || cell.relbd(-2, -1).ques === 1 || cell.relbd(-1, -2).ques === 1);
-				var isUR = (!UPin || !RTin || cell.relbd(2, -1).ques === 1 || cell.relbd(1, -2).ques === 1);
-				var isDL = (!DNin || !LTin || cell.relbd(-2, 1).ques === 1 || cell.relbd(-1, 2).ques === 1);
-				var isDR = (!DNin || !RTin || cell.relbd(2, 1).ques === 1 || cell.relbd(1, 2).ques === 1);
+				const isUL = (!UPin || !LTin || cell.relbd(-2, -1).ques === 1 || cell.relbd(-1, -2).ques === 1);
+				const isUR = (!UPin || !RTin || cell.relbd(2, -1).ques === 1 || cell.relbd(1, -2).ques === 1);
+				const isDL = (!DNin || !LTin || cell.relbd(-2, 1).ques === 1 || cell.relbd(-1, 2).ques === 1);
+				const isDR = (!DNin || !RTin || cell.relbd(2, 1).ques === 1 || cell.relbd(1, 2).ques === 1);
 
 				g.beginPath();
 
@@ -1359,17 +1401,19 @@ export class Graphic {
 	// pc.getLineColor() 描画する線の色を設定する
 	//---------------------------------------------------------------------------
 	drawLines() {
-		var g = this.vinc('line', 'crispEdges');
+		const g = this.vinc('line', 'crispEdges');
 
-		var blist = this.range.borders;
-		for (var i = 0; i < blist.length; i++) {
-			var border = blist[i], color = this.getLineColor(border);
+		const blist = this.range.borders;
+		for (let i = 0; i < blist.length; i++) {
+			const border = blist[i];
+			const color = this.getLineColor(border);
 
-			g.vid = "b_line_" + border.id;
+			g.vid = `b_line_${border.id}`;
 			if (!!color) {
-				var px = border.bx * this.bw, py = border.by * this.bh;
-				var isvert = (this.puzzle.board.borderAsLine === border.isVert());
-				var lm = this.lm + this.addlw / 2;
+				const px = border.bx * this.bw;
+				const py = border.by * this.bh;
+				const isvert = (this.puzzle.board.borderAsLine === border.isVert());
+				const lm = this.lm + this.addlw / 2;
 
 				g.fillStyle = color;
 				if (isvert) { g.fillRectCenter(px, py, lm, this.bh + lm); }
@@ -1382,18 +1426,19 @@ export class Graphic {
 	getLineColor(border: Border | null) {
 		this.addlw = 0;
 		if (border?.isLine()) {
-			var info = border.error || border.qinfo, puzzle = this.puzzle;
-			var isIrowake = (puzzle.execConfig('irowake') && border.path && border.path.color);
-			var isDispmove = puzzle.execConfig('dispmove');
+			const info = border.error || border.qinfo;
+			const puzzle = this.puzzle;
+			const isIrowake = (puzzle.execConfig('irowake') && border.path && border.path.color);
+			const isDispmove = puzzle.execConfig('dispmove');
 
 			if (border.trial && puzzle.execConfig('irowake')) { this.addlw = -this.lm; }
 			else if (info === 1) { this.addlw = 1; }
 
 			if (info === 1) { return this.errlinecolor; }
-			else if (info === -1) { return this.noerrcolor; }
-			else if (isDispmove) { return (border.trial ? this.movetrialcolor : this.movelinecolor); }
-			else if (isIrowake) { return border.path.color; }
-			else { return (border.trial ? this.trialcolor : this.linecolor); }
+			if (info === -1) { return this.noerrcolor; }
+			if (isDispmove) { return (border.trial ? this.movetrialcolor : this.movelinecolor); }
+			if (isIrowake) { return border.path.color; }
+			return (border.trial ? this.trialcolor : this.linecolor); 
 		}
 		return null;
 	}
@@ -1402,29 +1447,32 @@ export class Graphic {
 	// pc.drawTip()    動いたことを示す矢印のやじりを書き込む
 	//---------------------------------------------------------------------------
 	drawTip() {
-		var g = this.vinc('cell_linetip', 'auto');
+		const g = this.vinc('cell_linetip', 'auto');
 
-		var tsize = this.cw * 0.30;
-		var tplus = this.cw * 0.05;
+		const tsize = this.cw * 0.30;
+		const tplus = this.cw * 0.05;
 
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i], dir = 0, border = null;
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			let dir = 0;
+			let border = null;
 			if (cell.lcnt === 1 && cell.qnum === -1 && !this.puzzle.execConfig('dispmove')) {
-				var adb = cell.adjborder;
+				const adb = cell.adjborder;
 				if (adb.top.isLine()) { dir = 2; border = adb.top; }
 				else if (adb.bottom.isLine()) { dir = 1; border = adb.bottom; }
 				else if (adb.left.isLine()) { dir = 4; border = adb.left; }
 				else if (adb.right.isLine()) { dir = 3; border = adb.right; }
 			}
 
-			g.vid = "c_tip_" + cell.id;
+			g.vid = `c_tip_${cell.id}`;
 			if (dir !== 0) {
 				g.strokeStyle = this.getLineColor(border) || this.linecolor;
 				g.lineWidth = this.lw + this.addlw; //LineWidth
 
 				g.beginPath();
-				var px = cell.bx * this.bw + 1, py = cell.by * this.bh + 1;
+				const px = cell.bx * this.bw + 1;
+				const py = cell.by * this.bh + 1;
 				if (dir === 1) { g.setOffsetLinePath(px, py, -tsize, tsize, 0, -tplus, tsize, tsize, false); }
 				else if (dir === 2) { g.setOffsetLinePath(px, py, -tsize, -tsize, 0, tplus, tsize, -tsize, false); }
 				else if (dir === 3) { g.setOffsetLinePath(px, py, tsize, -tsize, -tplus, 0, tsize, tsize, false); }
@@ -1439,15 +1487,15 @@ export class Graphic {
 	// pc.drawPekes()    境界線上の×をCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawPekes() {
-		var g = this.vinc('border_peke', 'auto', true);
+		const g = this.vinc('border_peke', 'auto', true);
 
-		var size = this.cw * 0.15 + 1; if (size < 4) { size = 4; }
+		let size = this.cw * 0.15 + 1; if (size < 4) { size = 4; }
 		g.lineWidth = 1 + (this.cw / 40) | 0;
 
-		var blist = this.range.borders;
-		for (var i = 0; i < blist.length; i++) {
-			var border = blist[i];
-			g.vid = "b_peke_" + border.id;
+		const blist = this.range.borders;
+		for (let i = 0; i < blist.length; i++) {
+			const border = blist[i];
+			g.vid = `b_peke_${border.id}`;
 			if (border.qsub === 2) {
 				g.strokeStyle = (!border.trial ? this.pekecolor : this.trialcolor);
 				g.strokeCross(border.bx * this.bw, border.by * this.bh, size - 1);
@@ -1460,14 +1508,14 @@ export class Graphic {
 	// pc.drawBaseMarks() 交点のdotをCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawBaseMarks() {
-		var g = this.vinc('cross_mark', 'auto', true);
+		const g = this.vinc('cross_mark', 'auto', true);
 		g.fillStyle = this.quescolor;
 
-		var size = this.cw / 10;
-		var clist = this.range.crosses;
-		for (var i = 0; i < clist.length; i++) {
-			var cross = clist[i];
-			g.vid = "x_cm_" + cross.id;
+		const size = this.cw / 10;
+		const clist = this.range.crosses;
+		for (let i = 0; i < clist.length; i++) {
+			const cross = clist[i];
+			g.vid = `x_cm_${cross.id}`;
 			g.fillCircle(cross.bx * this.bw, cross.by * this.bh, size / 2);
 		}
 	}
@@ -1477,13 +1525,14 @@ export class Graphic {
 	// pc.drawTriangle1()  三角形をCanvasに書き込む(1マスのみ)
 	//---------------------------------------------------------------------------
 	drawTriangle() {
-		var g = this.vinc('cell_triangle', 'auto');
+		const g = this.vinc('cell_triangle', 'auto');
 
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i], num = (cell.ques !== 0 ? cell.ques : cell.qans);
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			const num = (cell.ques !== 0 ? cell.ques : cell.qans);
 
-			g.vid = "c_tri_" + cell.id;
+			g.vid = `c_tri_${cell.id}`;
 			if (num >= 2 && num <= 5) {
 				g.fillStyle = this.getTriangleColor(cell);
 				this.drawTriangle1(cell.bx * this.bw, cell.by * this.bh, num);
@@ -1495,8 +1544,10 @@ export class Graphic {
 		return this.quescolor;
 	}
 	drawTriangle1(px: number, py: number, num: number) {
-		var g = this.context;
-		var mgn = (this.pid === "reflect" ? 1 : 0), bw = this.bw + 1 - mgn, bh = this.bh + 1 - mgn;
+		const g = this.context;
+		const mgn = (this.pid === "reflect" ? 1 : 0);
+		const bw = this.bw + 1 - mgn;
+		const bh = this.bh + 1 - mgn;
 		g.beginPath();
 		switch (num) {
 			case 2: g.setOffsetLinePath(px, py, -bw, -bh, -bw, bh, bw, bh, true); break;
@@ -1511,22 +1562,24 @@ export class Graphic {
 	// pc.drawMBs()    Cell上の○,×をCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawMBs() {
-		var g = this.vinc('cell_mb', 'auto', true);
+		const g = this.vinc('cell_mb', 'auto', true);
 		g.lineWidth = 1;
 
-		var rsize = this.cw * 0.35;
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i], px = 0, py = 0;
+		const rsize = this.cw * 0.35;
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			let px = 0;
+			let py = 0;
 			if (cell.qsub > 0) {
 				px = cell.bx * this.bw; py = cell.by * this.bh;
 				g.strokeStyle = (!cell.trial ? this.mbcolor : "rgb(192, 192, 192)");
 			}
 
-			g.vid = "c_MB1_" + cell.id;
+			g.vid = `c_MB1_${cell.id}`;
 			if (cell.qsub === 1) { g.strokeCircle(px, py, rsize); } else { g.vhide(); }
 
-			g.vid = "c_MB2_" + cell.id;
+			g.vid = `c_MB2_${cell.id}`;
 			if (cell.qsub === 2) { g.strokeCross(px, py, rsize); } else { g.vhide(); }
 		}
 	}
@@ -1537,20 +1590,21 @@ export class Graphic {
 	// pc.getCircleFillColor()   描画する円の背景色を設定する
 	//---------------------------------------------------------------------------
 	drawCircles() {
-		var g = this.vinc('cell_circle', 'auto', true);
+		let g = this.vinc('cell_circle', 'auto', true);
 
-		var ra = this.circleratio;
-		var rsize_stroke = this.cw * (ra[0] + ra[1]) / 2, rsize_fill = this.cw * ra[0];
+		const ra = this.circleratio;
+		const rsize_stroke = this.cw * (ra[0] + ra[1]) / 2;
+		let rsize_fill = this.cw * ra[0];
 
 		/* fillとstrokeの間に線を描画するスキマを与える */
 		if (this.pid === 'loopsp') { rsize_fill -= this.cw * 0.10; }
 
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i];
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
 
-			var color = this.getCircleFillColor(cell);
-			g.vid = "c_cirb_" + cell.id;
+			const color = this.getCircleFillColor(cell);
+			g.vid = `c_cirb_${cell.id}`;
 			if (!!color) {
 				g.fillStyle = color;
 				g.fillCircle(cell.bx * this.bw, cell.by * this.bh, rsize_fill);
@@ -1561,11 +1615,11 @@ export class Graphic {
 		g = this.vinc('cell_circle_stroke', 'auto', true);
 		g.lineWidth = Math.max(this.cw * (ra[0] - ra[1]), 1);
 
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i];
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
 
-			var color = this.getCircleStrokeColor(cell);
-			g.vid = "c_cira_" + cell.id;
+			const color = this.getCircleStrokeColor(cell);
+			g.vid = `c_cira_${cell.id}`;
 			if (!!color) {
 				g.strokeStyle = color;
 				g.strokeCircle(cell.bx * this.bw, cell.by * this.bh, rsize_stroke);
@@ -1578,13 +1632,14 @@ export class Graphic {
 		return this.getCircleStrokeColor_qnum(cell)
 	}
 	getCircleStrokeColor_qnum(cell: Cell) {
-		var puzzle = this.puzzle, error = cell.error || cell.qinfo;
-		var isdrawmove = puzzle.execConfig('dispmove');
-		var num = (!isdrawmove ? cell : cell.base).qnum;
+		const puzzle = this.puzzle;
+		const error = cell.error || cell.qinfo;
+		const isdrawmove = puzzle.execConfig('dispmove');
+		const num = (!isdrawmove ? cell : cell.base).qnum;
 		if (num !== -1) {
 			if (isdrawmove && puzzle.mouse.mouseCell === cell) { return this.movecolor; }
-			else if (error === 1 || error === 4) { return this.errcolor1; }
-			else { return this.quescolor; }
+			if (error === 1 || error === 4) { return this.errcolor1; }
+			return this.quescolor; 
 		}
 		return null;
 	}
@@ -1600,9 +1655,9 @@ export class Graphic {
 	}
 	getCircleFillColor_qnum(cell: Cell) {
 		if (cell.qnum !== -1) {
-			var error = cell.error || cell.qinfo;
+			const error = cell.error || cell.qinfo;
 			if (error === 1 || error === 4) { return this.errbcolor1; }
-			else { return this.circlebasecolor; }
+			return this.circlebasecolor; 
 		}
 		return null;
 	}
@@ -1610,19 +1665,20 @@ export class Graphic {
 		if (cell.qnum === 1) {
 			return (cell.error === 1 ? this.errbcolor1 : "white");
 		}
-		else if (cell.qnum === 2) {
+		if (cell.qnum === 2) {
 			return (cell.error === 1 ? this.errcolor1 : this.quescolor);
 		}
 		return null;
 	}
 	getCircleFillColor_qcmp(cell: Cell) {
-		var puzzle = this.puzzle, error = cell.error || cell.qinfo;
-		var isdrawmove = puzzle.execConfig('dispmove');
-		var num = (!isdrawmove ? cell : cell.base).qnum;
+		const puzzle = this.puzzle;
+		const error = cell.error || cell.qinfo;
+		const isdrawmove = puzzle.execConfig('dispmove');
+		const num = (!isdrawmove ? cell : cell.base).qnum;
 		if (num !== -1) {
 			if (error === 1 || error === 4) { return this.errbcolor1; }
-			else if (cell.isCmp()) { return this.qcmpcolor; }
-			else { return this.circlebasecolor; }
+			if (cell.isCmp()) { return this.qcmpcolor; }
+			return this.circlebasecolor; 
 		}
 		return null;
 	}
@@ -1631,18 +1687,19 @@ export class Graphic {
 	// pc.drawDepartures()    移動系パズルで、移動元を示す記号を書き込む
 	//---------------------------------------------------------------------------
 	drawDepartures() {
-		var g = this.vinc('cell_depart', 'auto', true);
+		const g = this.vinc('cell_depart', 'auto', true);
 		g.fillStyle = this.movelinecolor;
 
-		var rsize = this.cw * 0.15;
-		var isdrawmove = this.puzzle.execConfig('dispmove');
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i];
+		const rsize = this.cw * 0.15;
+		const isdrawmove = this.puzzle.execConfig('dispmove');
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
 
-			g.vid = "c_dcir_" + cell.id;
+			g.vid = `c_dcir_${cell.id}`;
 			if (isdrawmove && cell.isDeparture()) {
-				var px = cell.bx * this.bw, py = cell.by * this.bh;
+				const px = cell.bx * this.bw;
+				const py = cell.by * this.bh;
 				g.fillCircle(px, py, rsize);
 			}
 			else { g.vhide(); }
@@ -1653,21 +1710,31 @@ export class Graphic {
 	// pc.drawLineParts()   ╋などをCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawLineParts() {
-		var g = this.vinc('cell_lineparts', 'crispEdges');
+		const g = this.vinc('cell_lineparts', 'crispEdges');
 		g.fillStyle = this.quescolor;
 
-		var lm = this.lm, bw = this.bw, bh = this.bh;
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i], qu = cell.ques;
+		const lm = this.lm;
+		const bw = this.bw;
+		const bh = this.bh;
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			const qu = cell.ques;
 
-			g.vid = "c_lp_" + cell.id;
+			g.vid = `c_lp_${cell.id}`;
 			if (qu >= 11 && qu <= 17) {
-				var px = cell.bx * this.bw, py = cell.by * this.bh;
-				var px0 = px - bw - 0.5, px1 = px - lm, px2 = px + lm, px3 = px + bw + 0.5;
-				var py0 = py - bh - 0.5, py1 = py - lm, py2 = py + lm, py3 = py + bh + 0.5;
+				const px = cell.bx * this.bw;
+				const py = cell.by * this.bh;
+				const px0 = px - bw - 0.5;
+				const px1 = px - lm;
+				const px2 = px + lm;
+				const px3 = px + bw + 0.5;
+				const py0 = py - bh - 0.5;
+				const py1 = py - lm;
+				const py2 = py + lm;
+				const py3 = py + bh + 0.5;
 
-				var flag = { 11: 15, 12: 3, 13: 12, 14: 9, 15: 5, 16: 6, 17: 10 }[qu] as number;
+				const flag = { 11: 15, 12: 3, 13: 12, 14: 9, 15: 5, 16: 6, 17: 10 }[qu] as number;
 				g.beginPath();
 				g.moveTo(px1, py1); if (flag & 1) { g.lineTo(px1, py0); g.lineTo(px2, py0); } // top
 				g.lineTo(px2, py1); if (flag & 8) { g.lineTo(px3, py1); g.lineTo(px3, py2); } // right
@@ -1685,22 +1752,24 @@ export class Graphic {
 	// pc.getBarColor()     縦棒・横棒の色を取得する
 	//---------------------------------------------------------------------------
 	drawTateyokos() {
-		var g = this.vinc('cell_tateyoko', 'crispEdges');
-		var lm = Math.max(this.cw / 6, 3) / 2;	//LineWidth
+		const g = this.vinc('cell_tateyoko', 'crispEdges');
+		const lm = Math.max(this.cw / 6, 3) / 2;	//LineWidth
 
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i], px = cell.bx * this.bw, py = cell.by * this.bh;
-			var qa = cell.qans;
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
+			const px = cell.bx * this.bw;
+			const py = cell.by * this.bh;
+			const qa = cell.qans;
 
-			g.vid = "c_bar1_" + cell.id;
+			g.vid = `c_bar1_${cell.id}`;
 			if (qa === 11 || qa === 12) {
 				g.fillStyle = this.getBarColor(cell, true);
 				g.fillRectCenter(px, py, lm + this.addlw / 2, this.bh);
 			}
 			else { g.vhide(); }
 
-			g.vid = "c_bar2_" + cell.id;
+			g.vid = `c_bar2_${cell.id}`;
 			if (qa === 11 || qa === 13) {
 				g.fillStyle = this.getBarColor(cell, false);
 				g.fillRectCenter(px, py, this.bw, lm + this.addlw / 2);
@@ -1711,7 +1780,9 @@ export class Graphic {
 	}
 
 	getBarColor(cell: Cell, vert: boolean) {
-		var err = cell.error, isErr = (err === 1 || err === 4 || ((err === 5 && vert) || (err === 6 && !vert))), color = "";
+		const err = cell.error;
+		const isErr = (err === 1 || err === 4 || ((err === 5 && vert) || (err === 6 && !vert)));
+		let color = "";
 		this.addlw = 0;
 		if (isErr) { color = this.errlinecolor; this.addlw = 1; }
 		else if (err !== 0) { color = this.noerrcolor; }
@@ -1733,50 +1804,54 @@ export class Graphic {
 		this.drawTargetTriangle();
 	}
 	drawSlash51Cells() {
-		var g = this.vinc('cell_ques51', 'crispEdges', true);
+		const g = this.vinc('cell_ques51', 'crispEdges', true);
 
 		g.strokeStyle = this.quescolor;
 		g.lineWidth = 1;
-		var clist = this.range.cells;
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i];
+		const clist = this.range.cells;
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
 
-			g.vid = "c_slash51_" + cell.id;
+			g.vid = `c_slash51_${cell.id}`;
 			if (cell.ques === 51) {
-				var px = cell.bx * this.bw, py = cell.by * this.bh;
+				const px = cell.bx * this.bw;
+				const py = cell.by * this.bh;
 				g.strokeLine(px - this.bw, py - this.bh, px + this.bw, py + this.bh);
 			}
 			else { g.vhide(); }
 		}
 	}
 	drawSlash51EXcells() {
-		var g = this.vinc('excell_ques51', 'crispEdges', true);
+		const g = this.vinc('excell_ques51', 'crispEdges', true);
 
 		g.strokeStyle = this.quescolor;
 		g.lineWidth = 1;
-		var exlist = this.range.excells;
-		for (var i = 0; i < exlist.length; i++) {
-			var excell = exlist[i], px = excell.bx * this.bw, py = excell.by * this.bh;
-			g.vid = "ex_slash51_" + excell.id;
+		const exlist = this.range.excells;
+		for (let i = 0; i < exlist.length; i++) {
+			const excell = exlist[i];
+			const px = excell.bx * this.bw;
+			const py = excell.by * this.bh;
+			g.vid = `ex_slash51_${excell.id}`;
 			g.strokeLine(px - this.bw, py - this.bh, px + this.bw, py + this.bh);
 		}
 	}
 	drawEXCellGrid() {
-		var g = this.vinc('grid_excell', 'crispEdges', true);
+		const g = this.vinc('grid_excell', 'crispEdges', true);
 
 		g.fillStyle = this.quescolor;
-		var exlist = this.range.excells;
-		for (var i = 0; i < exlist.length; i++) {
-			var excell = exlist[i];
-			var px = excell.bx * this.bw, py = excell.by * this.bh;
+		const exlist = this.range.excells;
+		for (let i = 0; i < exlist.length; i++) {
+			const excell = exlist[i];
+			const px = excell.bx * this.bw;
+			const py = excell.by * this.bh;
 
-			g.vid = "ex_bdx_" + excell.id;
+			g.vid = `ex_bdx_${excell.id}`;
 			if (excell.by === -1 && excell.bx < this.puzzle.board.maxbx) {
 				g.fillRectCenter(px + this.bw, py, 0.5, this.bh);
 			}
 			else { g.vhide(); }
 
-			g.vid = "ex_bdy_" + excell.id;
+			g.vid = `ex_bdy_${excell.id}`;
 			if (excell.bx === -1 && excell.by < this.puzzle.board.maxby) {
 				g.fillRectCenter(px, py + this.bh, this.bw, 0.5);
 			}
@@ -1791,17 +1866,21 @@ export class Graphic {
 	drawQuesNumbersOn51() {
 		this.vinc('cell_number51', 'auto');
 
-		var d = this.range;
-		for (var bx = (d.x1 | 1); bx <= d.x2; bx += 2) {
-			for (var by = (d.y1 | 1); by <= d.y2; by += 2) {
-				var piece = this.puzzle.board.getobj(bx, by); /* cell or excell */
+		const d = this.range;
+		for (let bx = (d.x1 | 1); bx <= d.x2; bx += 2) {
+			for (let by = (d.y1 | 1); by <= d.y2; by += 2) {
+				const piece = this.puzzle.board.getobj(bx, by); /* cell or excell */
 				if (!piece.isnull) { this.drawQuesNumbersOn51_1(piece); }
 			}
 		}
 	}
 	drawQuesNumbersOn51_1(piece: BoardPiece) { /* cell or excell */
-		var g = this.context, val, adj, px = piece.bx * this.bw, py = piece.by * this.bh;
-		var option = { ratio: 0.45, position: null as number | null };
+		const g = this.context;
+		let val;
+		let adj;
+		const px = piece.bx * this.bw;
+		const py = piece.by * this.bh;
+		const option = { ratio: 0.45, position: null as number | null };
 		g.fillStyle = (piece.error === 1 || piece.qinfo === 1 ? this.errcolor1 : this.quescolor);
 
 		adj = piece.relcell(2, 0);
@@ -1810,7 +1889,7 @@ export class Graphic {
 		g.vid = [piece.group, piece.id, 'text_ques51_rt'].join('_');
 		if (val >= 0 && !adj.isnull && adj.ques !== 51) {
 			option.position = this.TOPRIGHT;
-			this.disptext("" + val, px, py, option);
+			this.disptext(`${val}`, px, py, option);
 		}
 		else { g.vhide(); }
 
@@ -1820,7 +1899,7 @@ export class Graphic {
 		g.vid = [piece.group, piece.id, 'text_ques51_dn'].join('_');
 		if (val >= 0 && !adj.isnull && adj.ques !== 51) {
 			option.position = this.BOTTOMLEFT;
-			this.disptext("" + val, px, py, option);
+			this.disptext(`${val}`, px, py, option);
 		}
 		else { g.vhide(); }
 	}
@@ -1836,13 +1915,17 @@ export class Graphic {
 	}
 
 	drawCursor(islarge: boolean, isdraw: boolean) {
-		var g = this.vinc('target_cursor', 'crispEdges');
+		const g = this.vinc('target_cursor', 'crispEdges');
 
-		var d = this.range, cursor = this.puzzle.cursor;
+		const d = this.range;
+		const cursor = this.puzzle.cursor;
 		if (cursor.bx < d.x1 - 1 || d.x2 + 1 < cursor.bx) { return; }
 		if (cursor.by < d.y1 - 1 || d.y2 + 1 < cursor.by) { return; }
 
-		var px = cursor.bx * this.bw, py = cursor.by * this.bh, w, size;
+		const px = cursor.bx * this.bw;
+		const py = cursor.by * this.bh;
+		let w;
+		let size;
 		if (islarge !== false) { w = (Math.max(this.cw / 16, 2)) | 0; size = this.bw - 0.5; }
 		else { w = (Math.max(this.cw / 24, 1)) | 0; size = this.bw * 0.56; }
 
@@ -1856,20 +1939,24 @@ export class Graphic {
 	}
 
 	drawTargetSubNumber() {
-		var g = this.vinc('target_subnum', 'crispEdges');
+		const g = this.vinc('target_subnum', 'crispEdges');
 
-		var d = this.range, cursor = this.puzzle.cursor;
+		const d = this.range;
+		const cursor = this.puzzle.cursor;
 		if (cursor.bx < d.x1 || d.x2 < cursor.bx) { return; }
 		if (cursor.by < d.y1 || d.y2 < cursor.by) { return; }
 
-		var target = cursor.targetdir;
+		const target = cursor.targetdir;
 
 		g.vid = "target_subnum";
 		g.fillStyle = this.ttcolor;
 		if (this.puzzle.playmode && target !== 0) {
-			var bw = this.bw, bh = this.bh;
-			var px = cursor.bx * bw + 0.5, py = cursor.by * bh + 0.5;
-			var tw = bw * 0.8, th = bh * 0.8;
+			const bw = this.bw;
+			const bh = this.bh;
+			const px = cursor.bx * bw + 0.5;
+			const py = cursor.by * bh + 0.5;
+			const tw = bw * 0.8;
+			const th = bh * 0.8;
 			if (target === 5) { g.fillRect(px - bw, py - bh, tw, th); }
 			else if (target === 4) { g.fillRect(px + bw - tw, py - bh, tw, th); }
 			else if (target === 2) { g.fillRect(px - bw, py + bh - th, tw, th); }
@@ -1878,13 +1965,14 @@ export class Graphic {
 		else { g.vhide(); }
 	}
 	drawTargetTriangle() {
-		var g = this.vinc('target_triangle', 'auto');
+		const g = this.vinc('target_triangle', 'auto');
 
-		var d = this.range, cursor = this.puzzle.cursor;
+		const d = this.range;
+		const cursor = this.puzzle.cursor;
 		if (cursor.bx < d.x1 || d.x2 < cursor.bx) { return; }
 		if (cursor.by < d.y1 || d.y2 < cursor.by) { return; }
 
-		var target = cursor.detectTarget();
+		const target = cursor.detectTarget();
 
 		g.vid = "target_triangle";
 		g.fillStyle = this.ttcolor;
@@ -1898,26 +1986,34 @@ export class Graphic {
 	// pc.drawDashedCenterLines() セルの中心から中心にひかれる点線をCanvasに描画する
 	//---------------------------------------------------------------------------
 	drawDashedCenterLines() {
-		var g = this.vinc('centerline', 'crispEdges', true), bd = this.puzzle.board;
+		const g = this.vinc('centerline', 'crispEdges', true);
+		const bd = this.puzzle.board;
 
-		var x1 = this.range.x1, y1 = this.range.y1, x2 = this.range.x2, y2 = this.range.y2;
+		let x1 = this.range.x1;
+		let y1 = this.range.y1;
+		let x2 = this.range.x2;
+		let y2 = this.range.y2;
 		if (x1 < bd.minbx + 1) { x1 = bd.minbx + 1; } if (x2 > bd.maxbx - 1) { x2 = bd.maxbx - 1; }
 		if (y1 < bd.minby + 1) { y1 = bd.minby + 1; } if (y2 > bd.maxby - 1) { y2 = bd.maxby - 1; }
 		x1 -= (~x1 & 1); y1 -= (~y1 & 1); x2 += (~x2 & 1); y2 += (~y2 & 1); /* (x1,y1)-(x2,y2)を外側の奇数範囲まで広げる */
 
-		var dotCount = (Math.max(this.cw / (this.cw / 10 + 3), 1) | 0);
-		var dotSize = this.cw / (dotCount * 2);
+		const dotCount = (Math.max(this.cw / (this.cw / 10 + 3), 1) | 0);
+		const dotSize = this.cw / (dotCount * 2);
 
 		g.lineWidth = 1;
 		g.strokeStyle = this.gridcolor;
-		for (var i = x1; i <= x2; i += 2) {
-			var px = i * this.bw, py1 = y1 * this.bh, py2 = y2 * this.bh;
-			g.vid = "cliney_" + i;
+		for (let i = x1; i <= x2; i += 2) {
+			const px = i * this.bw;
+			const py1 = y1 * this.bh;
+			const py2 = y2 * this.bh;
+			g.vid = `cliney_${i}`;
 			g.strokeDashedLine(px, py1, px, py2, [dotSize]);
 		}
-		for (var i = y1; i <= y2; i += 2) {
-			var py = i * this.bh, px1 = x1 * this.bw, px2 = x2 * this.bw;
-			g.vid = "clinex_" + i;
+		for (let i = y1; i <= y2; i += 2) {
+			const py = i * this.bh;
+			const px1 = x1 * this.bw;
+			const px2 = x2 * this.bw;
+			g.vid = `clinex_${i}`;
 			g.strokeDashedLine(px1, py, px2, py, [dotSize]);
 		}
 	}
@@ -1927,65 +2023,89 @@ export class Graphic {
 	// pc.drawDashedGrid()  セルの枠線(点線)をCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawGrid(haschassis: boolean, isdraw: boolean) {
-		var g = this.vinc('grid', 'crispEdges', true), bd = this.puzzle.board;
+		const g = this.vinc('grid', 'crispEdges', true);
+		const bd = this.puzzle.board;
 
 		// 外枠まで描画するわけじゃないので、maxbxとか使いません
-		var x1 = this.range.x1, y1 = this.range.y1, x2 = this.range.x2, y2 = this.range.y2;
+		let x1 = this.range.x1;
+		let y1 = this.range.y1;
+		let x2 = this.range.x2;
+		let y2 = this.range.y2;
 		if (x1 < 0) { x1 = 0; } if (x2 > 2 * bd.cols) { x2 = 2 * bd.cols; }
 		if (y1 < 0) { y1 = 0; } if (y2 > 2 * bd.rows) { y2 = 2 * bd.rows; }
 		x1 -= (x1 & 1); y1 -= (y1 & 1); /* (x1,y1)を外側の偶数位置に移動する */
 		if (x1 >= x2 || y1 >= y2) { return; }
 
-		var bs = ((bd.hasborder !== 2 && haschassis !== false) ? 2 : 0), bw = this.bw, bh = this.bh;
-		var xa = Math.max(x1, 0 + bs), xb = Math.min(x2, 2 * bd.cols - bs);
-		var ya = Math.max(y1, 0 + bs), yb = Math.min(y2, 2 * bd.rows - bs);
+		const bs = ((bd.hasborder !== 2 && haschassis !== false) ? 2 : 0);
+		const bw = this.bw;
+		const bh = this.bh;
+		const xa = Math.max(x1, 0 + bs);
+		const xb = Math.min(x2, 2 * bd.cols - bs);
+		const ya = Math.max(y1, 0 + bs);
+		const yb = Math.min(y2, 2 * bd.rows - bs);
 
 		// isdraw!==false: 指定無しかtrueのときは描画する
 		g.lineWidth = 1;
 		g.strokeStyle = this.gridcolor;
-		for (var i = xa; i <= xb; i += 2) {
-			g.vid = "bdy_" + i;
+		for (let i = xa; i <= xb; i += 2) {
+			g.vid = `bdy_${i}`;
 			if (isdraw !== false) {
-				var px = i * bw, py1 = y1 * bh, py2 = y2 * bh;
+				const px = i * bw;
+				const py1 = y1 * bh;
+				const py2 = y2 * bh;
 				g.strokeLine(px, py1, px, py2);
 			}
 			else { g.vhide(); }
 		}
-		for (var i = ya; i <= yb; i += 2) {
-			g.vid = "bdx_" + i;
+		for (let i = ya; i <= yb; i += 2) {
+			g.vid = `bdx_${i}`;
 			if (isdraw !== false) {
-				var py = i * bh, px1 = x1 * bw, px2 = x2 * bw;
+				const py = i * bh;
+				const px1 = x1 * bw;
+				const px2 = x2 * bw;
 				g.strokeLine(px1, py, px2, py);
 			}
 			else { g.vhide(); }
 		}
 	}
 	drawDashedGrid(haschassis: boolean) {
-		var g = this.vinc('grid', 'crispEdges', true), bd = this.puzzle.board;
+		const g = this.vinc('grid', 'crispEdges', true);
+		const bd = this.puzzle.board;
 
 		// 外枠まで描画するわけじゃないので、maxbxとか使いません
-		var x1 = this.range.x1, y1 = this.range.y1, x2 = this.range.x2, y2 = this.range.y2;
+		let x1 = this.range.x1;
+		let y1 = this.range.y1;
+		let x2 = this.range.x2;
+		let y2 = this.range.y2;
 		if (x1 < 0) { x1 = 0; } if (x2 > 2 * bd.cols) { x2 = 2 * bd.cols; }
 		if (y1 < 0) { y1 = 0; } if (y2 > 2 * bd.rows) { y2 = 2 * bd.rows; }
 		x1 -= (x1 & 1); y1 -= (y1 & 1); x2 += (x2 & 1); y2 += (y2 & 1); /* (x1,y1)-(x2,y2)を外側の偶数範囲に移動する */
 
-		var dotCount = (Math.max(this.cw / (this.cw / 10 + 3), 1) | 0);
-		var dotSize = this.cw / (dotCount * 2);
+		const dotCount = (Math.max(this.cw / (this.cw / 10 + 3), 1) | 0);
+		const dotSize = this.cw / (dotCount * 2);
 
-		var bs = ((haschassis !== false) ? 2 : 0), bw = this.bw, bh = this.bh;
-		var xa = Math.max(x1, bd.minbx + bs), xb = Math.min(x2, bd.maxbx - bs);
-		var ya = Math.max(y1, bd.minby + bs), yb = Math.min(y2, bd.maxby - bs);
+		const bs = ((haschassis !== false) ? 2 : 0);
+		const bw = this.bw;
+		const bh = this.bh;
+		const xa = Math.max(x1, bd.minbx + bs);
+		const xb = Math.min(x2, bd.maxbx - bs);
+		const ya = Math.max(y1, bd.minby + bs);
+		const yb = Math.min(y2, bd.maxby - bs);
 
 		g.lineWidth = 1;
 		g.strokeStyle = this.gridcolor;
-		for (var i = xa; i <= xb; i += 2) {
-			var px = i * bw, py1 = y1 * bh, py2 = y2 * bh;
-			g.vid = "bdy_" + i;
+		for (let i = xa; i <= xb; i += 2) {
+			const px = i * bw;
+			const py1 = y1 * bh;
+			const py2 = y2 * bh;
+			g.vid = `bdy_${i}`;
 			g.strokeDashedLine(px, py1, px, py2, [dotSize]);
 		}
-		for (var i = ya; i <= yb; i += 2) {
-			var py = i * bh, px1 = x1 * bw, px2 = x2 * bw;
-			g.vid = "bdx_" + i;
+		for (let i = ya; i <= yb; i += 2) {
+			const py = i * bh;
+			const px1 = x1 * bw;
+			const px2 = x2 * bw;
+			g.vid = `bdx_${i}`;
 			g.strokeDashedLine(px1, py, px2, py, [dotSize]);
 		}
 	}
@@ -1995,15 +2115,21 @@ export class Graphic {
 	// pc.drawChassis_ex1() bd.hasexcell==1の時の外枠をCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawChassis() {
-		var g = this.vinc('chassis', 'crispEdges', true), bd = this.puzzle.board;
+		const g = this.vinc('chassis', 'crispEdges', true);
+		const bd = this.puzzle.board;
 
 		// ex===0とex===2で同じ場所に描画するので、maxbxとか使いません
-		var x1 = this.range.x1, y1 = this.range.y1, x2 = this.range.x2, y2 = this.range.y2;
+		let x1 = this.range.x1;
+		let y1 = this.range.y1;
+		let x2 = this.range.x2;
+		let y2 = this.range.y2;
 		if (x1 < 0) { x1 = 0; } if (x2 > 2 * bd.cols) { x2 = 2 * bd.cols; }
 		if (y1 < 0) { y1 = 0; } if (y2 > 2 * bd.rows) { y2 = 2 * bd.rows; }
 
-		var boardWidth = bd.cols * this.cw, boardHeight = bd.rows * this.ch;
-		var lw = this.lw, lm = this.lm;
+		const boardWidth = bd.cols * this.cw;
+		const boardHeight = bd.rows * this.ch;
+		let lw = this.lw;
+		let lm = this.lm;
 		if (this.pid === 'bosanowa') { lw = 1; lm = 0.5; }
 		g.fillStyle = this.quescolor;
 		g.vid = "chs1_"; g.fillRect(-lm, -lm, lw, boardHeight + lw);
@@ -2012,14 +2138,20 @@ export class Graphic {
 		g.vid = "chs4_"; g.fillRect(-lm, boardHeight - lm, boardWidth + lw, lw);
 	}
 	drawChassis_ex1(boldflag: boolean) {
-		var g = this.vinc('chassis_ex1', 'crispEdges', true), bd = this.puzzle.board;
+		const g = this.vinc('chassis_ex1', 'crispEdges', true);
+		const bd = this.puzzle.board;
 
-		var x1 = this.range.x1, y1 = this.range.y1, x2 = this.range.x2, y2 = this.range.y2;
+		let x1 = this.range.x1;
+		let y1 = this.range.y1;
+		let x2 = this.range.x2;
+		let y2 = this.range.y2;
 		if (x1 <= 0) { x1 = bd.minbx; } if (x2 > bd.maxbx) { x2 = bd.maxbx; }
 		if (y1 <= 0) { y1 = bd.minby; } if (y2 > bd.maxby) { y2 = bd.maxby; }
 
-		var lw = this.lw, lm = this.lm;
-		var boardWidth = bd.cols * this.cw, boardHeight = bd.rows * this.ch;
+		const lw = this.lw;
+		const lm = this.lm;
+		const boardWidth = bd.cols * this.cw;
+		const boardHeight = bd.rows * this.ch;
 
 		// extendcell==1も含んだ外枠の描画
 		g.fillStyle = this.quescolor;
@@ -2039,17 +2171,19 @@ export class Graphic {
 			g.vid = "chs1_"; g.fillRect(-0.5, -0.5, 1, boardHeight);
 			g.vid = "chs2_"; g.fillRect(-0.5, -0.5, boardWidth, 1);
 
-			var clist = this.range.cells;
-			for (var i = 0; i < clist.length; i++) {
-				var cell = clist[i], px = (cell.bx - 1) * this.bw, py = (cell.by - 1) * this.bh;
+			const clist = this.range.cells;
+			for (let i = 0; i < clist.length; i++) {
+				const cell = clist[i];
+				const px = (cell.bx - 1) * this.bw;
+				const py = (cell.by - 1) * this.bh;
 
 				if (cell.bx === 1) {
-					g.vid = "chs1_sub_" + cell.by;
+					g.vid = `chs1_sub_${cell.by}`;
 					if (cell.ques !== 51) { g.fillRect(-lm, py - lm, lw, this.ch + lw); } else { g.vhide(); }
 				}
 
 				if (cell.by === 1) {
-					g.vid = "chs2_sub_" + cell.bx;
+					g.vid = `chs2_sub_${cell.bx}`;
 					if (cell.ques !== 51) { g.fillRect(px - lm, -lm, this.cw + lw, lw); } else { g.vhide(); }
 				}
 			}

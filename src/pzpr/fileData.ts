@@ -28,7 +28,7 @@ export class FileData {
     isfile = true
 
     parse() {
-        var result = (this.parseFileType() && this.parseFileData());
+        const result = (this.parseFileType() && this.parseFileData());
         if (result) { this.changeProperPid(); }
         return (result ? this : null);
     }
@@ -41,9 +41,9 @@ export class FileData {
     //                   出力={pid:パズル種類, type:ファイル種類, fstr:ファイルの内容}
     //---------------------------------------------------------------------------
     parseFileType() {
-        var lines = this.fstr.split("\n");
-        var firstline = lines.shift();
-        delete this.fstr;
+        const lines = this.fstr.split("\n");
+        const firstline = lines.shift();
+        this.fstr = undefined;
 
         /* ヘッダからパズルの種類・ファイルの種類を判定する */
         if (firstline.match(/^pzprv3/)) {
@@ -81,9 +81,9 @@ export class FileData {
     outputFileType() {
         /* ヘッダの処理 */
         if (this.type === Constants.FILE_PZPR) {
-            return [(this.filever === 0 ? "pzprv3" : ("pzprv3." + this.filever)), this.pid, ""].join("\n");
+            return [(this.filever === 0 ? "pzprv3" : (`pzprv3.${this.filever}`)), this.pid, ""].join("\n");
         }
-        else if (this.type === Constants.FILE_PBOX_XML) {
+        if (this.type === Constants.FILE_PBOX_XML) {
             this.body.querySelector('puzzle').setAttribute('type', pzpr.variety(this.pid).kanpenid);
         }
         return "";
@@ -93,13 +93,15 @@ export class FileData {
     // ★ parseFileData() ファイルの内容からサイズなどを求める
     //---------------------------------------------------------------------------
     parseFileData() {
-        var lines = this.qdata.split("\n"), col = 0, row = 0;
-        delete this.qdata;
+        const lines = this.qdata.split("\n");
+        let col = 0;
+        let row = 0;
+        this.qdata = undefined;
 
         /* サイズを表す文字列 */
         if (this.type === Constants.FILE_PBOX_XML) {
-            row = +this.body!.querySelector('size')!.getAttribute('row')!;
-            col = +this.body!.querySelector('size')!.getAttribute('col')!;
+            row = +this.body?.querySelector('size')?.getAttribute('row')!;
+            col = +this.body?.querySelector('size')?.getAttribute('col')!;
             if (this.pid === "slither" || this.pid === 'kakuro') { row--; col--; }
         }
         else if (this.type === Constants.FILE_PBOX && this.pid === "kakuro") {
@@ -119,7 +121,10 @@ export class FileData {
 
         /* サイズ以降のデータを取得 */
         if (this.type === Constants.FILE_PZPR) {
-            var historypos = null, str = "", strs = [], isinfo = false;
+            let historypos = null;
+            let str = "";
+            const strs = [];
+            let isinfo = false;
             for (let i = 0; i < lines.length; i++) {
                 /* かなり昔のぱずぷれファイルは最終行にURLがあったので、末尾扱いする */
                 if (lines[i].match(/^http\:\/\//)) { break; }
@@ -136,7 +141,8 @@ export class FileData {
 
             /* 履歴部分の読み込み */
             if (historypos !== null && !!JSON) {
-                var count = 0, cnt;
+                let count = 0;
+                let cnt;
                 for (let i = historypos; i < lines.length; i++) {
                     str += lines[i];
 
@@ -150,7 +156,7 @@ export class FileData {
             /* 履歴出力があったら入力する */
             if (!!JSON) {
                 if (isinfo && (str.substr(0, 5) === "info:")) {
-                    var info = JSON.parse(str.substr(5));
+                    const info = JSON.parse(str.substr(5));
                     this.metadata = MetaData.update(this.metadata, info.metadata);
                     this.history = info.history || '';
                 }
@@ -164,11 +170,12 @@ export class FileData {
         }
         else if (this.type === Constants.FILE_PBOX_XML) {
             if (!!this.body) {
-                var metanode = this.body.querySelector('property'), meta = this.metadata;
+                const metanode = this.body.querySelector('property');
+                const meta = this.metadata;
                 meta.author = metanode.querySelector('author').getAttribute('value');
                 meta.source = metanode.querySelector('source').getAttribute('value');
                 meta.hard = metanode.querySelector('difficulty').getAttribute('value');
-                var commentnode = metanode.querySelector('comment');
+                const commentnode = metanode.querySelector('comment');
                 meta.comment = (!!commentnode ? commentnode.childNodes[0].data : '');
             }
         }
@@ -180,12 +187,14 @@ export class FileData {
     // ★ outputFileData() パズル種類, URL種類, fstrからファイルのデータを生成する
     //---------------------------------------------------------------------------
     outputFileData() {
-        var col = this.cols, row = this.rows, out = [] as any[];
-        var puzzlenode = (this.type === Constants.FILE_PBOX_XML ? this.body.querySelector('puzzle') : null);
+        let col = this.cols;
+        let row = this.rows;
+        const out = [] as any[];
+        const puzzlenode = (this.type === Constants.FILE_PBOX_XML ? this.body.querySelector('puzzle') : null);
 
         /* サイズを表す文字列 */
         if (this.type === Constants.FILE_PBOX_XML) {
-            var sizenode = puzzlenode.querySelector('size');
+            const sizenode = puzzlenode.querySelector('size');
             if (sizenode) { puzzlenode.removeChild(sizenode); }
             if (this.pid === "slither" || this.pid === 'kakuro') { row++; col++; }
             puzzlenode.appendChild(this.createXMLNode('size', { row: row, col: col }));
@@ -210,49 +219,49 @@ export class FileData {
         /* 履歴・メタデータ出力がある形式ならば出力する */
         if ((this.type === Constants.FILE_PZPR) && !!JSON) {
             if (!MetaData.isEmpty(this.metadata)) {
-                var info = { metadata: MetaData.getvaliddata(this.metadata), history: this.history || undefined };
-                out.push("info:" + JSON.stringify(info, null, 1));
+                const info = { metadata: MetaData.getvaliddata(this.metadata), history: this.history || undefined };
+                out.push(`info:${JSON.stringify(info, null, 1)}`);
             }
             else if (this.history) {
-                out.push("history:" + JSON.stringify(this.history, null, 1));
+                out.push(`history:${JSON.stringify(this.history, null, 1)}`);
             }
         }
         else if (this.type === Constants.FILE_PBOX_XML) {
-            var propnode = puzzlenode!.querySelector('property')!;
-            if (propnode) { puzzlenode!.removeChild(propnode); }
+            let propnode = puzzlenode?.querySelector('property')!;
+            if (propnode) { puzzlenode?.removeChild(propnode); }
             propnode = this.createXMLNode('property');
-            var meta = this.metadata;
+            const meta = this.metadata;
             propnode.appendChild(this.createXMLNode('author', { value: meta.author }));
             propnode.appendChild(this.createXMLNode('source', { value: meta.source }));
             propnode.appendChild(this.createXMLNode('difficulty', { value: meta.hard }));
             if (!!meta.comment) {
-                var commentnode = this.createXMLNode('comment');
+                const commentnode = this.createXMLNode('comment');
                 commentnode.appendChild(this.body.createTextNode(meta.comment));
                 propnode.appendChild(commentnode);
             }
-            puzzlenode!.appendChild(propnode);
+            puzzlenode?.appendChild(propnode);
 
             // 順番を入れ替え
-            puzzlenode!.appendChild(puzzlenode!.querySelector('board')!);
-            puzzlenode!.appendChild(puzzlenode!.querySelector('answer')!);
+            puzzlenode?.appendChild(puzzlenode?.querySelector('board')!);
+            puzzlenode?.appendChild(puzzlenode?.querySelector('answer')!);
         }
 
-        var outputdata;
+        let outputdata;
         if (this.type !== Constants.FILE_PBOX_XML) {
             outputdata = out.join("\n");
         }
         else {
             outputdata = new XMLSerializer().serializeToString(this.body);
             if (!outputdata.match(/^\<\?xml/)) {
-                outputdata = '<?xml version="1.0" encoding="UTF-8"?>\n' + outputdata;
+                outputdata = `<?xml version="1.0" encoding="UTF-8"?>\n${outputdata}`;
             }
         }
         return outputdata;
     }
 
     createXMLNode(name: string, attrs: Record<string, string | number> = null) {
-        var node = this.body.createElement(name);
-        if (!!attrs) { for (var i in attrs) { node.setAttribute(i, attrs[i]); } }
+        const node = this.body.createElement(name);
+        if (!!attrs) { for (const i in attrs) { node.setAttribute(i, attrs[i]); } }
         return node;
     }
 
@@ -263,33 +272,44 @@ export class FileData {
         if (this.type !== Constants.FILE_PZPR) { return; }
 
         switch (this.pid) {
-            case 'ichimaga':
-                var pzlflag = this.body.split('\n')[0];
+            case 'ichimaga': {
+                const pzlflag = this.body.split('\n')[0];
                 if (pzlflag === 'mag') { this.pid = 'ichimagam'; }
                 else if (pzlflag === 'cross') { this.pid = 'ichimagax'; }
                 break;
-            case 'icelom':
-                var pzltype = this.body.split('\n')[2];
+            }
+            case 'icelom': {
+                const pzltype = this.body.split('\n')[2];
                 if (pzltype === 'skipwhite') { this.pid = 'icelom2'; }
                 break;
-            case 'pipelink':
-                var lines = this.body.split('\n'), row = 1, len = this.rows;
+            }
+            case 'pipelink': {
+                const lines = this.body.split('\n');
+                const row = 1;
+                const len = this.rows;
                 if (lines.slice(row, row + len).join('').match(/o/)) {
                     this.pid = 'pipelinkr';
                 }
                 break;
-            case 'bonsan':
-                var lines = this.body.split('\n'), row = 2 * this.rows, len = 2 * this.rows - 1;
+            }
+            case 'bonsan': {
+                const lines = this.body.split('\n');
+                const row = 2 * this.rows;
+                const len = 2 * this.rows - 1;
                 if (lines.slice(row, row + len).join('').match(/1/)) {
                     this.pid = 'heyabon';
                 }
                 break;
-            case 'kramma':
-                var lines = this.body.split('\n'), row = this.rows, len = this.rows + 1;
+            }
+            case 'kramma': {
+                const lines = this.body.split('\n');
+                const row = this.rows;
+                const len = this.rows + 1;
                 if (lines.slice(row, row + len).join('').match(/1/)) {
                     this.pid = 'kramman';
                 }
                 break;
+            }
         }
     }
 };

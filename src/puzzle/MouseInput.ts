@@ -78,7 +78,7 @@ export class MouseEvent1 {
 	// mv.modechange() モード変更時に設定を初期化する
 	//---------------------------------------------------------------------------
 	mousereset() {
-		var cell0 = this.mouseCell;
+		const cell0 = this.mouseCell;
 
 		this.mouseCell = // 下の行へ続く
 			this.firstCell = this.puzzle.board.emptycell;
@@ -115,7 +115,7 @@ export class MouseEvent1 {
 
 		this.setMouseButton(e);			/* どのボタンが押されたか取得 (mousedown時のみ) */
 		if (!this.btn) { this.mousereset(); return; }
-		var addrtarget = this.getBoardAddress(e);
+		const addrtarget = this.getBoardAddress(e);
 		this.moveTo(addrtarget.bx, addrtarget.by);
 
 		e.stopPropagation();
@@ -133,7 +133,7 @@ export class MouseEvent1 {
 		if (!this.enableMouse || !this.btn) { return true; }
 		//@ts-ignore
 		if (e.touches !== void 0 || e.which === void 0 || e.which !== 0 || (e.type.match(/pointermove/i) && e.buttons > 0)) {
-			var addrtarget = this.getBoardAddress(e);
+			const addrtarget = this.getBoardAddress(e);
 			this.lineTo(addrtarget.bx, addrtarget.by);
 		}
 		else { this.mousereset(); }
@@ -153,7 +153,7 @@ export class MouseEvent1 {
 		this.btn = pzpr.util.getMouseButton(e);
 
 		// SHIFTキー/Commandキーを押している時は左右ボタン反転
-		var kc = this.puzzle.key;
+		const kc = this.puzzle.key;
 		kc.checkmodifiers(e);
 		if (((kc.isSHIFT || kc.isMETA) !== this.inversion) || this.inputMode === 'number-') {
 			if (this.btn === 'left') { this.btn = 'right'; }
@@ -161,9 +161,10 @@ export class MouseEvent1 {
 		}
 	}
 	getBoardAddress(e: MouseEvent) {
-		var puzzle = this.puzzle, pc = puzzle.painter;
-		var pix = { px: Number.NaN, py: Number.NaN };
-		var g = pc.context;
+		const puzzle = this.puzzle;
+		const pc = puzzle.painter;
+		let pix = { px: Number.NaN, py: Number.NaN };
+		const g = pc.context;
 		if (!g) { return { bx: null, by: null }; }
 		if (this.puzzle.canvas.children[0] instanceof SVGSVGElement) {
 			const svg = this.puzzle.canvas.children[0]
@@ -177,11 +178,12 @@ export class MouseEvent1 {
 			pix = { px: svgP.x + pc.x0, py: svgP.y + pc.y0 }
 		}
 		else if (!pzpr.env.API.touchevent || pzpr.env.API.pointerevent || pzpr.env.OS.iOS) {
-			if (!isNaN(e.offsetX)) { pix = { px: e.offsetX, py: e.offsetY }; }
+			if (!Number.isNaN(e.offsetX)) { pix = { px: e.offsetX, py: e.offsetY }; }
 			else { pix = { px: e.layerX, py: e.layerY }; }  // Firefox 39以前, iOSはこちら
 		}
 		else {
-			var pagePos = pzpr.util.getPagePos(e), rect = pzpr.util.getRect(pc.context.child);
+			const pagePos = pzpr.util.getPagePos(e);
+			const rect = pzpr.util.getRect(pc.context.child);
 			pix = { px: (pagePos.px - rect.left), py: (pagePos.py - rect.top) };
 		}
 		return { bx: (pix.px - pc.x0) / pc.bw, by: (pix.py - pc.y0) / pc.bh };
@@ -199,10 +201,12 @@ export class MouseEvent1 {
 	}
 	lineTo(bx: number, by: number) {
 		/* 前回の位置からの差分を順番に入力していきます */
-		var dx = (bx - this.inputPoint.bx), dy = (by - this.inputPoint.by);
-		var distance = (((dx >= 0 ? dx : -dx) + (dy >= 0 ? dy : -dy)) * 2 + 0.9) | 0; /* 0.5くらいずつ動かす */
-		var mx = dx / distance, my = dy / distance;
-		for (var i = 0; i < distance - 1; i++) {
+		const dx = (bx - this.inputPoint.bx);
+		const dy = (by - this.inputPoint.by);
+		const distance = (((dx >= 0 ? dx : -dx) + (dy >= 0 ? dy : -dy)) * 2 + 0.9) | 0; /* 0.5くらいずつ動かす */
+		const mx = dx / distance;
+		const my = dy / distance;
+		for (let i = 0; i < distance - 1; i++) {
 			this.inputPoint.move(mx, my);
 			this.mouseevent(1);
 		}
@@ -214,11 +218,11 @@ export class MouseEvent1 {
 		this.mousereset();
 	}
 	inputPath() {
-		var args = Array.prototype.slice.call(arguments);
+		const args = Array.prototype.slice.call(arguments);
 		this.mousereset();
 		this.btn = (typeof args[0] === 'string' ? args.shift() : 'left');
 		this.moveTo(args[0], args[1]);
-		for (var i = 2; i < args.length - 1; i += 2) { /* 奇数個の最後の一つは切り捨て */
+		for (let i = 2; i < args.length - 1; i += 2) { /* 奇数個の最後の一つは切り捨て */
 			this.lineTo(args[i], args[i + 1]);
 		}
 		this.inputEnd();
@@ -233,7 +237,7 @@ export class MouseEvent1 {
 		this.mousemove = (step === 1);
 		this.mouseend = (step === 2);
 
-		var puzzle = this.puzzle;
+		const puzzle = this.puzzle;
 		puzzle.emit('mouse');
 		if (!this.cancelEvent && (this.btn === 'left' || this.btn === 'right')) {
 			if (this.mousestart) {
@@ -254,7 +258,7 @@ export class MouseEvent1 {
 	// mv.mouseinput_other() inputMode指定時のマウスイベント処理。各パズルのファイルでオーバーライドされる。
 	//---------------------------------------------------------------------------
 	mouseinput() {
-		var mode = this.inputMode;
+		let mode = this.inputMode;
 		if (this.puzzle.key.isZ && this.inputMode.indexOf("info-") === -1) {
 			if (this.inputModes.play.indexOf('info-line') >= 0) { mode = 'info-line'; }
 			else if (this.inputModes.play.indexOf('info-blk') >= 0) { mode = 'info-blk'; }
@@ -315,13 +319,13 @@ export class MouseEvent1 {
 			this.savedInputMode[this.puzzle.editmode ? 'edit' : 'play'] = mode;
 		}
 		else {
-			throw "Invalid input mode :" + mode;
+			throw `Invalid input mode :${mode}`;
 		}
 	}
 	getInputModeList(type: IMode = null) {
 		if (this.puzzle.instancetype === 'viewer') { return []; }
 		type = (!!type ? type : (this.puzzle.editmode ? 'edit' : 'play'));
-		var list = ['auto'];
+		let list = ['auto'];
 		list = list.concat(this.inputModes[type]);
 		if (list.indexOf('number') >= 0) { list.splice(list.indexOf('number') + 1, 0, 'number-'); }
 		return list;
@@ -347,7 +351,8 @@ export class MouseEvent1 {
 		return this.getpos(0).getc();
 	}
 	getcell_excell() {
-		var pos = this.getpos(0), excell = pos.getex();
+		const pos = this.getpos(0);
+		const excell = pos.getex();
 		return (!excell.isnull ? excell : pos.getc());
 	}
 	getcross() {
@@ -355,40 +360,48 @@ export class MouseEvent1 {
 	}
 
 	getpos(spc: number) {
-		var addr = this.inputPoint, m1 = 2 * spc, m2 = 2 * (1 - spc);
+		const addr = this.inputPoint;
+		const m1 = 2 * spc;
+		const m2 = 2 * (1 - spc);
 		// 符号反転の影響なく計算したいので、+4して-4する
-		var bx = addr.bx + 4, by = addr.by + 4, dx = bx % 2, dy = by % 2;
+		let bx = addr.bx + 4;
+		let by = addr.by + 4;
+		const dx = bx % 2;
+		const dy = by % 2;
 		bx = (bx & ~1) + (+(dx >= m1)) + (+(dx >= m2)) - 4;
 		by = (by & ~1) + (+(dy >= m1)) + (+(dy >= m2)) - 4;
 		return (new Address(this.puzzle, bx, by));
 	}
 
 	getborder(spc: number) {
-		var addr = this.inputPoint;
-		var bx = (addr.bx & ~1) + 1, by = (addr.by & ~1) + 1;
-		var dx = addr.bx + 1 - bx, dy = addr.by + 1 - by;
+		const addr = this.inputPoint;
+		const bx = (addr.bx & ~1) + 1;
+		const by = (addr.by & ~1) + 1;
+		const dx = addr.bx + 1 - bx;
+		const dy = addr.by + 1 - by;
 
 		// 真ん中のあたりはどこにも該当しないようにする
-		var bd = this.puzzle.board;
+		const bd = this.puzzle.board;
 		if (bd.linegraph.isLineCross) {
 			if (!bd.borderAsLine) {
-				var m1 = 2 * spc, m2 = 2 * (1 - spc);
+				const m1 = 2 * spc;
+				const m2 = 2 * (1 - spc);
 				if ((dx < m1 || m2 < dx) && (dy < m1 || m2 < dy)) { return bd.emptyborder; }
 			}
 			else {
-				var m1 = 2 * (0.5 - spc), m2 = 2 * (0.5 + spc);
+				const m1 = 2 * (0.5 - spc);
+				const m2 = 2 * (0.5 + spc);
 				if (m1 < dx && dx < m2 && m1 < dy && dy < m2) { return bd.emptyborder; }
 			}
 		}
 
 		if (dx < 2 - dy) {	//左上
-			if (dx > dy) { return bd.getb(bx, by - 1); }	//左上＆右上 -> 上
-			else { return bd.getb(bx - 1, by); }	//左上＆左下 -> 左
+			if (dx > dy) { return bd.getb(bx, by - 1); }
+			return bd.getb(bx - 1, by); 
 		}
-		else {	//右下
-			if (dx > dy) { return bd.getb(bx + 1, by); }	//右下＆右上 -> 右
-			else { return bd.getb(bx, by + 1); }	//右下＆左下 -> 下
-		}
+		
+			if (dx > dy) { return bd.getb(bx + 1, by); }
+			return bd.getb(bx, by + 1); 
 		// unreachable
 	}
 
@@ -404,18 +417,19 @@ export class MouseEvent1 {
 	// mv.setcursorsnum() TargetCursorの補助記号に対する場所を移動する
 	//---------------------------------------------------------------------------
 	setcursor(pos: Position) {
-		var pos0 = this.cursor.getaddr();
+		const pos0 = this.cursor.getaddr();
 		this.cursor.setaddr(pos);
 		pos0.draw();
 		pos.draw();
 	}
 	setcursorsnum(pos: Position) {
-		var pos0 = this.cursor.getaddr();
+		const pos0 = this.cursor.getaddr();
 		this.cursor.setaddr(pos);
-		var bx = this.inputPoint.bx, by = this.inputPoint.by;
+		let bx = this.inputPoint.bx;
+		let by = this.inputPoint.by;
 		bx = (((bx + 12) % 2) * 1.5) | 0;
 		by = (((by + 12) % 2) * 1.5) | 0;
-		var target;
+		let target;
 		if (this.pid !== 'factors') {
 			target = [5, 0, 4, 0, 0, 0, 2, 0, 3][by * 3 + bx];
 		}
@@ -435,7 +449,7 @@ export class MouseEvent1 {
 	// mv.decIC()     0/1/2どれを入力すべきかを決定する。
 	//---------------------------------------------------------------------------
 	inputcell() {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull || cell === this.mouseCell) { return; }
 		if (this.inputData === null) { this.decIC(cell); }
 
@@ -444,7 +458,7 @@ export class MouseEvent1 {
 		if (cell.numberRemainsUnshaded && cell.qnum !== -1 && (this.inputData === 1 || (this.inputData === 2 && !this.puzzle.painter.enablebcolor))) { return; }
 		if (this.RBShadeCell && this.inputData === 1) {
 			if (this.firstCell.isnull) { this.firstCell = cell; }
-			var cell0 = this.firstCell;
+			const cell0 = this.firstCell;
 			if (((cell0.bx & 2) ^ (cell0.by & 2)) !== ((cell.bx & 2) ^ (cell.by & 2))) { return; }
 		}
 
@@ -485,12 +499,12 @@ export class MouseEvent1 {
 	// mv.inputclean_cell() Cellのqans(回答データ)を消去する
 	//---------------------------------------------------------------------------
 	inputclean_cell() {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull || cell === this.mouseCell) { return; }
 
 		this.mouseCell = cell;
 
-		var clist = new CellList(this.puzzle, [cell]);
+		const clist = new CellList(this.puzzle, [cell]);
 		if (this.puzzle.playmode) { clist.ansclear(); }
 		else { clist.allclear(); }
 
@@ -503,7 +517,7 @@ export class MouseEvent1 {
 	//---------------------------------------------------------------------------
 	inputqnum() {
 
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull || cell === this.mouseCell) { return; }
 
 		if (this.cursor.modesnum && this.puzzle.playmode && !this.cursor.checksnum(this.inputPoint) && cell.noNum()) {
@@ -518,7 +532,8 @@ export class MouseEvent1 {
 		this.mouseCell = cell;
 	}
 	inputqnum_main(cell: Cell) { // todo
-		var cell0 = cell, puzzle = this.puzzle;
+		let cell0 = cell;
+		const puzzle = this.puzzle;
 		if (puzzle.playmode && cell.qnum !== Cell.qnumDefault && puzzle.pid !== 'factors') { return; }
 
 		if (puzzle.editmode && puzzle.board.roommgr.hastop) {
@@ -530,12 +545,12 @@ export class MouseEvent1 {
 		}
 
 		if (cell.enableSubNumberArray && puzzle.playmode && this.cursor.targetdir >= 2) {
-			var snumpos = [-1, -1, 2, 3, 1, 0][this.cursor.targetdir];
+			const snumpos = [-1, -1, 2, 3, 1, 0][this.cursor.targetdir];
 			if (snumpos === -1) { return; }
 			cell.setSnum(snumpos, this.getNewNumber(cell, cell.snum[snumpos]));
 		}
 		else if (puzzle.editmode && cell.ques === 51) {
-			var target = puzzle.cursor.detectTarget(cell);
+			const target = puzzle.cursor.detectTarget(cell);
 			puzzle.key.setnum51(cell, target, this.getNewNumber(cell, puzzle.key.getnum51(cell, target)));
 		}
 		else {
@@ -548,10 +563,14 @@ export class MouseEvent1 {
 		cell0.draw();
 	}
 	getNewNumber(cell: Cell, num: number) {
-		var puzzle = this.puzzle, ishatena = (puzzle.editmode && !cell.disInputHatena);
-		var max = cell.getmaxnum(), min = cell.getminnum(), val = -1, qs = cell.qsub;
+		const puzzle = this.puzzle;
+		const ishatena = (puzzle.editmode && !cell.disInputHatena);
+		const max = cell.getmaxnum();
+		const min = cell.getminnum();
+		let val = -1;
+		let qs = cell.qsub;
 
-		var subtype = 0; // qsubを0～いくつまで入力可能かの設定
+		let subtype = 0; // qsubを0～いくつまで入力可能かの設定
 		if (puzzle.editmode) { subtype = -1; }
 		else if (this.cursor.targetdir >= 2) { subtype = 0; qs = 0; }
 		else if (cell.numberWithMB) { subtype = 2; qs = cell.qsub; }
@@ -588,10 +607,10 @@ export class MouseEvent1 {
 	// mv.inputFixedNumber() Cellに固定のqnum/anum値を入力する
 	//---------------------------------------------------------------------------
 	inputFixedNumber(num: number) {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull || cell === this.mouseCell) { return; }
 
-		var val = cell.getNum();
+		let val = cell.getNum();
 		if (val === -1 && cell.qsub > 0) { val = -1 - cell.qsub; }
 		if (this.inputData === null) { this.inputData = (val === num ? -1 : num); }
 		if (val !== num || this.inputData === -1) {
@@ -605,7 +624,7 @@ export class MouseEvent1 {
 	// mv.inputQues() Cellのquesデータをarrayのとおりに入力する
 	//---------------------------------------------------------------------------
 	inputQues(array: number[]) {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull) { return; }
 
 		if (cell !== this.cursor.getc() && this.inputMode === 'auto') {
@@ -616,10 +635,11 @@ export class MouseEvent1 {
 		}
 	}
 	inputQues_main(array: number[], cell: Cell) {
-		var qu = cell.ques, len = array.length;
-		var isInc = ((this.inputMode === 'quesmark' || this.inputMode === 'auto') === (this.btn === 'left'));
+		const qu = cell.ques;
+		const len = array.length;
+		const isInc = ((this.inputMode === 'quesmark' || this.inputMode === 'auto') === (this.btn === 'left'));
 		if (isInc) {
-			for (var i = 0; i <= len - 1; i++) {
+			for (let i = 0; i <= len - 1; i++) {
 				if (qu === array[i]) {
 					cell.setQues(array[((i < len - 1) ? i + 1 : 0)]);
 					break;
@@ -627,7 +647,7 @@ export class MouseEvent1 {
 			}
 		}
 		else {
-			for (var i = len - 1; i >= 0; i--) {
+			for (let i = len - 1; i >= 0; i--) {
 				if (qu === array[i]) {
 					cell.setQues(array[((i > 0) ? i - 1 : len - 1)]);
 					break;
@@ -643,14 +663,14 @@ export class MouseEvent1 {
 	// mv.inputBGcolor()   Cellの背景色を入力する
 	//---------------------------------------------------------------------------
 	inputMB() {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull) { return; }
 
 		cell.setQsub((this.btn === 'left' ? [1, 2, 0] : [2, 0, 1])[cell.qsub]);
 		cell.draw();
 	}
 	inputFixedQsub(val: number) {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull || cell.is51cell() || cell === this.mouseCell) { return; }
 
 		if (this.inputData === null) { this.inputData = (cell.qsub !== val ? val : 0); }
@@ -659,7 +679,7 @@ export class MouseEvent1 {
 		this.mouseCell = cell;
 	}
 	inputBGcolor(isforceforward = false) {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull || cell.is51cell() || cell === this.mouseCell) { return; }
 		if (this.inputData !== null) { }
 		else if (this.inputMode === 'bgcolor1') {
@@ -689,13 +709,13 @@ export class MouseEvent1 {
 	// mv.inputarrow_cell() Cellの矢印を入力する
 	//---------------------------------------------------------------------------
 	inputdirec() {
-		var pos = this.getpos(0);
+		const pos = this.getpos(0);
 		if (this.prevPos.equals(pos)) { return; }
 
-		var cell = this.prevPos.getc();
+		const cell = this.prevPos.getc();
 		if (!cell.isnull) {
 			if (cell.qnum !== -1) {
-				var dir = this.prevPos.getdir(pos, 2);
+				const dir = this.prevPos.getdir(pos, 2);
 				if (dir !== cell.NDIR) {
 					cell.setQdir(cell.qdir !== dir ? dir : 0);
 					cell.draw();
@@ -705,12 +725,13 @@ export class MouseEvent1 {
 		this.prevPos = pos;
 	}
 	inputarrow_cell() {
-		var pos = this.getpos(0);
+		const pos = this.getpos(0);
 		if (this.prevPos.equals(pos) && this.inputData === 1) { return; }
 
-		var dir = pos.NDIR, cell = this.prevPos.getc();
+		const dir = pos.NDIR;
+		const cell = this.prevPos.getc();
 		if (!cell.isnull) {
-			var dir = this.prevPos.getdir(pos, 2);
+			const dir = this.prevPos.getdir(pos, 2);
 			if (dir !== pos.NDIR) {
 				this.inputarrow_cell_main(cell, dir);
 				cell.draw();
@@ -728,14 +749,14 @@ export class MouseEvent1 {
 	// mv.inputtile()  黒タイル、白タイルを入力する
 	//---------------------------------------------------------------------------
 	inputtile() {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull || cell.is51cell() || cell === this.mouseCell) { return; }
 		if (this.inputData === null) { this.decIC(cell); }
 
 		this.mouseCell = cell;
-		var clist = cell.room.clist as CellList;
-		for (var i = 0; i < clist.length; i++) {
-			var cell2 = clist[i];
+		const clist = cell.room.clist as CellList;
+		for (let i = 0; i < clist.length; i++) {
+			const cell2 = clist[i];
 			if (this.inputData === 1 || cell2.qsub !== 3) {
 				(this.inputData === 1 ? cell2.setShade : cell2.clrShade).call(cell2);
 				cell2.setQsub(this.inputData === 2 ? 1 : 0);
@@ -748,7 +769,7 @@ export class MouseEvent1 {
 	// mv.inputIcebarn()  アイスバーンを入力する
 	//---------------------------------------------------------------------------
 	inputIcebarn() {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull || cell === this.mouseCell) { return; }
 		if (this.inputData === null) { this.inputData = (cell.ice() ? 0 : 6); }
 
@@ -761,10 +782,10 @@ export class MouseEvent1 {
 	// mv.input51()            inputMode=='auto'時に[＼]を作ったり消したりする
 	//---------------------------------------------------------------------------
 	input51() {
-		var piece = this.getcell_excell(); /* piece : cell or excell */
+		const piece = this.getcell_excell(); /* piece : cell or excell */
 		if (piece.isnull) { return; }
 
-		var group = piece.group;
+		const group = piece.group;
 		if (group === 'excell' || (group === 'cell' && piece !== this.cursor.getc())) {
 			this.setcursor(piece);
 		}
@@ -786,7 +807,7 @@ export class MouseEvent1 {
 	// mv.input51_fixed()      inputMode固定時に[＼]を作ったり消したりする
 	//---------------------------------------------------------------------------
 	input51_fixed() {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull || cell === this.mouseCell) { return; }
 
 		if (this.inputMode === 'clear') {
@@ -807,7 +828,7 @@ export class MouseEvent1 {
 	// mv.inputqnum_cell51()   [＼]のCellに数字を入力する
 	//---------------------------------------------------------------------------
 	inputqnum_cell51() {
-		var piece = this.getcell_excell(); /* piece : cell or excell */
+		const piece = this.getcell_excell(); /* piece : cell or excell */
 		if (piece.isnull || (this.mouseCell === piece && !this.mouseend)) { return; }
 
 		if (this.mousestart && (piece !== this.cursor.getobj() || piece.ques !== 51)) {
@@ -828,7 +849,7 @@ export class MouseEvent1 {
 			this.prevPos = this.getpos(0);
 		}
 		else if (this.mousemove) {
-			var dir = this.prevPos.getdir(this.getpos(0), 2);
+			const dir = this.prevPos.getdir(this.getpos(0), 2);
 			if ((dir === cell.RT || dir === cell.DN) && (dir !== this.cursor.targetdir)) {
 				this.cursor.targetdir = dir;
 				this.cursor.draw();
@@ -842,7 +863,7 @@ export class MouseEvent1 {
 	// mv.inputcrossMark()  Crossの黒点を入力する。
 	//---------------------------------------------------------------------------
 	inputqnum_cross() {
-		var cross = this.getcross();
+		const cross = this.getcross();
 		if (cross.isnull || cross === this.mouseCell) { return; }
 
 		if (cross !== this.cursor.getx()) {
@@ -863,12 +884,13 @@ export class MouseEvent1 {
 		cross.draw();
 	}
 	inputcrossMark() {
-		var pos = this.getpos(0.24);
+		const pos = this.getpos(0.24);
 		if (!pos.oncross()) { return; }
-		var bd = this.puzzle.board, bm = (bd.hascross === 2 ? 0 : 2);
+		const bd = this.puzzle.board;
+		const bm = (bd.hascross === 2 ? 0 : 2);
 		if (pos.bx < bd.minbx + bm || pos.bx > bd.maxbx - bm || pos.by < bd.minby + bm || pos.by > bd.maxby - bm) { return; }
 
-		var cross = pos.getx();
+		const cross = pos.getx();
 		if (cross.isnull) { return; }
 
 		this.puzzle.opemgr.disCombine = true;
@@ -882,12 +904,12 @@ export class MouseEvent1 {
 	// mv.inputclean_cross() Crossのqans(回答データ)を消去する
 	//---------------------------------------------------------------------------
 	inputclean_cross() {
-		var cross = this.getcross();
+		const cross = this.getcross();
 		if (cross.isnull || cross === this.mouseCell) { return; }
 
 		this.mouseCell = cross;
 
-		var xlist = new CrossList(this.puzzle, [cross]);
+		const xlist = new CrossList(this.puzzle, [cross]);
 		if (this.puzzle.playmode) { xlist.ansclear(); }
 		else { xlist.allclear(); }
 
@@ -899,10 +921,10 @@ export class MouseEvent1 {
 	// mv.inputQsubLine()   盤面の境界線用補助記号を入力する
 	//---------------------------------------------------------------------------
 	inputborder() {
-		var pos = this.getpos(0.35);
+		const pos = this.getpos(0.35);
 		if (this.prevPos.equals(pos)) { return; }
 
-		var border = this.prevPos.getborderobj(pos);
+		const border = this.prevPos.getborderobj(pos);
 		if (!border.isnull) {
 			if (this.inputData === null) { this.inputData = (border.isBorder() ? 0 : 1); }
 			if (this.inputData === 1) { border.setBorder(); }
@@ -912,10 +934,10 @@ export class MouseEvent1 {
 		this.prevPos = pos;
 	}
 	inputQsubLine() {
-		var pos = this.getpos(0);
+		const pos = this.getpos(0);
 		if (this.prevPos.equals(pos)) { return; }
 
-		var border = this.prevPos.getnb(pos);
+		const border = this.prevPos.getnb(pos);
 		if (!border.isnull) {
 			if (this.inputData === null) { this.inputData = (border.qsub === 0 ? 1 : 0); }
 			if (this.inputData === 1) { border.setQsub(1); }
@@ -936,7 +958,8 @@ export class MouseEvent1 {
 			return;
 		}
 
-		var pos, border;
+		let pos;
+		let border;
 		if (!this.puzzle.board.borderAsLine) {
 			pos = this.getpos(0);
 			if (this.prevPos.equals(pos)) { return; }
@@ -957,10 +980,11 @@ export class MouseEvent1 {
 		this.prevPos = pos;
 	}
 	inputMoveLine() {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull) { return; }
 
-		var cell0 = this.mouseCell, pos = cell.getaddr();
+		const cell0 = this.mouseCell;
+		const pos = cell.getaddr();
 		/* 初回はこの中に入ってきます。 */
 		if (this.mousestart && cell.isDestination()) {
 			this.mouseCell = cell;
@@ -969,11 +993,11 @@ export class MouseEvent1 {
 		}
 		/* 移動中の場合 */
 		else if (this.mousemove && !cell0.isnull && !cell.isDestination()) {
-			var border = this.prevPos.getnb(pos);
+			const border = this.prevPos.getnb(pos);
 			if (!border.isnull && ((!border.isLine() && cell.lcnt === 0) || (border.isLine() && cell0.lcnt === 1))) {
 				this.mouseCell = cell;
 				this.prevPos = pos;
-				var old = border.isLine();
+				const old = border.isLine();
 				if (!old) { border.setLine(); } else { border.removeLine(); }
 				if (old === border.isLine()) { this.mousereset(); cell0.draw(); return; }
 				border.draw();
@@ -985,10 +1009,10 @@ export class MouseEvent1 {
 	// mv.inputpeke()   盤面の線が通らないことを示す×を入力する
 	//---------------------------------------------------------------------------
 	inputpeke() {
-		var pos = this.getpos(0.22);
+		const pos = this.getpos(0.22);
 		if (this.prevPos.equals(pos)) { return; }
 
-		var border = pos.getb();
+		const border = pos.getb();
 		if (!border.isnull) {
 			if (this.inputData === null) { this.inputData = (border.qsub === 0 ? 2 : 3); }
 			if (this.inputData === 2 && border.isLine() && this.puzzle.execConfig('dispmove')) { }
@@ -999,7 +1023,7 @@ export class MouseEvent1 {
 		this.prevPos = pos;
 	}
 	inputpeke_onend() {
-		var border = this.getpos(0.22).getb();
+		const border = this.getpos(0.22).getb();
 		if (border.group === 'border' && !border.isnull) {
 			this.inputpeke();
 			return true;
@@ -1016,7 +1040,7 @@ export class MouseEvent1 {
 			return;
 		}
 
-		var cell = this.getcell();
+		const cell = this.getcell();
 		if (cell.isnull) { return; }
 
 		// 黒マス上なら何もしない
@@ -1028,16 +1052,16 @@ export class MouseEvent1 {
 		}
 		// まだ入力していないセルの場合
 		else if (this.firstPoint.bx !== null) {
-			var val = null,
-				dx = this.inputPoint.bx - this.firstPoint.bx,
-				dy = this.inputPoint.by - this.firstPoint.by;
+			let val = null;
+			const dx = this.inputPoint.bx - this.firstPoint.bx;
+			const dy = this.inputPoint.by - this.firstPoint.by;
 			if (dy <= -0.50 || 0.50 <= dy) { val = 1; }
 			else if (dx <= -0.50 || 0.50 <= dx) { val = 2; }
 
 			if (val !== null) {
-				var plus = (this.pid === "amibo" || this.pid === "tatamibari");
+				const plus = (this.pid === "amibo" || this.pid === "tatamibari");
 
-				var shape = 0;
+				let shape = 0;
 				if (this.puzzle.playmode) { shape = { 0: 0, 11: 3, 12: 1, 13: 2 }[cell.qans]; }
 				else { shape = { '-1': 0, 1: 3, 2: 1, 3: 2 }[cell.qnum]; }
 				if ((this.inputData === null) ? (shape & val) : this.inputData <= 0) {
@@ -1071,7 +1095,7 @@ export class MouseEvent1 {
 	// mv.dispInfoLine()   ひとつながりの線を赤く表示する
 	//---------------------------------------------------------------------------
 	dispInfoBlk() {
-		var cell = this.getcell();
+		const cell = this.getcell();
 		this.mousereset();
 		if (cell.isnull || !cell.isShade()) { return; }
 		if (!this.RBShadeCell) { cell.sblk.clist.setinfo(1); }
@@ -1080,29 +1104,32 @@ export class MouseEvent1 {
 		this.puzzle.redraw();
 	}
 	dispInfoBlk8(cell0: Cell) {
-		var stack = [cell0];
+		const stack = [cell0];
 		while (stack.length > 0) {
-			var cell = stack.pop();
+			const cell = stack.pop();
 			if (cell.qinfo !== 0) { continue; }
 
 			cell.setinfo(1);
-			var bx = cell.bx, by = cell.by, clist = this.puzzle.board.cellinside(bx - 2, by - 2, bx + 2, by + 2);
-			for (var i = 0; i < clist.length; i++) {
-				var cell2 = clist[i];
+			const bx = cell.bx;
+			const by = cell.by;
+			const clist = this.puzzle.board.cellinside(bx - 2, by - 2, bx + 2, by + 2);
+			for (let i = 0; i < clist.length; i++) {
+				const cell2 = clist[i];
 				if (cell2.qinfo === 0 && cell2.isShade()) { stack.push(cell2); }
 			}
 		}
 	}
 
 	dispInfoLine() {
-		var bd = this.puzzle.board, border = this.getborder(0.15);
+		const bd = this.puzzle.board;
+		let border = this.getborder(0.15);
 		this.mousereset();
 		if (border.isnull) { return; }
 
 		if (!border.isLine()) {
-			var piece = (!bd.borderAsLine ? this.getcell() : this.getcross()); /* cell or cross */
+			const piece = (!bd.borderAsLine ? this.getcell() : this.getcross()); /* cell or cross */
 			if (piece.isnull || (bd.linegraph.isLineCross && (piece.lcnt === 3 || piece.lcnt === 4))) { return; }
-			var adb = piece.adjborder;
+			const adb = piece.adjborder;
 			if (adb.left.isLine()) { border = adb.left; }
 			else if (adb.right.isLine()) { border = adb.right; }
 			else if (adb.top.isLine()) { border = adb.top; }

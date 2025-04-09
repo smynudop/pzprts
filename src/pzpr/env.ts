@@ -7,36 +7,36 @@ let _envobj: any = null
 export const getEnv = () => {
 	if (_envobj) return _envobj;
 
-	var isbrowser = CandleEnv.browser;
-	var UA = (isbrowser ? navigator.userAgent : '');
+	const isbrowser = CandleEnv.browser;
+	const UA = (isbrowser ? navigator.userAgent : '');
 
-	var ios = (UA.indexOf('like Mac OS X') > -1);
-	var android = (UA.indexOf('Android') > -1);
-	var os = {
+	const ios = (UA.indexOf('like Mac OS X') > -1);
+	const android = (UA.indexOf('Android') > -1);
+	const os = {
 		iOS: (ios),
 		Android: (android),
 		mobile: (ios || android)
 	};
 
 
-	var ChromeVersion = (function () {
+	const ChromeVersion = (function () {
 		if (UA.match(/Safari\/([\w\.]+)/) && UA.match(/Chrome\/(\w+(\.\w+)?)/)) {
 			return RegExp.$1;
 		}
 		return null;
 	})();
-	var SafariVersion = (function () {
+	const SafariVersion = (function () {
 		if (ChromeVersion === null && UA.match(/Safari\/([\w\.]+)/) && UA.match(/Version\/(\w+(\.\w+)?)/)) {
 			return RegExp.$1;
 		}
 		return null;
 	})();
-	var bz = {
+	const bz = {
 		AndroidBrowser: (os.Android && SafariVersion),
 		Presto: false
 	};
 
-	var api = {
+	const api = {
 		touchevent: isbrowser && ((!!window.ontouchstart)),
 		pointerevent: isbrowser && (!!window.PointerEvent),
 		mspointerevent: isbrowser,
@@ -56,6 +56,6 @@ export const getEnv = () => {
 
 export const getLang = function () {
 	const env = getEnv();
-	var userlang = (env.node ? process.env.LANG : (navigator.language));
+	const userlang = (env.node ? process.env.LANG : (navigator.language));
 	return ((!userlang || userlang.substr(0, 2) === 'ja') ? 'ja' : 'en');
 };

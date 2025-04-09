@@ -75,7 +75,7 @@ export class KeyEvent {
 	e_keydown(e: KeyboardEvent) {
 		if (!this.enableKey) { return; }
 
-		var c = this.getchar(e);
+		const c = this.getchar(e);
 		this.checkbutton(c, 0);
 		if (c) { this.keyevent(c, 0); }
 
@@ -87,7 +87,7 @@ export class KeyEvent {
 	e_keyup(e: KeyboardEvent) {
 		if (!this.enableKey) { return; }
 
-		var c = this.getchar(e);
+		const c = this.getchar(e);
 		this.checkbutton(c, 1);
 		if (c) { this.keyevent(c, 1); }
 
@@ -108,7 +108,7 @@ export class KeyEvent {
 		this.isALT = e.altKey;
 	}
 	checkbutton(charall: string, step: number) {
-		var c = charall.split(/\+/).pop();
+		const c = charall.split(/\+/).pop();
 		if (c === 'z') { this.isZ = (step === 0); }
 		if (c === 'x') { this.isX = (step === 0); }
 		if (c === 'y') { this.isY = (step === 0); }
@@ -121,7 +121,8 @@ export class KeyEvent {
 	getchar(e: KeyboardEvent) {
 		this.checkmodifiers(e);
 
-		var key = '', keycode = (!!e.keyCode ? e.keyCode : e.charCode);
+		let key = '';
+		const keycode = (!!e.keyCode ? e.keyCode : e.charCode);
 
 		if (keycode === 38) { key = 'up'; }
 		else if (keycode === 40) { key = 'down'; }
@@ -130,12 +131,12 @@ export class KeyEvent {
 		else if (48 <= keycode && keycode <= 57) { key = (keycode - 48).toString(36); }
 		else if (65 <= keycode && keycode <= 90) { key = (keycode - 55).toString(36); } //アルファベット
 		else if (96 <= keycode && keycode <= 105) { key = (keycode - 96).toString(36); } //テンキー対応
-		else if (112 <= keycode && keycode <= 123) { key = 'F' + (keycode - 111).toString(10); } /* 112～123はF1～F12キー */
+		else if (112 <= keycode && keycode <= 123) { key = `F${(keycode - 111).toString(10)}`; } /* 112～123はF1～F12キー */
 		else if (keycode === 32 || keycode === 46) { key = ' '; } // 32はスペースキー 46はdelキー
 		else if (keycode === 8) { key = 'BS'; }
 		else if (keycode === 109 || keycode === 189 || keycode === 173) { key = '-'; }
 
-		var keylist = (!!key ? [key] : []);
+		const keylist = (!!key ? [key] : []);
 		if (this.isMETA) { keylist.unshift('meta'); }
 		if (this.isALT) { keylist.unshift('alt'); }
 		if (this.isCTRL) { keylist.unshift('ctrl'); }
@@ -154,7 +155,7 @@ export class KeyEvent {
 	// kc.inputKeys()   キーボードイベントを実行する
 	//---------------------------------------------------------------------------
 	inputKeys(...args: string[]) {
-		for (var i = 0; i < args.length; i++) {
+		for (let i = 0; i < args.length; i++) {
 			this.keyevent(args[i], 0);
 			this.keyevent(args[i], 1);
 		}
@@ -164,7 +165,7 @@ export class KeyEvent {
 	// kc.keyevent()  キーイベント処理
 	//---------------------------------------------------------------------------
 	keyevent(c: string, step: number) {
-		var puzzle = this.puzzle;
+		const puzzle = this.puzzle;
 		this.cancelEvent = false;
 		this.cancelDefault = false;
 		this.keydown = (step === 0);
@@ -190,7 +191,7 @@ export class KeyEvent {
 	// kc.keyexec() モードに共通で行う処理を実行します
 	//---------------------------------------------------------------------------
 	keyexec(c: string) {
-		var puzzle = this.puzzle;
+		const puzzle = this.puzzle;
 		if (this.keydown && c === 'alt+c' && !puzzle.playeronly) {
 			puzzle.setMode(puzzle.playmode ? 1 : 3);
 			return false;
@@ -224,7 +225,10 @@ export class KeyEvent {
 	moveTCross(ca: string) { return this.moveTC(ca, 2); }
 	moveTBorder(ca: string) { return this.moveTC(ca, 1); }
 	moveTC(ca: string, mv: number) {
-		var cursor = this.cursor, pos0 = cursor.getaddr(), flag = true, dir = cursor.NDIR;
+		const cursor = this.cursor;
+		const pos0 = cursor.getaddr();
+		let flag = true;
+		let dir = cursor.NDIR;
 		switch (ca) {
 			case 'up': if (cursor.by - mv >= cursor.miny) { dir = cursor.UP; } break;
 			case 'down': if (cursor.by + mv <= cursor.maxy) { dir = cursor.DN; } break;
@@ -246,7 +250,10 @@ export class KeyEvent {
 	// kc.moveEXCell()  EXCellのキーボードからの入力対象を矢印キーで動かす
 	//---------------------------------------------------------------------------
 	moveEXCell(ca: string) {
-		var cursor = this.cursor, addr0 = cursor.getaddr(), flag = true, dir = addr0.NDIR;
+		const cursor = this.cursor;
+		const addr0 = cursor.getaddr();
+		let flag = true;
+		let dir = addr0.NDIR;
 		switch (ca) {
 			case 'up':
 				if (cursor.by === cursor.maxy && cursor.minx < cursor.bx && cursor.bx < cursor.maxx) { cursor.by = cursor.miny; }
@@ -281,11 +288,13 @@ export class KeyEvent {
 	// kc.key_inputcross() 上限maxまでの数字をCrossの問題データをして入力する(keydown時)
 	//---------------------------------------------------------------------------
 	key_inputcross(ca: string) {
-		var cross = this.cursor.getx();
-		var max = cross.getmaxnum(), val = -1;
+		const cross = this.cursor.getx();
+		const max = cross.getmaxnum();
+		let val = -1;
 
 		if ('0' <= ca && ca <= '9') {
-			var num = +ca, cur = cross.qnum;
+			const num = +ca;
+			let cur = cross.qnum;
 			if (cur <= 0 || cur * 10 + num > max) { cur = 0; }
 			val = cur * 10 + num;
 			if (val > max) { return; }
@@ -301,7 +310,7 @@ export class KeyEvent {
 	// kc.key_inputqnum() 上限maxまでの数字をCellの問題データをして入力する(keydown時)
 	//---------------------------------------------------------------------------
 	key_inputqnum(ca: string) {
-		var cell = this.cursor.getc();
+		const cell = this.cursor.getc();
 		if (cell.enableSubNumberArray && this.puzzle.playmode && ca === 'shift' && cell.noNum()) {
 			this.cursor.chtarget();
 		}
@@ -310,7 +319,9 @@ export class KeyEvent {
 		}
 	}
 	key_inputqnum_main(cell: Cell, ca: string) {
-		var cell0 = cell, puzzle = this.puzzle, bd = puzzle.board;
+		let cell0 = cell;
+		const puzzle = this.puzzle;
+		const bd = puzzle.board;
 		if (puzzle.editmode && bd.roommgr.hastop) {
 			cell0 = cell = cell.room.top;
 		}
@@ -320,14 +331,14 @@ export class KeyEvent {
 		}
 
 		if (cell.enableSubNumberArray && this.cursor.targetdir >= 2) {
-			var snumpos = [-1, -1, 2, 3, 1, 0][this.cursor.targetdir];
+			const snumpos = [-1, -1, 2, 3, 1, 0][this.cursor.targetdir];
 			if (snumpos === -1) { return; }
-			var val = this.getNewNumber(cell, ca, cell.snum[snumpos]);
+			const val = this.getNewNumber(cell, ca, cell.snum[snumpos]);
 			if (val === null) { return; }
 			cell.setSnum(snumpos, val);
 		}
 		else {
-			var val = this.getNewNumber(cell, ca, cell.getNum());
+			const val = this.getNewNumber(cell, ca, cell.getNum());
 			if (val === null) { return; }
 			cell.setNum(val);
 			if (cell.numberWithMB && cell.enableSubNumberArray && ca === ' ') { cell.clrSnum(); }
@@ -341,17 +352,19 @@ export class KeyEvent {
 		this.prev = cell;
 	}
 	getNewNumber(cell: Cell, ca: string, cur: number) {
-		var max = cell.getmaxnum(), min = cell.getminnum(), val = null;
+		const max = cell.getmaxnum();
+		const min = cell.getminnum();
+		let val = null;
 
 		if ('0' <= ca && ca <= '9' && !cell.numberAsLetter) {
-			var num = +ca;
+			const num = +ca;
 			if (cur <= 0 || cur * 10 + num > max || this.prev !== cell) { cur = 0; }
 			val = cur * 10 + num;
 			if (val > max || (min > 0 && val === 0)) { val = null; }
 		}
 		else if ('a' <= ca && ca <= 'z' && ca.length === 1 && cell.numberAsLetter) {
 			if (ca.length > 1 && ca !== 'BS') { return null; }
-			var num = Number.parseInt(ca, 36) - 10;
+			const num = Number.parseInt(ca, 36) - 10;
 			if (cur > 0 && (cur - 1) % 26 === num) { // Same alphabet
 				val = ((cur <= 26) ? cur + 26 : -1);
 			}
@@ -382,10 +395,10 @@ export class KeyEvent {
 		return this.key_inputdirec_common(ca, true);
 	}
 	key_inputdirec_common(ca: string, arrownum: boolean) { // 共通処理
-		var cell = this.cursor.getc();
+		const cell = this.cursor.getc();
 		if (arrownum && cell.qnum === -1) { return false; }
 
-		var dir = cell.NDIR;
+		let dir = cell.NDIR;
 		switch (ca) {
 			case 'shift+up': dir = cell.UP; break;
 			case 'shift+down': dir = cell.DN; break;
@@ -408,11 +421,11 @@ export class KeyEvent {
 	// kc.getnum51()      モード別に数字を取得する
 	//---------------------------------------------------------------------------
 	inputnumber51(ca: string, max_obj: any) {
-		var cursor = this.cursor;
+		const cursor = this.cursor;
 		if (ca === 'shift') { cursor.chtarget(); return; }
 
-		var piece = cursor.getobj(); /* cell or excell */
-		var target = cursor.detectTarget(piece);
+		const piece = cursor.getobj(); /* cell or excell */
+		const target = cursor.detectTarget(piece);
 		if (target === 0 || (piece.group === 'cell' && piece.is51cell())) {
 			if (ca === 'q' && !piece.isnull) {
 				if (!piece.is51cell()) { piece.set51cell(); }
@@ -423,11 +436,13 @@ export class KeyEvent {
 		}
 		if (target === 0) { return; }
 
-		var def = Cell.prototype[(target === piece.RT ? 'qnum' : 'qnum2')]; // TODO
-		var max = piece.getmaxnum(), val = def;
+		const def = Cell.prototype[(target === piece.RT ? 'qnum' : 'qnum2')]; // TODO
+		const max = piece.getmaxnum();
+		let val = def;
 
 		if ('0' <= ca && ca <= '9') {
-			var num = +ca, cur = this.getnum51(piece, target);
+			const num = +ca;
+			let cur = this.getnum51(piece, target);
 			if (cur <= 0 || cur * 10 + num > max || this.prev !== piece) { cur = 0; }
 			val = cur * 10 + num;
 			if (val > max) { return; }
@@ -496,7 +511,8 @@ export class TargetCursor extends Address {
 	// tc.setminmax_customize()  初期化時・モード変更時のプロパティをパズルごとに調節する
 	//---------------------------------------------------------------------------
 	setminmax() {
-		var bd = this.board, bm = (!this.crosstype ? 1 : 0);
+		const bd = this.board;
+		const bm = (!this.crosstype ? 1 : 0);
 		this.minx = bd.minbx + bm;
 		this.miny = bd.minby + bm;
 		this.maxx = bd.maxbx - bm;
@@ -526,10 +542,10 @@ export class TargetCursor extends Address {
 		else if (this.modesnum && this.puzzle.playmode) { this.targetdir = 0; }
 	}
 	adjust_cell_to_excell() {
-		var bd = this.board;
-		var shortest = Math.min(this.bx, (bd.cols * 2 - this.bx), this.by, (bd.rows * 2 - this.by));
+		const bd = this.board;
+		const shortest = Math.min(this.bx, (bd.cols * 2 - this.bx), this.by, (bd.rows * 2 - this.by));
 		if (shortest <= 0) { return; }
-		else if (this.by === shortest) { this.by = this.miny; }
+		if (this.by === shortest) { this.by = this.miny; }
 		else if (bd.rows * 2 - this.by === shortest) { this.by = this.maxy; }
 		else if (this.bx === shortest) { this.bx = this.minx; }
 		else if (bd.cols * 2 - this.bx === shortest) { this.bx = this.maxx; }
@@ -539,12 +555,12 @@ export class TargetCursor extends Address {
 	// tc.checksnum()  ターゲットの位置かどうか判定する (Cellのみ)
 	//---------------------------------------------------------------------------
 	checksnum(pos: Position) {
-		var bx = ((((pos.bx + 12) / 2) | 0) - 6) * 2 + 1;
-		var by = ((((pos.by + 12) / 2) | 0) - 6) * 2 + 1;
-		var result = (this.bx === bx && this.by === by);
+		const bx = ((((pos.bx + 12) / 2) | 0) - 6) * 2 + 1;
+		const by = ((((pos.by + 12) / 2) | 0) - 6) * 2 + 1;
+		let result = (this.bx === bx && this.by === by);
 		if (result && this.modesnum && this.puzzle.playmode) {
-			var tmpx = (((pos.bx + 12) % 2) * 1.5) | 0;
-			var tmpy = (((pos.by + 12) % 2) * 1.5) | 0;
+			const tmpx = (((pos.bx + 12) % 2) * 1.5) | 0;
+			const tmpy = (((pos.by + 12) % 2) * 1.5) | 0;
 			if (this.pid !== 'factors') {
 				result = ([5, 0, 4, 0, 0, 0, 2, 0, 3][tmpy * 3 + tmpx] === this.targetdir);
 			}
@@ -604,38 +620,38 @@ export class TargetCursor extends Address {
 	}
 	detectTarget(piece: BoardPiece = null) {
 		piece = piece || this.getobj();
-		var bd = this.board, adc = piece.adjacent;
+		const bd = this.board;
+		const adc = piece.adjacent;
 		if (piece.isnull) { return 0; }
-		else if (piece.group === 'cell') {
+		if (piece.group === 'cell') {
 			if (piece.ques !== 51 || piece.id === bd.cell.length - 1) { return 0; }
-			else {
-				var invalidRight = (adc.right.isnull || adc.right.ques === 51);
-				var invalidBottom = (adc.bottom.isnull || adc.bottom.ques === 51);
+			
+				const invalidRight = (adc.right.isnull || adc.right.ques === 51);
+				const invalidBottom = (adc.bottom.isnull || adc.bottom.ques === 51);
 				if (invalidRight && invalidBottom) { return 0; }
-				else if (invalidBottom) { return piece.RT; }
-				else if (invalidRight) { return piece.DN; }
-			}
+				if (invalidBottom) { return piece.RT; }
+				if (invalidRight) { return piece.DN; }
 		}
 		else if (piece.group === 'excell') {
 			if (piece.id === bd.cols + bd.rows) { return 0; }
-			else if ((piece.by === -1 && adc.bottom.ques === 51) ||
+			if ((piece.by === -1 && adc.bottom.ques === 51) ||
 				(piece.bx === -1 && adc.right.ques === 51)) { return 0; }
-			else if (piece.by === -1) { return piece.DN; }
-			else if (piece.bx === -1) { return piece.RT; }
+			if (piece.by === -1) { return piece.DN; }
+			if (piece.bx === -1) { return piece.RT; }
 		}
 		else { return 0; }
 
 		return this.targetdir;
 	}
 	getNumOfTarget(piece: BoardPiece) {
-		var num = 1;
+		let num = 1;
 		if (piece.isnull) { num = 0; }
 		else if (piece.group === 'cell') {
 			if (this.modesnum && this.puzzle.playmode) {
 				num = 4 - (this.pid === 'factors' ? 1 : 0);
 			}
 			else if (piece.ques === 51) {
-				var adc = piece.adjacent;
+				const adc = piece.adjacent;
 				num = ((!adc.right.isnull && adc.right.ques !== 51) ? 1 : 0) +
 					((!adc.bottom.isnull && adc.bottom.ques !== 51) ? 1 : 0);
 			}

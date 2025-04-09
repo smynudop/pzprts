@@ -72,7 +72,7 @@ export class Config {
 	}
 	add(name: string, defvalue: any, extoption: any = null) {
 		if (!extoption) { extoption = {}; }
-		var item = { val: defvalue, defval: defvalue, volatile: !!extoption.volatile, option: null as any, variety: null as any };
+		const item = { val: defvalue, defval: defvalue, volatile: !!extoption.volatile, option: null as any, variety: null as any };
 		if (!!extoption.option) { item.option = extoption.option; }
 		if (!!extoption.variety) { item.variety = {}; }
 		this.list[name] = item;
@@ -91,11 +91,11 @@ export class Config {
 	}
 	//getCurrnetName(name) { return this.getgetCurrentName(name); }
 	getNormalizedName(argname: string) {
-		var info = { name: argname, pid: null as string };
+		const info = { name: argname, pid: null as string };
 		if (argname.match(/\@/)) {
-			var splitted = argname.split(/\@/);
+			const splitted = argname.split(/\@/);
 			info.name = splitted[0];
-			var pid = pzpr.variety.toPID(splitted[1]);
+			const pid = pzpr.variety.toPID(splitted[1]);
 			if (!!pid) { info.pid = pid; }
 		}
 		info.name = this.getCurrentName(info.name);
@@ -108,25 +108,27 @@ export class Config {
 	// config.reset()各フラグの設定値を初期値に戻す
 	//---------------------------------------------------------------------------
 	get(argname: string) {
-		var names = this.getNormalizedName(argname), name = names.name;
-		var item = this.list[name];
+		const names = this.getNormalizedName(argname);
+		const name = names.name;
+		const item = this.list[name];
 		if (!item) { return null; }
 		if (!!item.variety) {
-			var pid = (names.pid !== void 0 ? names.pid : this.puzzle.pid);
+			const pid = (names.pid !== void 0 ? names.pid : this.puzzle.pid);
 			if (item.variety[pid] !== void 0) { return item.variety[pid]; }
 		}
 		return item.val;
 	}
 	set(argname: string, newval: any) {
-		var names = this.getNormalizedName(argname), name = names.name;
+		const names = this.getNormalizedName(argname);
+		const name = names.name;
 		if (!this.list[name]) { return; }
 		newval = this.setproper(names, newval);
 		this.configevent(name, newval);
 		this.puzzle.emit('config', name, newval);
 	}
 	reset(argname: string) {
-		var names = this.getNormalizedName(argname);
-		var item = this.list[names.name];
+		const names = this.getNormalizedName(argname);
+		const item = this.list[names.name];
 		if (!item) { return; }
 		if (!!item.variety && !names.pid) {
 			item.variety = {};
@@ -141,8 +143,8 @@ export class Config {
 	// config.getList()  現在有効な設定値のリストを返す
 	//---------------------------------------------------------------------------
 	getList() {
-		var conf: Record<string, any> = {};
-		for (var idname in this.list) {
+		const conf: Record<string, any> = {};
+		for (const idname in this.list) {
 			if (this.getexec(idname)) { conf[idname] = this.get(idname); }
 		}
 		return conf;
@@ -153,33 +155,33 @@ export class Config {
 	// config.setAll()  全フラグの設定値を設定する
 	//---------------------------------------------------------------------------
 	getAll() {
-		var object: Record<string, any> = {};
-		for (var key in this.list) {
-			var item = this.list[key];
+		const object: Record<string, any> = {};
+		for (const key in this.list) {
+			const item = this.list[key];
 			if (item.volatile) { continue; }
 			if (item.val !== item.defval) { object[key] = item.val; }
 			if (!item.variety) { continue; }
-			for (var pid in item.variety) {
-				if (item.variety[pid] !== item.defval) { object[key + '@' + pid] = item.variety[pid]; }
+			for (const pid in item.variety) {
+				if (item.variety[pid] !== item.defval) { object[`${key}@${pid}`] = item.variety[pid]; }
 			}
 		}
 		return object;
 	}
 	setAll(settings: any) {
 		this.init();
-		for (var key in settings) { this.set(key, settings[key]); }
+		for (const key in settings) { this.set(key, settings[key]); }
 	}
 
 	//---------------------------------------------------------------------------
 	// config.setproper()    設定値の型を正しいものに変換して設定変更する
 	//---------------------------------------------------------------------------
 	setproper<T extends { name: string, pid: string }>(names: T, newval: any) {
-		var name = names.name;
-		var item = this.list[name];
+		const name = names.name;
+		const item = this.list[name];
 		switch (typeof item.defval) {
 			case "boolean": newval = !!newval; break;
 			case "number": newval = +newval; break;
-			case "string": newval = "" + newval; break;
+			case "string": newval = `${newval}`; break;
 		}
 		if (!item.option || (item.option.indexOf(newval) >= 0)) {
 			if (!!item.variety) {
@@ -194,7 +196,10 @@ export class Config {
 	// config.getexec()  設定値を現在のパズルで有効かどうか返す
 	//---------------------------------------------------------------------------
 	getexec(name: string) {
-		var puzzle = this.puzzle, pid = puzzle.pid, EDITOR = !puzzle.playeronly, exec = false;
+		const puzzle = this.puzzle;
+		const pid = puzzle.pid;
+		const EDITOR = !puzzle.playeronly;
+		let exec = false;
 		switch (name) {
 			case 'use': exec = puzzle.mouse.use; break;
 			case 'use_tri': exec = (pid === "shakashaka"); break;
@@ -227,7 +232,7 @@ export class Config {
 	// config.configevent()  設定変更時の動作を記述する
 	//---------------------------------------------------------------------------
 	configevent(name: string, newval: any) {
-		var puzzle = this.puzzle;
+		const puzzle = this.puzzle;
 		if (!this.getexec(name)) { return; }
 		switch (name) {
 			case 'irowake': case 'irowakeblk': case 'dispmove': case 'cursor': case 'undefcell':

@@ -32,7 +32,7 @@ onMounted(() => {
 
 const nowMode = ref("auto")
 const changeMode = (newMode: string) => {
-    if (nowMode.value == newMode) return;
+    if (nowMode.value === newMode) return;
 
     if (puzzle) {
         nowMode.value = newMode

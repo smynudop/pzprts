@@ -25,7 +25,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "biome lint",
-    "lint-fix": "biome lint --write"
+    "lint-fix": "biome lint --write",
+    "lint-fix-unsafe": "biome lint --write --unsafe"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

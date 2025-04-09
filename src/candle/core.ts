@@ -10,16 +10,16 @@ import type WrapperBase from './base.js';
 /* ------------- */
 /*   variables   */
 /* ------------- */
-var _color: Record<string, string> = {},
-	_order: string[] = [],
-	_wrapper: Record<string, { new(parent: any): WrapperBase<any> }> = {};
+const _color: Record<string, string> = {};
+const _order: string[] = [];
+const _wrapper: Record<string, { new(parent: any): WrapperBase<any> }> = {};
 
 /* ---------- */
 /*   arrays   */
 /* ---------- */
-var _hex = (function () {
-	var tbl: Record<string, string> = {};
-	for (var r = 256; r < 512; r++) { tbl[(r - 256).toString()] = r.toString(16).substr(1); }
+const _hex = (function () {
+	const tbl: Record<string, string> = {};
+	for (let r = 256; r < 512; r++) { tbl[(r - 256).toString()] = r.toString(16).substr(1); }
 	return tbl;
 })();
 
@@ -28,7 +28,7 @@ type CandleContext<TElement> = TElement extends HTMLCanvasElement ? CanvasRender
 /* ---------------------- */
 /*   Candleオブジェクト   */
 /* ---------------------- */
-var Candle = {
+const Candle = {
 	version: "",
 
 	env,
@@ -49,7 +49,7 @@ var Candle = {
 	parse: function (rgbstr: string) {
 		if (!_color[rgbstr]) {
 			if (rgbstr.substr(0, 4) === 'rgb(') {
-				var m = rgbstr.match(/\d+/g);
+				const m = rgbstr.match(/\d+/g);
 				_color[rgbstr] = ["#", _hex[m[0]], _hex[m[1]], _hex[m[2]]].join('');
 			}
 			else { _color[rgbstr] = rgbstr; }
@@ -60,9 +60,9 @@ var Candle = {
 	start: function <TElement>(element: TElement, type: string, initCallBack?: (context: CandleContext<TElement>) => void) {
 		metrics.init();
 
-		var context: any;
+		let context: any;
 		if (!isCanvasElement(element)) {
-			var choice = type;
+			let choice = type;
 			if (!this.enable[choice]) { choice = this.current; }
 			if (!choice || !this.enable[choice]) { throw 'No canvas environment is installed'; }
 			const wrapper = context = new _wrapper[choice](element);

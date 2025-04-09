@@ -150,19 +150,20 @@ const varietylist: Record<string, GenreOption> = {
 
 export const createVariety = function () {
 
-	var _info: Record<string, any> = {}, _list: string[] = [];
+	const _info: Record<string, any> = {};
+	const _list: string[] = [];
 	function toPID(name: string) {
 		if (!!_info[name]) { return name; }
-		for (var pid in _info) {
+		for (const pid in _info) {
 			if (!_info[pid].alias) { continue; }
-			for (var type in _info[pid].alias) {
+			for (const type in _info[pid].alias) {
 				if (_info[pid].alias[type] === name) { return pid; }
 			}
 		}
 		return '';
 	}
 
-	var variety = (function (pid) {
+	const variety = (function (pid) {
 		return _info[toPID(pid)] || { valid: false };
 	}) as {
 		(pid: string): any,
@@ -179,13 +180,13 @@ export const createVariety = function () {
 		return variety(name).valid;
 	}
 	variety.each = function (func: any) {
-		for (var pid in _info) { func(pid); }
+		for (const pid in _info) { func(pid); }
 	}
 	variety.getList = function () {
 		return _list.slice();
 	}
 
-	for (var pzprid in varietylist) {
+	for (const pzprid in varietylist) {
 		_info[pzprid] = Genre(pzprid, varietylist[pzprid]);
 		_list.push(pzprid);
 	}

@@ -73,12 +73,13 @@ export class LineGraph extends GraphBase {
 	// linegraph.incdecLineCount() 線が引かれたり消された時に、lcnt変数を生成し直す
 	//---------------------------------------------------------------------------
 	resetLineCount() {
-		var cells = this.puzzle.board[this.pointgroup], borders = this.puzzle.board[this.linkgroup];
+		const cells = this.puzzle.board[this.pointgroup];
+		const borders = this.puzzle.board[this.linkgroup];
 		this.ltotal = [cells.length];
-		for (var c = 0; c < cells.length; c++) {
+		for (let c = 0; c < cells.length; c++) {
 			cells[c].lcnt = 0;
 		}
-		for (var id = 0; id < borders.length; id++) {
+		for (let id = 0; id < borders.length; id++) {
 			if (this.isedgevalidbylinkobj(borders[id])) {
 				this.incdecLineCount(borders[id], true);
 			}
@@ -86,8 +87,8 @@ export class LineGraph extends GraphBase {
 	}
 	incdecLineCount(border: Border, isset: boolean) {
 		if (border.group !== this.linkgroup) { return; }
-		for (var i = 0; i < 2; i++) {
-			var cell = border.sideobj[i];
+		for (let i = 0; i < 2; i++) {
+			const cell = border.sideobj[i];
 			if (!cell.isnull) {
 				this.ltotal[cell.lcnt]--;
 				if (isset) { cell.lcnt++; } else { cell.lcnt--; }
@@ -100,7 +101,7 @@ export class LineGraph extends GraphBase {
 	// linegraph.setEdgeByLinkObj() 線が引かれたり消された時に、lcnt変数や線の情報を生成しなおす
 	//---------------------------------------------------------------------------
 	setEdgeByLinkObj(linkobj: any) {
-		var isset = this.isedgevalidbylinkobj(linkobj);
+		const isset = this.isedgevalidbylinkobj(linkobj);
 		if (isset === this.isedgeexistsbylinkobj(linkobj)) { return; }
 
 		if (!!this.incdecLineCount) {
@@ -116,23 +117,26 @@ export class LineGraph extends GraphBase {
 	// graph.removeEdgeByLinkObj() 指定されたオブジェクトの場所からEdgeを除去する
 	//---------------------------------------------------------------------------
 	addEdgeByLinkObj(linkobj: any) { // 線(など)を引いた時の処理
-		var enattach = (this.modifyNodes.length === 0);
-		var sidenodeobj = this.getSideObjByLinkObj(linkobj);
+		const enattach = (this.modifyNodes.length === 0);
+		const sidenodeobj = this.getSideObjByLinkObj(linkobj);
 
 		// 周囲のNodeをグラフに追加するかどうか確認する
 		this.createNodeIfEmpty(sidenodeobj[0]);
 		this.createNodeIfEmpty(sidenodeobj[1]);
 
 		// linkするNodeを取得する
-		var sidenodes = this.getSideNodesByLinkObj(linkobj);
+		const sidenodes = this.getSideNodesByLinkObj(linkobj);
 
 		// 周囲のNodeとlink
 		this.addEdge(sidenodes[0], sidenodes[1]);
 
 		// 周囲のComponentにくっついただけの場合は情報を更新して終了
 		if (this.rebuildmode || !enattach) { return; }
-		var attachnodes = null, node1 = sidenodes[0], node2 = sidenodes[1];
-		var lcnt1 = node1.obj.lcnt, lcnt2 = node2.obj.lcnt;
+		let attachnodes = null;
+		const node1 = sidenodes[0];
+		const node2 = sidenodes[1];
+		const lcnt1 = node1.obj.lcnt;
+		const lcnt2 = node2.obj.lcnt;
 		if (lcnt1 === 1 && (lcnt2 === 2 || (!this.isLineCross && lcnt2 > 2)) && node1.component === null && node2.component !== null) { attachnodes = [sidenodes[0], sidenodes[1]]; }
 		else if (lcnt2 === 1 && (lcnt1 === 2 || (!this.isLineCross && lcnt1 > 2)) && node2.component === null && node1.component !== null) { attachnodes = [sidenodes[1], sidenodes[0]]; }
 		if (!!attachnodes) {
@@ -142,8 +146,8 @@ export class LineGraph extends GraphBase {
 	}
 	removeEdgeByLinkObj(linkobj: any) { // 線(など)を消した時の処理
 		// unlinkするNodeを取得する
-		var endetach = (this.modifyNodes.length === 0);
-		var sidenodes = this.getSideNodesByLinkObj(linkobj);
+		const endetach = (this.modifyNodes.length === 0);
+		const sidenodes = this.getSideNodesByLinkObj(linkobj);
 
 		// 周囲のNodeとunlink
 		this.removeEdge(sidenodes[0], sidenodes[1]);
@@ -156,8 +160,11 @@ export class LineGraph extends GraphBase {
 
 		// 周囲のComponent末端から切り離されただけの場合は情報を更新して終了
 		if (!endetach) { return; }
-		var detachnodes = null, node1 = sidenodes[0], node2 = sidenodes[1];
-		var lcnt1 = node1.obj.lcnt, lcnt2 = node2.obj.lcnt;
+		let detachnodes = null;
+		const node1 = sidenodes[0];
+		const node2 = sidenodes[1];
+		const lcnt1 = node1.obj.lcnt;
+		const lcnt2 = node2.obj.lcnt;
 		if (lcnt1 === 0 && ((lcnt2 === 1 || (!this.isLineCross && lcnt2 > 1)) && node2.component !== null)) { detachnodes = [sidenodes[0], sidenodes[1]]; }
 		else if (lcnt2 === 0 && ((lcnt1 === 1 || (!this.isLineCross && lcnt1 > 1)) && node1.component !== null)) { detachnodes = [sidenodes[1], sidenodes[0]]; }
 		if (!!detachnodes) {
@@ -170,7 +177,7 @@ export class LineGraph extends GraphBase {
 	// linegraph.setOtherInformation() 移動系パズルで数字などが入力された時に線の情報を生成しなおす
 	//---------------------------------------------------------------------------
 	modifyOtherInfo(cell: Cell, relation: any) {
-		var haspath = !!cell.path;
+		const haspath = !!cell.path;
 		if (haspath !== this.isnodevalid(cell)) {
 			if (haspath) { this.deleteNodeIfEmpty(cell); }
 			else { this.createNodeIfEmpty(cell); }
@@ -186,7 +193,7 @@ export class LineGraph extends GraphBase {
 	// linegraph.deleteNodeIfEmpty()  指定されたオブジェクトの場所からNodeを除去する
 	//---------------------------------------------------------------------------
 	createNodeIfEmpty(cell: Cell) {
-		var nodes = this.getObjNodeList(cell);
+		const nodes = this.getObjNodeList(cell);
 
 		// 周囲のNode生成が必要かもしれないのでチェック＆create
 		if (nodes.length === 0) {
@@ -198,10 +205,10 @@ export class LineGraph extends GraphBase {
 			this.createNode(cell);
 
 			// 上下/左右の線が1本ずつだった場合は左右の線をnodes[1]に付加し直します
-			var nbnodes = nodes[0].nodes;
-			var isvert = [cell.getvert(nbnodes[0].obj, 2), cell.getvert(nbnodes[1].obj, 2)];
+			const nbnodes = nodes[0].nodes;
+			const isvert = [cell.getvert(nbnodes[0].obj, 2), cell.getvert(nbnodes[1].obj, 2)];
 			if (isvert[0] !== isvert[1]) {
-				var lrnode = nbnodes[!isvert[0] ? 0 : 1];
+				const lrnode = nbnodes[!isvert[0] ? 0 : 1];
 				this.removeEdge(nodes[0], lrnode);
 				this.addEdge(nodes[1], lrnode);
 			}
@@ -212,7 +219,7 @@ export class LineGraph extends GraphBase {
 		}
 	}
 	deleteNodeIfEmpty(cell: Cell) {
-		var nodes = this.getObjNodeList(cell);
+		const nodes = this.getObjNodeList(cell);
 
 		// 周囲のNodeが消えるかもしれないのでチェック＆remove
 		if (nodes.length === 1 && nodes[0].nodes.length === 0 && !this.isnodevalid(cell)) {
@@ -222,7 +229,7 @@ export class LineGraph extends GraphBase {
 		else if (!!nodes[1] && nodes[0].nodes.length + nodes[1].nodes.length === 2 && this.iscrossing(cell)) {
 			// 3本->2本になってnodes[0], nodes[1]に1本ずつEdgeが存在する場合はnodes[0]に統合
 			if (nodes[1].nodes.length === 1) {
-				var lrnode = nodes[1].nodes[0];
+				const lrnode = nodes[1].nodes[0];
 				this.removeEdge(nodes[1], lrnode);
 				this.addEdge(nodes[0], lrnode);
 			}
@@ -248,8 +255,8 @@ export class LineGraph extends GraphBase {
 			component.color = this.puzzle.painter.getNewLineColor();
 		}
 
-		var edgeobjs = component.getedgeobjs();
-		for (var i = 0; i < edgeobjs.length; i++) {
+		const edgeobjs = component.getedgeobjs();
+		for (let i = 0; i < edgeobjs.length; i++) {
 			this.setComponentRefs(edgeobjs[i], component);
 		}
 
@@ -263,8 +270,8 @@ export class LineGraph extends GraphBase {
 	// linegraph.repaintNodes() ブロックを再描画する
 	//--------------------------------------------------------------------------------
 	repaintNodes(components: GraphComponent[]) {
-		var blist_all = new BorderList(this.puzzle);
-		for (var i = 0; i < components.length; i++) {
+		const blist_all = new BorderList(this.puzzle);
+		for (let i = 0; i < components.length; i++) {
 			//@ts-ignore todo
 			blist_all.extend(components[i].getedgeobjs());
 		}
@@ -276,25 +283,27 @@ export class LineGraph extends GraphBase {
 	// linemgr.setMovedBase()    指定された領域の移動情報を設定する
 	//--------------------------------------------------------------------------------
 	setMovedBase(component: GraphComponent) {
-		var emptycell = this.puzzle.board.emptycell;
+		const emptycell = this.puzzle.board.emptycell;
 		component.departure = component.destination = emptycell;
 		component.movevalid = false;
 
-		var clist = component.clist;
+		const clist = component.clist;
 		if (clist.length < 1) { return; }
-		for (var i = 0; i < clist.length; i++) {
-			var cell = clist[i];
+		for (let i = 0; i < clist.length; i++) {
+			const cell = clist[i];
 			cell.base = (cell.isNum() ? cell : emptycell);
 		}
 
-		var before = null, after = null, point = 0;
+		let before = null;
+		let after = null;
+		let point = 0;
 		if (clist.length === 1) {
 			before = after = clist[0];
 			point = 2;
 		}
 		else {
-			for (var i = 0; i < clist.length; i++) {
-				var cell = clist[i];
+			for (let i = 0; i < clist.length; i++) {
+				const cell = clist[i];
 				if (cell.lcnt === 1) {
 					point++;
 					if (cell.isNum()) { before = cell; } else { after = cell; }

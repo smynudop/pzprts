@@ -4,8 +4,8 @@ export const initPzpr = function (pzpr: any) {
 	//---------------------------------------------------------------
 	// 起動時関連関数
 	//---------------------------------------------------------------
-	var preinit = true;
-	var loadfun: (() => void)[] = [];
+	let preinit = true;
+	let loadfun: (() => void)[] = [];
 	pzpr.on = function (eventtype: string, func: () => void) {
 		if (eventtype === 'load') {
 			if (preinit) { loadfun.push(func); }
@@ -19,7 +19,7 @@ export const initPzpr = function (pzpr: any) {
 	function postload(e: any) {
 		if (preinit) {
 			preinit = false;
-			for (var i = 0; i < loadfun.length; i++) { loadfun[i](); }
+			for (let i = 0; i < loadfun.length; i++) { loadfun[i](); }
 			loadfun = [];
 		}
 	}
@@ -37,7 +37,7 @@ export const initPzpr = function (pzpr: any) {
 	// addKeyEvents()  キーボード入力発生時に指定されたパズルへ通知する準備を行う
 	// exec????()      各パズルのキー入力へ分岐する
 	//---------------------------------------------------------------------------
-	var keytarget: Puzzle = null;
+	let keytarget: Puzzle = null;
 	function execKeyDown(e: KeyboardEvent) {
 		if (!!keytarget && !!keytarget.key) { keytarget.key.e_keydown(e); }
 	}

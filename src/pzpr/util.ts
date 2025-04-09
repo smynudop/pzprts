@@ -3,11 +3,11 @@
 import type { Puzzle } from "../puzzle/Puzzle";
 import { getEnv } from "./env";
 const env = getEnv();
-let api = env.API,
-	eventMouseDown = ["mousedown"],
-	eventMouseMove = ["mousemove"],
-	eventMouseUp = ["mouseup"],
-	eventMouseCancel = [""];
+const api = env.API;
+let eventMouseDown = ["mousedown"];
+let eventMouseMove = ["mousemove"];
+let eventMouseUp = ["mouseup"];
+let eventMouseCancel = [""];
 
 if (env.bz.AndroidBrowser) {
 	eventMouseDown = [""];
@@ -42,14 +42,14 @@ export const util = {
 	// pzpr.jsが読み込まれているスクリプトのパスを取得する
 	getpath: function () {
 		if (env.browser) {
-			var srcs = document.getElementsByTagName('script');
-			for (var i = 0; i < srcs.length; i++) {
-				var result = srcs[i].src.match(/^(.*\/)pzpr\.js(?:\?.*)?$/);
+			const srcs = document.getElementsByTagName('script');
+			for (let i = 0; i < srcs.length; i++) {
+				const result = srcs[i].src.match(/^(.*\/)pzpr\.js(?:\?.*)?$/);
 				if (result) { return result[1] + (!result[1].match(/\/$/) ? '/' : ''); }
 			}
 		}
 		else {
-			return require('path').dirname(__filename) + '/' + (__filename.match('pzpr.js') ? '' : '../');
+			return `${require('node:path').dirname(__filename)}/${__filename.match('pzpr.js') ? '' : '../'}`;
 		}
 		return "";
 	},
@@ -76,7 +76,7 @@ export const util = {
 	// pzpr.util.addEvent()          addEventListener()を呼び出す
 	//----------------------------------------------------------------------
 	addEvent: function (el: HTMLElement, type: string, self: Puzzle, callback: (e: any) => void, capt: any = false) {
-		var types = [type];
+		let types = [type];
 		if (type === "mousedown") { types = eventMouseDown; }
 		else if (type === "mousemove") { types = eventMouseMove; }
 		else if (type === "mouseup") { types = eventMouseUp; }
@@ -97,7 +97,7 @@ export const util = {
 			/* touchイベントだった場合 */
 			return (e.touches.length === 1 ? 'left' : '');
 		}
-		else if (util.isPointerEvent(e) && e.pointerType !== 'mouse') {
+		if (util.isPointerEvent(e) && e.pointerType !== 'mouse') {
 			/* pointerイベントだった場合 */
 			return (e.isPrimary ? 'left' : '');
 		}
@@ -125,9 +125,10 @@ export const util = {
 	pageX: function (e: MouseEvent | TouchEvent) {
 		if (util.isTouchEvent(e)) {
 			if (e.touches.length > 0) {
-				var len = e.touches.length, pos = 0;
+				const len = e.touches.length;
+				let pos = 0;
 				if (len > 0) {
-					for (var i = 0; i < len; i++) { pos += e.touches[i].pageX; }
+					for (let i = 0; i < len; i++) { pos += e.touches[i].pageX; }
 					return pos / len;
 				}
 			}
@@ -138,9 +139,10 @@ export const util = {
 	pageY: function (e: MouseEvent | TouchEvent) {
 		if (util.isTouchEvent(e)) {
 			if (e.touches.length > 0) {
-				var len = e.touches.length, pos = 0;
+				const len = e.touches.length;
+				let pos = 0;
 				if (len > 0) {
-					for (var i = 0; i < len; i++) { pos += e.touches[i].pageY; }
+					for (let i = 0; i < len; i++) { pos += e.touches[i].pageY; }
 					return pos / len;
 				}
 			}
@@ -156,21 +158,23 @@ export const util = {
 		if (!env.browser) {
 			return { top: 0, bottom: 0, left: 0, right: 0, height: 0, width: 0 };
 		}
-		var rect = el.getBoundingClientRect(), scrollLeft, scrollTop;
+		const rect = el.getBoundingClientRect();
+		let scrollLeft;
+		let scrollTop;
 		if (window.scrollX !== void 0) {
 			scrollLeft = window.scrollX;
 			scrollTop = window.scrollY;
 		}
 		else {
 			/* IE11以下向け */
-			var _html = document.documentElement;
+			const _html = document.documentElement;
 			scrollLeft = _html.scrollLeft;
 			scrollTop = _html.scrollTop;
 		}
-		var left = rect.left + scrollLeft;
-		var top = rect.top + scrollTop;
-		var right = rect.right + scrollLeft;
-		var bottom = rect.bottom + scrollTop;
+		const left = rect.left + scrollLeft;
+		const top = rect.top + scrollTop;
+		const right = rect.right + scrollLeft;
+		const bottom = rect.bottom + scrollTop;
 
 
 		const style = getComputedStyle(el);
@@ -185,10 +189,11 @@ export const util = {
 	// pzpr.util.checkpid()  メニューなどが表示対象のパズルかどうか返す
 	//---------------------------------------------------------------------------
 	checkpid: function (str: string, pid: string) {
-		var matches = str.match(/!?[a-z0-9]+/g), isdisp = true;
+		const matches = str.match(/!?[a-z0-9]+/g);
+		let isdisp = true;
 		if (!!matches) {
 			isdisp = false;
-			for (var i = 0; i < matches.length; i++) {
+			for (let i = 0; i < matches.length; i++) {
 				if (matches[i].charAt(0) !== "!") { if (matches[i] === pid) { isdisp = true; } }
 				else { isdisp = (matches[i].substr(1) !== pid); }
 			}

@@ -133,10 +133,10 @@ export class BoardPiece extends Position {
 		//@ts-ignore
 		this[prop] = num;
 
-		var trialstage = this.board.trialstage;
+		const trialstage = this.board.trialstage;
 		if (trialstage > 0) { this.trial = trialstage; }
 
-		this.board.modifyInfo(this, this.group + '.' + prop);
+		this.board.modifyInfo(this, `${this.group}.${prop}`);
 
 		if (!!this.posthook[prop]) { this.posthook[prop](this, num); }
 	}
@@ -160,7 +160,7 @@ export class BoardPiece extends Position {
 		//@ts-ignore
 		this[prop][pos] = num;
 
-		var trialstage = this.board.trialstage;
+		const trialstage = this.board.trialstage;
 		if (trialstage > 0) { this.trial = trialstage; }
 
 		if (!!this.posthook[prop]) { this.posthook[prop].call(this, pos, num); }
@@ -177,7 +177,7 @@ export class BoardPiece extends Position {
 		}
 
 		//@ts-ignore
-		var def = this.pureObject[prop];
+		const def = this.pureObject[prop];
 		//@ts-ignore
 		const now = this[prop]
 		if (now !== def) {
@@ -193,20 +193,22 @@ export class BoardPiece extends Position {
 	// compare()  プロパティの値を比較し違っていたらcallback関数を呼びだす
 	//---------------------------------------------------------------------------
 	getprops() {
-		var props: { [key in (keyof BoardPiece)]?: any } = {};
-		var proplist = this.getproplist(['ques', 'ans', 'sub']);
-		for (var i = 0; i < proplist.length; i++) {
-			var a = proplist[i], isArray = (this[a] instanceof Array);
+		const props: { [key in (keyof BoardPiece)]?: any } = {};
+		const proplist = this.getproplist(['ques', 'ans', 'sub']);
+		for (let i = 0; i < proplist.length; i++) {
+			const a = proplist[i];
+			const isArray = (Array.isArray(this[a]));
 			props[a] = (!isArray ? this[a] : Array.prototype.slice.call(this[a]));
 		}
 		return props;
 	}
 	compare(props: BoardPiece, callback: (group: IGroup, id: number, prop: string) => void) {
-		var proplist = this.getproplist(['ques', 'ans', 'sub']);
-		for (var i = 0; i < proplist.length; i++) {
-			var a = proplist[i], isArray = (this[a] instanceof Array);
-			var source = (!isArray ? props[a] : props[a].join(','));
-			var target = (!isArray ? this[a] : this[a].join(','));
+		const proplist = this.getproplist(['ques', 'ans', 'sub']);
+		for (let i = 0; i < proplist.length; i++) {
+			const a = proplist[i];
+			const isArray = (Array.isArray(this[a]));
+			const source = (!isArray ? props[a] : props[a].join(','));
+			const target = (!isArray ? this[a] : this[a].join(','));
 			if (source !== target) { callback(this.group as IGroup, this.id, a); }
 		}
 	}
@@ -215,9 +217,9 @@ export class BoardPiece extends Position {
 	// getproplist() ansclear等で使用するプロパティの配列を取得する
 	//---------------------------------------------------------------------------
 	getproplist(types: ("ques" | "ans" | "sub" | "info" | "trial")[]) {
-		var array: (keyof BoardPiece)[] = [];
-		for (var i = 0; i < types.length; i++) {
-			var array1: (keyof BoardPiece)[] = [];
+		let array: (keyof BoardPiece)[] = [];
+		for (let i = 0; i < types.length; i++) {
+			let array1: (keyof BoardPiece)[] = [];
 			switch (types[i]) {
 				case 'ques': array1 = this.propques; break;
 				case 'ans': array1 = this.propans; break;
@@ -289,7 +291,7 @@ export class Cell extends BoardPiece {
 		super(puzzle)
 
 		if (this.enableSubNumberArray) {
-			var anum0 = Cell.anumDefault;
+			const anum0 = Cell.anumDefault;
 			this.snum = [anum0, anum0, anum0, anum0];
 		}
 	}
@@ -303,8 +305,8 @@ export class Cell extends BoardPiece {
 	//---------------------------------------------------------------------------
 	propclear(prop: any, isrec: boolean) {
 		if (prop === 'snum' && this.enableSubNumberArray) {
-			for (var pos = 0; pos < 4; ++pos) {
-				var def = this.constructor.prototype[prop];
+			for (let pos = 0; pos < 4; ++pos) {
+				const def = this.constructor.prototype[prop];
 				//@ts-ignore
 				const now = this[prop][pos]
 
@@ -361,8 +363,8 @@ export class Cell extends BoardPiece {
 		}
 		// playmode時 val>=0は数字 val=-1は消去 numberAsObjectの・はval=-2 numberWithMBの○×はval=-2,-3
 		else if (this.qnum === -1) {
-			var vala = ((val > -1 && !(this.numberAsObject && this.anum === val)) ? val : -1);
-			var vals = ((val < -1 && !(this.numberAsObject && this.qsub === -val - 1)) ? -val - 1 : 0);
+			const vala = ((val > -1 && !(this.numberAsObject && this.anum === val)) ? val : -1);
+			const vals = ((val < -1 && !(this.numberAsObject && this.qsub === -val - 1)) ? -val - 1 : 0);
 			this.setAnum(vala);
 			this.setQsub(vals);
 			this.setQdir(0);
@@ -454,7 +456,7 @@ export class Cell extends BoardPiece {
 	//---------------------------------------------------------------------------
 	isLineStraight() { // 0:直進ではない 1:縦に直進 2:横に直進
 		if (this.lcnt === 2 && this.adjborder.top.isLine() && this.adjborder.bottom.isLine()) { return 1; }
-		else if (this.lcnt === 2 && this.adjborder.left.isLine() && this.adjborder.right.isLine()) { return 2; }
+		if (this.lcnt === 2 && this.adjborder.left.isLine() && this.adjborder.right.isLine()) { return 2; }
 		return 0;
 	}
 	isLineCurve() {
@@ -493,9 +495,10 @@ export class Cell extends BoardPiece {
 	// cell.countDir4Cell()  上下左右4方向で条件func==trueになるマスの数をカウントする
 	//---------------------------------------------------------------------------
 	countDir4Cell(func: any) {
-		var adc = this.adjacent, cnt = 0;
-		var cells = [adc.top, adc.bottom, adc.left, adc.right];
-		for (var i = 0; i < 4; i++) {
+		const adc = this.adjacent;
+		let cnt = 0;
+		const cells = [adc.top, adc.bottom, adc.left, adc.right];
+		for (let i = 0; i < 4; i++) {
 			if (cells[i].group === "cell" && !cells[i].isnull && func(cells[i])) { cnt++; }
 		}
 		return cnt;
@@ -506,18 +509,21 @@ export class Cell extends BoardPiece {
 	// cell.getdir4cblist()  上下左右4方向のセル＆境界線＆方向を返す
 	//---------------------------------------------------------------------------
 	getdir4clist() {
-		var adc = this.adjacent, list: [Cell, number][] = [];
-		var cells = [adc.top, adc.bottom, adc.left, adc.right];
-		for (var i = 0; i < 4; i++) {
+		const adc = this.adjacent;
+		const list: [Cell, number][] = [];
+		const cells = [adc.top, adc.bottom, adc.left, adc.right];
+		for (let i = 0; i < 4; i++) {
 			if (cells[i].group === "cell" && !cells[i].isnull) { list.push([cells[i] as Cell, (i + 1)]); } /* i+1==dir */
 		}
 		return list;
 	}
 	getdir4cblist() {
-		var adc = this.adjacent, adb = this.adjborder, cblist = [];
-		var cells = [adc.top, adc.bottom, adc.left, adc.right];
-		var bds = [adb.top, adb.bottom, adb.left, adb.right];
-		for (var i = 0; i < 4; i++) {
+		const adc = this.adjacent;
+		const adb = this.adjborder;
+		const cblist = [];
+		const cells = [adc.top, adc.bottom, adc.left, adc.right];
+		const bds = [adb.top, adb.bottom, adb.left, adb.right];
+		for (let i = 0; i < 4; i++) {
 			if (cells[i].group === "cell" && !cells[i].isnull || !bds[i].isnull) { cblist.push([cells[i], bds[i], (i + 1)]); } /* i+1==dir */
 		}
 		return cblist;
@@ -528,10 +534,11 @@ export class Cell extends BoardPiece {
 	//--------------------------------------------------------------------------------
 	eraseMovedLines() {
 		if (this.path === null) { return; }
-		var clist = this.path.clist, count = 0;
-		for (var i = 0, len = clist.length; i < len; i++) {
-			for (var j = i + 1; j < len; j++) {
-				var border = clist[i].getnb(clist[j]);
+		const clist = this.path.clist;
+		let count = 0;
+		for (let i = 0, len = clist.length; i < len; i++) {
+			for (let j = i + 1; j < len; j++) {
+				const border = clist[i].getnb(clist[j]);
 				if (!border.isnull) { border.removeLine(); count++; }
 			}
 		}
@@ -600,7 +607,7 @@ export class Border extends BoardPiece {
 	// initSideObject() 隣接オブジェクトの情報を設定する
 	//---------------------------------------------------------------------------
 	initSideObject() {
-		var allowexcell = (this.board.hasborder === 2 && this.board.hasexcell === 2);
+		const allowexcell = (this.board.hasborder === 2 && this.board.hasexcell === 2);
 		if (this.isvert) {
 			this.sidecell[0] = ((!allowexcell || this.bx > 0) ? this.relcell(-1, 0) : this.relexcell(-1, 0));
 			this.sidecell[1] = ((!allowexcell || this.bx < this.board.cols * 2) ? this.relcell(1, 0) : this.relexcell(1, 0));
@@ -690,7 +697,8 @@ export class Border extends BoardPiece {
 	// border.setLineCal => checkStableLineから呼ばれる関数
 	//  -> cellidの片方がnullになっていることを考慮していません
 	isLineNG() {
-		var cell1 = this.sidecell[0], cell2 = this.sidecell[1];
+		const cell1 = this.sidecell[0];
+		const cell2 = this.sidecell[1];
 		return this.isVert()
 			? (cell1.noLP(cell1.RT) || cell2.noLP(cell2.LT))
 			: (cell1.noLP(cell1.DN) || cell2.noLP(cell2.UP));

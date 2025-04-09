@@ -9,7 +9,7 @@ export default {
 	init() {
 		if (!!metricsElement || typeof window === 'undefined') { return; }
 
-		var me = _doc.createElement('div');
+		const me = _doc.createElement('div');
 		me.style.display = 'inline';
 		me.style.position = 'absolute';
 		me.style.top = "0px";
@@ -25,12 +25,12 @@ export default {
 		}
 	},
 	getoffsetHeight(text: string, font: string) {
-		var top;
+		let top;
 		if (font.match(/(.+\s)?([0-9]+)px (.+)$/)) {
 			top = +RegExp.$2;
 		}
 		else if (!!metricsElement) {
-			var ME = metricsElement;
+			const ME = metricsElement;
 			ME.style.font = font;
 			ME.style.lineHeight = '100%';
 			ME.innerHTML = text;
