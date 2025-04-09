@@ -11,10 +11,12 @@ import { decodeURL, encodeURL, type Converter } from './Encode.js';
 import { FileIO } from './FileData.js';
 import * as MetaData from '../pzpr/metadata.js';
 import type { Cell, Cross, Border, EXCell } from "./Piece"
+import Candle from '../candle/';
 
 import type { WrapperBase } from '../candle/';
 
 import { pzpr } from '../pzpr/core.js';
+import { getRect, currentTime, addEvent, unselectable } from '../pzpr/util.js';
 
 type Handler = (puzzle: Puzzle, ...args: any[]) => void;
 type IConfig = {
@@ -219,7 +221,7 @@ export class Puzzle<
 	setCanvas(el: HTMLElement, type: string = null) {
 		if (!el) { return; }
 
-		const rect = pzpr.util.getRect(el);
+		const rect = getRect(el);
 		const _div = document.createElement('div');
 		// _div.style.width = rect.width + 'px';
 		// _div.style.height = rect.height + 'px';
@@ -329,10 +331,10 @@ export class Puzzle<
 	// owner.getTime()        開始からの時間をミリ秒単位で取得する
 	//---------------------------------------------------------------------------
 	resetTime() {
-		this.starttime = pzpr.util.currentTime();
+		this.starttime = currentTime();
 	}
 	getTime() {
-		return (pzpr.util.currentTime() - this.starttime);
+		return (currentTime() - this.starttime);
 	}
 
 	//---------------------------------------------------------------------------
@@ -520,14 +522,15 @@ export class Puzzle<
 //---------------------------------------------------------------------------
 function setCanvas_main(puzzle: Puzzle, type: string) {
 	/* fillTextが使えない場合は強制的にSVG描画に変更する */
-	if (type === 'canvas' && !!pzpr.Candle.enable.canvas && !CanvasRenderingContext2D.prototype.fillText) { type = 'svg'; }
+	if (type === 'canvas' && !!Candle.enable.canvas && !CanvasRenderingContext2D.prototype.fillText) { type = 'svg'; }
 
-	pzpr.Candle.start(puzzle.canvas, type, function (gg) {
+	Candle.start(puzzle.canvas, type, function (gg) {
 		const g = gg as WrapperBase<any>;
-		pzpr.util.unselectable(g.canvas);
+		unselectable(g.canvas);
 		g.child.style.pointerEvents = 'none';
 		if (g.use.canvas && !puzzle.subcanvas) {
-			const canvas = puzzle.subcanvas = createSubCanvas('canvas');
+			puzzle.subcanvas = createSubCanvas('canvas');
+			const canvas = puzzle.subcanvas
 			if (!!document.body) {
 				canvas.id = `_${(new Date()).getTime()}${type}`; /* 何か他とかぶらないようなID */
 				canvas.style.position = 'absolute';
@@ -540,9 +543,9 @@ function setCanvas_main(puzzle: Puzzle, type: string) {
 	});
 }
 function createSubCanvas(type: string) {
-	if (!pzpr.Candle.enable[type]) { return null; }
+	if (!Candle.enable[type]) { return null; }
 	const el = document.createElement('div');
-	pzpr.Candle.start(el, type);
+	Candle.start(el, type);
 	return el;
 }
 
@@ -579,7 +582,7 @@ export function postCanvasReady(puzzle: Puzzle) {
 //  exec????()        マウス入力へ分岐する(puzzle.mouseが不変でないためバイパスする)
 //---------------------------------------------------------------------------
 function setCanvasEvents(puzzle: Puzzle) {
-	function ae(type: string, func: (e: any) => void) { pzpr.util.addEvent(puzzle.canvas, type, puzzle, func); }
+	function ae(type: string, func: (e: any) => void) { addEvent(puzzle.canvas, type, puzzle, func); }
 
 	// マウス入力イベントの設定
 	ae("mousedown", (e: any) => {
@@ -651,7 +654,7 @@ function parseImageOption(type: string, quality: number, option: any) { // (type
 	if ('bgcolor' in option) { bgcolor = option.bgcolor; }
 
 
-	imageopt.type = ((type || pzpr.Candle.current).match(/svg/) ? 'svg' : 'canvas');
+	imageopt.type = ((type || Candle.current).match(/svg/) ? 'svg' : 'canvas');
 	imageopt.mimetype = (imageopt.type !== 'svg' ? `image/${type}` : 'image/svg+xml');
 	if (quality !== null && quality !== void 0) { imageopt.quality = quality; }
 

@@ -23,7 +23,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vue-tsc --noEmit && vite build",
     "lint": "biome lint",
     "lint-fix": "biome lint --write",
     "lint-fix-unsafe": "biome lint --write --unsafe"

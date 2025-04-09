@@ -9,8 +9,9 @@ import type { Puzzle } from "./Puzzle";
 import { RawAddress, Address, type Position } from "./Address";
 import type { TargetCursor } from "./KeyInput";
 import { CellList, CrossList } from "./PieceList";
-import { BoardPiece, Cell, type Cross, type EXCell } from "./Piece";
+import { type Border, Cell, type Cross, type EXCell } from "./Piece";
 import { pzpr } from "../pzpr/core";
+import { getMouseButton, getPagePos, getRect } from "../pzpr/util";
 
 type IMode = "edit" | "play"
 
@@ -150,7 +151,7 @@ export class MouseEvent1 {
 	// mv.getBoardAddress() イベントが起こったcanvas内の座標を取得する
 	//---------------------------------------------------------------------------
 	setMouseButton(e: MouseEvent) {
-		this.btn = pzpr.util.getMouseButton(e);
+		this.btn = getMouseButton(e);
 
 		// SHIFTキー/Commandキーを押している時は左右ボタン反転
 		const kc = this.puzzle.key;
@@ -182,8 +183,8 @@ export class MouseEvent1 {
 			else { pix = { px: e.layerX, py: e.layerY }; }  // Firefox 39以前, iOSはこちら
 		}
 		else {
-			const pagePos = pzpr.util.getPagePos(e);
-			const rect = pzpr.util.getRect(pc.context.child);
+			const pagePos = getPagePos(e);
+			const rect = getRect(pc.context.child);
 			pix = { px: (pagePos.px - rect.left), py: (pagePos.py - rect.top) };
 		}
 		return { bx: (pix.px - pc.x0) / pc.bw, by: (pix.py - pc.y0) / pc.bh };
@@ -217,8 +218,7 @@ export class MouseEvent1 {
 		this.mouseevent(2);
 		this.mousereset();
 	}
-	inputPath() {
-		const args = Array.prototype.slice.call(arguments);
+	inputPath(...args: any[]) {
 		this.mousereset();
 		this.btn = (typeof args[0] === 'string' ? args.shift() : 'left');
 		this.moveTo(args[0], args[1]);
@@ -397,11 +397,11 @@ export class MouseEvent1 {
 
 		if (dx < 2 - dy) {	//左上
 			if (dx > dy) { return bd.getb(bx, by - 1); }
-			return bd.getb(bx - 1, by); 
+			return bd.getb(bx - 1, by);
 		}
-		
-			if (dx > dy) { return bd.getb(bx + 1, by); }
-			return bd.getb(bx, by + 1); 
+
+		if (dx > dy) { return bd.getb(bx + 1, by); }
+		return bd.getb(bx, by + 1);
 		// unreachable
 	}
 
@@ -429,7 +429,7 @@ export class MouseEvent1 {
 		let by = this.inputPoint.by;
 		bx = (((bx + 12) % 2) * 1.5) | 0;
 		by = (((by + 12) % 2) * 1.5) | 0;
-		let target;
+		let target: number;
 		if (this.pid !== 'factors') {
 			target = [5, 0, 4, 0, 0, 0, 2, 0, 3][by * 3 + bx];
 		}
@@ -958,8 +958,8 @@ export class MouseEvent1 {
 			return;
 		}
 
-		let pos;
-		let border;
+		let pos: Address;
+		let border: Border;
 		if (!this.puzzle.board.borderAsLine) {
 			pos = this.getpos(0);
 			if (this.prevPos.equals(pos)) { return; }

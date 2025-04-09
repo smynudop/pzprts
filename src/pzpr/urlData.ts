@@ -84,7 +84,6 @@ export class URLData {
             }
             this.type = Constants.URL_PZPRV3;
         }
-        this.pid = pzpr.variety.toPID(this.pid);
     }
 
     //---------------------------------------------------------------------------
@@ -104,8 +103,8 @@ export class URLData {
             case Constants.URL_HEYAAPP: url = "http://www.geocities.co.jp/heyawake/?problem="; break;
         }
 
-        return url.replace("%PID%", pzpr.variety(pid).urlid)
-            .replace("%KID%", pzpr.variety(pid).kanpenid);
+        return url//.replace("%PID%", pzpr.variety(pid).urlid)
+        //.replace("%KID%", pzpr.variety(pid).kanpenid);
     }
 
     //---------------------------------------------------------------------------

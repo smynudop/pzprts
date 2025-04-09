@@ -95,8 +95,9 @@ export class Config {
 		if (argname.match(/\@/)) {
 			const splitted = argname.split(/\@/);
 			info.name = splitted[0];
-			const pid = pzpr.variety.toPID(splitted[1]);
-			if (!!pid) { info.pid = pid; }
+			info.pid = splitted[1]
+			//const pid = pzpr.variety.toPID(splitted[1]);
+			//if (!!pid) { info.pid = pid; }
 		}
 		info.name = this.getCurrentName(info.name);
 		return info;

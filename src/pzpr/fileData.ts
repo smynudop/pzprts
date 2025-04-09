@@ -70,7 +70,6 @@ export class FileData {
         else {
             this.pid = '';
         }
-        this.pid = pzpr.variety.toPID(this.pid);
 
         return (!!this.pid);
     }
@@ -83,9 +82,9 @@ export class FileData {
         if (this.type === Constants.FILE_PZPR) {
             return [(this.filever === 0 ? "pzprv3" : (`pzprv3.${this.filever}`)), this.pid, ""].join("\n");
         }
-        if (this.type === Constants.FILE_PBOX_XML) {
-            this.body.querySelector('puzzle').setAttribute('type', pzpr.variety(this.pid).kanpenid);
-        }
+        // if (this.type === Constants.FILE_PBOX_XML) {
+        //     this.body.querySelector('puzzle').setAttribute('type', pzpr.variety(this.pid).kanpenid);
+        // }
         return "";
     }
 

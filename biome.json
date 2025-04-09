@@ -25,7 +25,12 @@
       },
       "complexity": {
         "noExtraBooleanCast": "off",
-        "useArrowFunction": "off"
+        "useArrowFunction": "off",
+        "noForEach": "off"
+      },
+      "style": {
+        "noParameterAssign": "off",
+        "noNonNullAssertion": "off"
       }
     }
   },

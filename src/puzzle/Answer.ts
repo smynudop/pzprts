@@ -6,6 +6,7 @@ import { BorderList } from "./PieceList";
 import type { BoardPiece, Cell, EXCell, Border, Cross } from "./Piece";
 import type { GraphBase, GraphComponent } from "./GraphBase";
 import type { AreaGraphBase, AreaRoomGraph } from "./AreaManager";
+import { checkpid } from "../pzpr/util";
 import { pzpr } from "../pzpr/core";
 
 //---------------------------------------------------------------------------
@@ -71,7 +72,7 @@ export class AnsCheck<
 			let isexist = true;
 			let prio = 0;
 			if (item.match('@')) {
-				isexist = pzpr.util.checkpid(item.substr(item.indexOf('@') + 1), this.puzzle.pid);
+				isexist = checkpid(item.substr(item.indexOf('@') + 1), this.puzzle.pid);
 				item = item.substr(0, item.indexOf('@'));
 			}
 			if (isexist) {
@@ -651,7 +652,7 @@ export class AnsCheck<
 				result = false;
 				if (this.checkOnly) { break allloop; }
 			}
-		} while (0);
+		} while (false);
 
 		if (!result) {
 			this.failcode.add(code);

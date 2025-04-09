@@ -7,6 +7,7 @@ import type { BoardPiece, Border, Cell, EXCell } from "./Piece";
 import { pzpr } from "../pzpr/core";
 import { getEnv } from "../pzpr/env";
 import type { WrapperBase } from "../candle";
+import { getRect } from "../pzpr/util";
 
 
 const CENTER = 1;
@@ -211,7 +212,7 @@ export class Graphic {
 		}
 
 		if (this.canvasWidth === null || this.canvasHeight === null) {
-			const rect = pzpr.util.getRect(puzzle.canvas);
+			const rect = getRect(puzzle.canvas);
 			this.resizeCanvas(rect.width, rect.height);
 		}
 
@@ -344,7 +345,7 @@ export class Graphic {
 
 		// CanvasのOffset位置変更 (SVGの時、小数点以下の端数調整を行う)
 		if (!g.use.canvas) {
-			const rect = pzpr.util.getRect(g.canvas);
+			const rect = getRect(g.canvas);
 			g.translate(x0 - (rect.left % 1), y0 - (rect.top % 1));
 		}
 		else {
@@ -760,7 +761,7 @@ export class Graphic {
 	getBGCellColor_icebarn(cell: Cell) {
 		if (cell.error === 1 || cell.qinfo === 1) {
 			if (cell.ques === 6) { return this.erricecolor; }
-			return this.errbcolor1; 
+			return this.errbcolor1;
 		}
 		if (cell.ques === 6) { return this.icecolor; }
 		return null;
@@ -882,7 +883,7 @@ export class Graphic {
 		const dir = (!cell.numberAsObject ? cell.qdir : cell.getNum());
 		if (dir >= 1 && dir <= 4) {
 			if (!cell.numberAsObject || cell.qnum !== -1) { return this.quescolor; }
-			return (!cell.trial ? this.qanscolor : this.trialcolor); 
+			return (!cell.trial ? this.qanscolor : this.trialcolor);
 		}
 		return null;
 	}
@@ -983,8 +984,8 @@ export class Graphic {
 		if (!(cell as Cell).numberAsLetter) {
 			return this.getNumberTextCore(num);
 		}
-		
-			return this.getNumberTextCore_letter(num);
+
+		return this.getNumberTextCore_letter(num);
 	}
 	getNumberTextCore(num: number) {
 		const hideHatena = (this.pid !== "yajirin" ? this.hideHatena : this.puzzle.getConfig('disptype_yajilin') === 2);
@@ -1257,7 +1258,7 @@ export class Graphic {
 			if (err === 1) { return this.errcolor1; }
 			if (err === -1) { return this.noerrcolor; }
 			if (border.trial) { return this.trialcolor; }
-			return this.qanscolor; 
+			return this.qanscolor;
 		}
 		return null;
 	}
@@ -1438,7 +1439,7 @@ export class Graphic {
 			if (info === -1) { return this.noerrcolor; }
 			if (isDispmove) { return (border.trial ? this.movetrialcolor : this.movelinecolor); }
 			if (isIrowake) { return border.path.color; }
-			return (border.trial ? this.trialcolor : this.linecolor); 
+			return (border.trial ? this.trialcolor : this.linecolor);
 		}
 		return null;
 	}
@@ -1639,7 +1640,7 @@ export class Graphic {
 		if (num !== -1) {
 			if (isdrawmove && puzzle.mouse.mouseCell === cell) { return this.movecolor; }
 			if (error === 1 || error === 4) { return this.errcolor1; }
-			return this.quescolor; 
+			return this.quescolor;
 		}
 		return null;
 	}
@@ -1657,7 +1658,7 @@ export class Graphic {
 		if (cell.qnum !== -1) {
 			const error = cell.error || cell.qinfo;
 			if (error === 1 || error === 4) { return this.errbcolor1; }
-			return this.circlebasecolor; 
+			return this.circlebasecolor;
 		}
 		return null;
 	}
@@ -1678,7 +1679,7 @@ export class Graphic {
 		if (num !== -1) {
 			if (error === 1 || error === 4) { return this.errbcolor1; }
 			if (cell.isCmp()) { return this.qcmpcolor; }
-			return this.circlebasecolor; 
+			return this.circlebasecolor;
 		}
 		return null;
 	}
