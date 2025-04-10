@@ -22,6 +22,7 @@ export default defineConfig({
             fileName: (format, entry) => `${entry}.${format}.js`,
             formats: ["es"]
         },
+        sourcemap: true
     },
     define: {
         'process.env.NODE_ENV': JSON.stringify('production')  // または 'development'
