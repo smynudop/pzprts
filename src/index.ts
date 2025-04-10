@@ -1,0 +1,1 @@
+export { SlitherlinkPlayer } from "./player/slitherlink"

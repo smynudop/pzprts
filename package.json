@@ -1,26 +1,32 @@
 {
-  "name": "pzprts",
-  "version": "0.0.1",
+  "name": "@udop/penpa-player",
+  "version": "0.0.2",
   "description": "Scripts for handling puzzle objects",
-  "main": "./index.js",
   "type": "module",
   "directories": {
     "test": "test"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "puzzle",
     "HTML5"
   ],
-  "author": "sabo2",
+  "author": "udop",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sabo2/pzprjs"
+    "url": "https://github.com/smynudop/pzprts"
   },
-  "homepage": "https://github.com/sabo2/pzprjs",
+  "homepage": "https://github.com/smynudop/pzprts",
   "engines": {
     "node": ">= 20"
   },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.es.js",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
@@ -34,6 +40,7 @@
     "rollup-plugin-visualizer": "^5.14.0",
     "typescript": "^5.8.2",
     "vite": "^6.2.5",
+    "vite-plugin-dts": "^4.5.3",
     "vue-tsc": "^2.2.8"
   },
   "dependencies": {

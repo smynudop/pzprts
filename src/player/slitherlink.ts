@@ -1,4 +1,4 @@
-import SlitherlinkApp from "./components/Slitherlink.ce.vue"
+import SlitherlinkApp from "../components/Slitherlink.ce.vue"
 import { defineCustomElement } from 'vue';
 
 // Custom Element のコンストラクタに変換
