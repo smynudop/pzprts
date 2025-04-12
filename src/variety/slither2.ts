@@ -11,11 +11,11 @@ import type { BorderList } from "../puzzle/PieceList";
 import { Puzzle } from "../puzzle/Puzzle";
 
 class SlitherMouseEvent extends MouseEvent1 {
-    inputModes = {
+    override inputModes = {
         edit: ['number', 'clear', 'info-line'],
         play: ['line', 'peke', 'bgcolor', 'bgcolor1', 'bgcolor2', 'clear', 'info-line']
     }
-    mouseinput_auto() {
+    override mouseinput_auto() {
         const puzzle = this.puzzle;
         if (puzzle.playmode) {
             if (this.checkInputBGcolor()) {
@@ -52,25 +52,25 @@ class SlitherMouseEvent extends MouseEvent1 {
 
 class SlitherKeyEvent extends KeyEvent {
 
-    enablemake = true
+    override enablemake = true
 
 }
 
 class SlitherBoard extends Board<SlitherCell> {
-    hasborder = 2
-    borderAsLine = true
-    createCell() {
+    override hasborder = 2
+    override borderAsLine = true
+    override createCell() {
         return new SlitherCell(this.puzzle);
     }
-    createLineGraph(): LineGraph {
+    override createLineGraph(): LineGraph {
         return new SlitherLineGraph(this.puzzle)
     }
 }
 class SlitherCell extends Cell {
-    maxnum() {
+    override maxnum() {
         return 3
     }
-    minnum() {
+    override minnum() {
         return 0;
     }
 
@@ -86,12 +86,12 @@ class SlitherCell extends Cell {
 }
 
 class SlitherGraphic extends Graphic {
-    bgcellcolor_func = "qsub2"
-    numbercolor_func = "qnum"
-    margin = 0.5
-    irowake = true
+    override bgcellcolor_func = "qsub2"
+    override numbercolor_func = "qnum"
+    override margin = 0.5
+    override irowake = true
 
-    paint() {
+    override paint() {
         this.drawBGCells();
         this.drawLines();
 
@@ -105,7 +105,7 @@ class SlitherGraphic extends Graphic {
     }
 
 
-    repaintParts(blist: BorderList) {
+    override repaintParts(blist: BorderList) {
         if (this.pid === 'slither') {
             this.range.crosses = blist.crossinside();
             this.drawBaseMarks();
@@ -114,12 +114,12 @@ class SlitherGraphic extends Graphic {
 }
 
 class SlitherLineGraph extends LineGraph {
-    enabled = true
+    override enabled = true
 }
 
 
 class SlitherFileIO extends FileIO {
-    decodeData() {
+    override decodeData() {
         if (this.filever === 1 || this.puzzle.pid !== 'slither') {
             this.decodeCellQnum();
             this.decodeCellQsub();
@@ -130,18 +130,18 @@ class SlitherFileIO extends FileIO {
             this.decodeBorderLine();
         }
     }
-    encodeData() {
+    override encodeData() {
         if (this.puzzle.pid === 'slither') { this.filever = 1; }
         this.encodeCellQnum();
         this.encodeCellQsub();
         this.encodeBorderLine();
     }
 
-    kanpenOpen() {
+    override kanpenOpen() {
         this.decodeCellQnum_kanpen();
         this.decodeBorderLine();
     }
-    kanpenSave() {
+    override kanpenSave() {
         this.encodeCellQnum_kanpen();
         this.encodeBorderLine();
     }
@@ -150,7 +150,7 @@ class SlitherFileIO extends FileIO {
 }
 
 class SlitherAnsCheck extends AnsCheck<SlitherCell> {
-    makeCheckList(): void {
+    override makeCheckList(): void {
         this.checklist = [
             "checkLineExist+",
             "checkBranchLine",
@@ -171,39 +171,39 @@ class SlitherAnsCheck extends AnsCheck<SlitherCell> {
 
 
 export class SlitherLink extends Puzzle<SlitherCell> {
-    pid = "slither"
+    override pid = "slither"
 
-    createMouseEvent(): MouseEvent1 {
+    override createMouseEvent(): MouseEvent1 {
         return new SlitherMouseEvent(this);
     }
 
-    createKeyEvent(): KeyEvent {
+    override createKeyEvent(): KeyEvent {
         return new SlitherKeyEvent(this);
     }
 
-    createGraphic(): Graphic {
+    override createGraphic(): Graphic {
         return new SlitherGraphic(this);
     }
 
-    createBoard() {
+    override createBoard() {
         return new SlitherBoard(this);
     }
 
-    createFailCode() {
+    override createFailCode() {
         const map = super.createFailCode()
         map.set("nmLineNe", ["数字の周りにある線の本数が違います。", "The number is not equal to the number of lines around it."])
         return map;
     }
 
-    createFileIO(): FileIO {
+    override createFileIO(): FileIO {
         return new SlitherFileIO(this);
     }
 
-    createAnsCheck() {
+    override createAnsCheck() {
         return new SlitherAnsCheck(this);
     }
 
-    initConverters(): void {
+    override initConverters(): void {
         this.converters.push(cell4)
     }
 

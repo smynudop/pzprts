@@ -61,7 +61,7 @@ const S_HEIGHT = (() => {
 /*   SVG用ラッパー   */
 /* ----------------- */
 class SVGWrapper extends WrapperBase<SVGSVGElement> {
-	vid: string
+	override vid: string
 	elements: Record<string, SVGSVGElement>;
 	_textcache: Record<string, any>;
 	target: any;
@@ -69,7 +69,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 	cpath: (string | number)[];
 	lastpath: string;
 	freezepath: boolean;
-	enableTextLengthWA: boolean
+	override enableTextLengthWA: boolean
 	constructor(parent: any) {
 		super(parent);
 
@@ -553,7 +553,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 	}
 
 	/* VectorID Functions */
-	vhide(vids: any) {
+	override vhide(vids: any) {
 		const el = this.elements[this.vid];
 		if (!!el) { this.hide(el); }
 	}

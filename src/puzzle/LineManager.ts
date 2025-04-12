@@ -14,8 +14,8 @@ export class LineGraph extends GraphBase {
 		if (this.moveline) { this.relation['cell.qnum'] = 'move'; }
 	}
 
-	enabled = false
-	relation: Record<string, string> = { 'border.line': 'link' }
+	override enabled = false
+	override relation: Record<string, string> = { 'border.line': 'link' }
 
 	pointgroup: 'cell' | "cross" = 'cell'
 	linkgroup = 'border' as const
@@ -25,7 +25,7 @@ export class LineGraph extends GraphBase {
 	makeClist = false		// 線が存在するclistを生成する
 	moveline = false		// 丸数字などを動かすパズル
 
-	coloring = true
+	override coloring = true
 	ltotal: any[] = []
 
 	//--------------------------------------------------------------------------------
@@ -35,11 +35,11 @@ export class LineGraph extends GraphBase {
 	// linegraph.getObjNodeList()      objにあるnodeを取得する
 	// linegraph.resetObjNodeList()    objからnodeをクリアする
 	//--------------------------------------------------------------------------------
-	setComponentRefs(obj: any, component: GraphComponent | null) { obj.path = component; }
-	isedgeexistsbylinkobj(linkobj: any) { return linkobj.path !== null; }
+	override setComponentRefs(obj: any, component: GraphComponent | null) { obj.path = component; }
+	override isedgeexistsbylinkobj(linkobj: any) { return linkobj.path !== null; }
 
-	getObjNodeList(nodeobj: any) { return nodeobj.pathnodes; }
-	resetObjNodeList(nodeobj: any) {
+	override getObjNodeList(nodeobj: any) { return nodeobj.pathnodes; }
+	override resetObjNodeList(nodeobj: any) {
 		nodeobj.pathnodes = [];
 		if (this.moveline) { this.resetExtraData(nodeobj); }
 	}
@@ -49,19 +49,19 @@ export class LineGraph extends GraphBase {
 	// linegraph.isedgevalidbylinkobj()  そのborderにEdgeが存在すべきかどうか返す
 	// linegraph.iscrossing()            そのセルで交差するかどうか返す
 	//--------------------------------------------------------------------------------
-	isnodevalid(cell: Cell) { return cell.lcnt > 0 || (this.moveline && cell.isNum()); }
-	isedgevalidbylinkobj(border: Border) { return border.isLine(); }
+	override isnodevalid(cell: Cell) { return cell.lcnt > 0 || (this.moveline && cell.isNum()); }
+	override isedgevalidbylinkobj(border: Border) { return border.isLine(); }
 	iscrossing(cell: Cell) { return this.isLineCross; }
 
 	//---------------------------------------------------------------------------
 	// linegraph.rebuild()  既存の情報からデータを再設定する
 	// linegraph.rebuild2() 継承先に固有のデータを設定する
 	//---------------------------------------------------------------------------
-	rebuild() {
+	override rebuild() {
 		if (this.puzzle.board.borderAsLine) { this.pointgroup = 'cross'; }
 		super.rebuild()
 	}
-	rebuild2() {
+	override rebuild2() {
 		if (!!this.incdecLineCount) {
 			this.resetLineCount();
 		}
@@ -100,7 +100,7 @@ export class LineGraph extends GraphBase {
 	//---------------------------------------------------------------------------
 	// linegraph.setEdgeByLinkObj() 線が引かれたり消された時に、lcnt変数や線の情報を生成しなおす
 	//---------------------------------------------------------------------------
-	setEdgeByLinkObj(linkobj: any) {
+	override setEdgeByLinkObj(linkobj: any) {
 		const isset = this.isedgevalidbylinkobj(linkobj);
 		if (isset === this.isedgeexistsbylinkobj(linkobj)) { return; }
 
@@ -116,7 +116,7 @@ export class LineGraph extends GraphBase {
 	// graph.addEdgeByLinkObj()    指定されたオブジェクトの場所にEdgeを生成する
 	// graph.removeEdgeByLinkObj() 指定されたオブジェクトの場所からEdgeを除去する
 	//---------------------------------------------------------------------------
-	addEdgeByLinkObj(linkobj: any) { // 線(など)を引いた時の処理
+	override addEdgeByLinkObj(linkobj: any) { // 線(など)を引いた時の処理
 		const enattach = (this.modifyNodes.length === 0);
 		const sidenodeobj = this.getSideObjByLinkObj(linkobj);
 
@@ -176,7 +176,7 @@ export class LineGraph extends GraphBase {
 	//---------------------------------------------------------------------------
 	// linegraph.setOtherInformation() 移動系パズルで数字などが入力された時に線の情報を生成しなおす
 	//---------------------------------------------------------------------------
-	modifyOtherInfo(cell: Cell, relation: any) {
+	override modifyOtherInfo(cell: Cell, relation: any) {
 		const haspath = !!cell.path;
 		if (haspath !== this.isnodevalid(cell)) {
 			if (haspath) { this.deleteNodeIfEmpty(cell); }
@@ -192,7 +192,7 @@ export class LineGraph extends GraphBase {
 	// linegraph.createNodeIfEmpty()  指定されたオブジェクトの場所にNodeを生成する
 	// linegraph.deleteNodeIfEmpty()  指定されたオブジェクトの場所からNodeを除去する
 	//---------------------------------------------------------------------------
-	createNodeIfEmpty(cell: Cell) {
+	override createNodeIfEmpty(cell: Cell) {
 		const nodes = this.getObjNodeList(cell);
 
 		// 周囲のNode生成が必要かもしれないのでチェック＆create
@@ -218,7 +218,7 @@ export class LineGraph extends GraphBase {
 			}
 		}
 	}
-	deleteNodeIfEmpty(cell: Cell) {
+	override deleteNodeIfEmpty(cell: Cell) {
 		const nodes = this.getObjNodeList(cell);
 
 		// 周囲のNodeが消えるかもしれないのでチェック＆remove
@@ -247,10 +247,10 @@ export class LineGraph extends GraphBase {
 	// linegraph.resetExtraData() 指定されたオブジェクトの拡張データをリセットする
 	// linegraph.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
-	resetExtraData(nodeobj: any) {
+	override resetExtraData(nodeobj: any) {
 		if (this.moveline) { nodeobj.base = (nodeobj.isNum() ? nodeobj : this.puzzle.board.emptycell); }
 	}
-	setExtraData(component: GraphComponent) {
+	override setExtraData(component: GraphComponent) {
 		if (this.coloring && !component.color) {
 			component.color = this.puzzle.painter.getNewLineColor();
 		}
@@ -269,7 +269,7 @@ export class LineGraph extends GraphBase {
 	//--------------------------------------------------------------------------------
 	// linegraph.repaintNodes() ブロックを再描画する
 	//--------------------------------------------------------------------------------
-	repaintNodes(components: GraphComponent[]) {
+	override repaintNodes(components: GraphComponent[]) {
 		const blist_all = new BorderList(this.puzzle);
 		for (let i = 0; i < components.length; i++) {
 			//@ts-ignore todo

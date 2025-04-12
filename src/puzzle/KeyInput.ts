@@ -496,7 +496,7 @@ export class TargetCursor extends Address {
 		this.modesnum = (Cell.prototype.enableSubNumberArray);
 		if (this.mode51 && this.puzzle.editmode) { this.targetdir = 4; } // right
 	}
-	init(bx: number, by: number) {
+	override init(bx: number, by: number) {
 		this.bx = bx;
 		this.by = by;
 		if (!this.mode51) { this.targetdir = 0; }
@@ -589,7 +589,7 @@ export class TargetCursor extends Address {
 	//---------------------------------------------------------------------------
 	// tc.getaddr() ターゲットの位置を移動する
 	//---------------------------------------------------------------------------
-	movedir(dir: number, mv: number) {
+	override movedir(dir: number, mv: number) {
 		super.movedir(dir, mv);
 		if (this.modesnum && this.puzzle.playmode) { this.targetdir = 0; }
 		return this;

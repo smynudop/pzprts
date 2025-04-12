@@ -14,14 +14,14 @@ export class AreaGraphBase extends GraphBase {
 	pointgroup: IGroup = 'cell'
 	linkgroup: IGroup | null = null
 
-	isedgevalidbynodeobj(cell1: Cell, cell2: Cell) {
+	override isedgevalidbynodeobj(cell1: Cell, cell2: Cell) {
 		return this.isedgevalidbylinkobj(this.puzzle.board.getb(((cell1.bx + cell2.bx) >> 1), ((cell1.by + cell2.by) >> 1)));
 	}
 
 	//---------------------------------------------------------------------------
 	// areagraph.setEdgeByNodeObj() 黒マスになったりした時にブロックの情報を生成しなおす
 	//---------------------------------------------------------------------------
-	setEdgeByNodeObj(nodeobj: Cell) {
+	override setEdgeByNodeObj(nodeobj: Cell) {
 		// 一度Edgeを取り外す
 		if (this.getObjNodeList(nodeobj).length > 0) {
 			this.removeEdgeByNodeObj(nodeobj);
@@ -94,7 +94,7 @@ export class AreaGraphBase extends GraphBase {
 	//--------------------------------------------------------------------------------
 	// areagraph.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
-	setExtraData(component: GraphComponent) {
+	override setExtraData(component: GraphComponent) {
 		component.clist = new CellList(this.puzzle, component.getnodeobjs());
 	}
 }
@@ -105,17 +105,17 @@ export class AreaGraphBase extends GraphBase {
 // ☆AreaNumberGraphクラス 数字情報オブジェクトのクラス
 //--------------------------------------------------------------------------------
 export class AreaShadeGraph extends AreaGraphBase {
-	relation = { 'cell.qans': 'node' }
-	setComponentRefs(obj: any, component: any) { obj.sblk = component; }
-	getObjNodeList(nodeobj: any) { return nodeobj.sblknodes; }
-	resetObjNodeList(nodeobj: any) { nodeobj.sblknodes = []; }
+	override relation = { 'cell.qans': 'node' }
+	override setComponentRefs(obj: any, component: any) { obj.sblk = component; }
+	override getObjNodeList(nodeobj: any) { return nodeobj.sblknodes; }
+	override resetObjNodeList(nodeobj: any) { nodeobj.sblknodes = []; }
 
-	isnodevalid(cell: Cell) { return cell.isShade(); }
+	override isnodevalid(cell: Cell) { return cell.isShade(); }
 
 	//--------------------------------------------------------------------------------
 	// sblkmgr.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
-	setExtraData(component: GraphComponent) {
+	override setExtraData(component: GraphComponent) {
 		component.clist = new CellList(this.puzzle, component.getnodeobjs());
 		if (this.coloring && !component.color) {
 			component.color = this.puzzle.painter.getNewLineColor();
@@ -125,7 +125,7 @@ export class AreaShadeGraph extends AreaGraphBase {
 	//--------------------------------------------------------------------------------
 	// sblkmgr.repaintNodes() ブロックを再描画する
 	//--------------------------------------------------------------------------------
-	repaintNodes(components: GraphComponent[]) {
+	override repaintNodes(components: GraphComponent[]) {
 		const clist_all = new CellList(this.puzzle);
 		for (let i = 0; i < components.length; i++) {
 			clist_all.extend(components[i].getnodeobjs());
@@ -135,43 +135,43 @@ export class AreaShadeGraph extends AreaGraphBase {
 }
 
 export class AreaUnshadeGraph extends AreaGraphBase {
-	relation = { 'cell.qans': 'node' }
-	setComponentRefs(obj: any, component: GraphComponent) { obj.ublk = component; }
-	getObjNodeList(nodeobj: any) { return nodeobj.ublknodes; }
-	resetObjNodeList(nodeobj: any) { nodeobj.ublknodes = []; }
+	override relation = { 'cell.qans': 'node' }
+	override setComponentRefs(obj: any, component: GraphComponent) { obj.ublk = component; }
+	override getObjNodeList(nodeobj: any) { return nodeobj.ublknodes; }
+	override resetObjNodeList(nodeobj: any) { nodeobj.ublknodes = []; }
 
-	isnodevalid(cell: Cell) { return cell.isUnshade(); }
+	override isnodevalid(cell: Cell) { return cell.isUnshade(); }
 }
 
 export class AreaNumberGraph extends AreaGraphBase {
-	relation = { 'cell.qnum': 'node', 'cell.anum': 'node', 'cell.qsub': 'node' }
-	setComponentRefs(obj: any, component: GraphComponent) { obj.nblk = component; }
-	getObjNodeList(nodeobj: any) { return nodeobj.nblknodes; }
-	resetObjNodeList(nodeobj: any) { nodeobj.nblknodes = []; }
+	override relation = { 'cell.qnum': 'node', 'cell.anum': 'node', 'cell.qsub': 'node' }
+	override setComponentRefs(obj: any, component: GraphComponent) { obj.nblk = component; }
+	override getObjNodeList(nodeobj: any) { return nodeobj.nblknodes; }
+	override resetObjNodeList(nodeobj: any) { nodeobj.nblknodes = []; }
 
-	isnodevalid(cell: Cell) { return cell.isNumberObj(); }
+	override isnodevalid(cell: Cell) { return cell.isNumberObj(); }
 }
 
 //--------------------------------------------------------------------------------
 // ☆AreaRoomGraphクラス 部屋情報オブジェクトのクラス
 //--------------------------------------------------------------------------------
 export class AreaRoomGraph extends AreaGraphBase {
-	relation = { 'cell.ques': 'node', 'border.ques': 'separator', 'border.qans': 'separator' }
+	override relation = { 'cell.ques': 'node', 'border.ques': 'separator', 'border.qans': 'separator' }
 
 	hastop = false
 
 	getComponentRefs(obj: any): GraphComponent { return obj.room; } // getSideAreaInfo用
-	setComponentRefs(obj: any, component: GraphComponent) { obj.room = component; }
-	getObjNodeList(nodeobj: any) { return nodeobj.roomnodes; }
-	resetObjNodeList(nodeobj: any) { nodeobj.roomnodes = []; }
+	override setComponentRefs(obj: any, component: GraphComponent) { obj.room = component; }
+	override getObjNodeList(nodeobj: any) { return nodeobj.roomnodes; }
+	override resetObjNodeList(nodeobj: any) { nodeobj.roomnodes = []; }
 
-	isnodevalid(cell: Cell) { return (cell.ques !== 7); }
-	isedgevalidbylinkobj(border: Border) { return !border.isBorder(); }
+	override isnodevalid(cell: Cell) { return (cell.ques !== 7); }
+	override isedgevalidbylinkobj(border: Border) { return !border.isBorder(); }
 
 	//--------------------------------------------------------------------------------
 	// roomgraph.rebuild2() 部屋情報の再設定を行う
 	//--------------------------------------------------------------------------------
-	rebuild2() {
+	override rebuild2() {
 		super.rebuild2()
 		this.resetBorderCount();
 	}
@@ -197,7 +197,7 @@ export class AreaRoomGraph extends AreaGraphBase {
 			}
 		}
 	}
-	incdecBorderCount(border: Border, isset: boolean) {
+	override incdecBorderCount(border: Border, isset: boolean) {
 		for (let i = 0; i < 2; i++) {
 			const cross = border.sidecross[i];
 			if (!cross.isnull) {
@@ -210,7 +210,7 @@ export class AreaRoomGraph extends AreaGraphBase {
 	// roommgr.addEdgeBySeparator()    指定されたオブジェクトの場所にEdgeを生成する
 	// roommgr.removeEdgeBySeparator() 指定されたオブジェクトの場所からEdgeを除去する
 	//---------------------------------------------------------------------------
-	addEdgeBySeparator(border: Border) { // 境界線を消した時の処理
+	override addEdgeBySeparator(border: Border) { // 境界線を消した時の処理
 		const sidenodes = this.getSideNodesBySeparator(border);
 		if (!sidenodes) { return; }
 		this.addEdge(sidenodes[0], sidenodes[1]);
@@ -221,7 +221,7 @@ export class AreaRoomGraph extends AreaGraphBase {
 			this.setTopOfRoom_combine(sidenodes[0].obj, sidenodes[1].obj);
 		}
 	}
-	removeEdgeBySeparator(border: Border) { // 境界線を引いた時の処理
+	override removeEdgeBySeparator(border: Border) { // 境界線を引いた時の処理
 		const sidenodes = this.getSideNodesBySeparator(border);
 		if (!sidenodes) { return; }
 		this.removeEdge(sidenodes[0], sidenodes[1]);
@@ -257,7 +257,7 @@ export class AreaRoomGraph extends AreaGraphBase {
 	//--------------------------------------------------------------------------------
 	// roommgr.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
-	setExtraData(component: GraphComponent) {
+	override setExtraData(component: GraphComponent) {
 		component.clist = new CellList(this.puzzle, component.getnodeobjs());
 		const clist = component.clist;
 		if (this.hastop) {

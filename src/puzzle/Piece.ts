@@ -255,7 +255,7 @@ export class BoardPiece extends Position {
 // ボードメンバデータの定義(1)
 // Cellクラスの定義
 export class Cell extends BoardPiece {
-	group: IGroup = 'cell'
+	override group: IGroup = 'cell'
 
 	lcnt = 0		// セルに存在する線の本数
 	base: Cell | null = null	// 丸数字やアルファベットが移動してきた場合の移動元のセルを示す (移動なし時は自分自身を指す)
@@ -269,7 +269,7 @@ export class Cell extends BoardPiece {
 	numberRemainsUnshaded = false	// 数字のあるマスが黒マスにならないパズル
 	enableSubNumberArray = false	// 補助数字の配列を作るパズル
 
-	room: any
+
 	path: any
 	sblk: any = null
 
@@ -304,7 +304,7 @@ export class Cell extends BoardPiece {
 	}
 
 
-	relobj(bx: number, by: number) {
+	override relobj(bx: number, by: number) {
 		return super.relobj(bx, by) as Cell
 	}
 
@@ -315,7 +315,7 @@ export class Cell extends BoardPiece {
 	//---------------------------------------------------------------------------
 	// propclear() 指定されたプロパティの値をクリアする
 	//---------------------------------------------------------------------------
-	propclear(prop: any, isrec: boolean) {
+	override propclear(prop: any, isrec: boolean) {
 		if (prop === 'snum' && this.enableSubNumberArray) {
 			for (let pos = 0; pos < 4; ++pos) {
 				const def = this.constructor.prototype[prop];
@@ -338,12 +338,12 @@ export class Cell extends BoardPiece {
 	// prehook  値の設定前にやっておく処理や、設定禁止処理を行う
 	// posthook 値の設定後にやっておく処理を行う
 	//---------------------------------------------------------------------------
-	prehook = {
+	override prehook = {
 		qnum(cell: Cell, num: number) { return (cell.getminnum() > 0 && num === 0); },
 		qnum2(cell: Cell, num: number) { return (cell.getminnum() > 0 && num === 0); },
 		anum(cell: Cell, num: number) { return (cell.getminnum() > 0 && num === 0); }
 	}
-	posthook = {}
+	override posthook = {}
 
 	//---------------------------------------------------------------------------
 	// cell.isShade()   該当するCellが黒マスかどうか返す
@@ -402,7 +402,7 @@ export class Cell extends BoardPiece {
 	// cell.setSnum() Cellの補助数字を設定する
 	// cell.clrSnum() Cellの補助数字を消去する
 	//---------------------------------------------------------------------------
-	setSnum(pos: number, num: number = null!) { // todo
+	override setSnum(pos: number, num: number = null!) { // todo
 		if (this.isNum() && num !== -1) { return; }
 		if (!this.enableSubNumberArray) {
 			this.setdata('snum', num);	// 1つ目の数字のみ
@@ -429,14 +429,14 @@ export class Cell extends BoardPiece {
 	// cell.remove51cell() [＼]を消去する(カックロ以外はオーバーライドされる)
 	//---------------------------------------------------------------------------
 	// ※とりあえずカックロ用
-	is51cell() { return (this.ques === 51); }
-	set51cell(val?: number) {
+	override is51cell() { return (this.ques === 51); }
+	override set51cell(val?: number) {
 		this.setQues(51);
 		this.setQnum(0);
 		this.setQnum2(0);
 		this.setAnum(-1);
 	}
-	remove51cell(val?: number) {
+	override remove51cell(val?: number) {
 		this.setQues(0);
 		this.setQnum(0);
 		this.setQnum2(0);
@@ -564,7 +564,7 @@ export class Cell extends BoardPiece {
 // ボードメンバデータの定義(2)
 // Crossクラスの定義
 export class Cross extends BoardPiece {
-	group: IGroup = 'cross'
+	override group: IGroup = 'cross'
 
 	lcnt = 0		// 交点に存在する線の本数
 
@@ -605,7 +605,7 @@ export class Border extends BoardPiece {
 		this.sidecross = [null!, null!];	// 隣接交点のオブジェクト
 		this.sideobj = [];			// LineManager用
 	}
-	group: IGroup = 'border'
+	override group: IGroup = 'border'
 
 	isvert = false	// true:境界線が垂直(縦) false:境界線が水平(横)
 	inside = false	// true:盤面内 false:外枠上or盤面外
@@ -641,17 +641,17 @@ export class Border extends BoardPiece {
 	// prehook  値の設定前にやっておく処理や、設定禁止処理を行う
 	// posthook 値の設定後にやっておく処理を行う
 	//---------------------------------------------------------------------------
-	prehook = {
+	override prehook = {
 		qans(cell: Cell, num: number) { return (cell.ques !== 0); },
 		line(cell: Cell, num: number) { return (cell.checkStableLine(num)); }
 	}
 
-	posthook = {}
+	override posthook = {}
 
 	//---------------------------------------------------------------------------
 	// border.draw() 盤面に自分の周囲を描画する (Borderはちょっと範囲が広い)
 	//---------------------------------------------------------------------------
-	draw() {
+	override draw() {
 		this.puzzle.painter.paintRange(this.bx - 2, this.by - 2, this.bx + 2, this.by + 2);
 	}
 
@@ -694,7 +694,7 @@ export class Border extends BoardPiece {
 	// border.isLineNG() 線が引けないborderの条件を判定する
 	//---------------------------------------------------------------------------
 	// [pipelink, loopsp], [barns, slalom, reflect, yajirin]で呼ばれる関数
-	checkStableLine(num: number) {	// border.setLineから呼ばれる
+	override checkStableLine(num: number) {	// border.setLineから呼ばれる
 		if (this.enableLineNG) {
 			return (num !== 0 && this.isLineNG());
 		}
@@ -723,19 +723,13 @@ export class Border extends BoardPiece {
 // ボードメンバデータの定義(4)
 // EXCellクラスの定義
 export class EXCell extends BoardPiece {
-	group: IGroup = 'excell'
+	override group: IGroup = 'excell'
 	adjacent: {
 		top: Cell,
 		bottom: Cell,
 		left: Cell,
 		right: Cell
 	} = null!	// 隣接するセルの情報を保持する
-	adjborder: {
-		top: Border,
-		bottom: Border,
-		left: Border,
-		right: Border
-	} = null!
 
 	//---------------------------------------------------------------------------
 	// initAdjacent()   隣接セルの情報を設定する
@@ -750,7 +744,7 @@ export class EXCell extends BoardPiece {
 		};
 	}
 
-	relobj(dx: number, dy: number): Cell {
+	override relobj(dx: number, dy: number): Cell {
 		return super.relobj(dx, dy) as Cell
 	}
 
@@ -766,7 +760,7 @@ export class EXCell extends BoardPiece {
 	//---------------------------------------------------------------------------
 	// excell.is51cell()   [＼]のセルかチェックする
 	//---------------------------------------------------------------------------
-	is51cell() { return (this.ques === 51); }
+	override is51cell() { return (this.ques === 51); }
 
 	//---------------------------------------------------------------------------
 	// excell.ice() アイスのマスかどうか判定する

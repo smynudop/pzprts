@@ -92,7 +92,7 @@ export class ObjectOperation extends Operation<number> {
 	// ope.toString() ファイル出力する履歴の出力用ルーチン
 	//---------------------------------------------------------------------------
 
-	decode(strs: string[]) {
+	override decode(strs: string[]) {
 		this.group = this.STRGROUP[strs[0].charAt(0) as keyof typeof this.STRGROUP];
 		this.property = this.STRPROP[strs[0].charAt(1) as keyof typeof this.STRPROP];
 		if (!this.group || !this.property) { return false; }
@@ -103,7 +103,7 @@ export class ObjectOperation extends Operation<number> {
 		this.num = +strs[4];
 		return true;
 	}
-	toString() {
+	override toString() {
 		let prefix = '';
 		for (const i in this.STRGROUP) { if (this.group === this.STRGROUP[i as keyof typeof this.STRGROUP]) { prefix += i; break; } }
 		for (const i in this.STRPROP) { if (this.property === this.STRPROP[i as keyof typeof this.STRPROP]) { prefix += i; break; } }
@@ -137,7 +137,7 @@ export class ObjectOperation extends Operation<number> {
 	//---------------------------------------------------------------------------
 	// ope.exec()  操作opeを反映する。ope.undo(),ope.redo()から内部的に呼ばれる
 	//---------------------------------------------------------------------------
-	exec(num: any, d: any = null) {
+	override exec(num: any, d: any = null) {
 		const bd = this.puzzle.board;
 		const piece = bd.getObjectPos(this.group, this.bx, this.by);
 		if (this.group !== piece.group) { return true; }
@@ -161,17 +161,17 @@ export class ObjectOperation extends Operation<number> {
 // BoardClearOperationクラス
 export class BoardClearOperation extends Operation<any> {
 	prefix = 'AC'
-	reqReset = true
+	override reqReset = true
 
 	//---------------------------------------------------------------------------
 	// ope.decode()   ファイル出力された履歴の入力用ルーチン
 	// ope.toString() ファイル出力する履歴の出力用ルーチン
 	//---------------------------------------------------------------------------
-	decode(strs: string[]) {
+	override decode(strs: string[]) {
 		if (strs[0] !== this.prefix) { return false; }
 		return true;
 	}
-	toString() {
+	override toString() {
 		return this.prefix;
 	}
 }
@@ -185,19 +185,19 @@ export class BoardAdjustOperation extends Operation<IBoardOperation, number> {
 		this.num = ope;
 	}
 	prefix = 'AJ'
-	reqReset = true
+	override reqReset = true
 	//---------------------------------------------------------------------------
 	// ope.setData()  オブジェクトのデータを設定する
 	// ope.decode()   ファイル出力された履歴の入力用ルーチン
 	// ope.toString() ファイル出力する履歴の出力用ルーチン
 	//---------------------------------------------------------------------------
 
-	decode(strs: [string, IBoardOperation]) {
+	override decode(strs: [string, IBoardOperation]) {
 		if (strs[0] !== this.prefix) { return false; }
 		this.old = this.num = strs[1];
 		return true;
 	}
-	toString() {
+	override toString() {
 		return [this.prefix, this.num].join(',');
 	}
 
@@ -206,15 +206,15 @@ export class BoardAdjustOperation extends Operation<IBoardOperation, number> {
 	// ope.redo()  操作opeを一手進める
 	// ope.exec()  操作opeを反映する。ope.undo(),ope.redo()から内部的に呼ばれる
 	//---------------------------------------------------------------------------
-	undo() {
+	override undo() {
 		const key_undo = this.puzzle.board.exec.boardtype[this.old][0];
 		this.exec(key_undo);
 	}
-	redo() {
+	override redo() {
 		const key_redo = this.puzzle.board.exec.boardtype[this.num][1];
 		this.exec(key_redo);
 	}
-	exec(num: number, d: any = null) {
+	override exec(num: number, d: any = null) {
 		const puzzle = this.puzzle;
 		const bd = puzzle.board;
 		d = d || { x1: 0, y1: 0, x2: 2 * bd.cols, y2: 2 * bd.rows };
@@ -226,7 +226,7 @@ export class BoardAdjustOperation extends Operation<IBoardOperation, number> {
 // BoardFlipOperationクラス
 export class BoardFlipOperation extends Operation<IBoardOperation, number> {
 	prefix = 'AT'
-	reqReset = true
+	override reqReset = true
 	area = {
 		x1: 0,
 		y1: 0,
@@ -246,7 +246,7 @@ export class BoardFlipOperation extends Operation<IBoardOperation, number> {
 	// ope.toString() ファイル出力する履歴の出力用ルーチン
 	//---------------------------------------------------------------------------
 
-	decode(strs: string[]) {
+	override decode(strs: string[]) {
 		if (strs[0] !== this.prefix) { return false; }
 		this.old = this.num = strs[1] as IBoardOperation;
 		this.area.x1 = +strs[2];
@@ -255,7 +255,7 @@ export class BoardFlipOperation extends Operation<IBoardOperation, number> {
 		this.area.y2 = +strs[5];
 		return true;
 	}
-	toString() {
+	override toString() {
 		const d = this.area;
 		return [this.prefix, this.num, d.x1, d.y1, d.x2, d.y2].join(',');
 	}
@@ -265,7 +265,7 @@ export class BoardFlipOperation extends Operation<IBoardOperation, number> {
 	// ope.redo()  操作opeを一手進める
 	// ope.exec()  操作opeを反映する。ope.undo(),ope.redo()から内部的に呼ばれる
 	//---------------------------------------------------------------------------
-	undo() {
+	override undo() {
 		// とりあえず盤面全部の対応だけ
 		const d0 = this.area;
 		const d = { x1: d0.x1, y1: d0.y1, x2: d0.x2, y2: d0.y2 };
@@ -273,14 +273,14 @@ export class BoardFlipOperation extends Operation<IBoardOperation, number> {
 		if (key_undo & this.TURN) { const tmp = d.x1; d.x1 = d.y1; d.y1 = tmp; }
 		this.exec(key_undo, d);
 	}
-	redo() {
+	override redo() {
 		// とりあえず盤面全部の対応だけ
 		const d0 = this.area;
 		const d = { x1: d0.x1, y1: d0.y1, x2: d0.x2, y2: d0.y2 };
 		const key_redo = this.puzzle.board.exec.boardtype[this.num][1];
 		this.exec(key_redo, d);
 	}
-	exec(num: number, d: any) {
+	override exec(num: number, d: any) {
 		const puzzle = this.puzzle;
 		puzzle.board.exec.execadjust_main(num, d);
 		puzzle.redraw();
@@ -294,7 +294,7 @@ export class TrialEnterOperation extends Operation<number> {
 		this.old = old;
 		this.num = num;
 	}
-	undo() {
+	override undo() {
 		this.manager.position--;
 		this.manager.resumeTrial();
 		this.manager.position++;
@@ -302,18 +302,18 @@ export class TrialEnterOperation extends Operation<number> {
 		this.manager.trialpos.pop();
 		this.manager.emitTrial(this.old);
 	}
-	redo() {
+	override redo() {
 		this.manager.trialpos.push(this.manager.position);
 		this.manager.emitTrial(this.num);
 	}
 
-	decode(strs: string[]) {
+	override decode(strs: string[]) {
 		if (strs[0] !== 'TE') { return false; }
 		this.old = +strs[1];
 		this.num = +strs[2];
 		return true;
 	}
-	toString() {
+	override toString() {
 		return ['TE', this.old, this.num].join(',');
 	}
 }
@@ -324,9 +324,9 @@ class TrialFinalizeOperation extends Operation<any> {
 		super(puzzle)
 		this.old = old
 	}
-	num: any[] = []
+	override num: any[] = []
 
-	exec(num: any, d: any) {
+	override exec(num: any, d: any) {
 		this.manager.trialpos = num.concat();
 		if (num.length === 0) {
 			this.puzzle.board.trialclear();
@@ -340,13 +340,13 @@ class TrialFinalizeOperation extends Operation<any> {
 		this.puzzle.redraw();
 	}
 
-	decode(strs: string[]) {
+	override decode(strs: string[]) {
 		if (strs[0] !== 'TF') { return false; }
 		strs.shift();
 		this.old = JSON.parse(strs.join(','));
 		return true;
 	}
-	toString() {
+	override toString() {
 		return `TF,[${this.old.join(',')}]`;
 	}
 }

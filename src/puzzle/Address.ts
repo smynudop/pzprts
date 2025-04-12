@@ -139,7 +139,7 @@ export class Address extends Position {
 	//---------------------------------------------------------------------------
 	oncell() { return !!((this.bx & 1) && (this.by & 1)); }
 	oncross() { return !!(!(this.bx & 1) && !(this.by & 1)); }
-	onborder() { return !!((this.bx + this.by) & 1); }
+	override onborder() { return !!((this.bx + this.by) & 1); }
 
 	//---------------------------------------------------------------------------
 	// getc(), getx(), getb(), getex(), getobj() Positionに存在するオブジェクトを返す
