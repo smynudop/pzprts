@@ -28,7 +28,7 @@ export const decodeURL = (puzzle: Puzzle, url: string, converters: Converter[]) 
 export const encodeURL = (puzzle: Puzzle, converters: Converter[]) => {
 	const pid = puzzle.pid;
 	const bd = puzzle.board;
-	const pzl = new URLData('');
+	const pzl = new URLData();
 
 	let bstr = ""
 	for (const cnv of converters) {
@@ -474,7 +474,7 @@ const crossMark = {
 	}
 }
 
-const circle = {
+export const circle = {
 	//---------------------------------------------------------------------------
 	// enc.decodeCircle() 白丸・黒丸をデコードする
 	// enc.encodeCircle() 白丸・黒丸をエンコードする

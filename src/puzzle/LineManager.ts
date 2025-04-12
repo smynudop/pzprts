@@ -26,7 +26,7 @@ export class LineGraph extends GraphBase {
 	moveline = false		// 丸数字などを動かすパズル
 
 	coloring = true
-	ltotal: any[]
+	ltotal: any[] = []
 
 	//--------------------------------------------------------------------------------
 	// linegraph.setComponentRefs()    objにcomponentの設定を行う (性能対策)
@@ -35,7 +35,7 @@ export class LineGraph extends GraphBase {
 	// linegraph.getObjNodeList()      objにあるnodeを取得する
 	// linegraph.resetObjNodeList()    objからnodeをクリアする
 	//--------------------------------------------------------------------------------
-	setComponentRefs(obj: any, component: GraphComponent) { obj.path = component; }
+	setComponentRefs(obj: any, component: GraphComponent | null) { obj.path = component; }
 	isedgeexistsbylinkobj(linkobj: any) { return linkobj.path !== null; }
 
 	getObjNodeList(nodeobj: any) { return nodeobj.pathnodes; }

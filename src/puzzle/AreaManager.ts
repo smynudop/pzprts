@@ -12,6 +12,7 @@ import type { IGroup } from './Board';
 //--------------------------------------------------------------------------------
 export class AreaGraphBase extends GraphBase {
 	pointgroup: IGroup = 'cell'
+	linkgroup: IGroup | null = null
 
 	isedgevalidbynodeobj(cell1: Cell, cell2: Cell) {
 		return this.isedgevalidbylinkobj(this.puzzle.board.getb(((cell1.bx + cell2.bx) >> 1), ((cell1.by + cell2.by) >> 1)));

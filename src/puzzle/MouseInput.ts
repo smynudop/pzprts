@@ -21,8 +21,8 @@ export class MouseEvent1 {
 	enableMouse: boolean;	// マウス入力は有効か
 	mouseCell: any;	// 入力されたセル等のID
 	firstCell: any;	// mousedownされた時のセルのID(連黒分断禁用)
-	inputPoint: any;	// 入力イベントが発生したborder座標 ※端数あり
-	firstPoint: any;	// mousedownされた時のborder座標 ※端数あり
+	inputPoint: RawAddress;	// 入力イベントが発生したborder座標 ※端数あり
+	firstPoint: RawAddress;	// mousedownされた時のborder座標 ※端数あり
 
 	prevPos: Address;	// 前回のマウス入力イベントのborder座標
 	btn: string;	// 押されているボタン
@@ -43,9 +43,9 @@ export class MouseEvent1 {
 		this.mouseCell = null;		// 入力されたセル等のID
 		this.firstCell = null;		// mousedownされた時のセルのID(連黒分断禁用)
 
-		this.inputPoint = new RawAddress(puzzle, null, null);	// 入力イベントが発生したborder座標 ※端数あり
-		this.firstPoint = new RawAddress(puzzle, null, null);	// mousedownされた時のborder座標 ※端数あり
-		this.prevPos = new Address(puzzle, null, null);		// 前回のマウス入力イベントのborder座標
+		this.inputPoint = new RawAddress(puzzle);	// 入力イベントが発生したborder座標 ※端数あり
+		this.firstPoint = new RawAddress(puzzle);	// mousedownされた時のborder座標 ※端数あり
+		this.prevPos = new Address(puzzle);		// 前回のマウス入力イベントのborder座標
 
 		this.btn = '';				// 押されているボタン
 		this.inputData = null;		// 入力中のデータ番号(実装依存)
@@ -55,6 +55,8 @@ export class MouseEvent1 {
 		this.mousestart = false;	// mousedown/touchstartイベントかどうか
 		this.mousemove = false;		// mousemove/touchmoveイベントかどうか
 		this.mouseend = false;		// mouseup/touchendイベントかどうか
+
+		this.cancelEvent = false
 
 		this.inputMode = 'auto';
 		this.savedInputMode = { edit: 'auto', play: 'auto' };
@@ -117,6 +119,7 @@ export class MouseEvent1 {
 		this.setMouseButton(e);			/* どのボタンが押されたか取得 (mousedown時のみ) */
 		if (!this.btn) { this.mousereset(); return; }
 		const addrtarget = this.getBoardAddress(e);
+		//@ts-ignore
 		this.moveTo(addrtarget.bx, addrtarget.by);
 
 		e.stopPropagation();
@@ -135,6 +138,7 @@ export class MouseEvent1 {
 		//@ts-ignore
 		if (e.touches !== void 0 || e.which === void 0 || e.which !== 0 || (e.type.match(/pointermove/i) && e.buttons > 0)) {
 			const addrtarget = this.getBoardAddress(e);
+			//@ts-ignore
 			this.lineTo(addrtarget.bx, addrtarget.by);
 		}
 		else { this.mousereset(); }
@@ -175,7 +179,7 @@ export class MouseEvent1 {
 			pt.y = e.clientY;
 
 			// スクリーン座標からSVG座標へ変換
-			const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+			const svgP = pt.matrixTransform(svg.getScreenCTM()!.inverse());
 			pix = { px: svgP.x + pc.x0, py: svgP.y + pc.y0 }
 		}
 		else if (!pzpr.env.API.touchevent || pzpr.env.API.pointerevent || pzpr.env.OS.iOS) {
@@ -322,7 +326,7 @@ export class MouseEvent1 {
 			throw `Invalid input mode :${mode}`;
 		}
 	}
-	getInputModeList(type: IMode = null) {
+	getInputModeList(type?: IMode) {
 		if (this.puzzle.instancetype === 'viewer') { return []; }
 		type = (!!type ? type : (this.puzzle.editmode ? 'edit' : 'play'));
 		let list = ['auto'];
@@ -540,7 +544,7 @@ export class MouseEvent1 {
 			cell0 = cell = cell.room.top;
 		}
 		else if (puzzle.execConfig('dispmove')) {
-			if (cell.isDestination()) { cell = cell.base; }
+			if (cell.isDestination()) { cell = cell.base!; }
 			else if (cell.lcnt > 0) { return; }
 		}
 
@@ -1062,8 +1066,8 @@ export class MouseEvent1 {
 				const plus = (this.pid === "amibo" || this.pid === "tatamibari");
 
 				let shape = 0;
-				if (this.puzzle.playmode) { shape = { 0: 0, 11: 3, 12: 1, 13: 2 }[cell.qans]; }
-				else { shape = { '-1': 0, 1: 3, 2: 1, 3: 2 }[cell.qnum]; }
+				if (this.puzzle.playmode) { shape = { 0: 0, 11: 3, 12: 1, 13: 2 }[cell.qans]!; }
+				else { shape = { '-1': 0, 1: 3, 2: 1, 3: 2 }[cell.qnum]!; }
 				if ((this.inputData === null) ? (shape & val) : this.inputData <= 0) {
 					val = (!plus ? 0 : -val);
 				}
@@ -1106,7 +1110,7 @@ export class MouseEvent1 {
 	dispInfoBlk8(cell0: Cell) {
 		const stack = [cell0];
 		while (stack.length > 0) {
-			const cell = stack.pop();
+			const cell = stack.pop()!;
 			if (cell.qinfo !== 0) { continue; }
 
 			cell.setinfo(1);

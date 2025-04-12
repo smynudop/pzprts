@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { SlitherLink } from '../variety/slither2'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, type Ref } from 'vue'
 
 const playModes = ref<string[]>([])
 const props = defineProps<{
     src: string
 }>()
 
-let puzzle: SlitherLink = null
-const element = ref<HTMLDivElement>()
+let puzzle: SlitherLink = null!
+const element = ref<HTMLDivElement>() as Ref<HTMLDivElement>
 onMounted(() => {
     puzzle = new SlitherLink({
         type: "player"

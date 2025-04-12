@@ -6,13 +6,10 @@ import { pzpr } from "./core";
 import * as Constants from "./constants"
 
 export class URLData {
-    constructor(url: string) {
-        this.url = url;
-    }
+
     pid = ''
     type = Constants.URL_AUTO	/* ==0 */
-    url = ""
-    qdata = ""
+
     pflag: string | null = null
     cols = 0
     rows = 0
@@ -21,9 +18,9 @@ export class URLData {
     isurl = true
     isfile = false
 
-    parse() {
-        this.parseURLType();
-        this.parseURLData();
+    parse(url: string) {
+        const qdata = this.parseURLType(url);
+        this.parseURLData(qdata);
         this.changeProperPid();
         return this;
     }
@@ -37,39 +34,38 @@ export class URLData {
     //                   出力={pid:パズル種類, type:URL種類, qdata:タテヨコ以下のデータ}
     //                         qdata -> [(pflag)/](cols)/(rows)/(bstr)
     //---------------------------------------------------------------------------
-    parseURLType() {
+    parseURLType(url: string): string {
+        let qdata = ""
         /* URLからパズルの種類・URLの種類を判定する */
-        const url = this.url;
-        this.url = undefined;
         // カンペンの場合
         if (url.match(/www\.kanpen\.net/) || url.match(/www\.geocities(\.co)?\.jp\/pencil_applet/)) {
             url.match(/([0-9a-z]+)\.html/);
             this.pid = RegExp.$1;
             // カンペンだけどデータ形式はへやわけアプレット
             if (url.indexOf("?heyawake=") >= 0) {
-                this.qdata = url.substr(url.indexOf("?heyawake=") + 10);
+                qdata = url.substr(url.indexOf("?heyawake=") + 10);
                 this.type = Constants.URL_HEYAAPP;
             }
             // カンペンだけどデータ形式はぱずぷれ
             else if (url.indexOf("?pzpr=") >= 0) {
-                this.qdata = url.substr(url.indexOf("?pzpr=") + 6);
+                qdata = url.substr(url.indexOf("?pzpr=") + 6);
                 this.type = Constants.URL_KANPENP;
             }
             else {
-                this.qdata = url.substr(url.indexOf("?problem=") + 9);
+                qdata = url.substr(url.indexOf("?problem=") + 9);
                 this.type = Constants.URL_KANPEN;
             }
         }
         // へやわけアプレットの場合
         else if (url.match(/www\.geocities(\.co)?\.jp\/heyawake/)) {
             this.pid = 'heyawake';
-            this.qdata = url.substr(url.indexOf("?problem=") + 9);
+            qdata = url.substr(url.indexOf("?problem=") + 9);
             this.type = Constants.URL_HEYAAPP;
         }
         // ぱずぷれアプレットの場合
         else if (url.match(/indi\.s58\.xrea\.com\/(.+)\/(sa|sc)\//)) {
             this.pid = RegExp.$1;
-            this.qdata = url.substr(url.indexOf("?"));
+            qdata = url.substr(url.indexOf("?"));
             this.type = Constants.URL_PZPRAPP;
         }
         // ぱずぷれv3の場合
@@ -77,13 +73,14 @@ export class URLData {
             const qs = url.indexOf("/", url.indexOf("?"));
             if (qs > -1) {
                 this.pid = url.substring(url.indexOf("?") + 1, qs);
-                this.qdata = url.substr(qs + 1);
+                qdata = url.substr(qs + 1);
             }
             else {
                 this.pid = url.substr(url.indexOf("?") + 1);
             }
             this.type = Constants.URL_PZPRV3;
         }
+        return qdata
     }
 
     //---------------------------------------------------------------------------
@@ -111,15 +108,14 @@ export class URLData {
     // ★ parseURLData() URLを縦横・問題部分などに分解する
     //                   qdata -> [(pflag)/](cols)/(rows)/(bstr)
     //---------------------------------------------------------------------------
-    parseURLData() {
-        const inp = this.qdata.split("/");
+    parseURLData(qdata: string) {
+        const inp = qdata.split("/");
         let col = 0;
         let row = 0;
-        this.qdata = undefined;
         /* URLにつけるオプション */
         if (this.type !== Constants.URL_KANPEN && this.type !== Constants.URL_HEYAAPP) {
             if (!!inp[0] && !Number.isNaN(+inp[0])) { inp.unshift(""); }
-            this.pflag = inp.shift();
+            this.pflag = inp.shift() ?? null;
         }
 
         /* サイズを表す文字列 */
@@ -137,7 +133,7 @@ export class URLData {
             }
         }
         else if (this.type === Constants.URL_HEYAAPP) {
-            const size = inp.shift()?.split("x");
+            const size = inp.shift()?.split("x")!;
             col = +size[0];
             row = +size[1];
         }

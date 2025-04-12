@@ -14,8 +14,8 @@ import type { IBoardOperation } from "./BoardExec";
 export class Operation<TValue = any, TExecValue = TValue> {
 	puzzle: Puzzle
 	manager: OperationManager
-	old: TValue
-	num: TValue
+	old: TValue = null!
+	num: TValue = null!
 
 	constructor(puzzle: Puzzle) {
 		this.puzzle = puzzle
@@ -30,7 +30,7 @@ export class Operation<TValue = any, TExecValue = TValue> {
 	// ope.toString() ファイル出力する履歴の出力用ルーチン
 	// ope.toJSON()   ファイル保存時に使用するルーチン
 	//---------------------------------------------------------------------------
-	decode(strs: any[] = null) { return false; }
+	decode(strs?: any[]) { return false; }
 	toString() { return ''; }
 	toJSON() { return this.toString(); }
 
@@ -61,7 +61,7 @@ export class ObjectOperation extends Operation<number> {
 	}
 	group: IGroup2
 	property = ''
-	pos: number = null
+	pos: number | null = null
 
 	/* 変換テーブル */
 	STRGROUP = {
@@ -371,7 +371,7 @@ export class OperationList extends Array<Operation<any>> {
 // OperationManagerクラス
 export class OperationManager {
 	puzzle: Puzzle
-	lastope: Operation<any> = null;	// this.opeの最後に追加されたOperationへのポインタ
+	lastope: Operation<any> | null = null;	// this.opeの最後に追加されたOperationへのポインタ
 	history: (OperationList | Operation<any>[])[] = [];		// OperationListのオブジェクトを保持する配列
 	position = 0;		// 現在の表示操作番号を保持する
 	trialpos: number[] = [];		// TrialModeの位置を保持する配列
@@ -566,7 +566,7 @@ export class OperationManager {
 		const historyinfo = {
 			type: 'pzpr',
 			version: 0.4,
-			time: null as number,
+			time: null as number | null,
 			current: null as any,
 			trialpos: null as any,
 			datas: null as any

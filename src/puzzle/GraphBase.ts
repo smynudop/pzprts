@@ -10,17 +10,17 @@ import { Board, type IGroup } from "./Board"
 //---------------------------------------------------------------------------
 // GraphBaseクラスの定義
 
-export class GraphBase {
+export abstract class GraphBase {
 
 	enabled = false
 	relation: any = {}
 
-	pointgroup: IGroup
-	linkgroup: IGroup
+	abstract pointgroup: IGroup
+	abstract linkgroup: IGroup | null
 
 	coloring = false
-	components: GraphComponent[]
-	modifyNodes: any[]
+	components: GraphComponent[] = null!
+	modifyNodes: any[] = null!
 	puzzle: Puzzle
 	constructor(puzzle: Puzzle) {
 		this.puzzle = puzzle
@@ -40,7 +40,7 @@ export class GraphBase {
 	// graph.getObjNodeList()      objにあるnodeを取得する
 	// graph.resetObjNodeList()    objからnodeをクリアする
 	//--------------------------------------------------------------------------------
-	setComponentRefs(obj: any, component: GraphComponent) { }
+	setComponentRefs(obj: any, component: GraphComponent | null) { }
 
 	getObjNodeList(nodeobj: BoardPiece) { return [] as any[]; }
 	resetObjNodeList(nodeobj: any) { }
@@ -86,13 +86,13 @@ export class GraphBase {
 	}
 	rebuild2() {
 		const nodeobjs = this.puzzle.board[this.pointgroup];
-		const linkobjs = this.puzzle.board[this.linkgroup];
 		for (let c = 0; c < nodeobjs.length; c++) {
 			this.setComponentRefs(nodeobjs[c], null);
 			this.resetObjNodeList(nodeobjs[c]);
 			if (this.isnodevalid(nodeobjs[c])) { this.createNode(nodeobjs[c]); }
 		}
 		if (this.linkgroup) {
+			const linkobjs = this.puzzle.board[this.linkgroup];
 			for (let id = 0; id < linkobjs.length; id++) {
 				this.setComponentRefs(linkobjs[id], null);
 				if (this.isedgevalidbylinkobj(linkobjs[id])) { this.addEdgeByLinkObj(linkobjs[id]); }
@@ -402,7 +402,7 @@ export class GraphBase {
 	searchSingle(startparts: GraphNode, component: GraphComponent) {
 		const stack = [startparts];
 		while (stack.length > 0) {
-			const node = stack.pop();
+			const node = stack.pop()!;
 			if (node.component !== null) { continue; }
 
 			node.component = component;
@@ -448,7 +448,7 @@ export class GraphBase {
 		}
 		return (!!largeComponent ? largeComponent.color : null);
 	}
-	setLongColor(components: GraphComponent[], longColor: string) {
+	setLongColor(components: GraphComponent[], longColor: string | null) {
 		if (components.length === 0) { return; }
 		const puzzle = this.puzzle;
 
@@ -485,17 +485,17 @@ export class GraphBase {
 }
 export class GraphComponent {
 	nodes: any[]
-	color: string
+	color: string | null
 	circuits: number
 	puzzle: Puzzle
-	cmp: boolean
-	clist: CellList
-	departure: Cell
-	destination: Cell
-	movevalid: boolean
+	cmp: boolean = false
+	clist: CellList = null!
+	departure: Cell | null = null
+	destination: Cell | null = null
+	movevalid: boolean = false
 	top: any = null
 	isremake = false
-	id: number = null
+	id: number = null!
 
 	constructor(puzzle: Puzzle) {
 		this.puzzle = puzzle

@@ -49,7 +49,8 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 		super(parent);
 
 		// variables for internal
-		this.context = null;	// 本来のCanvasRenderingContext2Dオブジェクト
+		//superのinitで初期化されている
+		this.context = null!;	// 本来のCanvasRenderingContext2Dオブジェクト
 
 		this.use = this.getTypeList();
 
@@ -82,7 +83,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 			root.style.height = `${rect.height}px`;
 			this.canvas.appendChild(root);
 		}
-		this.context = root.getContext('2d');
+		this.context = root.getContext('2d')!;
 	}
 	initFunction() {
 		function atob(base64: string) {
@@ -90,7 +91,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 			return new Buffer(RegExp.$2, 'base64').toString('binary');
 		}
 
-		const root = this.child;
+		const root = this.child!;
 		this.canvas.toDataURL = function (type, quality) {
 			return root.toDataURL(type || void 0, quality);
 		};
@@ -141,7 +142,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 	}
 
 	/* layer functions */
-	setLayer(layerid: string = null, option: any = null) {
+	setLayer(layerid: string | null = null, option: any = null) {
 		this.currentLayerId = (!!layerid ? layerid : '_empty');
 		const layer = this.currentLayerId
 		this.isedge = this.isedgearray[(this.isedgearray[layer] !== void 0) ? layer : "_empty"];
@@ -177,7 +178,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 			parent.style.height = `${height}px`;
 		}
 
-		const child = this.child;
+		const child = this.child!;
 		if (isBrowser) {
 			const left = Number.parseInt(child.style.left);
 			const top = Number.parseInt(child.style.top);

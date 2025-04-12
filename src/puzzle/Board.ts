@@ -149,8 +149,9 @@ export class Board<
 	//---------------------------------------------------------------------------
 	// bd.initBoardSize() 指定されたサイズで盤面の初期化を行う
 	//---------------------------------------------------------------------------
-	initBoardSize(col: number = undefined, row: number = undefined) {
-		if (col === (void 0) || Number.isNaN(col)) { col = this.cols; row = this.rows; }
+	initBoardSize(col?: number, row?: number) {
+		if (col === (void 0) || Number.isNaN(col)) { col = this.cols; }
+		if (row === (void 0) || Number.isNaN(row)) { row = this.rows; }
 
 		this.allclear(false); // initGroupで、新Objectに対しては別途allclearが呼ばれます
 
@@ -497,7 +498,7 @@ export class Board<
 		return (id !== null ? this.excell[id] : this.emptyexcell);
 	}
 
-	getobj(bx: number, by: number) {
+	getobj(bx: number, by: number): BoardPiece {
 		if ((bx + by) & 1) { return this.getb(bx, by); }
 		if (!(bx & 1) && !(by & 1)) { return this.getx(bx, by); }
 

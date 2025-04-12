@@ -53,7 +53,7 @@ export class AnsCheck<
 		this.makeCheckList();
 	}
 	failcodemode = false
-	failcode: CheckInfo = (void 0)
+	failcode: CheckInfo = null!
 	_info: any = (void 0)
 	checklist: any = []
 	checklist_normal: any[] = []
@@ -136,7 +136,8 @@ export class AnsCheck<
 	// ans.resetCache() 前回のエラー情報等を破棄する
 	//---------------------------------------------------------------------------
 	resetCache() {
-		this.failcode = this.failcodemode = void 0;
+		this.failcode = null!
+		this.failcodemode = false;
 		this._info = {};
 	}
 
@@ -440,7 +441,7 @@ export class AnsCheck<
 	// ans.checkAllArea2()   すべてのエリアがareaを引数に取るevalfuncを満たすかどうか判定する
 	//---------------------------------------------------------------------------
 	checkAllArea(graph: AreaGraphBase, evalfunc: AreaCheck, code: string) { this.checkAllBlock(graph, null, evalfunc, code); }
-	checkAllBlock(graph: AreaGraphBase, filterfunc: CellCheck, evalfunc: AreaCheck, code: string) {
+	checkAllBlock(graph: AreaGraphBase, filterfunc: CellCheck | null, evalfunc: AreaCheck, code: string) {
 		const areas = graph.components;
 		for (let id = 0; id < areas.length; id++) {
 			const area = areas[id];
@@ -496,7 +497,7 @@ export class AnsCheck<
 	//---------------------------------------------------------------------------
 	// ans.checkNoMovedObjectInRoom() 領域に移動後のオブジェクトがないと判定する
 	//---------------------------------------------------------------------------
-	checkNoMovedObjectInRoom(graph: AreaGraphBase) { this.checkAllBlock(graph, function (cell) { return cell.base.qnum !== -1; }, function (w, h, a, n) { return (a !== 0); }, "bkNoNum"); }
+	checkNoMovedObjectInRoom(graph: AreaGraphBase) { this.checkAllBlock(graph, function (cell) { return cell.base!.qnum !== -1; }, function (w, h, a, n) { return (a !== 0); }, "bkNoNum"); }
 
 	//---------------------------------------------------------------------------
 	// ans.checkDisconnectLine() 数字などに繋がっていない線の判定を行う
@@ -672,10 +673,10 @@ export class AnsCheck<
 		let info: any;
 		allloop: do {
 			/* 横方向サーチ */
-			info = { keycell: null as BoardPiece, key51num: -1, isvert: false };
+			info = { keycell: null as BoardPiece | null, key51num: -1, isvert: false };
 			for (let by = 1; by <= bd.maxby; by += 2) {
 				for (let bx = 1; bx <= bd.maxbx; bx += 2) {
-					let txx: number;
+					let txx: number = bx;
 					for (let tx = bx; tx <= bd.maxbx; tx += 2) { txx = tx; if (termfunc(bd.getc(tx, by))) { break; } }
 					info.keycell = bd.getobj(bx - 2, by);
 					info.key51num = info.keycell.qnum;
@@ -687,10 +688,10 @@ export class AnsCheck<
 				}
 			}
 			/* 縦方向サーチ */
-			info = { keycell: null as BoardPiece, key51num: -1, isvert: true };
+			info = { keycell: null as BoardPiece | null, key51num: -1, isvert: true };
 			for (let bx = 1; bx <= bd.maxbx; bx += 2) {
 				for (let by = 1; by <= bd.maxby; by += 2) {
-					let tyy: number;
+					let tyy: number = by;
 					for (let ty = by; ty <= bd.maxby; ty += 2) { tyy = ty; if (termfunc(bd.getc(bx, ty))) { break; } }
 					info.keycell = bd.getobj(bx, by - 2);
 					info.key51num = info.keycell.qnum2;
@@ -789,10 +790,10 @@ export class AnsCheck<
 		this._info.num = pathsegs
 		return pathsegs;
 	}
-	serachLineShapeInfo(cell1: Cell, dir: number, passed: boolean[]): IPathSeg {
+	serachLineShapeInfo(cell1: Cell, dir: number, passed: boolean[]): IPathSeg | null {
 		const pathseg = {
 			objs: (new BorderList(this.puzzle)),
-			cells: [cell1, null] as [Cell, Cell],	// 出発したセル、到達したセル
+			cells: [cell1, null!] as [Cell, Cell],	// 出発したセル、到達したセル
 			ccnt: 0,				// 曲がった回数
 			length: [] as number[],				// 曲がった箇所で区切った、それぞれの線分の長さの配列
 			dir1: dir,			// dir1 スタート地点で線が出発した方向
@@ -845,7 +846,7 @@ class CheckInfo {
 	complete = true
 	text = ''
 
-	lastcode: string = null
+	lastcode: string | null = null
 
 	add(code: string) {
 		if (!code) { return; }
@@ -855,16 +856,16 @@ class CheckInfo {
 		}
 		this.complete = false;
 	}
-	gettext(lang: string = null) {
+	gettext(lang?: string) {
 		const puzzle = this.puzzle;
 		const textlist = puzzle.faillist;
 		const texts = [];
 		const langcode = ((lang || pzpr.lang) === "ja" ? 0 : 1);
 		if (this.list.length === 0) {
-			return textlist.get("complete")[langcode];
+			return textlist.get("complete")![langcode];
 		}
 		for (let i = 0; i < this.list.length; i++) {
-			const textitem = textlist.get(this.list[i]) || textlist.get("invalid");
+			const textitem = textlist.get(this.list[i]) || textlist.get("invalid")!;
 			texts.push(textitem[langcode]);
 		}
 		return texts.join("\n");

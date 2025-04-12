@@ -8,8 +8,8 @@ import type { IDir } from "./Piece"
 // ★Positionクラス Address, Pieceクラスのベースクラス
 //---------------------------------------------------------------------------
 export class Position {
-	bx: number = null
-	by: number = null
+	bx: number = null!
+	by: number = null!
 
 	// 方向を表す定数
 	NDIR = 0	// 方向なし
@@ -122,12 +122,12 @@ export class Position {
 // ★Addressクラス (bx,by)座標を扱う
 //---------------------------------------------------------------------------
 export class Address extends Position {
-	constructor(puzzle: Puzzle, bx: number, by: number) {
+	constructor(puzzle: Puzzle, bx?: number, by?: number) {
 		super(puzzle);
 		if (bx != null && by != null) { this.init(bx, by); }
 	}
 
-	reset() { this.bx = null; this.by = null; }
+	reset() { this.bx = null!; this.by = null!; }
 	clone() { return (new Address(this.puzzle, this.bx, this.by)); } // todo
 
 	set<T extends { bx: number, by: number }>(addr: T) { this.bx = addr.bx; this.by = addr.by; return this; }

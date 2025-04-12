@@ -12,9 +12,9 @@ export default abstract class WrapperBase<ChildElement> {
 	font = '14px system';
 	textAlign: CanvasTextAlign = 'center';
 	textBaseline: CanvasTextBaseline | "candle-top" = 'middle';
-	canvas: HTMLElement = null;
+	canvas: HTMLElement;
 	canvasid = '';
-	child: ChildElement = null;
+	child: ChildElement;
 	enableTextLengthWA = false;
 	use: any
 	constructor(parent: HTMLElement) {
@@ -24,7 +24,7 @@ export default abstract class WrapperBase<ChildElement> {
 
 		// variables for internal
 		this.canvasid = `_candle_${++_counter}`;
-		this.child = null;	// 親エレメントの直下にあるエレメント
+		this.child = null!;	// 親エレメントの直下にあるエレメント
 
 		this.enableTextLengthWA = false;
 
@@ -32,6 +32,7 @@ export default abstract class WrapperBase<ChildElement> {
 		this.canvas.getContext = (type) => this;
 
 		this.use = {};
+		this.vid = ""
 	}
 	init() {
 		this.initElement();

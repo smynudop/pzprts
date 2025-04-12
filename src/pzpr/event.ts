@@ -37,7 +37,7 @@ export const initPzpr = function (pzpr: any) {
 	// addKeyEvents()  キーボード入力発生時に指定されたパズルへ通知する準備を行う
 	// exec????()      各パズルのキー入力へ分岐する
 	//---------------------------------------------------------------------------
-	let keytarget: Puzzle = null;
+	let keytarget: Puzzle | null = null;
 	function execKeyDown(e: KeyboardEvent) {
 		if (!!keytarget && !!keytarget.key) { keytarget.key.e_keydown(e); }
 	}

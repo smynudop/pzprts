@@ -9,6 +9,6 @@ declare global {
         getContext: (type: string) => WrapperBase
         toDataURL: (type: string, quality: number) => string
         toBuffer: (type: string, quality: number) => string | Buffer<ArrayBuffer> | Uint8Array<ArrayBuffer> | ArrayBuffer | null;
-        toBlob: (callback: (blob: Blob, option?: any) => void, type: string, quality: number) => void
+        toBlob: (callback: (blob: Blob | null, option?: any) => void, type: string, quality: number) => void
     }
 }

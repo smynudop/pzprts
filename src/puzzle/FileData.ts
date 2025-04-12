@@ -26,8 +26,7 @@ function throwNoImplementation() { throw "no Implemention"; }
 export class FileIO {
 	filever = 0
 	lineseek = 0
-	dataarray: string[] = null
-	xmldoc: Document = null
+	dataarray: string[] | null = null
 	datastr = ""
 	currentType = 0
 	puzzle: Puzzle
@@ -42,6 +41,9 @@ export class FileIO {
 		const puzzle = this.puzzle;
 		const bd = puzzle.board;
 		const pzl = parseFile(datastr, puzzle.pid);
+		if (!pzl) {
+			throw new Error(`Invalid File Data.`)
+		}
 		this.currentType = pzl.type
 		const filetype = this.currentType;
 
@@ -53,7 +55,7 @@ export class FileIO {
 			this.dataarray = pzl.body.split("\n");
 		}
 		else {
-			this.xmldoc = pzl.body;
+			//this.xmldoc = pzl.body;
 		}
 
 		// メイン処理
@@ -94,12 +96,12 @@ export class FileIO {
 
 		this.filever = 0;
 		this.datastr = "";
-		if (filetype === Constants.FILE_PBOX_XML) {
-			this.xmldoc = (new DOMParser()).parseFromString('<?xml version="1.0" encoding="utf-8" ?><puzzle />', 'text/xml');
-			const puzzlenode = this.xmldoc.querySelector('puzzle');
-			puzzlenode.appendChild(this.createXMLNode('board'));
-			puzzlenode.appendChild(this.createXMLNode('answer'));
-		}
+		// if (filetype === Constants.FILE_PBOX_XML) {
+		// 	this.xmldoc = (new DOMParser()).parseFromString('<?xml version="1.0" encoding="utf-8" ?><puzzle />', 'text/xml');
+		// 	const puzzlenode = this.xmldoc.querySelector('puzzle')!;
+		// 	puzzlenode.appendChild(this.createXMLNode('board'));
+		// 	puzzlenode.appendChild(this.createXMLNode('answer'));
+		// }
 
 		// メイン処理
 		switch (filetype) {
@@ -128,7 +130,7 @@ export class FileIO {
 			pzl.body = this.datastr;
 		}
 		else {
-			pzl.body = this.xmldoc;
+			//pzl.body = this.xmldoc;
 		}
 		pzl.metadata = MetaData.update(pzl.metadata, puzzle.metadata);
 		if (option.history && (filetype === Constants.FILE_PZPR)) {
@@ -155,7 +157,7 @@ export class FileIO {
 	decodeTrial() {
 		const opemgr = this.puzzle.opemgr;
 		const bd = this.puzzle.board;
-		const len = +(this.readLine().match(/TrialData\((\d+)\)/)[1]);
+		const len = +(this.readLine().match(/TrialData\((\d+)\)/)![1]);
 		for (let i = len - 1; i >= 0; i--) {
 			const opes: Operation<any>[] = [];
 			const bd1 = bd.freezecopy();
@@ -197,7 +199,7 @@ export class FileIO {
 	//---------------------------------------------------------------------------
 	readLine() {
 		this.lineseek++;
-		return this.dataarray[this.lineseek - 1];
+		return this.dataarray![this.lineseek - 1];
 	}
 
 	getItemList(rows: number) {
@@ -316,87 +318,6 @@ export class FileIO {
 	}
 	encodeCellExcell(func: IEncodeFunc<string, BoardPiece>) {
 		this.encodeObj(func, 'obj', -1, -1, this.puzzle.board.maxbx - 1, this.puzzle.board.maxby - 1);
-	}
-
-	//---------------------------------------------------------------------------
-	// fio.decodeCellXMLBoard()  配列で、個別文字列から個別セルの設定を行う (XML board用)
-	// fio.decodeCellXMLBrow()   配列で、個別文字列から個別セルの設定を行う (XML board用)
-	// fio.decodeCellXMLArow()   配列で、個別文字列から個別セルの設定を行う (XML answer用)
-	// fio.encodeCellXMLBoard()  個別セルデータから個別文字列の設定を行う (XML board用)
-	// fio.encodeCellXMLBrow()   個別セルデータから個別文字列の設定を行う (XML board用)
-	// fio.encodeCellXMLArow()   個別セルデータから個別文字列の設定を行う (XML answer用)
-	// fio.createXMLNode()  指定されたattributeを持つXMLのノードを作成する
-	//---------------------------------------------------------------------------
-	decodeCellXMLBoard(func: IDecodeFunc<number>) {
-		const nodes = this.xmldoc.querySelectorAll('board number');
-		for (let i = 0; i < nodes.length; i++) {
-			const node = nodes[i];
-			const cell = this.puzzle.board.getc(+node.getAttribute('c') * 2 - 1, +node.getAttribute('r') * 2 - 1);
-			if (!cell.isnull) { func(cell, +node.getAttribute('n')); }
-		}
-	}
-	encodeCellXMLBoard(func: IEncodeFunc<number>) {
-		const boardnode = this.xmldoc.querySelector('board');
-		const bd = this.puzzle.board;
-		for (let i = 0; i < bd.cell.length; i++) {
-			const cell = bd.cell[i];
-			const val = func(cell);
-			if (val !== null) {
-				boardnode.appendChild(this.createXMLNode('number', { r: ((cell.by / 2) | 0) + 1, c: ((cell.bx / 2) | 0) + 1, n: val }));
-			}
-		}
-	}
-
-	PBOX_ADJUST = 0
-	decodeCellXMLBrow(func: IDecodeFunc<string>) { this.decodeCellXMLrow_com(func, 'board', 'brow'); }
-	encodeCellXMLBrow(func: IEncodeFunc<string>) { this.encodeCellXMLrow_com(func, 'board', 'brow'); }
-	decodeCellXMLArow(func: IDecodeFunc<string>) { this.decodeCellXMLrow_com(func, 'answer', 'arow'); }
-	encodeCellXMLArow(func: IEncodeFunc<string>) { this.encodeCellXMLrow_com(func, 'answer', 'arow'); }
-	decodeCellXMLrow_com(func: IDecodeFunc<string>, parentnodename: string, targetnodename: string) {
-		const rownodes = this.xmldoc.querySelectorAll(`${parentnodename} ${targetnodename}`);
-		const ADJ = this.PBOX_ADJUST;
-		for (let b = 0; b < rownodes.length; b++) {
-			let bx = 1 - ADJ;
-			const by = (+rownodes[b].getAttribute('row')) * 2 - 1 - ADJ;
-			const nodes = rownodes[b].childNodes;
-			for (let i = 0; i < nodes.length; i++) {
-				if (nodes[i].nodeType !== 1) { continue; }
-				let name = nodes[i].nodeName;
-				const n = +(nodes[i] as HTMLElement).getAttribute('n') || 1;
-				if (name === 'z') { name = 'n0'; }
-				else if (name === 'n') { name = `n${+(nodes[i] as HTMLElement).getAttribute('v')}`; }
-				for (let j = 0; j < n; j++) {
-					func(this.puzzle.board.getobj(bx, by), name);
-					bx += 2;
-				}
-			}
-		}
-	}
-	encodeCellXMLrow_com(func: IEncodeFunc<string>, parentnodename: string, targetnodename: string) {
-		const boardnode = this.xmldoc.querySelector(parentnodename);
-		const ADJ = this.PBOX_ADJUST;
-		const bd = this.puzzle.board;
-		for (let by = 1 - ADJ; by <= bd.maxby; by += 2) {
-			const rownode = this.createXMLNode(targetnodename, { row: (((by + ADJ) / 2) | 0) + 1 });
-			for (let bx = 1 - ADJ; bx <= bd.maxbx; bx += 2) {
-				const piece = bd.getobj(bx, by);
-				const nodename = func(piece);
-				let node: HTMLElement;
-				if (nodename.match(/n(\d\d+)/) || nodename.match(/n(\-\d+)/)) {
-					node = this.createXMLNode('n', { v: RegExp.$1 });
-				}
-				else if (nodename === 'n0') { node = this.createXMLNode('z'); }
-				else { node = this.createXMLNode(nodename); }
-				rownode.appendChild(node);
-			}
-			boardnode.appendChild(rownode);
-		}
-	}
-
-	createXMLNode(name: string, attrs: Record<string, string | number> = null) {
-		const node = this.xmldoc.createElement(name);
-		if (!!attrs) { for (const i in attrs) { node.setAttribute(i, attrs[i].toString()); } }
-		return node;
 	}
 
 	//---------------------------------------------------------------------------
@@ -777,146 +698,4 @@ export class FileIO {
 		});
 	}
 
-	//---------------------------------------------------------------------------
-	// fio.decodeCellQnum_XMLBoard() pencilbox XML用問題用数字のデコードを行う
-	// fio.encodeCellQnum_XMLBoard() pencilbox XML用問題用数字のエンコードを行う
-	//---------------------------------------------------------------------------
-	UNDECIDED_NUM_XML = -1
-	decodeCellQnum_XMLBoard() {
-		const minnum = (this.puzzle.board.cell[0].getminnum() > 0 ? 1 : 0);
-		const undecnum = this.UNDECIDED_NUM_XML;
-		this.decodeCellXMLBoard(function (cell, val: number) {
-			if (val === undecnum) { cell.qnum = -2; }
-			else if (val >= minnum) { cell.qnum = val; }
-		});
-	}
-	encodeCellQnum_XMLBoard() {
-		const minnum = (this.puzzle.board.cell[0].getminnum() > 0 ? 1 : 0);
-		const undecnum = this.UNDECIDED_NUM_XML;
-		this.encodeCellXMLBoard(function (cell) {
-			let val = null;
-			if (cell.qnum === -2) { val = undecnum; }
-			else if (cell.qnum >= minnum) { val = cell.qnum; }
-			return val;
-		});
-	}
-
-	//---------------------------------------------------------------------------
-	// fio.decodeCellQnum_XMLBoard() pencilbox XML用問題用数字(browタイプ)のデコードを行う
-	// fio.encodeCellQnum_XMLBoard() pencilbox XML用問題用数字(browタイプ)のエンコードを行う
-	//---------------------------------------------------------------------------
-	decodeCellQnum_XMLBoard_Brow() {
-		const undecnum = this.UNDECIDED_NUM_XML;
-		this.decodeCellXMLBrow(function (cell, name) {
-			if (name === `n${undecnum}`) { cell.qnum = -2; }
-			else if (name !== 's') { cell.qnum = +name.substr(1); }
-		});
-	}
-	encodeCellQnum_XMLBoard_Brow() {
-		const undecnum = this.UNDECIDED_NUM_XML;
-		this.encodeCellXMLBrow(function (cell) {
-			if (cell.qnum === -2) { return `n${undecnum}`; }
-			if (cell.qnum >= 0) { return `n${cell.qnum}`; }
-			return 's';
-		});
-	}
-
-	//---------------------------------------------------------------------------
-	// fio.decodeCellAnum_XMLBoard() pencilbox XML用回答用数字のデコードを行う
-	// fio.encodeCellAnum_XMLBoard() pencilbox XML用回答用数字のエンコードを行う
-	//---------------------------------------------------------------------------
-	decodeCellAnum_XMLAnswer() {
-		this.decodeCellXMLArow(function (cell, name) {
-			if (name === 'n0') { cell.anum = -1; }
-			else if (name !== 's') { cell.anum = +name.substr(1); }
-		});
-	}
-	encodeCellAnum_XMLAnswer() {
-		this.encodeCellXMLArow(function (cell) {
-			if (cell.anum > 0) { return `n${cell.anum}`; }
-			if (cell.anum === -1) { return 'n0'; }
-			return 's';
-		});
-	}
-
-	//---------------------------------------------------------------------------
-	// fio.decodeAreaRoom_XMLBoard() pencilbox XML用問題用不定形部屋のデコードを行う
-	// fio.encodeAreaRoom_XMLBoard() pencilbox XML用問題用不定形部屋のエンコードを行う
-	//---------------------------------------------------------------------------
-	decodeAreaRoom_XMLBoard() {
-		const rdata: number[] = [];
-		this.decodeCellXMLBrow(function (cell, name) {
-			rdata.push(+name.substr(1));
-		});
-		this.rdata2Border(true, rdata);
-		this.puzzle.board.roommgr.rebuild();
-	}
-	encodeAreaRoom_XMLBoard() {
-		const bd = this.puzzle.board;
-		bd.roommgr.rebuild();
-		const rooms = bd.roommgr.components;
-		this.xmldoc.querySelector('board').appendChild(this.createXMLNode('areas', { N: rooms.length }));
-		this.encodeCellXMLBrow(function (cell) {
-			const roomid = rooms.indexOf(cell.room);
-			return `n${roomid > 0 ? roomid : -1}`;
-		});
-	}
-
-	//---------------------------------------------------------------------------
-	// fio.decodeCellAns_XMLAnswer() pencilbox XML用黒マスのデコードを行う
-	// fio.encodeCellAns_XMLAnswer() pencilbox XML用黒マスのエンコードを行う
-	//---------------------------------------------------------------------------
-	decodeCellAns_XMLAnswer() {
-		this.decodeCellXMLArow(function (cell, name) {
-			if (name === 'w') { cell.qans = 1; }
-			else if (name === 's') { cell.qsub = 1; }
-		});
-	}
-	encodeCellAns_XMLAnswer() {
-		this.encodeCellXMLArow(function (cell) {
-			if (cell.qans === 1) { return 'w'; }
-			if (cell.qsub === 1) { return 's'; }
-			return 'u';
-		});
-	}
-
-	//---------------------------------------------------------------------------
-	// fio.decodeBorderLine_XMLAnswer() pencilbox XML用Lineのデコードを行う
-	// fio.encodeBorderLine_XMLAnswer() pencilbox XML用Lineのエンコードを行う
-	//---------------------------------------------------------------------------
-	decodeBorderLine_XMLAnswer() {
-		this.decodeCellXMLArow(function (cell, name) {
-			let val = 0;
-			const bdh = cell.adjborder.bottom;
-			const bdv = cell.adjborder.right;
-			if (name.charAt(0) === 'n') { val = +name.substr(1); }
-			else {
-				if (name.match(/h/)) { val += 1; }
-				if (name.match(/v/)) { val += 2; }
-			}
-			if (val & 1) { bdh.line = 1; }
-			if (val & 2) { bdv.line = 1; }
-			if (val & 4) { bdh.qsub = 2; }
-			if (val & 8) { bdv.qsub = 2; }
-		});
-	}
-	encodeBorderLine_XMLAnswer() {
-		this.encodeCellXMLArow(function (cell) {
-			let val = 0;
-			let nodename = '';
-			const bdh = cell.adjborder.bottom;
-			const bdv = cell.adjborder.right;
-			if (bdh.line === 1) { val += 1; }
-			if (bdv.line === 1) { val += 2; }
-			if (bdh.qsub === 2) { val += 4; }
-			if (bdv.qsub === 2) { val += 8; }
-
-			if (val === 0) { nodename = 's'; }
-			else if (val === 1) { nodename = 'h'; }
-			else if (val === 2) { nodename = 'v'; }
-			else if (val === 3) { nodename = 'hv'; }
-			else { nodename = `n${val}`; }
-			return nodename;
-		});
-	}
 }

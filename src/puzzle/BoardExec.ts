@@ -8,14 +8,32 @@ import { BoardFlipOperation, BoardAdjustOperation, type Operation } from "./Oper
 import { type BoardPiece, type Border, Cell } from "./Piece";
 
 // 拡大縮小・回転反転用定数
-const UP = 0x01;
-const DN = 0x02;
-const LT = 0x03;
-const RT = 0x04;
-const EXPAND = 0x10;
-const REDUCE = 0x20;
-const TURN = 0x40;
-const FLIP = 0x80;
+const UP = 0x01 as const;
+const DN = 0x02 as const;
+const LT = 0x03 as const;
+const RT = 0x04 as const;
+const EXPAND = 0x10 as const;
+const REDUCE = 0x20 as const;
+const TURN = 0x40 as const;
+const FLIP = 0x80 as const;
+
+const TURNFLIP = (TURN | FLIP)
+
+const EXPANDUP = (EXPAND | UP)
+const EXPANDDN = (EXPAND | DN)
+const EXPANDLT = (EXPAND | LT)
+const EXPANDRT = (EXPAND | RT)
+
+const REDUCEUP = (REDUCE | UP)
+const REDUCEDN = (REDUCE | DN)
+const REDUCELT = (REDUCE | LT)
+const REDUCERT = (REDUCE | RT)
+
+const TURNL = (TURN | 1)
+const TURNR = (TURN | 2)
+
+const FLIPX = (FLIP | 1)
+const FLIPY = (FLIP | 2)
 
 export type IBoardOperation =
 	"expandup" |
@@ -42,32 +60,8 @@ export type ID = {
 //---------------------------------------------------------------------------
 export class BoardExec {
 	// 拡大縮小・回転反転用定数
-	UP = UP
-	DN = DN
-	LT = LT
-	RT = RT
 
-	EXPAND = EXPAND
-	REDUCE = REDUCE
-	TURN = TURN
-	FLIP = FLIP
-	TURNFLIP = (TURN | FLIP)
 
-	EXPANDUP = (EXPAND | UP)
-	EXPANDDN = (EXPAND | DN)
-	EXPANDLT = (EXPAND | LT)
-	EXPANDRT = (EXPAND | RT)
-
-	REDUCEUP = (REDUCE | UP)
-	REDUCEDN = (REDUCE | DN)
-	REDUCELT = (REDUCE | LT)
-	REDUCERT = (REDUCE | RT)
-
-	TURNL = (TURN | 1)
-	TURNR = (TURN | 2)
-
-	FLIPX = (FLIP | 1)
-	FLIPY = (FLIP | 2)
 
 	boardtype = {
 		expandup: [REDUCE | UP, EXPAND | UP],
@@ -148,8 +142,8 @@ export class BoardExec {
 			d = { x1: 0, y1: 0, x2: 2 * bd.cols, y2: 2 * bd.rows };
 		}
 		else if (key & EXPAND) {
-			if (key === this.EXPANDUP || key === this.EXPANDDN) { bd.rows++; }
-			else if (key === this.EXPANDLT || key === this.EXPANDRT) { bd.cols++; }
+			if (key === EXPANDUP || key === EXPANDDN) { bd.rows++; }
+			else if (key === EXPANDLT || key === EXPANDRT) { bd.cols++; }
 		}
 
 		// main operation
@@ -160,8 +154,8 @@ export class BoardExec {
 		});
 
 		if (key & REDUCE) {
-			if (key === this.REDUCEUP || key === this.REDUCEDN) { bd.rows--; }
-			else if (key === this.REDUCELT || key === this.REDUCERT) { bd.cols--; }
+			if (key === REDUCEUP || key === REDUCEDN) { bd.rows--; }
+			else if (key === REDUCELT || key === REDUCERT) { bd.cols--; }
 		}
 		bd.setposAll();
 
@@ -175,7 +169,7 @@ export class BoardExec {
 		const key = this.boardtype[name][1];
 		const puzzle = this.puzzle;
 		let ope: Operation;
-		if (key & this.TURNFLIP) { ope = new BoardFlipOperation(this.puzzle, d, name); }
+		if (key & TURNFLIP) { ope = new BoardFlipOperation(this.puzzle, d, name); }
 		else { ope = new BoardAdjustOperation(this.puzzle, name); }
 		puzzle.opemgr.add(ope);
 	}
@@ -240,10 +234,10 @@ export class BoardExec {
 	turnflipGroup(group: IGroup, key: number, d: ID) {
 		const bd = this.board;
 		if (group === 'excell') {
-			if (bd.hasexcell === 1 && (key & this.FLIP)) {
+			if (bd.hasexcell === 1 && (key & FLIP)) {
 				const d2 = { x1: d.x1, y1: d.y1, x2: d.x2, y2: d.y2 };
-				if (key === this.FLIPY) { d2.x1 = d2.x2 = -1; }
-				else if (key === this.FLIPX) { d2.y1 = d2.y2 = -1; }
+				if (key === FLIPY) { d2.x1 = d2.x2 = -1; }
+				else if (key === FLIPX) { d2.y1 = d2.y2 = -1; }
 				d = d2;
 			}
 			else if (bd.hasexcell === 2) {
@@ -257,12 +251,13 @@ export class BoardExec {
 		const yy = (d.y1 + d.y2);
 		for (let i = 0; i < objlist.length; i++) {
 			const obj = objlist[i];
-			let id = null;
+			let id = -1;
 			switch (key) {
-				case this.FLIPY: id = bd.getObjectPos(group, obj.bx, yy - obj.by).id; break;
-				case this.FLIPX: id = bd.getObjectPos(group, xx - obj.bx, obj.by).id; break;
-				case this.TURNL: id = bd.getObjectPos(group, obj.by, yy - obj.bx).id; break;
-				case this.TURNR: id = bd.getObjectPos(group, xx - obj.by, obj.bx).id; break;
+				case FLIPY: id = bd.getObjectPos(group, obj.bx, yy - obj.by).id; break;
+				case FLIPX: id = bd.getObjectPos(group, xx - obj.bx, obj.by).id; break;
+				case TURNL: id = bd.getObjectPos(group, obj.by, yy - obj.bx).id; break;
+				case TURNR: id = bd.getObjectPos(group, xx - obj.by, obj.bx).id; break;
+				default: new Error("key is invalid"); break;
 			}
 			converted[id] = obj;
 		}
@@ -279,10 +274,10 @@ export class BoardExec {
 		if (piece.isnull) { return -1; }
 
 		key &= 0x0F;
-		if (key === this.UP) { return piece.by; }
-		if (key === this.DN) { return 2 * bd.rows - piece.by; }
-		if (key === this.LT) { return piece.bx; }
-		if (key === this.RT) { return 2 * bd.cols - piece.bx; }
+		if (key === UP) { return piece.by; }
+		if (key === DN) { return 2 * bd.rows - piece.by; }
+		if (key === LT) { return piece.bx; }
+		if (key === RT) { return 2 * bd.cols - piece.bx; }
 		return -1;
 	}
 
@@ -340,20 +335,20 @@ export class BoardExec {
 	innerBorder(id: number, key: number) {
 		const border = this.board.border[id];
 		key &= 0x0F;
-		if (key === this.UP) { return border.relbd(0, 2); }
-		if (key === this.DN) { return border.relbd(0, -2); }
-		if (key === this.LT) { return border.relbd(2, 0); }
-		if (key === this.RT) { return border.relbd(-2, 0); }
-		return null;
+		if (key === UP) { return border.relbd(0, 2); }
+		if (key === DN) { return border.relbd(0, -2); }
+		if (key === LT) { return border.relbd(2, 0); }
+		if (key === RT) { return border.relbd(-2, 0); }
+		throw new Error(`key is invalid`)
 	}
 	outerBorder(id: number, key: number) {
 		const border = this.board.border[id];
 		key &= 0x0F;
-		if (key === this.UP) { return border.relbd(0, -2); }
-		if (key === this.DN) { return border.relbd(0, 2); }
-		if (key === this.LT) { return border.relbd(-2, 0); }
-		if (key === this.RT) { return border.relbd(2, 0); }
-		return null;
+		if (key === UP) { return border.relbd(0, -2); }
+		if (key === DN) { return border.relbd(0, 2); }
+		if (key === LT) { return border.relbd(-2, 0); }
+		if (key === RT) { return border.relbd(2, 0); }
+		throw new Error(`key is invalid`)
 	}
 
 	//---------------------------------------------------------------------------
@@ -409,12 +404,12 @@ export class BoardExec {
 	// bd.exec.adjustBorderArrow()  回転・反転開始前の境界線にある矢印セル等の調整
 	//------------------------------------------------------------------------------
 	adjustNumberArrow(key: number, d: ID) {
-		if (key & this.TURNFLIP) {
+		if (key & TURNFLIP) {
 			this.adjustCellQdirArrow(key, d);
 		}
 	}
 	adjustCellArrow(key: number, d: ID) {
-		if (key & this.TURNFLIP) {
+		if (key & TURNFLIP) {
 			if (this.board.createCell().numberAsObject) {
 				this.adjustCellQnumArrow(key, d);
 			}
@@ -442,7 +437,7 @@ export class BoardExec {
 	}
 
 	adjustBorderArrow(key: number, d: ID) {
-		if (key & this.TURNFLIP) {
+		if (key & TURNFLIP) {
 			const trans = this.getTranslateDir(key);
 			const blist = this.board.borderinside(d.x1, d.y1, d.x2, d.y2);
 			for (let i = 0; i < blist.length; i++) {
@@ -455,10 +450,10 @@ export class BoardExec {
 	getTranslateDir(key: number): Record<number, number> {
 		let trans = {};
 		switch (key) {
-			case this.FLIPY: trans = { 1: 2, 2: 1 }; break;			// 上下反転
-			case this.FLIPX: trans = { 3: 4, 4: 3 }; break;			// 左右反転
-			case this.TURNR: trans = { 1: 4, 2: 3, 3: 1, 4: 2 }; break;	// 右90°回転
-			case this.TURNL: trans = { 1: 3, 2: 4, 3: 2, 4: 1 }; break;	// 左90°回転
+			case FLIPY: trans = { 1: 2, 2: 1 }; break;			// 上下反転
+			case FLIPX: trans = { 3: 4, 4: 3 }; break;			// 左右反転
+			case TURNR: trans = { 1: 4, 2: 3, 3: 1, 4: 2 }; break;	// 右90°回転
+			case TURNL: trans = { 1: 3, 2: 4, 3: 2, 4: 1 }; break;	// 左90°回転
 		}
 		return trans;
 	}
@@ -499,7 +494,7 @@ export class BoardExec {
 		const bd = this.board;
 		bd.disableInfo();
 		switch (key) {
-			case this.FLIPY: // 上下反転
+			case FLIPY: // 上下反転
 				for (let bx = bx1; bx <= d.x2; bx += 2) {
 					idx = 1; this.qnumh[bx] = this.qnumh[bx].reverse();
 					bd.getex(bx, -1).setQnum2(this.qnumh[bx][0]);
@@ -510,7 +505,7 @@ export class BoardExec {
 				}
 				break;
 
-			case this.FLIPX: // 左右反転
+			case FLIPX: // 左右反転
 				for (let by = by1; by <= d.y2; by += 2) {
 					idx = 1; this.qnumw[by] = this.qnumw[by].reverse();
 					bd.getex(-1, by).setQnum(this.qnumw[by][0]);
@@ -521,7 +516,7 @@ export class BoardExec {
 				}
 				break;
 
-			case this.TURNR: // 右90°反転
+			case TURNR: // 右90°反転
 				for (let by = by1; by <= d.y2; by += 2) {
 					idx = 1; this.qnumh[by] = this.qnumh[by].reverse();
 					bd.getex(-1, by).setQnum(this.qnumh[by][0]);
@@ -540,7 +535,7 @@ export class BoardExec {
 				}
 				break;
 
-			case this.TURNL: // 左90°反転
+			case TURNL: // 左90°反転
 				for (let by = by1; by <= d.y2; by += 2) {
 					idx = 1;
 					bd.getex(-1, by).setQnum(this.qnumh[yy - by][0]);
@@ -575,18 +570,18 @@ export class BoardExec {
 		let bx2: number;
 		let by2: number;
 		switch (key) {
-			case this.FLIPY: bx2 = bx1; by2 = yy - by1; break;
-			case this.FLIPX: bx2 = xx - bx1; by2 = by1; break;
-			case this.TURNR: bx2 = yy - by1; by2 = bx1; break;
-			case this.TURNL: bx2 = by1; by2 = xx - bx1; break;
-			case this.EXPANDUP: bx2 = bx1; by2 = by1 + (by1 === bd.minby ? 0 : 2); break;
-			case this.EXPANDDN: bx2 = bx1; by2 = by1 + (by1 === bd.maxby ? 2 : 0); break;
-			case this.EXPANDLT: bx2 = bx1 + (bx1 === bd.minbx ? 0 : 2); by2 = by1; break;
-			case this.EXPANDRT: bx2 = bx1 + (bx1 === bd.maxbx ? 2 : 0); by2 = by1; break;
-			case this.REDUCEUP: bx2 = bx1; by2 = by1 - (by1 <= bd.minby + 2 ? 0 : 2); break;
-			case this.REDUCEDN: bx2 = bx1; by2 = by1 - (by1 >= bd.maxby - 2 ? 2 : 0); break;
-			case this.REDUCELT: bx2 = bx1 - (bx1 <= bd.minbx + 2 ? 0 : 2); by2 = by1; break;
-			case this.REDUCERT: bx2 = bx1 - (bx1 >= bd.maxbx - 2 ? 2 : 0); by2 = by1; break;
+			case FLIPY: bx2 = bx1; by2 = yy - by1; break;
+			case FLIPX: bx2 = xx - bx1; by2 = by1; break;
+			case TURNR: bx2 = yy - by1; by2 = bx1; break;
+			case TURNL: bx2 = by1; by2 = xx - bx1; break;
+			case EXPANDUP: bx2 = bx1; by2 = by1 + (by1 === bd.minby ? 0 : 2); break;
+			case EXPANDDN: bx2 = bx1; by2 = by1 + (by1 === bd.maxby ? 2 : 0); break;
+			case EXPANDLT: bx2 = bx1 + (bx1 === bd.minbx ? 0 : 2); by2 = by1; break;
+			case EXPANDRT: bx2 = bx1 + (bx1 === bd.maxbx ? 2 : 0); by2 = by1; break;
+			case REDUCEUP: bx2 = bx1; by2 = by1 - (by1 <= bd.minby + 2 ? 0 : 2); break;
+			case REDUCEDN: bx2 = bx1; by2 = by1 - (by1 >= bd.maxby - 2 ? 2 : 0); break;
+			case REDUCELT: bx2 = bx1 - (bx1 <= bd.minbx + 2 ? 0 : 2); by2 = by1; break;
+			case REDUCERT: bx2 = bx1 - (bx1 >= bd.maxbx - 2 ? 2 : 0); by2 = by1; break;
 			default: bx2 = bx1; by2 = by1; break;
 		}
 

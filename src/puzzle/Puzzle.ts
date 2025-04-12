@@ -97,7 +97,7 @@ export class Puzzle<
 		this.checker = this.createAnsCheck();	// 正解判定オブジェクト
 		this.painter = this.createGraphic();		// 描画系オブジェクト
 
-		this.cursor = new TargetCursor(this, null, null);	// 入力用カーソルオブジェクト
+		this.cursor = new TargetCursor(this);	// 入力用カーソルオブジェクト
 		this.mouse = this.createMouseEvent();	// マウス入力オブジェクト
 		this.key = this.createKeyEvent();		// キーボード入力オブジェクト
 
@@ -121,7 +121,7 @@ export class Puzzle<
 		});
 	}
 
-	pid: string = null		// パズルのID("creek"など)
+	pid: string = null!		// パズルのID("creek"など)
 	info: any = {}		// VarietyInfoへの参照
 
 	ready = false	// 盤面の準備ができたかを示す (Canvas準備完了前にtrueになる)
@@ -132,12 +132,12 @@ export class Puzzle<
 
 	starttime = 0
 
-	canvas: HTMLElement = null	// 描画canvas本体
-	subcanvas: HTMLElement = null	// 補助canvas
+	canvas: HTMLElement = null!	// 描画canvas本体
+	subcanvas: HTMLElement = null!	// 補助canvas
 
-	listeners: { [key: string]: { func: Handler, once: boolean }[] } = null
+	listeners: { [key: string]: { func: Handler, once: boolean }[] } = {}
 
-	config: Config = null
+	config: Config = null!
 
 	metadata: MetaData.IMetaData	// 作者やコメントなどの情報
 
@@ -218,7 +218,7 @@ export class Puzzle<
 	//---------------------------------------------------------------------------
 	// owner.setCanvas()  描画キャンバスをセットする
 	//---------------------------------------------------------------------------
-	setCanvas(el: HTMLElement, type: string = null) {
+	setCanvas(el: HTMLElement, type?: string) {
 		if (!el) { return; }
 
 		const rect = getRect(el);
@@ -244,7 +244,7 @@ export class Puzzle<
 			this.preInitCanvasInfo.height = height;
 		}
 	}
-	setCanvasSizeByCellSize(cellsize: number = null) {
+	setCanvasSizeByCellSize(cellsize: number | null = null) {
 		if (!this.preInitCanvasInfo) {
 			this.painter.resizeCanvasByCellSize(cellsize);
 		}
@@ -280,7 +280,7 @@ export class Puzzle<
 		if (!!canvas.parentNode) { canvas.parentNode.removeChild(canvas); }
 		return dataurl;
 	}
-	toBlob(callback: (blob: Blob) => void, type: string, quality: number, option: any) {
+	toBlob(callback: (blob: Blob | null) => void, type: string, quality: number, option: any) {
 		const imageopt = parseImageOption(type, quality, option);
 		const canvas = getLocalCanvas(this, imageopt);
 		canvas.toBlob(function (blob) {
@@ -433,7 +433,7 @@ export class Puzzle<
 	setMode(newval: string | number) {
 		if (this.playeronly) { return; }
 		if (typeof newval === 'string') {
-			newval = { edit: 1, play: 3 }[newval.substring(0, 4)];
+			newval = { edit: 1, play: 3 }[newval.substring(0, 4)]!;
 			if (newval === void 0) { return; }
 		}
 		this.editmode = (newval === MODE_EDITOR);
@@ -543,7 +543,7 @@ function setCanvas_main(puzzle: Puzzle, type: string) {
 	});
 }
 function createSubCanvas(type: string) {
-	if (!Candle.enable[type]) { return null; }
+	if (!Candle.enable[type]) { throw new Error("type is invalid"); }
 	const el = document.createElement('div');
 	Candle.start(el, type);
 	return el;
@@ -571,7 +571,7 @@ export function postCanvasReady(puzzle: Puzzle) {
 				pc.resizeCanvasByCellSize(opt.cellsize);
 			}
 		}
-		puzzle.preInitCanvasInfo = undefined;
+		//puzzle.preInitCanvasInfo = undefined;
 	}
 
 	pc.initCanvas();
@@ -640,12 +640,12 @@ function getLocalCanvas(puzzle: Puzzle, imageopt: any) {
 //---------------------------------------------------------------------------
 //  generateLocalCanvas()  toDataURL, toBlobの入力オプション解析処理
 //---------------------------------------------------------------------------
-function parseImageOption(type: string, quality: number, option: any) { // (type,quality,option)のはず
+function parseImageOption(type: string, quality: number | null, option: any) { // (type,quality,option)のはず
 	const imageopt = {} as any;
 
 	let cellsize = null
 	let bgcolor = null
-	if (quality > 1.01) {
+	if (quality && quality > 1.01) {
 		cellsize = quality
 		quality = null;
 	}

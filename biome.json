@@ -30,7 +30,9 @@
       },
       "style": {
         "noParameterAssign": "off",
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "off",
+        "noUnusedTemplateLiteral": "off",
+        "noInferrableTypes": "off"
       },
       "correctness": {
         "noConstantCondition": "off"

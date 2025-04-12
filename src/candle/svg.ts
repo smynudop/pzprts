@@ -20,7 +20,7 @@ const needTextLengthWA = (function (UA) {
 	return (UA.match(/Trident\//) || (UA.match(/Safari\//) && UA.match(/Edge\//)));
 })((isBrowser && navigator.userAgent) || '');
 
-function newEL(tag: any) { return _doc.createElementNS(SVGNS, tag); }
+function newEL(tag: any): SVGSVGElement { return _doc.createElementNS(SVGNS, tag); }
 
 /* ------------------------------------------- */
 /*   VectorContext(SVG)クラス用const文字列集   */
@@ -157,7 +157,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 	}
 
 	/* layer functions */
-	setLayer(layerid: string = null, option: any = null) {
+	setLayer(layerid: string | null = null, option: any = null) {
 		option = option || {};
 		this.vid = '';
 		if (!!layerid) {
@@ -190,13 +190,13 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		const child = this.child;
 		// child.setAttribute('width', width.toString());
 		// child.setAttribute('height', height.toString());
-		const m = child.getAttribute('viewBox').split(/ /);
+		const m = child.getAttribute('viewBox')!.split(/ /);
 		child.setAttribute('viewBox', [m[0], m[1], width, height].join(' '));
 	}
 
 	/* Canvas API functions (for transform) */
 	translate(left: number, top: number) {
-		const m = this.child.getAttribute('viewBox').split(/ /);
+		const m = this.child.getAttribute('viewBox')!.split(/ /);
 		m[0] = (-left).toString(); m[1] = (-top).toString();
 		this.child.setAttribute('viewBox', m.join(' '));
 	}
@@ -306,7 +306,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		const stack = this.cpath;
 		this.cpath = [S_PATH_MOVE, x1, y1, S_PATH_LINE, x2, y2];
 		const obj = this.addVectorElement(false, true);
-		obj.setAttribute('stroke-dasharray', sizes.join(" "));
+		obj?.setAttribute('stroke-dasharray', sizes.join(" "));
 		this.cpath = stack;
 	}
 	strokeCross(cx: number, cy: number, l: number) {
@@ -365,8 +365,8 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		if (!imgel) {
 			imgel = newEL('image');
 			imgel.setAttribute('id', `${!!imgel.ownerDocument ? `${this.canvasid}_` : ''}img${imgs.length}`);
-			imgel.setAttribute("width", image.width);
-			imgel.setAttribute("height", image.height);
+			imgel.setAttribute("width", image.width.toString());
+			imgel.setAttribute("height", image.height.toString());
 			imgel.setAttributeNS(XLINKNS, "xlink:href", image.src);
 
 			defs.appendChild(imgel);
@@ -407,10 +407,10 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		else if (!!el) { this.hide(el); }
 		this.vid = '';
 	}
-	fillText_main(el: SVGSVGElement, text: string, x: number, y: number, maxLength: number) {
-		const newel = !el;
+	fillText_main(el: SVGSVGElement | null, text: string, x: number, y: number, maxLength: number) {
+		const newel = ((e): e is null => !e)(el);
 		const _cache = (!!this.vid ? this._textcache[this.vid] || {} : {});
-		if (newel) { el = newEL('text'); }
+		if (!el) { el = newEL('text'); }
 		else { this.show(el); }
 
 		if (el.getAttribute(S_ATT_FILL) !== this.fillStyle) { el.setAttribute(S_ATT_FILL, this.fillStyle); }
@@ -494,9 +494,9 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		else if (!!el) { this.hide(el); }
 		this.vid = '';
 	}
-	drawImage_main(el: SVGSVGElement, image: HTMLImageElement, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) {
+	drawImage_main(el: SVGSVGElement | null, image: HTMLImageElement, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) {
 		const newel = !el;
-		if (newel) { el = newEL('use'); }
+		if (!el) { el = newEL('use'); }
 		else { this.show(el); }
 		const refid = this.getImageSymbol(image, sx, sy, sw, sh).getAttribute("id");
 
@@ -527,9 +527,9 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		this.vid = '';
 		return el2;
 	}
-	addVectorElement_main(el: SVGSVGElement, isfill: boolean, isstroke: boolean) {
+	addVectorElement_main(el: SVGSVGElement | null, isfill: boolean, isstroke: boolean) {
 		const newel = !el;
-		if (newel) {
+		if (!el) {
 			el = newEL('path');
 			el.setAttribute(S_ATT_FILL, S_NONE);
 			el.setAttribute(S_ATT_STROKE, S_NONE);
@@ -540,7 +540,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 			const path = this.cpath.join(' ');
 			const linewidth = (isstroke ? this.lineWidth : null);
 			if (el.getAttribute(S_ATT_PATH) !== path) { el.setAttribute(S_ATT_PATH, path); }
-			if (el.getAttribute(S_ATT_STROKEWIDTH) !== linewidth?.toString()) { el.setAttribute(S_ATT_STROKEWIDTH, linewidth?.toString()); }
+			if (el.getAttribute(S_ATT_STROKEWIDTH) !== linewidth?.toString()) { el.setAttribute(S_ATT_STROKEWIDTH, linewidth?.toString()!); }
 		}
 
 		const fillcolor = (isfill ? this.fillStyle : S_NONE);

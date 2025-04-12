@@ -9,19 +9,21 @@ import { pzpr } from "../pzpr/core";
 //---------------------------------------------------------------------------
 export class Config {
 	puzzle: Puzzle
+	list: Record<string, any> 		/* 設定値 */
 	constructor(puzzle: Puzzle) {
 		this.puzzle = puzzle;
+		this.list = {};
+
 		this.init();
 	};
 
-	list: Record<string, any> = null		/* 設定値 */
+
 
 	//---------------------------------------------------------------------------
 	// config.init()        各設定値を初期化する
 	// config.add()         初期化時に設定を追加する
 	//---------------------------------------------------------------------------
 	init() {
-		this.list = {};
 
 		/* 盤面表示設定 */
 		this.add('font', 1, { option: [1, 2] });					/* 文字の描画 1:ゴシック 2:明朝 */
@@ -91,7 +93,7 @@ export class Config {
 	}
 	//getCurrnetName(name) { return this.getgetCurrentName(name); }
 	getNormalizedName(argname: string) {
-		const info = { name: argname, pid: null as string };
+		const info = { name: argname, pid: "" as string };
 		if (argname.match(/\@/)) {
 			const splitted = argname.split(/\@/);
 			info.name = splitted[0];

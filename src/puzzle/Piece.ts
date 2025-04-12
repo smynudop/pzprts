@@ -11,7 +11,7 @@ import { CellList } from "./PieceList";
 export type IDir = 1 | 2 | 3 | 4
 export class BoardPiece extends Position {
 	group: IGroup2 = 'none'
-	id: number = null
+	id: number = null!
 	isnull = true
 
 	// デフォルト値
@@ -55,6 +55,14 @@ export class BoardPiece extends Position {
 	propinfo: (keyof BoardPiece)[] = ['error', 'qinfo']
 	propnorec: Record<string, number> = { color: 1, error: 1, qinfo: 1 }
 
+	adjborder: {
+		top: Border,
+		bottom: Border,
+		left: Border,
+		right: Border
+	} = null!
+
+
 	//clist: CellList | null = null
 
 	// 入力できる最大・最小の数字
@@ -64,34 +72,7 @@ export class BoardPiece extends Position {
 	minnum() {
 		return 1
 	}
-	adjacent: {
-		top: BoardPiece,
-		bottom: BoardPiece,
-		left: BoardPiece,
-		right: BoardPiece
-	}	// 隣接するセルの情報を保持する
-	adjborder: {
-		top: Border,
-		bottom: Border,
-		left: Border,
-		right: Border
-	}
 
-	room: any
-	pureObject: BoardPiece = null
-
-	//---------------------------------------------------------------------------
-	// initAdjacent()   隣接セルの情報を設定する
-	// initAdjBorder()  隣接境界線の情報を設定する
-	//---------------------------------------------------------------------------
-	initAdjacent() {
-		this.adjacent = {
-			top: this.relobj(0, -2),
-			bottom: this.relobj(0, 2),
-			left: this.relobj(-2, 0),
-			right: this.relobj(2, 0)
-		};
-	}
 	initAdjBorder() {
 		this.adjborder = {
 			top: this.relbd(0, -1),
@@ -100,6 +81,12 @@ export class BoardPiece extends Position {
 			right: this.relbd(1, 0)
 		};
 	}
+
+
+	room: any
+	pureObject: BoardPiece | null = null
+
+
 
 	//---------------------------------------------------------------------------
 	// オブジェクト設定値のgetter/setter
@@ -271,7 +258,7 @@ export class Cell extends BoardPiece {
 	group: IGroup = 'cell'
 
 	lcnt = 0		// セルに存在する線の本数
-	base: Cell = null	// 丸数字やアルファベットが移動してきた場合の移動元のセルを示す (移動なし時は自分自身を指す)
+	base: Cell | null = null	// 丸数字やアルファベットが移動してきた場合の移動元のセルを示す (移動なし時は自分自身を指す)
 
 	disInputHatena = false	// qnum==-2を入力できないようにする
 
@@ -286,6 +273,13 @@ export class Cell extends BoardPiece {
 	path: any
 	sblk: any = null
 
+	adjacent: {
+		top: Cell,
+		bottom: Cell,
+		left: Cell,
+		right: Cell
+	} = null!	// 隣接するセルの情報を保持する
+
 
 	constructor(puzzle: Puzzle) {
 		super(puzzle)
@@ -294,6 +288,24 @@ export class Cell extends BoardPiece {
 			const anum0 = Cell.anumDefault;
 			this.snum = [anum0, anum0, anum0, anum0];
 		}
+	}
+
+	//---------------------------------------------------------------------------
+	// initAdjacent()   隣接セルの情報を設定する
+	// initAdjBorder()  隣接境界線の情報を設定する
+	//---------------------------------------------------------------------------
+	initAdjacent() {
+		this.adjacent = {
+			top: this.relobj(0, -2),
+			bottom: this.relobj(0, 2),
+			left: this.relobj(-2, 0),
+			right: this.relobj(2, 0)
+		};
+	}
+
+
+	relobj(bx: number, by: number) {
+		return super.relobj(bx, by) as Cell
 	}
 
 	isCmp() {
@@ -390,7 +402,7 @@ export class Cell extends BoardPiece {
 	// cell.setSnum() Cellの補助数字を設定する
 	// cell.clrSnum() Cellの補助数字を消去する
 	//---------------------------------------------------------------------------
-	setSnum(pos: number, num: number = null) {
+	setSnum(pos: number, num: number = null!) { // todo
 		if (this.isNum() && num !== -1) { return; }
 		if (!this.enableSubNumberArray) {
 			this.setdata('snum', num);	// 1つ目の数字のみ
@@ -418,13 +430,13 @@ export class Cell extends BoardPiece {
 	//---------------------------------------------------------------------------
 	// ※とりあえずカックロ用
 	is51cell() { return (this.ques === 51); }
-	set51cell(val: number = null) {
+	set51cell(val?: number) {
 		this.setQues(51);
 		this.setQnum(0);
 		this.setQnum2(0);
 		this.setAnum(-1);
 	}
-	remove51cell(val: number = null) {
+	remove51cell(val?: number) {
 		this.setQues(0);
 		this.setQnum(0);
 		this.setQnum2(0);
@@ -589,8 +601,8 @@ export class Border extends BoardPiece {
 	sideobj: any[]	// LineManager用
 	constructor(puzzle: Puzzle) {
 		super(puzzle)
-		this.sidecell = [null, null];	// 隣接セルのオブジェクト
-		this.sidecross = [null, null];	// 隣接交点のオブジェクト
+		this.sidecell = [null!, null!];	// 隣接セルのオブジェクト
+		this.sidecross = [null!, null!];	// 隣接交点のオブジェクト
 		this.sideobj = [];			// LineManager用
 	}
 	group: IGroup = 'border'
@@ -650,9 +662,9 @@ export class Border extends BoardPiece {
 	// border.removeLine()  該当するBorderから線を消す
 	//-----------------------------------------------------------------------
 	isLine() { return this.line > 0; }
-	setLine(id: string = null) { this.setLineVal(1); this.setQsub(0); }
-	setPeke(id: string = null) { this.setLineVal(0); this.setQsub(2); }
-	removeLine(id: string = null) { this.setLineVal(0); this.setQsub(0); }
+	setLine(id?: string) { this.setLineVal(1); this.setQsub(0); }
+	setPeke(id?: string) { this.setLineVal(0); this.setQsub(2); }
+	removeLine(id?: string) { this.setLineVal(0); this.setQsub(0); }
 
 	//---------------------------------------------------------------------------
 	// border.isBorder()     該当するBorderに境界線が引かれているか判定する
@@ -712,7 +724,35 @@ export class Border extends BoardPiece {
 // EXCellクラスの定義
 export class EXCell extends BoardPiece {
 	group: IGroup = 'excell'
+	adjacent: {
+		top: Cell,
+		bottom: Cell,
+		left: Cell,
+		right: Cell
+	} = null!	// 隣接するセルの情報を保持する
+	adjborder: {
+		top: Border,
+		bottom: Border,
+		left: Border,
+		right: Border
+	} = null!
 
+	//---------------------------------------------------------------------------
+	// initAdjacent()   隣接セルの情報を設定する
+	// initAdjBorder()  隣接境界線の情報を設定する
+	//---------------------------------------------------------------------------
+	initAdjacent() {
+		this.adjacent = {
+			top: this.relobj(0, -2),
+			bottom: this.relobj(0, 2),
+			left: this.relobj(-2, 0),
+			right: this.relobj(2, 0)
+		};
+	}
+
+	relobj(dx: number, dy: number): Cell {
+		return super.relobj(dx, dy) as Cell
+	}
 
 	//-----------------------------------------------------------------------
 	// excell.getNum()     該当するCellの数字を返す

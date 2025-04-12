@@ -20,7 +20,22 @@ export class KeyEvent {
 
 		this.enableKey = true;		// キー入力は有効か
 
-		this.keyreset();
+		this.isCTRL = false;
+		this.isMETA = false;	// MacのCommandキーなど
+		this.isALT = false;	// ALTはメニュー用なので基本的に使わない
+		this.isSHIFT = false;
+		this.isZ = false;
+		this.isX = false;
+		this.isY = false;
+
+		this.keydown = false;
+		this.keyup = false;
+
+		this.ca = '';
+
+		this.prev = null;
+
+		//this.keyreset();
 	}
 	puzzle: Puzzle
 	enablemake = true
@@ -37,8 +52,8 @@ export class KeyEvent {
 	keyup: boolean
 	ca: string
 	prev: any
-	cancelDefault: boolean
-	cancelEvent: boolean
+	cancelDefault: boolean = false
+	cancelEvent: boolean = false
 	pid: string
 
 
@@ -326,7 +341,7 @@ export class KeyEvent {
 			cell0 = cell = cell.room.top;
 		}
 		else if (puzzle.execConfig('dispmove')) {
-			if (cell.isDestination()) { cell = cell.base; }
+			if (cell.isDestination()) { cell = cell.base!; }
 			else if (cell.lcnt > 0) { return; }
 		}
 
@@ -472,9 +487,9 @@ export class TargetCursor extends Address {
 	modesnum: boolean
 	pid: string
 
-	constructor(puzzle: Puzzle, bx: number, by: number) {
+	constructor(puzzle: Puzzle, bx?: number, by?: number) {
 		super(puzzle, bx, by);
-
+		this.pid = puzzle.pid
 		this.bx = 1;
 		this.by = 1;
 		this.mode51 = (EXCell.prototype.ques === 51);
@@ -489,10 +504,10 @@ export class TargetCursor extends Address {
 	}
 
 	// 有効な範囲(minx,miny)-(maxx,maxy)
-	minx: number = null
-	miny: number = null
-	maxx: number = null
-	maxy: number = null
+	minx: number = null!
+	miny: number = null!
+	maxx: number = null!
+	maxy: number = null!
 
 	crosstype = false
 
@@ -618,21 +633,22 @@ export class TargetCursor extends Address {
 		}
 		this.draw();
 	}
-	detectTarget(piece: BoardPiece = null) {
+	detectTarget(piece?: BoardPiece) {
 		piece = piece || this.getobj();
 		const bd = this.board;
-		const adc = piece.adjacent;
 		if (piece.isnull) { return 0; }
 		if (piece.group === 'cell') {
+			const adc = (piece as Cell).adjacent;
 			if (piece.ques !== 51 || piece.id === bd.cell.length - 1) { return 0; }
-			
-				const invalidRight = (adc.right.isnull || adc.right.ques === 51);
-				const invalidBottom = (adc.bottom.isnull || adc.bottom.ques === 51);
-				if (invalidRight && invalidBottom) { return 0; }
-				if (invalidBottom) { return piece.RT; }
-				if (invalidRight) { return piece.DN; }
+
+			const invalidRight = (adc.right.isnull || adc.right.ques === 51);
+			const invalidBottom = (adc.bottom.isnull || adc.bottom.ques === 51);
+			if (invalidRight && invalidBottom) { return 0; }
+			if (invalidBottom) { return piece.RT; }
+			if (invalidRight) { return piece.DN; }
 		}
 		else if (piece.group === 'excell') {
+			const adc = (piece as EXCell).adjacent;
 			if (piece.id === bd.cols + bd.rows) { return 0; }
 			if ((piece.by === -1 && adc.bottom.ques === 51) ||
 				(piece.bx === -1 && adc.right.ques === 51)) { return 0; }
@@ -651,7 +667,7 @@ export class TargetCursor extends Address {
 				num = 4 - (this.pid === 'factors' ? 1 : 0);
 			}
 			else if (piece.ques === 51) {
-				const adc = piece.adjacent;
+				const adc = (piece as Cell).adjacent;
 				num = ((!adc.right.isnull && adc.right.ques !== 51) ? 1 : 0) +
 					((!adc.bottom.isnull && adc.bottom.ques !== 51) ? 1 : 0);
 			}

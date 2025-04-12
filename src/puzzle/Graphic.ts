@@ -51,8 +51,8 @@ export class Graphic {
 		this.initFont();
 	}
 
-	context: WrapperBase<any> = null
-	subcontext: WrapperBase<any> = null
+	context: WrapperBase<any> = null!
+	subcontext: WrapperBase<any> = null!
 
 	fgcellcolor_func = "ques"		// getQuesCellColor()の種類
 	bgcellcolor_func = "error1"	// getBGCellColor()の種類
@@ -143,8 +143,8 @@ export class Graphic {
 	margin = 0.15
 
 	// canvasの大きさを保持する
-	canvasWidth: number | null = null
-	canvasHeight: number | null = null
+	canvasWidth: number = null!
+	canvasHeight: number = null!
 
 	// canvas内での盤面の左上座標
 	x0 = 0
@@ -177,7 +177,7 @@ export class Graphic {
 		crosses: CrossList,
 		borders: BorderList,
 		excells: EXCellList
-	} = null				// 描画領域を保持するオブジェクト
+	} = null!				// 描画領域を保持するオブジェクト
 
 	useBuffer = false			// Buffer描画を行うか
 	outputImage = false			// 画像保存中
@@ -270,7 +270,7 @@ export class Graphic {
 		this.pendingResize = true;
 		if (!insuspend) { this.unsuspend(); }
 	}
-	resizeCanvasByCellSize(cellsize: number) {
+	resizeCanvasByCellSize(cellsize: number | null) {
 		const insuspend = this.suspended;
 		this.suspendAll();
 
@@ -977,7 +977,7 @@ export class Graphic {
 		}
 	}
 	getQuesNumberText(cell: Cell | EXCell) {
-		return this.getNumberText(cell, (this.puzzle.execConfig('dispmove') ? (cell as Cell).base : cell).qnum);
+		return this.getNumberText(cell, (this.puzzle.execConfig('dispmove') ? (cell as Cell).base! : cell).qnum);
 	}
 	getAnsNumberText(cell: Cell) {
 		return this.getNumberText(cell, cell.anum);
@@ -1638,7 +1638,7 @@ export class Graphic {
 		const puzzle = this.puzzle;
 		const error = cell.error || cell.qinfo;
 		const isdrawmove = puzzle.execConfig('dispmove');
-		const num = (!isdrawmove ? cell : cell.base).qnum;
+		const num = (!isdrawmove ? cell : cell.base!).qnum;
 		if (num !== -1) {
 			if (isdrawmove && puzzle.mouse.mouseCell === cell) { return this.movecolor; }
 			if (error === 1 || error === 4) { return this.errcolor1; }
@@ -1677,7 +1677,7 @@ export class Graphic {
 		const puzzle = this.puzzle;
 		const error = cell.error || cell.qinfo;
 		const isdrawmove = puzzle.execConfig('dispmove');
-		const num = (!isdrawmove ? cell : cell.base).qnum;
+		const num = (!isdrawmove ? cell : cell.base!).qnum;
 		if (num !== -1) {
 			if (error === 1 || error === 4) { return this.errbcolor1; }
 			if (cell.isCmp()) { return this.qcmpcolor; }
@@ -2071,7 +2071,7 @@ export class Graphic {
 			else { g.vhide(); }
 		}
 	}
-	drawDashedGrid(haschassis: boolean) {
+	drawDashedGrid(haschassis?: boolean) {
 		const g = this.vinc('grid', 'crispEdges', true);
 		const bd = this.puzzle.board;
 

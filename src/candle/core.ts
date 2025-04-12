@@ -49,7 +49,7 @@ const Candle = {
 	parse: function (rgbstr: string) {
 		if (!_color[rgbstr]) {
 			if (rgbstr.substr(0, 4) === 'rgb(') {
-				const m = rgbstr.match(/\d+/g);
+				const m = rgbstr.match(/\d+/g)!;
 				_color[rgbstr] = ["#", _hex[m[0]], _hex[m[1]], _hex[m[2]]].join('');
 			}
 			else { _color[rgbstr] = rgbstr; }

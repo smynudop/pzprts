@@ -8,18 +8,15 @@ import { pzpr } from "./core";
 export class FileData {
     constructor(fstr: string, variety: string) {
         this.pid = (!!variety ? variety : '');
-        this.fstr = fstr;
         this.metadata = MetaData.createEmtpyMetaData();
     }
 
     pid = ''
     type = Constants.FILE_AUTO	/* == 0 */
     filever = 0
-    fstr = ""
-    qdata = ""
     cols = 0
     rows = 0
-    body: any = ""
+    body = ""
     history: any = {}
     metadata: MetaData.IMetaData
     xmldoc: any = null
@@ -27,8 +24,13 @@ export class FileData {
     isurl = false
     isfile = true
 
-    parse() {
-        const result = (this.parseFileType() && this.parseFileData());
+    parse(fstr: string) {
+        const qdata = this.parseFileType(fstr)
+        if (!qdata) {
+            return null // エラーのほうがいい？
+        }
+        const result = this.parseFileData(qdata);
+
         if (result) { this.changeProperPid(); }
         return (result ? this : null);
     }
@@ -40,38 +42,37 @@ export class FileData {
     // ★ parseFileType() 入力されたファイルのデータからどのパズルか、およびパズルの種類を抽出する
     //                   出力={pid:パズル種類, type:ファイル種類, fstr:ファイルの内容}
     //---------------------------------------------------------------------------
-    parseFileType() {
-        const lines = this.fstr.split("\n");
-        const firstline = lines.shift();
-        this.fstr = undefined;
-
+    parseFileType(fstr: string) {
+        const lines = fstr.split("\n");
+        const firstline = lines.shift()!;
+        let qdata = ""
         /* ヘッダからパズルの種類・ファイルの種類を判定する */
         if (firstline.match(/^pzprv3/)) {
             this.type = Constants.FILE_PZPR;
             if (firstline.match(/pzprv3\.(\d+)/)) { this.filever = +RegExp.$1; }
-            this.pid = lines.shift();
-            this.qdata = lines.join("\n");
+            this.pid = lines.shift()!;
+            qdata = lines.join("\n");
         }
         else if (firstline.match(/^\<\?xml/)) {
-            this.type = Constants.FILE_PBOX_XML;
-            lines.unshift(firstline);
-            this.qdata = lines.join("\n");
-            if (!!DOMParser) {
-                this.body = (new DOMParser()).parseFromString(this.qdata, 'text/xml');
-                this.pid = this.body.querySelector('puzzle').getAttribute('type');
-            }
-            else { this.pid = ''; }
+            // this.type = Constants.FILE_PBOX_XML;
+            // lines.unshift(firstline);
+            // this.qdata = lines.join("\n");
+            // if (!!DOMParser) {
+            //     this.body = (new DOMParser()).parseFromString(this.qdata, 'text/xml');
+            //     this.pid = this.body.querySelector('puzzle').getAttribute('type');
+            // }
+            // else { this.pid = ''; }
         }
         else if (firstline.match(/^\d+$/)) {
-            this.type = Constants.FILE_PBOX;
-            lines.unshift(firstline);
-            this.qdata = lines.join("\n");
+            // this.type = Constants.FILE_PBOX;
+            // lines.unshift(firstline);
+            // this.qdata = lines.join("\n");
         }
         else {
             this.pid = '';
         }
 
-        return (!!this.pid);
+        return qdata;
     }
 
     //---------------------------------------------------------------------------
@@ -91,17 +92,16 @@ export class FileData {
     //---------------------------------------------------------------------------
     // ★ parseFileData() ファイルの内容からサイズなどを求める
     //---------------------------------------------------------------------------
-    parseFileData() {
-        const lines = this.qdata.split("\n");
+    parseFileData(qdata: string) {
+        const lines = qdata.split("\n");
         let col = 0;
         let row = 0;
-        this.qdata = undefined;
 
         /* サイズを表す文字列 */
         if (this.type === Constants.FILE_PBOX_XML) {
-            row = +this.body?.querySelector('size')?.getAttribute('row')!;
-            col = +this.body?.querySelector('size')?.getAttribute('col')!;
-            if (this.pid === "slither" || this.pid === 'kakuro') { row--; col--; }
+            // row = +this.body?.querySelector('size')?.getAttribute('row')!;
+            // col = +this.body?.querySelector('size')?.getAttribute('col')!;
+            // if (this.pid === "slither" || this.pid === 'kakuro') { row--; col--; }
         }
         else if (this.type === Constants.FILE_PBOX && this.pid === "kakuro") {
             row = +lines.shift()! - 1;
@@ -165,18 +165,18 @@ export class FileData {
             }
         }
         else if (this.type === Constants.FILE_PBOX) {
-            this.body = lines.join("\n");
+            // this.body = lines.join("\n");
         }
         else if (this.type === Constants.FILE_PBOX_XML) {
-            if (!!this.body) {
-                const metanode = this.body.querySelector('property');
-                const meta = this.metadata;
-                meta.author = metanode.querySelector('author').getAttribute('value');
-                meta.source = metanode.querySelector('source').getAttribute('value');
-                meta.hard = metanode.querySelector('difficulty').getAttribute('value');
-                const commentnode = metanode.querySelector('comment');
-                meta.comment = (!!commentnode ? commentnode.childNodes[0].data : '');
-            }
+            // if (!!this.body) {
+            //     const metanode = this.body.querySelector('property');
+            //     const meta = this.metadata;
+            //     meta.author = metanode.querySelector('author').getAttribute('value');
+            //     meta.source = metanode.querySelector('source').getAttribute('value');
+            //     meta.hard = metanode.querySelector('difficulty').getAttribute('value');
+            //     const commentnode = metanode.querySelector('comment');
+            //     meta.comment = (!!commentnode ? commentnode.childNodes[0].data : '');
+            // }
         }
 
         return true;
@@ -186,17 +186,17 @@ export class FileData {
     // ★ outputFileData() パズル種類, URL種類, fstrからファイルのデータを生成する
     //---------------------------------------------------------------------------
     outputFileData() {
-        let col = this.cols;
-        let row = this.rows;
+        const col = this.cols;
+        const row = this.rows;
         const out = [] as any[];
-        const puzzlenode = (this.type === Constants.FILE_PBOX_XML ? this.body.querySelector('puzzle') : null);
+        //const puzzlenode = (this.type === Constants.FILE_PBOX_XML ? this.body.querySelector('puzzle') : null);
 
         /* サイズを表す文字列 */
         if (this.type === Constants.FILE_PBOX_XML) {
-            const sizenode = puzzlenode.querySelector('size');
-            if (sizenode) { puzzlenode.removeChild(sizenode); }
-            if (this.pid === "slither" || this.pid === 'kakuro') { row++; col++; }
-            puzzlenode.appendChild(this.createXMLNode('size', { row: row, col: col }));
+            // const sizenode = puzzlenode.querySelector('size');
+            // if (sizenode) { puzzlenode.removeChild(sizenode); }
+            // if (this.pid === "slither" || this.pid === 'kakuro') { row++; col++; }
+            // puzzlenode.appendChild(this.createXMLNode('size', { row: row, col: col }));
         }
         else if (this.type === Constants.FILE_PBOX && this.pid === "kakuro") {
             out.push(row + 1);
@@ -226,23 +226,23 @@ export class FileData {
             }
         }
         else if (this.type === Constants.FILE_PBOX_XML) {
-            let propnode = puzzlenode?.querySelector('property')!;
-            if (propnode) { puzzlenode?.removeChild(propnode); }
-            propnode = this.createXMLNode('property');
-            const meta = this.metadata;
-            propnode.appendChild(this.createXMLNode('author', { value: meta.author }));
-            propnode.appendChild(this.createXMLNode('source', { value: meta.source }));
-            propnode.appendChild(this.createXMLNode('difficulty', { value: meta.hard }));
-            if (!!meta.comment) {
-                const commentnode = this.createXMLNode('comment');
-                commentnode.appendChild(this.body.createTextNode(meta.comment));
-                propnode.appendChild(commentnode);
-            }
-            puzzlenode?.appendChild(propnode);
+            // let propnode = puzzlenode?.querySelector('property')!;
+            // if (propnode) { puzzlenode?.removeChild(propnode); }
+            // propnode = this.createXMLNode('property');
+            // const meta = this.metadata;
+            // propnode.appendChild(this.createXMLNode('author', { value: meta.author }));
+            // propnode.appendChild(this.createXMLNode('source', { value: meta.source }));
+            // propnode.appendChild(this.createXMLNode('difficulty', { value: meta.hard }));
+            // if (!!meta.comment) {
+            //     const commentnode = this.createXMLNode('comment');
+            //     commentnode.appendChild(this.body.createTextNode(meta.comment));
+            //     propnode.appendChild(commentnode);
+            // }
+            // puzzlenode?.appendChild(propnode);
 
-            // 順番を入れ替え
-            puzzlenode?.appendChild(puzzlenode?.querySelector('board')!);
-            puzzlenode?.appendChild(puzzlenode?.querySelector('answer')!);
+            // // 順番を入れ替え
+            // puzzlenode?.appendChild(puzzlenode?.querySelector('board')!);
+            // puzzlenode?.appendChild(puzzlenode?.querySelector('answer')!);
         }
 
         let outputdata: string;
@@ -250,19 +250,16 @@ export class FileData {
             outputdata = out.join("\n");
         }
         else {
-            outputdata = new XMLSerializer().serializeToString(this.body);
-            if (!outputdata.match(/^\<\?xml/)) {
-                outputdata = `<?xml version="1.0" encoding="UTF-8"?>\n${outputdata}`;
-            }
+            // outputdata = new XMLSerializer().serializeToString(this.body);
+            // if (!outputdata.match(/^\<\?xml/)) {
+            //     outputdata = `<?xml version="1.0" encoding="UTF-8"?>\n${outputdata}`;
+            // }
+            outputdata = ""
         }
         return outputdata;
     }
 
-    createXMLNode(name: string, attrs: Record<string, string | number> = null) {
-        const node = this.body.createElement(name);
-        if (!!attrs) { for (const i in attrs) { node.setAttribute(i, attrs[i]); } }
-        return node;
-    }
+
 
     //---------------------------------------------------------------------------
     // ★ changeProperPid() parse後パズル種類が実際には別だった場合にpidを変更する

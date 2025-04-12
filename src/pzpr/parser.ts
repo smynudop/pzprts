@@ -15,7 +15,7 @@ export const parseURL = (url: URLData | string) => {
 	if (url instanceof URLData) { return url; }
 
 	url = url.replace(/(\r|\n)/g, ""); // textarea上の改行が実際の改行扱いになるUAに対応(Operaとか)
-	return (new URLData(url)).parse();
+	return (new URLData()).parse(url);
 }
 export const parseFile = (fstr: FileData | string, variety: string) => {
 	if (fstr instanceof FileData) { return fstr; }
@@ -23,7 +23,7 @@ export const parseFile = (fstr: FileData | string, variety: string) => {
 	if (!fstr.match(/^\<\?xml/)) {
 		fstr = fstr.replace(/[\t\r]*\n/g, "\n").replace(/\//g, "\n");
 	}
-	return (new FileData(fstr, variety)).parse();
+	return (new FileData(fstr, variety)).parse(fstr);
 }
 
 

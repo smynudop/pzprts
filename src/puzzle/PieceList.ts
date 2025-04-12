@@ -10,7 +10,7 @@ import type { Cell, Cross, Border, EXCell, BoardPiece } from "./Piece";
 export class PieceList<T extends BoardPiece> extends Array<T> {
 
 	puzzle: Puzzle
-	constructor(puzzle: Puzzle, list: T[] = null) {
+	constructor(puzzle: Puzzle, list?: T[]) {
 		super()
 		this.puzzle = puzzle;
 		if (!!list) { this.extend(list); }
