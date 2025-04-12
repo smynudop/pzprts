@@ -20,7 +20,7 @@ export abstract class GraphBase {
 
 	coloring = false
 	components: GraphComponent[] = null!
-	modifyNodes: any[] = null!
+	modifyNodes: GraphNode[] = null!
 	puzzle: Puzzle
 	constructor(puzzle: Puzzle) {
 		this.puzzle = puzzle
@@ -42,7 +42,7 @@ export abstract class GraphBase {
 	//--------------------------------------------------------------------------------
 	setComponentRefs(obj: any, component: GraphComponent | null) { }
 
-	getObjNodeList(nodeobj: BoardPiece) { return [] as any[]; }
+	getObjNodeList(nodeobj: BoardPiece) { return [] as GraphNode[]; }
 	resetObjNodeList(nodeobj: any) { }
 
 	//--------------------------------------------------------------------------------
@@ -179,7 +179,7 @@ export abstract class GraphBase {
 	// graph.addEdge()    Node間にEdgeを追加する
 	// graph.removeEdge() Node間からEdgeを除外する
 	//---------------------------------------------------------------------------
-	addEdge(node1: GraphComponent, node2: GraphComponent) {
+	addEdge(node1: GraphNode, node2: GraphNode) {
 		if (node1.nodes.indexOf(node2) >= 0) { return; } // 多重辺にしないため
 		node1.nodes.push(node2);
 		node2.nodes.push(node1);
@@ -189,7 +189,7 @@ export abstract class GraphBase {
 			if (this.modifyNodes.indexOf(node2) < 0) { this.modifyNodes.push(node2); }
 		}
 	}
-	removeEdge(node1: GraphComponent, node2: GraphComponent) {
+	removeEdge(node1: GraphNode, node2: GraphNode) {
 		if (node1.nodes.indexOf(node2) < 0) { return; } // 存在しない辺を削除しない
 		this.removeFromArray(node1.nodes, node2);
 		this.removeFromArray(node2.nodes, node1);
@@ -247,7 +247,7 @@ export abstract class GraphBase {
 	//---------------------------------------------------------------------------
 	// graph.modifyInfo() 黒マスや線が引かれたり消された時に、lcnt変数や線の情報を生成しなおす
 	//---------------------------------------------------------------------------
-	modifyInfo(obj: any, type: string) {
+	modifyInfo(obj: BoardPiece, type: string) {
 		if (!this.enabled) { return; }
 		const relation = this.relation[type] as string;
 		if (!relation) { return; }
@@ -257,7 +257,7 @@ export abstract class GraphBase {
 		switch (relation) {
 			case 'node': this.setEdgeByNodeObj(obj); break;
 			case 'link': this.setEdgeByLinkObj(obj); break;
-			case 'separator': this.setEdgeBySeparator(obj); break;
+			case 'separator': this.setEdgeBySeparator(obj as Border); break;
 			default: this.modifyOtherInfo(obj, relation); break;
 		}
 
@@ -432,7 +432,7 @@ export abstract class GraphBase {
 	// graph.resetExtraData() 指定されたオブジェクトの拡張データをリセットする
 	// graph.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
-	resetExtraData(nodeobj: GraphNode) { }
+	resetExtraData(nodeobj: BoardPiece) { }
 	setExtraData(component: GraphComponent) { }
 
 	//--------------------------------------------------------------------------------
@@ -484,7 +484,7 @@ export abstract class GraphBase {
 	}
 }
 export class GraphComponent {
-	nodes: any[]
+	nodes: GraphNode[]
 	color: string | null
 	circuits: number
 	puzzle: Puzzle
@@ -526,11 +526,11 @@ export class GraphComponent {
 		return objs as CellList;
 	}
 	getedgeobjs() {
-		const objs = [];
+		const objs: Border[] = [];
 		for (let i = 0; i < this.nodes.length; i++) {
 			const node = this.nodes[i];
 			for (let n = 0; n < node.nodes.length; n++) {
-				const obj = this.getLinkObjByNodes(node, node.nodes[n]);
+				const obj = this.getLinkObjByNodes(node, node.nodes[n]) as Border;
 				if (!!obj) { objs.push(obj); }
 			}
 		}
@@ -565,8 +565,8 @@ export class GraphComponent {
 }
 export class GraphNode {
 	obj: any
-	nodes: any[]
-	component: any
+	nodes: GraphNode[]
+	component: GraphComponent | null
 	constructor(obj: any) {
 		this.obj = obj;
 		this.nodes = [];	// Array of Linked GraphNode

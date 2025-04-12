@@ -100,7 +100,7 @@ export class LineGraph extends GraphBase {
 	//---------------------------------------------------------------------------
 	// linegraph.setEdgeByLinkObj() 線が引かれたり消された時に、lcnt変数や線の情報を生成しなおす
 	//---------------------------------------------------------------------------
-	override setEdgeByLinkObj(linkobj: any) {
+	override setEdgeByLinkObj(linkobj: Border) {
 		const isset = this.isedgevalidbylinkobj(linkobj);
 		if (isset === this.isedgeexistsbylinkobj(linkobj)) { return; }
 
@@ -140,7 +140,7 @@ export class LineGraph extends GraphBase {
 		if (lcnt1 === 1 && (lcnt2 === 2 || (!this.isLineCross && lcnt2 > 2)) && node1.component === null && node2.component !== null) { attachnodes = [sidenodes[0], sidenodes[1]]; }
 		else if (lcnt2 === 1 && (lcnt1 === 2 || (!this.isLineCross && lcnt1 > 2)) && node2.component === null && node1.component !== null) { attachnodes = [sidenodes[1], sidenodes[0]]; }
 		if (!!attachnodes) {
-			this.attachNode(attachnodes[0], attachnodes[1].component);
+			this.attachNode(attachnodes[0], attachnodes[1].component!);
 			this.modifyNodes = [];
 		}
 	}
@@ -168,7 +168,7 @@ export class LineGraph extends GraphBase {
 		if (lcnt1 === 0 && ((lcnt2 === 1 || (!this.isLineCross && lcnt2 > 1)) && node2.component !== null)) { detachnodes = [sidenodes[0], sidenodes[1]]; }
 		else if (lcnt2 === 0 && ((lcnt1 === 1 || (!this.isLineCross && lcnt1 > 1)) && node1.component !== null)) { detachnodes = [sidenodes[1], sidenodes[0]]; }
 		if (!!detachnodes) {
-			this.setComponentInfo(detachnodes[1].component);
+			this.setComponentInfo(detachnodes[1].component!);
 			this.modifyNodes = [];
 		}
 	}
@@ -272,7 +272,7 @@ export class LineGraph extends GraphBase {
 	override repaintNodes(components: GraphComponent[]) {
 		const blist_all = new BorderList(this.puzzle);
 		for (let i = 0; i < components.length; i++) {
-			//@ts-ignore todo
+
 			blist_all.extend(components[i].getedgeobjs());
 		}
 		this.puzzle.painter.repaintLines(blist_all);

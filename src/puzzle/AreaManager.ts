@@ -60,7 +60,7 @@ export class AreaGraphBase extends GraphBase {
 
 		// 周囲のComponent末端から切り離されただけの場合は情報を更新して終了
 		if (!this.rebuildmode && preedges === 1 && endetach) {
-			this.setComponentInfo(component);
+			this.setComponentInfo(component!);
 			this.modifyNodes = [];
 		}
 	}
@@ -86,7 +86,7 @@ export class AreaGraphBase extends GraphBase {
 
 		// 周囲のComponentに1か所くっついただけの場合は情報を更新して終了
 		if (!this.rebuildmode && node1.nodes.length === 1 && enattach) {
-			this.attachNode(node1, node1.nodes[0].component);
+			this.attachNode(node1, node1.nodes[0].component!);
 			this.modifyNodes = [];
 		}
 	}
