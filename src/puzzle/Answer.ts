@@ -286,7 +286,7 @@ export abstract class AnsCheck<
 	checkConnectUnshadeRB() {
 		if (this.puzzle.board.ublkmgr.components.length > 1) {
 			this.failcode.add("cuDivideRB");
-			const errclist = new CellList(this.puzzle);
+			const errclist = new CellList();
 			const clist = this.puzzle.board.cell.filter(function (cell) { return cell.isShade(); });
 			for (let i = 0; i < clist.length; i++) {
 				const cell = clist[i];
@@ -793,7 +793,7 @@ export abstract class AnsCheck<
 	}
 	serachLineShapeInfo(cell1: Cell, dir: number, passed: boolean[]): IPathSeg | null {
 		const pathseg = {
-			objs: (new BorderList(this.puzzle)),
+			objs: (new BorderList()),
 			cells: [cell1, null!] as [Cell, Cell],	// 出発したセル、到達したセル
 			ccnt: 0,				// 曲がった回数
 			length: [] as number[],				// 曲がった箇所で区切った、それぞれの線分の長さの配列

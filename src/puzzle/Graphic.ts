@@ -484,10 +484,10 @@ export class Graphic {
 			y1: bd.maxby + 1,
 			x2: bd.minbx - 1,
 			y2: bd.minby - 1,
-			cells: (new CellList(this.puzzle)),
-			crosses: (new CrossList(this.puzzle)),
-			borders: (new BorderList(this.puzzle)),
-			excells: (new EXCellList(this.puzzle))
+			cells: (new CellList()),
+			crosses: (new CrossList()),
+			borders: (new BorderList()),
+			excells: (new EXCellList())
 		}
 	}
 
@@ -566,7 +566,8 @@ export class Graphic {
 	//                     canvas描画時のみ呼ばれます(他は描画しなおす必要なし)
 	//---------------------------------------------------------------------------
 	repaintBlocks(clist: CellList<Cell>) {
-		clist.draw();
+		const d = clist.getRectSize();
+		this.puzzle.painter.paintRange(d.x1 - 1, d.y1 - 1, d.x2 + 1, d.y2 + 1);
 	}
 	repaintLines(blist: BorderList) {
 		this.range.borders = blist;

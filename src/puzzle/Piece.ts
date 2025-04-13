@@ -241,6 +241,12 @@ export class BoardPiece extends Position {
 		if (this.board.isenableSetError()) { this.error = num; }
 	}
 
+	setnoerr() {
+		if (this.board.isenableSetError()) {
+			if (this.error === 0) { this.error = -1; }
+		}
+	}
+
 	setinfo(num: number) { this.qinfo = num; }
 	is51cell() { return false }
 	remove51cell() { }

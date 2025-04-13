@@ -110,10 +110,10 @@ export class Board<
 		this.hasinfo = false;
 
 		// 盤面上にあるセル・境界線等のオブジェクト
-		this.cell = new CellList(this.puzzle);
-		this.cross = new CrossList(this.puzzle);
-		this.border = new BorderList(this.puzzle);
-		this.excell = new EXCellList(this.puzzle);
+		this.cell = new CellList();
+		this.cross = new CrossList();
+		this.border = new BorderList();
+		this.excell = new EXCellList();
 
 		// 空オブジェクト
 		this.nullobj = new BoardPiece(this.puzzle);
@@ -249,7 +249,7 @@ export class Board<
 		if (group === 'cross') { return this.cross; }
 		if (group === 'border') { return this.border; }
 		if (group === 'excell') { return this.excell; }
-		return new PieceList(this.puzzle);
+		return new PieceList();
 	}
 	estimateSize(group: IGroup, col: number, row: number) {
 		if (group === 'cell') { return col * row; }
@@ -554,7 +554,7 @@ export class Board<
 		if (group === 'cross') { return this.crossinside(x1, y1, x2, y2); }
 		if (group === 'border') { return this.borderinside(x1, y1, x2, y2); }
 		if (group === 'excell') { return this.excellinside(x1, y1, x2, y2); }
-		return new PieceList(this.puzzle);
+		return new PieceList();
 	}
 
 	//---------------------------------------------------------------------------
@@ -564,7 +564,7 @@ export class Board<
 	// bd.excellinside() 座標(x1,y1)-(x2,y2)に含まれるExcellのリストを取得する
 	//---------------------------------------------------------------------------
 	cellinside(x1: number, y1: number, x2: number, y2: number) {
-		const clist = new CellList<TCell>(this.puzzle);
+		const clist = new CellList<TCell>();
 		for (let by = (y1 | 1); by <= y2; by += 2) {
 			for (let bx = (x1 | 1); bx <= x2; bx += 2) {
 				const cell = this.getc(bx, by);
@@ -574,7 +574,7 @@ export class Board<
 		return clist;
 	}
 	crossinside(x1: number, y1: number, x2: number, y2: number) {
-		const clist = new CrossList(this.puzzle);
+		const clist = new CrossList();
 		if (!!this.hascross) {
 			for (let by = y1 + (y1 & 1); by <= y2; by += 2) {
 				for (let bx = x1 + (x1 & 1); bx <= x2; bx += 2) {
@@ -586,7 +586,7 @@ export class Board<
 		return clist;
 	}
 	borderinside(x1: number, y1: number, x2: number, y2: number) {
-		const blist = new BorderList(this.puzzle);
+		const blist = new BorderList();
 		if (!!this.hasborder) {
 			for (let by = y1; by <= y2; by++) {
 				for (let bx = x1 + (((x1 + by) & 1) ^ 1); bx <= x2; bx += 2) {
@@ -598,7 +598,7 @@ export class Board<
 		return blist;
 	}
 	excellinside(x1: number, y1: number, x2: number, y2: number) {
-		const exlist = new EXCellList(this.puzzle);
+		const exlist = new EXCellList();
 		if (!!this.hasexcell) {
 			if (y1 < -1) { y1 = -1; }
 			for (let by = (y1 | 1); by <= y2; by += 2) {

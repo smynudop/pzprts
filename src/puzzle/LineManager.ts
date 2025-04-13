@@ -268,7 +268,7 @@ export class LineGraph extends GraphBase {
 		}
 
 		if (this.makeClist || this.moveline) {
-			component.clist = new CellList(this.puzzle, component.getnodeobjs());
+			component.clist = new CellList(component.getnodeobjs());
 			if (this.moveline) { this.setMovedBase(component); }
 		}
 	}
@@ -277,7 +277,7 @@ export class LineGraph extends GraphBase {
 	// linegraph.repaintNodes() ブロックを再描画する
 	//--------------------------------------------------------------------------------
 	override repaintNodes(components: GraphComponent[]) {
-		const blist_all = new BorderList(this.puzzle);
+		const blist_all = new BorderList();
 		for (let i = 0; i < components.length; i++) {
 
 			blist_all.extend(components[i].getedgeobjs());

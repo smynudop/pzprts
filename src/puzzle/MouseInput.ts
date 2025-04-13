@@ -508,7 +508,7 @@ export class MouseEvent1 {
 
 		this.mouseCell = cell;
 
-		const clist = new CellList(this.puzzle, [cell]);
+		const clist = new CellList([cell]);
 		if (this.puzzle.playmode) { clist.ansclear(); }
 		else { clist.allclear(); }
 
@@ -766,7 +766,7 @@ export class MouseEvent1 {
 				cell2.setQsub(this.inputData === 2 ? 1 : 0);
 			}
 		}
-		clist.draw();
+		this.puzzle.painter.repaintBlocks(clist)
 	}
 
 	//---------------------------------------------------------------------------
@@ -913,7 +913,7 @@ export class MouseEvent1 {
 
 		this.mouseCell = cross;
 
-		const xlist = new CrossList(this.puzzle, [cross]);
+		const xlist = new CrossList([cross]);
 		if (this.puzzle.playmode) { xlist.ansclear(); }
 		else { xlist.allclear(); }
 

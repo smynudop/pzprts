@@ -95,7 +95,7 @@ export class AreaGraphBase extends GraphBase {
 	// areagraph.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
 	override setExtraData(component: GraphComponent) {
-		component.clist = new CellList(this.puzzle, component.getnodeobjs());
+		component.clist = new CellList(component.getnodeobjs());
 	}
 }
 
@@ -116,7 +116,7 @@ export class AreaShadeGraph extends AreaGraphBase {
 	// sblkmgr.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
 	override setExtraData(component: GraphComponent) {
-		component.clist = new CellList(this.puzzle, component.getnodeobjs());
+		component.clist = new CellList(component.getnodeobjs());
 		if (this.coloring && !component.color) {
 			component.color = this.puzzle.painter.getNewLineColor();
 		}
@@ -126,7 +126,7 @@ export class AreaShadeGraph extends AreaGraphBase {
 	// sblkmgr.repaintNodes() ブロックを再描画する
 	//--------------------------------------------------------------------------------
 	override repaintNodes(components: GraphComponent[]) {
-		const clist_all = new CellList(this.puzzle);
+		const clist_all = new CellList();
 		for (let i = 0; i < components.length; i++) {
 			clist_all.extend(components[i].getnodeobjs());
 		}
@@ -267,7 +267,7 @@ export class AreaRoomGraph extends AreaGraphBase {
 	// roommgr.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
 	override setExtraData(component: GraphComponent) {
-		component.clist = new CellList(this.puzzle, component.getnodeobjs());
+		component.clist = new CellList(component.getnodeobjs());
 		const clist = component.clist;
 		if (this.hastop) {
 			component.top = clist.getTopCell();

@@ -290,7 +290,7 @@ export class BoardExec {
 		const bdAsLine = bd.borderAsLine;
 		// borderAsLineじゃないUndo時は、後でオブジェクトを代入するので下の処理はパス
 		if (bdAsLine || !bd.puzzle.opemgr.undoExec) {
-			const group2 = new BorderList(this.puzzle);
+			const group2 = new BorderList();
 			// 直前のexpandGroupで、bx,byプロパティが不定なままなので設定する
 			bd.setposBorders();
 

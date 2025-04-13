@@ -545,7 +545,7 @@ export class GraphComponent {
 		if (this.cmp !== iscmp) {
 			this.cmp = iscmp;
 			if (this.puzzle.execConfig('autocmp')) {
-				this.clist.draw();
+				this.puzzle.painter.repaintBlocks(this.clist);
 			}
 		}
 	}

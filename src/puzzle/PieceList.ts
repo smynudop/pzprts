@@ -9,16 +9,14 @@ import type { Cell, Cross, Border, EXCell, BoardPiece } from "./Piece";
 //---------------------------------------------------------------------------
 export class PieceList<T extends BoardPiece> extends Array<T> {
 
-	puzzle: Puzzle
-	constructor(puzzle: Puzzle, list?: T[]) {
+	constructor(list?: T[]) {
 		super()
-		this.puzzle = puzzle;
 		if (!!list) { this.extend(list); }
 	}
 
 	clone() {
 		//@ts-ignore
-		return new this.constructor(this.puzzle) as PieceList<T>;
+		return new this.constructor() as PieceList<T>;
 	}
 
 	//--------------------------------------------------------------------------------
@@ -76,13 +74,13 @@ export class PieceList<T extends BoardPiece> extends Array<T> {
 	// list.setinfo()  保持しているオブジェクトにqinfo値を設定する
 	//--------------------------------------------------------------------------------
 	seterr(num: number) {
-		if (!this.puzzle.board.isenableSetError()) { return; }
-		for (let i = 0; i < this.length; i++) { this[i].error = num; }
+		for (let i = 0; i < this.length; i++) {
+			this[i].seterr(num)
+		}
 	}
 	setnoerr() {
-		if (!this.puzzle.board.isenableSetError()) { return; }
 		for (let i = 0; i < this.length; i++) {
-			if (this[i].error === 0) { this[i].error = -1; }
+			this[i].setnoerr()
 		}
 	}
 	setinfo(num: number) {
@@ -123,8 +121,22 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 	//---------------------------------------------------------------------------
 	checkCmp: any = null
 	getRectSize() {
-		const bd = this.puzzle.board;
-		const d = { x1: bd.maxbx + 1, x2: bd.minbx - 1, y1: bd.maxby + 1, y2: bd.minby - 1, cols: 0, rows: 0, cnt: 0 };
+		//ロジック変更 バグらないといいなぁ……
+		if (this.length === 0) {
+			return {
+				x1: 0, x2: 0,
+				y1: 0, y2: 0,
+				cols: 0, rows: 0,
+				cnt: 0
+			};
+		}
+
+		const d = {
+			x1: 999, x2: 0,
+			y1: 999, y2: 0,
+			cols: 0, rows: 0,
+			cnt: 0
+		};
 		for (let i = 0; i < this.length; i++) {
 			const cell = this[i];
 			if (d.x1 > cell.bx) { d.x1 = cell.bx; }
@@ -145,49 +157,43 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 		for (let i = 0, len = this.length; i < len; i++) {
 			if (this[i].isNum()) { return this[i]; }
 		}
-		return this.puzzle.board.emptycell;
+		return null;
 	}
 
 	//--------------------------------------------------------------------------------
 	// clist.getTopCell()  指定されたClistの中で一番左上にあるセルを返す
 	//--------------------------------------------------------------------------------
 	getTopCell() {
-		const bd = this.puzzle.board;
-		let tcell = null;
-		let bx = bd.maxbx;
-		let by = bd.maxby;
-		for (let i = 0; i < this.length; i++) {
-			const cell = this[i];
-			if (cell.bx > bx || (cell.bx === bx && cell.by >= by)) { continue; }
-			tcell = this[i];
-			bx = cell.bx;
-			by = cell.by;
-		}
-		return tcell;
+		if (this.length === 0) return null;
+
+		return this.toSorted((a, b) => {
+			return a.bx - b.bx
+				|| a.by - b.by
+		})[0]
 	}
 
 	//---------------------------------------------------------------------------
 	// clist.eraseLines()  Clistに含まれるlineを消去します
 	//---------------------------------------------------------------------------
 	eraseLines() {
-		const count = 0;
-		for (let i = 0, len = this.length; i < len; i++) {
-			for (let j = i + 1; j < len; j++) {
-				//todo
-				// var border = this.puzzle.mouse.getnb(this[i].getaddr(), this[j].getaddr());
-				// if (!border.isnull) { border.removeLine(); count++; }
-			}
-		}
-		if (count > 0) { this.draw(); }
+		// const count = 0;
+		// for (let i = 0, len = this.length; i < len; i++) {
+		// 	for (let j = i + 1; j < len; j++) {
+		// 		//todo
+		// 		// var border = this.puzzle.mouse.getnb(this[i].getaddr(), this[j].getaddr());
+		// 		// if (!border.isnull) { border.removeLine(); count++; }
+		// 	}
+		// }
+		//if (count > 0) { this.draw(); }
 	}
 
 	//---------------------------------------------------------------------------
 	// clist.draw()   盤面に自分の周囲を描画する
 	//---------------------------------------------------------------------------
-	draw() {
-		const d = this.getRectSize();
-		this.puzzle.painter.paintRange(d.x1 - 1, d.y1 - 1, d.x2 + 1, d.y2 + 1);
-	}
+	// draw() {
+	// 	const d = this.getRectSize();
+	// 	this.puzzle.painter.paintRange(d.x1 - 1, d.y1 - 1, d.x2 + 1, d.y2 + 1);
+	// }
 }
 
 //----------------------------------------------------------------------------
@@ -204,7 +210,7 @@ export class BorderList extends PieceList<Border> {
 	// blist.crossinside() 線が重なる交点のリストを取得する
 	//---------------------------------------------------------------------------
 	cellinside() {
-		const clist = new CellList(this.puzzle);
+		const clist = new CellList();
 		const pushed = [];
 		for (let i = 0; i < this.length; i++) {
 			const border = this[i];
@@ -216,7 +222,7 @@ export class BorderList extends PieceList<Border> {
 		return clist;
 	}
 	crossinside() {
-		const clist = new CrossList(this.puzzle);
+		const clist = new CrossList();
 		const pushed = [];
 		for (let i = 0; i < this.length; i++) {
 			const border = this[i];
