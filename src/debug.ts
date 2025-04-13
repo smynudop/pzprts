@@ -1,5 +1,5 @@
-import { SlitherlinkPlayer } from "./player/slitherlink";
-import { MashuPlayer } from "./player/mashu";
+import * as PenpaPlayer from "./index"
 
-customElements.define("slitherlink-player", SlitherlinkPlayer)
-customElements.define("mashu-player", MashuPlayer)
+customElements.define("slitherlink-player", PenpaPlayer.SlitherlinkPlayer)
+customElements.define("mashu-player", PenpaPlayer.MashuPlayer)
+customElements.define("sudoku-player", PenpaPlayer.SudokuPlayer)

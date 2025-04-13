@@ -155,7 +155,16 @@ export class AreaNumberGraph extends AreaGraphBase {
 //--------------------------------------------------------------------------------
 // ☆AreaRoomGraphクラス 部屋情報オブジェクトのクラス
 //--------------------------------------------------------------------------------
+export type AreaRoomGraphOption = {
+	enabled?: boolean
+}
+
 export class AreaRoomGraph extends AreaGraphBase {
+	constructor(puzzle: Puzzle, option?: AreaRoomGraphOption) {
+		super(puzzle)
+		this.enabled = option?.enabled || false
+	}
+
 	override relation = { 'cell.ques': 'node', 'border.ques': 'separator', 'border.qans': 'separator' }
 
 	hastop = false

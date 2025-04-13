@@ -950,7 +950,12 @@ export class Graphic {
 	}
 	drawAnsNumbers() {
 		this.vinc('cell_ans_number', 'auto');
-		this.drawNumbers_com(this.getAnsNumberText, this.getAnsNumberColor, 'cell_ans_text_', {});
+		this.drawNumbers_com(
+			(cell: Cell) => this.getNumberText(cell, cell.anum),
+			(cell: Cell) => this.getAnsNumberColor(cell),
+			'cell_ans_text_',
+			{}
+		);
 	}
 	drawHatenas() {
 		function getQuesHatenaText(cell: Cell) { return ((cell.ques === -2 || cell.qnum === -2) ? "?" : ""); }
@@ -979,9 +984,7 @@ export class Graphic {
 	getQuesNumberText(cell: Cell | EXCell) {
 		return this.getNumberText(cell, (this.puzzle.execConfig('dispmove') ? (cell as Cell).base! : cell).qnum);
 	}
-	getAnsNumberText(cell: Cell) {
-		return this.getNumberText(cell, cell.anum);
-	}
+
 	getNumberText(cell: Cell | EXCell, num: number) {
 		if (!(cell as Cell).numberAsLetter) {
 			return this.getNumberTextCore(num);
@@ -1930,7 +1933,7 @@ export class Graphic {
 		this.drawCursor(true, this.puzzle.editmode);
 	}
 
-	drawCursor(islarge: boolean, isdraw: boolean) {
+	drawCursor(islarge: boolean = true, isdraw: boolean = true) {
 		const g = this.vinc('target_cursor', 'crispEdges');
 
 		const d = this.range;

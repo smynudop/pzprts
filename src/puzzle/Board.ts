@@ -19,7 +19,8 @@ import {
 	AreaRoomGraph,
 	AreaShadeGraph,
 	AreaUnshadeGraph,
-	AreaNumberGraph
+	AreaNumberGraph,
+	type AreaRoomGraphOption
 } from './AreaManager';
 import type { GraphBase } from './GraphBase';
 import { BoardExec, type IBoardOperation } from './BoardExec';
@@ -34,6 +35,7 @@ import { BoardClearOperation } from "./Operation"
 type BoardOption = {
 	hasborder?: 0 | 1 | 2
 	lineGraph?: boolean | LineGraphOption,
+	areaRoomGraph?: boolean | AreaRoomGraphOption,
 	borderAsLine?: boolean
 }
 
@@ -128,7 +130,7 @@ export class Board<
 		this.infolist = [];
 
 		this.linegraph = this.addInfoListInstance(this.createLineGraph(option?.lineGraph || false));			// 交差なし線のグラフ
-		this.roommgr = this.addInfoList(AreaRoomGraph);			// 部屋情報を保持する
+		this.roommgr = this.addInfoListInstance(this.createAreaRoomGraph(option?.areaRoomGraph || false));			// 部屋情報を保持する
 		this.sblkmgr = this.addInfoList(AreaShadeGraph);		// 黒マス情報を保持する
 		this.ublkmgr = this.addInfoList(AreaUnshadeGraph);		// 白マス情報を保持する
 		this.nblkmgr = this.addInfoList(AreaNumberGraph);		// 数字情報を保持する
@@ -147,6 +149,16 @@ export class Board<
 			option.enabled = true
 		}
 		return new LineGraph(this.puzzle, option)
+	}
+
+
+	createAreaRoomGraph(option: boolean | AreaRoomGraphOption) {
+		if (typeof option === "boolean") {
+			option = { enabled: option }
+		} else {
+			option.enabled = true
+		}
+		return new AreaRoomGraph(this.puzzle, option)
 	}
 
 	addInfoListInstance<T extends GraphBase>(instance: T, enabled?: boolean): T {
