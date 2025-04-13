@@ -2038,7 +2038,7 @@ export class Graphic {
 	// pc.drawGrid()        セルの枠線(実線)をCanvasに書き込む
 	// pc.drawDashedGrid()  セルの枠線(点線)をCanvasに書き込む
 	//---------------------------------------------------------------------------
-	drawGrid(haschassis: boolean, isdraw: boolean) {
+	drawGrid(haschassis: boolean = true, isdraw: boolean = true) {
 		const g = this.vinc('grid', 'crispEdges', true);
 		const bd = this.puzzle.board;
 

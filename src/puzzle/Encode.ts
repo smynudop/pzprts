@@ -186,7 +186,7 @@ const number10 = {
 	}
 }
 
-const number16 = {
+export const number16 = {
 	//---------------------------------------------------------------------------
 	// enc.decodeNumber16()  quesが0～8192?までの場合、デコードする
 	// enc.encodeNumber16()  quesが0～8192?までの場合、問題部をエンコードする

@@ -568,7 +568,7 @@ export class AnsCheck<
 	// ans.checkDifferentNumberInRoom() 部屋の中に同じ数字が存在しないことを判定する
 	// ans.isDifferentNumberInClist()   clistの中に同じ数字が存在しないことを判定だけを行う
 	//---------------------------------------------------------------------------
-	checkSameObjectInRoom(graph: AreaGraphBase, getvalue: (cell: Cell) => number, code: string) {
+	checkSameObjectInRoom(graph: GraphBase, getvalue: (cell: Cell) => number, code: string) {
 		const areas = graph.components;
 		allloop:
 		for (let id = 0; id < areas.length; id++) {
