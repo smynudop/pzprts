@@ -14,7 +14,7 @@ import {
 	Border,
 	EXCell
 } from './Piece';
-import { LineGraph } from './LineManager';
+import { LineGraph, type LineGraphOption } from './LineManager';
 import {
 	AreaRoomGraph,
 	AreaShadeGraph,
@@ -30,6 +30,13 @@ import { BoardClearOperation } from "./Operation"
 // Boardクラスの定義
 
 //---------------------------------------------------------
+
+type BoardOption = {
+	hasborder?: 0 | 1 | 2
+	lineGraph?: boolean | LineGraphOption,
+	borderAsLine?: boolean
+}
+
 export type IGroup = 'cell' | 'cross' | 'border' | 'excell';
 export type IGroup2 = 'cell' | 'cross' | 'border' | 'excell' | "obj" | "none";
 export class Board<
@@ -67,7 +74,20 @@ export class Board<
 	falling = false
 
 
-	constructor(puzzle: Puzzle) {
+	cols = 10		/* 盤面の横幅(デフォルト) */
+	rows = 10		/* 盤面の縦幅(デフォルト) */
+
+	hascross = 2	// 1:盤面内側のCrossが操作可能なパズル 2:外枠上を含めてCrossが操作可能なパズル (どちらもCrossは外枠上に存在します)
+	/**
+	 * 1:Border/Lineが操作可能なパズル 2:外枠上も操作可能なパズル
+	 */
+	hasborder = 0
+	hasexcell = 0	// 1:上・左側にセルを用意するパズル 2:四方にセルを用意するパズル
+	borderAsLine = false	// 境界線をlineとして扱う
+	disable_subclear = false	// "補助消去"ボタン不要
+
+
+	constructor(puzzle: Puzzle, option?: BoardOption) {
 		this.puzzle = puzzle;
 		// 盤面の範囲
 		this.minbx = 0;
@@ -77,6 +97,9 @@ export class Board<
 
 		// エラー設定可能状態かどうか
 		this.diserror = 0;
+
+		this.hasborder = option?.hasborder || 0
+		this.borderAsLine = option?.borderAsLine || false
 
 		// エラー表示中かどうか
 		this.haserror = false;
@@ -104,7 +127,7 @@ export class Board<
 		this.disrecinfo = 0;
 		this.infolist = [];
 
-		this.linegraph = this.addInfoListInstance(this.createLineGraph());			// 交差なし線のグラフ
+		this.linegraph = this.addInfoListInstance(this.createLineGraph(option?.lineGraph || false));			// 交差なし線のグラフ
 		this.roommgr = this.addInfoList(AreaRoomGraph);			// 部屋情報を保持する
 		this.sblkmgr = this.addInfoList(AreaShadeGraph);		// 黒マス情報を保持する
 		this.ublkmgr = this.addInfoList(AreaUnshadeGraph);		// 白マス情報を保持する
@@ -117,12 +140,18 @@ export class Board<
 
 		this.trialstage = 0;	// TrialMode
 	}
-	createLineGraph() {
-		return new LineGraph(this.puzzle)
+	createLineGraph(option: boolean | LineGraphOption) {
+		if (typeof option === "boolean") {
+			option = { enabled: option }
+		} else {
+			option.enabled = true
+		}
+		return new LineGraph(this.puzzle, option)
 	}
 
-	addInfoListInstance<T extends GraphBase>(instance: T): T {
-		if (instance.enabled) {
+	addInfoListInstance<T extends GraphBase>(instance: T, enabled?: boolean): T {
+		if (instance.enabled || enabled) {
+			instance.enabled = true
 			this.infolist.push(instance);
 		}
 		return instance;
@@ -137,14 +166,6 @@ export class Board<
 	}
 	addExtraInfo() { }
 
-	cols = 10		/* 盤面の横幅(デフォルト) */
-	rows = 10		/* 盤面の縦幅(デフォルト) */
-
-	hascross = 2	// 1:盤面内側のCrossが操作可能なパズル 2:外枠上を含めてCrossが操作可能なパズル (どちらもCrossは外枠上に存在します)
-	hasborder = 0	// 1:Border/Lineが操作可能なパズル 2:外枠上も操作可能なパズル
-	hasexcell = 0	// 1:上・左側にセルを用意するパズル 2:四方にセルを用意するパズル
-	borderAsLine = false	// 境界線をlineとして扱う
-	disable_subclear = false	// "補助消去"ボタン不要
 
 	//---------------------------------------------------------------------------
 	// bd.initBoardSize() 指定されたサイズで盤面の初期化を行う

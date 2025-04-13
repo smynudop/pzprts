@@ -68,8 +68,6 @@ class MashuCell extends Cell {
 }
 
 class MashuBoard extends Board<MashuCell> {
-	override hasborder = 1
-
 	uramashu = false
 
 	revCircle() {
@@ -92,15 +90,9 @@ class MashuBoard extends Board<MashuCell> {
 	override createCell(): MashuCell {
 		return new MashuCell(this.puzzle)
 	}
-
-	override createLineGraph(): LineGraph {
-		return new MashuLineGraph(this.puzzle)
-	}
 }
 
-class MashuLineGraph extends LineGraph {
-	override enabled = true
-}
+
 
 //---------------------------------------------------------
 // 画像表示系
@@ -147,18 +139,20 @@ class MashuFileIO extends FileIO {
 //---------------------------------------------------------
 // 正解判定処理実行部
 class MashuAnsCheck extends AnsCheck<MashuCell> {
-	override checklist = [
-		"checkLineExist+",
-		"checkBranchLine",
-		"checkCrossLine",
-		"checkWhitePearl1",
-		"checkBlackPearl1",
-		"checkBlackPearl2",
-		"checkWhitePearl2",
-		"checkNoLinePearl",
-		"checkDeadendLine+",
-		"checkOneLoop"
-	]
+	override getCheckList() {
+		return [
+			"checkLineExist+",
+			"checkBranchLine",
+			"checkCrossLine",
+			"checkWhitePearl1",
+			"checkBlackPearl1",
+			"checkBlackPearl2",
+			"checkWhitePearl2",
+			"checkNoLinePearl",
+			"checkDeadendLine+",
+			"checkOneLoop"
+		]
+	}
 
 	checkNoLinePearl() {
 		this.checkAllCell(function (cell) { return (cell.isNum() && cell.lcnt === 0); }, "mashuOnLine");
@@ -255,7 +249,10 @@ class MashuAnsCheck extends AnsCheck<MashuCell> {
 
 export class Mashu extends Puzzle<MashuCell> {
 	override createBoard(): Board<MashuCell, Cross, Border, EXCell> {
-		return new MashuBoard(this)
+		return new MashuBoard(this, {
+			hasborder: 1,
+			lineGraph: true
+		})
 	}
 	override createAnsCheck(): AnsCheck<MashuCell, Cross, Border, EXCell> {
 		return new MashuAnsCheck(this)

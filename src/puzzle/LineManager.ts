@@ -3,14 +3,21 @@ import { GraphBase, type GraphComponent } from "./GraphBase";
 import { CellList, BorderList } from "./PieceList";
 import type { Puzzle } from "./Puzzle";
 import type { Border, Cell } from "./Piece";
-import { IGroup } from "./Board";
-import { pzpr } from "../pzpr/core";
+
+export type LineGraphOption = {
+	enabled?: boolean
+	makeClist?: boolean
+}
+
 //---------------------------------------------------------------------------
 // ★LineGraphクラス 主に線や色分けの情報を管理する
 //---------------------------------------------------------------------------
 export class LineGraph extends GraphBase {
-	constructor(puzzle: Puzzle) {
+	constructor(puzzle: Puzzle, option?: LineGraphOption) {
 		super(puzzle);
+		this.enabled = option?.enabled || false
+		this.makeClist = option?.makeClist ?? false
+
 		if (this.moveline) { this.relation['cell.qnum'] = 'move'; }
 	}
 

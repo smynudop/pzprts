@@ -37,17 +37,6 @@ class NumberlinkKeyEvent extends KeyEvent {
 }
 
 
-class NumberlinkBoard extends Board {
-	override hasborder = 1
-	override createLineGraph(): LineGraph {
-		return new NumberlinkLineGraph(this.puzzle)
-	}
-}
-
-class NumberlinkLineGraph extends LineGraph {
-	override enabled = true
-	override makeClist = true
-}
 
 //---------------------------------------------------------
 // 画像表示系
@@ -109,17 +98,19 @@ class NumberlinkFileIO extends FileIO {
 //---------------------------------------------------------
 // 正解判定処理実行部
 class NumberlinkAnsCheck extends AnsCheck {
-	override checklist = [
-		"checkLineExist+",
-		"checkBranchLine",
-		"checkCrossLine",
-		"checkTripleObject",
-		"checkLinkSameNumber",
-		"checkLineOverLetter",
-		"checkDeadendConnectLine+",
-		"checkDisconnectLine",
-		"checkNoLineObject+",
-	]
+	override getCheckList() {
+		return [
+			"checkLineExist+",
+			"checkBranchLine",
+			"checkCrossLine",
+			"checkTripleObject",
+			"checkLinkSameNumber",
+			"checkLineOverLetter",
+			"checkDeadendConnectLine+",
+			"checkDisconnectLine",
+			"checkNoLineObject+",
+		]
+	}
 
 	checkLinkSameNumber() {
 		this.checkSameObjectInRoom(this.puzzle.board.linegraph, function (cell) { return cell.qnum; }, "nmConnDiff");
@@ -136,7 +127,13 @@ export class Numberlink extends Puzzle {
 	}
 
 	override createBoard(): Board<Cell, Cross, Border, EXCell> {
-		return new NumberlinkBoard(this)
+		return new Board(this, {
+			hasborder: 1,
+			lineGraph: {
+				enabled: true,
+				makeClist: true
+			}
+		})
 	}
 
 	override createFileIO(): FileIO {

@@ -64,14 +64,6 @@ export class FileIO {
 				this.decodeData();
 				if ((this.readLine() || '').match(/TrialData/)) { this.lineseek--; this.decodeTrial(); }
 				break;
-
-			case Constants.FILE_PBOX:
-				this.kanpenOpen();
-				break;
-
-			case Constants.FILE_PBOX_XML:
-				this.kanpenOpenXML();
-				break;
 		}
 
 		puzzle.metadata = MetaData.update(puzzle.metadata, pzl.metadata);
@@ -110,14 +102,6 @@ export class FileIO {
 				if (!option.history && option.trial && bd.trialstage > 0) { this.encodeTrial(); }
 				break;
 
-			case Constants.FILE_PBOX:
-				this.kanpenSave();
-				break;
-
-			case Constants.FILE_PBOX_XML:
-				this.kanpenSaveXML();
-				break;
-
 			default:
 				throw "invalid File Type";
 		}
@@ -126,12 +110,8 @@ export class FileIO {
 		pzl.filever = this.filever;
 		pzl.cols = bd.cols;
 		pzl.rows = bd.rows;
-		if (filetype !== Constants.FILE_PBOX_XML) {
-			pzl.body = this.datastr;
-		}
-		else {
-			//pzl.body = this.xmldoc;
-		}
+		pzl.body = this.datastr;
+
 		pzl.metadata = MetaData.update(pzl.metadata, puzzle.metadata);
 		if (option.history && (filetype === Constants.FILE_PZPR)) {
 			pzl.history = puzzle.opemgr.encodeHistory({ time: !!option.time });
@@ -145,10 +125,6 @@ export class FileIO {
 	// オーバーライド用
 	decodeData() { }
 	encodeData() { }
-	kanpenOpen() { }
-	kanpenSave() { }
-	kanpenOpenXML() { }
-	kanpenSaveXML() { }
 
 	//---------------------------------------------------------------------------
 	// fio.decodeTrial() 仮置きデータを復旧する
@@ -646,56 +622,4 @@ export class FileIO {
 			return ". ";
 		});
 	}
-	//---------------------------------------------------------------------------
-	// fio.decodeCellQnum_kanpen() pencilbox用問題数字のデコードを行う
-	// fio.encodeCellQnum_kanpen() pencilbox用問題数字のエンコードを行う
-	//---------------------------------------------------------------------------
-	decodeCellQnum_kanpen() {
-		this.decodeCell(function (cell, ca) {
-			if (ca !== ".") { cell.qnum = +ca; }
-		});
-	}
-	encodeCellQnum_kanpen() {
-		this.encodeCell(function (cell) {
-			return ((cell.qnum >= 0) ? `${cell.qnum} ` : ". ");
-		});
-	}
-	//---------------------------------------------------------------------------
-	// fio.decodeCellAnum_kanpen() pencilbox用回答数字のデコードを行う
-	// fio.encodeCellAnum_kanpen() pencilbox用回答数字のエンコードを行う
-	//---------------------------------------------------------------------------
-	decodeCellAnum_kanpen() {
-		this.decodeCell(function (cell, ca) {
-			if (ca !== "." && ca !== "0") { cell.anum = +ca; }
-		});
-	}
-	encodeCellAnum_kanpen() {
-		this.encodeCell(function (cell) {
-			if (cell.qnum !== -1) { return ". "; }
-			if (cell.anum === -1) { return "0 "; }
-			return `${cell.anum} `;
-		});
-	}
-	//---------------------------------------------------------------------------
-	// fio.decodeCellQnumAns_kanpen() pencilbox用問題数字＋黒マス白マスのデコードを行う
-	// fio.encodeCellQnumAns_kanpen() pencilbox用問題数字＋黒マス白マスのエンコードを行う
-	//---------------------------------------------------------------------------
-	decodeCellQnumAns_kanpen() {
-		this.decodeCell(function (cell, ca) {
-			if (ca === "#") { cell.qans = 1; }
-			else if (ca === "+") { cell.qsub = 1; }
-			else if (ca === "?") { cell.qnum = -2; }
-			else if (ca !== ".") { cell.qnum = +ca; }
-		});
-	}
-	encodeCellQnumAns_kanpen() {
-		this.encodeCell(function (cell) {
-			if (cell.qnum >= 0) { return `${cell.qnum} `; }
-			if (cell.qnum === -2) { return "? "; }
-			if (cell.qans === 1) { return "# "; }
-			if (cell.qsub === 1) { return "+ "; }
-			return ". ";
-		});
-	}
-
 }

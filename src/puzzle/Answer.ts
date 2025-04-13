@@ -34,7 +34,7 @@ type IPathSeg = {
 import type { Board } from "./Board";
 
 
-export class AnsCheck<
+export abstract class AnsCheck<
 	TCell extends Cell = Cell,
 	TCross extends Cross = Cross,
 	TBorder extends Border = Border,
@@ -63,9 +63,10 @@ export class AnsCheck<
 	//---------------------------------------------------------------------------
 	// ans.makeCheckList() 最初にchecklistの配列を生成する
 	//---------------------------------------------------------------------------
+	abstract getCheckList(): string[]
 	makeCheckList() {
 		/* 当該パズルで使用しないchecklistのアイテムをフィルタリング */
-		const checklist = this.checklist;
+		const checklist = this.getCheckList();
 		let order = [];
 		for (let i = 0; i < checklist.length; i++) {
 			let item = checklist[i];

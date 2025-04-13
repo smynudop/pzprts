@@ -57,13 +57,8 @@ class SlitherKeyEvent extends KeyEvent {
 }
 
 class SlitherBoard extends Board<SlitherCell> {
-    override hasborder = 2
-    override borderAsLine = true
     override createCell() {
         return new SlitherCell(this.puzzle);
-    }
-    override createLineGraph(): LineGraph {
-        return new SlitherLineGraph(this.puzzle)
     }
 }
 class SlitherCell extends Cell {
@@ -106,52 +101,29 @@ class SlitherGraphic extends Graphic {
 
 
     override repaintParts(blist: BorderList) {
-        if (this.pid === 'slither') {
-            this.range.crosses = blist.crossinside();
-            this.drawBaseMarks();
-        }
+        this.range.crosses = blist.crossinside();
+        this.drawBaseMarks();
     }
-}
-
-class SlitherLineGraph extends LineGraph {
-    override enabled = true
 }
 
 
 class SlitherFileIO extends FileIO {
     override decodeData() {
-        if (this.filever === 1 || this.puzzle.pid !== 'slither') {
-            this.decodeCellQnum();
-            this.decodeCellQsub();
-            this.decodeBorderLine();
-        }
-        else if (this.filever === 0) {
-            this.decodeCellQnum();
-            this.decodeBorderLine();
-        }
+        this.decodeCellQnum();
+        this.decodeCellQsub();
+        this.decodeBorderLine();
     }
     override encodeData() {
-        if (this.puzzle.pid === 'slither') { this.filever = 1; }
+        this.filever = 1;
         this.encodeCellQnum();
         this.encodeCellQsub();
         this.encodeBorderLine();
     }
-
-    override kanpenOpen() {
-        this.decodeCellQnum_kanpen();
-        this.decodeBorderLine();
-    }
-    override kanpenSave() {
-        this.encodeCellQnum_kanpen();
-        this.encodeBorderLine();
-    }
-
-
 }
 
 class SlitherAnsCheck extends AnsCheck<SlitherCell> {
-    override makeCheckList(): void {
-        this.checklist = [
+    override getCheckList() {
+        return [
             "checkLineExist+",
             "checkBranchLine",
             "checkCrossLine",
@@ -161,7 +133,6 @@ class SlitherAnsCheck extends AnsCheck<SlitherCell> {
             "checkOneLoop",
             "checkDeadendLine+",
         ]
-        super.makeCheckList()
     }
 
     checkdir4BorderLine() {
@@ -186,7 +157,11 @@ export class SlitherLink extends Puzzle<SlitherCell> {
     }
 
     override createBoard() {
-        return new SlitherBoard(this);
+        return new SlitherBoard(this, {
+            lineGraph: true,
+            borderAsLine: true,
+            hasborder: 2
+        });
     }
 
     override createFailCode() {
