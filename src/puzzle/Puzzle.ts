@@ -1,14 +1,14 @@
 // Puzzle.js v3.6.0
 import { Config } from './Config.js';
-import { Board, type IGroup } from './Board';
-import { AnsCheck } from './Answer';
+import type { Board, IGroup } from './Board';
+import type { AnsCheck } from './Answer';
 import { createFailCode } from './FailCode.js';
 import { OperationManager } from './Operation';
-import { MouseEvent1 } from './MouseInput';
-import { KeyEvent, TargetCursor } from './KeyInput';
+import type { MouseEvent1 } from './MouseInput';
+import { type KeyEvent, TargetCursor } from './KeyInput';
 import { Graphic } from './Graphic';
 import { decodeURL, encodeURL, type Converter } from './Encode.js';
-import { FileIO } from './FileData.js';
+import type { FileIO } from './FileData.js';
 import * as MetaData from '../pzpr/metadata.js';
 import type { Cell, Cross, Border, EXCell } from "./Piece"
 import Candle from '../candle/';
@@ -35,7 +35,7 @@ const MODE_PLAYER = 3
 //---------------------------------------------------------------------------
 // ★Puzzleクラス ぱずぷれv3のベース処理やその他の処理を行う
 //---------------------------------------------------------------------------
-export class Puzzle<
+export abstract class Puzzle<
 	TCell extends Cell = Cell,
 	TCross extends Cross = Cross,
 	TBorder extends Border = Border,
@@ -144,40 +144,24 @@ export class Puzzle<
 	// モード設定用定数
 
 
-	createKeyEvent() {
-		return new KeyEvent(this);
-	}
+	abstract createKeyEvent(): KeyEvent
 
-	createMouseEvent() {
-		return new MouseEvent1(this);
-	}
+	abstract createMouseEvent(): MouseEvent1
 
-	createBoard() {
-		return new Board(this) as Board<TCell, TCross, TBorder, TEXCell>
-	}
+	abstract createBoard(): Board<TCell, TCross, TBorder, TEXCell>
 
-	createGraphic() {
-		return new Graphic(this);
-	}
+	abstract createGraphic(): Graphic
 
-	createAnsCheck() {
-		return new AnsCheck(this);
-	}
-
+	abstract createAnsCheck(): AnsCheck<TCell, TCross, TBorder, TEXCell>
 	createFailCode() {
 		return createFailCode()
 	}
-
-	createFileIO() {
-		return new FileIO(this);
-	}
+	abstract createFileIO(): FileIO
 
 	/**
 	 * override用
 	 */
-	initConverters() {
-
-	}
+	abstract initConverters(): void
 
 	//---------------------------------------------------------------------------
 	// owner.open()    パズルデータを入力して盤面の初期化を行う

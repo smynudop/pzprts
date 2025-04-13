@@ -658,8 +658,4 @@ export class Board<
 			}
 		}
 	}
-
-	revCircleConfig(newval: any) {
-
-	}
 }

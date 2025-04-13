@@ -266,7 +266,7 @@ export class Config {
 				break;
 
 			case 'uramashu':
-				puzzle.board.revCircleConfig(newval);
+				//puzzle.board.revCircleConfig(newval);
 				puzzle.redraw();
 				break;
 		}

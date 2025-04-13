@@ -1,49 +1,44 @@
 <script setup lang="ts">
-import { SlitherLink } from '../variety/slither2'
+import type { Puzzle } from '../puzzle/Puzzle';
 import { onMounted, ref, type Ref } from 'vue'
 
 const playModes = ref<string[]>([])
 const props = defineProps<{
-    src: string
+    src: string,
+    puzzle: Puzzle
 }>()
 
-let puzzle: SlitherLink = null!
 const element = ref<HTMLDivElement>() as Ref<HTMLDivElement>
 onMounted(() => {
-    puzzle = new SlitherLink({
-        type: "player"
-    })
+    props.puzzle.readURL(props.src)
 
-    puzzle.readURL(props.src)
+    props.puzzle.mount(element.value)
 
-    puzzle.mount(element.value)
+    props.puzzle.setMode("play")
+    props.puzzle.mouse.setInputMode("auto")
 
-    puzzle.setMode("play")
-    puzzle.mouse.setInputMode("auto")
+    props.puzzle.setCanvasSizeByCellSize(36)
+    element.value.style.maxWidth = `${props.puzzle.painter.canvasWidth}px`
 
-    puzzle.setCanvasSizeByCellSize(36)
-    element.value.style.maxWidth = `${puzzle.painter.canvasWidth}px`
+    playModes.value = ["auto", ...props.puzzle.mouse.inputModes.play]
 
-    playModes.value = ["auto", ...puzzle.mouse.inputModes.play]
-
-    puzzle.redraw(true)
-
+    props.puzzle.redraw(true)
 })
 
 const nowMode = ref("auto")
 const changeMode = (newMode: string) => {
     if (nowMode.value === newMode) return;
 
-    if (puzzle) {
+    if (props.puzzle) {
         nowMode.value = newMode
-        puzzle.mouse.setInputMode(nowMode.value)
+        props.puzzle.mouse.setInputMode(nowMode.value)
     }
 }
 
 const resultText = ref("")
 const complete = ref(false)
 const check = () => {
-    const result = puzzle.check(true)
+    const result = props.puzzle.check(true)
     resultText.value = result.text
     if (result.complete) {
         complete.value = true

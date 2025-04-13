@@ -212,8 +212,9 @@ export class Graphic {
 		}
 
 		if (this.canvasWidth === null || this.canvasHeight === null) {
-			const rect = getRect(puzzle.canvas);
-			this.resizeCanvas(rect.width, rect.height);
+			// const rect = getRect(puzzle.canvas);
+			// this.resizeCanvas(rect.width, rect.height);
+			this.resizeCanvasByCellSize();
 		}
 
 		this.pendingResize = true;
@@ -263,14 +264,13 @@ export class Graphic {
 	resizeCanvas(cwid: number | null = null, chgt: number | null = null) {
 		const insuspend = this.suspended;
 		this.suspendAll();
-
 		this.canvasWidth = cwid || this.canvasWidth;
 		this.canvasHeight = chgt || this.canvasHeight;
 
 		this.pendingResize = true;
 		if (!insuspend) { this.unsuspend(); }
 	}
-	resizeCanvasByCellSize(cellsize: number | null) {
+	resizeCanvasByCellSize(cellsize: number | null = null) {
 		const insuspend = this.suspended;
 		this.suspendAll();
 
@@ -1632,7 +1632,12 @@ export class Graphic {
 	}
 
 	getCircleStrokeColor(cell: Cell) {
-		return this.getCircleStrokeColor_qnum(cell)
+		switch (this.circlestrokecolor_func) {
+			case "qnum":
+				return this.getCircleStrokeColor_qnum(cell)
+			case "qnum2":
+				return this.getCircleStrokeColor_qnum2(cell)
+		}
 	}
 	getCircleStrokeColor_qnum(cell: Cell) {
 		const puzzle = this.puzzle;
@@ -1654,8 +1659,16 @@ export class Graphic {
 	}
 
 	getCircleFillColor(cell: Cell) {
-		return this.getCircleFillColor_qnum(cell)
+		switch (this.circlefillcolor_func) {
+			case "qnum":
+				return this.getCircleFillColor_qnum(cell)
+			case "qnum2":
+				return this.getCircleFillColor_qnum2(cell)
+			case "qcmp":
+				return this.getCircleFillColor_qcmp(cell)
+		}
 	}
+
 	getCircleFillColor_qnum(cell: Cell) {
 		if (cell.qnum !== -1) {
 			const error = cell.error || cell.qinfo;

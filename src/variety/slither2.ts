@@ -203,7 +203,7 @@ export class SlitherLink extends Puzzle<SlitherCell> {
         return new SlitherAnsCheck(this);
     }
 
-    override initConverters(): void {
+    override initConverters() {
         this.converters.push(cell4)
     }
 

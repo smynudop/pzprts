@@ -1,5 +1,5 @@
-import { SlitherLink } from '../variety/slither2';
+import { Mashu } from '../variety/mashu';
 import { createPlayer } from '../components/webComponent';
 
 // Custom Element のコンストラクタに変換
-export const SlitherlinkPlayer = createPlayer(SlitherLink)
+export const MashuPlayer = createPlayer(Mashu)
