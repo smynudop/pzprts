@@ -1,6 +1,6 @@
 {
   "name": "@udop/penpa-player",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Scripts for handling puzzle objects",
   "type": "module",
   "directories": {
@@ -10,8 +10,7 @@
     "access": "public"
   },
   "keywords": [
-    "puzzle",
-    "HTML5"
+    "pencil puzzle"
   ],
   "author": "udop",
   "license": "MIT",
