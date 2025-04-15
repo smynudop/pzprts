@@ -97,7 +97,7 @@ export abstract class Puzzle<
 		this.checker = this.createAnsCheck();	// 正解判定オブジェクト
 		this.painter = this.createGraphic();		// 描画系オブジェクト
 
-		this.cursor = new TargetCursor(this);	// 入力用カーソルオブジェクト
+		this.cursor = this.createTargetCursor();	// 入力用カーソルオブジェクト
 		this.mouse = this.createMouseEvent();	// マウス入力オブジェクト
 		this.key = this.createKeyEvent();		// キーボード入力オブジェクト
 
@@ -162,6 +162,10 @@ export abstract class Puzzle<
 	 * override用
 	 */
 	abstract initConverters(): void
+
+	createTargetCursor() {
+		return new TargetCursor(this)
+	}
 
 	//---------------------------------------------------------------------------
 	// owner.open()    パズルデータを入力して盤面の初期化を行う

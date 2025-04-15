@@ -2,12 +2,15 @@ import Slitherlink from "./player/slitherlink.svelte"
 import Mashu from "./player/mashu.svelte"
 import Numberlink from "./player/numberlink.svelte"
 import Sudoku from "./player/sudoku.svelte"
+import Kakkuro from "./player/kakkuro.svelte"
 
 //@ts-ignore
-export const SlitherlinkPlayer = Slitherlink.element
+export const SlitherlinkPlayer = Slitherlink.element as new () => HTMLElement
 //@ts-ignore
-export const MashuPlayer = Mashu.element
+export const MashuPlayer = Mashu.element as new () => HTMLElement
 //@ts-ignore
-export const NumberlinkPlayer = Numberlink.element
+export const NumberlinkPlayer = Numberlink.element as new () => HTMLElement
 //@ts-ignore
-export const SudokuPlayer = Sudoku.element
+export const SudokuPlayer = Sudoku.element as new () => HTMLElement
+//@ts-ignore
+export const KakkuroPlayer = Kakkuro.element as new () => HTMLElement

@@ -34,6 +34,9 @@ import { BoardClearOperation } from "./Operation"
 
 type BoardOption = {
 	hasborder?: 0 | 1 | 2
+	hasexcell?: 0 | 1 | 2
+	rows?: number
+	cols?: number
 	lineGraph?: boolean | LineGraphOption,
 	areaRoomGraph?: boolean | AreaRoomGraphOption,
 	borderAsLine?: boolean
@@ -84,7 +87,11 @@ export class Board<
 	 * 1:Border/Lineが操作可能なパズル 2:外枠上も操作可能なパズル
 	 */
 	hasborder = 0
-	hasexcell = 0	// 1:上・左側にセルを用意するパズル 2:四方にセルを用意するパズル
+
+	/**
+	 *  1:上・左側にセルを用意するパズル 2:四方にセルを用意するパズル
+	 */
+	hasexcell = 0
 	borderAsLine = false	// 境界線をlineとして扱う
 	disable_subclear = false	// "補助消去"ボタン不要
 
@@ -96,6 +103,10 @@ export class Board<
 		this.minby = 0;
 		this.maxbx = 0;
 		this.maxby = 0;
+
+		this.rows = option?.rows || 10
+		this.cols = option?.cols || 10
+		this.hasexcell = option?.hasexcell || 0
 
 		// エラー設定可能状態かどうか
 		this.diserror = 0;
@@ -122,7 +133,6 @@ export class Board<
 		this.emptyborder = this.createBorder();
 		this.emptyexcell = this.createEXCell();
 
-
 		this.createExtraObject();
 
 		// 補助オブジェクト
@@ -137,7 +147,7 @@ export class Board<
 
 		this.addExtraInfo();
 
-		this.exec = new BoardExec(this.puzzle);
+		this.exec = this.createBoardExec();
 		this.exec.insex.cross = (this.hascross === 1 ? { 2: true } : { 0: true });
 
 		this.trialstage = 0;	// TrialMode
@@ -159,6 +169,10 @@ export class Board<
 			option.enabled = true
 		}
 		return new AreaRoomGraph(this.puzzle, option)
+	}
+
+	createBoardExec() {
+		return new BoardExec(this.puzzle)
 	}
 
 	addInfoListInstance<T extends GraphBase>(instance: T, enabled?: boolean): T {
@@ -241,7 +255,7 @@ export class Board<
 			}
 			groups2.allclear(false);
 		}
-		groups.length = len;
+		//groups.length = len;
 		return (len - clen);
 	}
 	getGroup(group: IGroup): PieceList<BoardPiece> {
@@ -350,6 +364,7 @@ export class Board<
 		}
 	}
 	setposEXcells() {
+		console.log("setposexcells")
 		const qc = this.cols;
 		const qr = this.rows;
 		for (let id = 0; id < this.excell.length; id++) {
@@ -369,6 +384,7 @@ export class Board<
 				if (i >= 0 && i < qr) { excell.bx = -1; excell.by = i * 2 + 1; } i -= qr;
 				if (i >= 0 && i < qr) { excell.bx = 2 * qc + 1; excell.by = i * 2 + 1; } i -= qr;
 			}
+			console.log(`cols: ${this.cols} rows: ${this.rows} id: ${id} bx: ${excell.bx} by: ${excell.by} ${excell.ques}`)
 
 			excell.initAdjacent();
 		}
@@ -527,7 +543,6 @@ export class Board<
 			else if (bx === -1 && by > 0 && by < 2 * qr) { id = 2 * qc + (by >> 1); }
 			else if (bx === 2 * qc + 1 && by > 0 && by < 2 * qr) { id = 2 * qc + qr + (by >> 1); }
 		}
-
 		return (id !== null ? this.excell[id] : this.emptyexcell);
 	}
 

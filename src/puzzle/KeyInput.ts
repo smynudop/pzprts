@@ -435,7 +435,7 @@ export class KeyEvent {
 	// kc.setnum51()      モード別に数字を設定する
 	// kc.getnum51()      モード別に数字を取得する
 	//---------------------------------------------------------------------------
-	inputnumber51(ca: string, max_obj: any) {
+	inputnumber51(ca: string, max_obj?: any) {
 		const cursor = this.cursor;
 		if (ca === 'shift') { cursor.chtarget(); return; }
 

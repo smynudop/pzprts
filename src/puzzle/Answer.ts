@@ -34,6 +34,7 @@ type IPathSeg = {
 import type { Board } from "./Board";
 
 
+
 export abstract class AnsCheck<
 	TCell extends Cell = Cell,
 	TCross extends Cross = Cross,
@@ -668,39 +669,43 @@ export abstract class AnsCheck<
 	// ans.checkRowsColsPartly()      黒マスや[＼]等で分かれるタテ列・ヨコ列の数字の判定を行う
 	// ans.checkRowsColsFor51cell()   [＼]で分かれるタテ列・ヨコ列の数字の判定を行う
 	//---------------------------------------------------------------------------
-	checkRowsColsPartly(evalfunc: (clist: CellList, info: any) => boolean, termfunc: CellCheck, code: string) {
-		let result = true;
-		const bd = this.puzzle.board;
-		let info: any;
+	checkRowsColsPartly(
+		evalfunc: (clist: CellList, info: any) => boolean,
+		termfunc: CellCheck,
+		code: string
+	) {
+		let result = true
+		const bd = this.puzzle.board
+		let info = { keycell: null! as BoardPiece | null, key51num: 0, isvert: false };
 		allloop: do {
 			/* 横方向サーチ */
-			info = { keycell: null as BoardPiece | null, key51num: -1, isvert: false };
+			info = { keycell: null, key51num: -1, isvert: false };
 			for (let by = 1; by <= bd.maxby; by += 2) {
 				for (let bx = 1; bx <= bd.maxbx; bx += 2) {
-					let txx: number = bx;
-					for (let tx = bx; tx <= bd.maxbx; tx += 2) { txx = tx; if (termfunc(bd.getc(tx, by))) { break; } }
+					let tx: number
+					for (tx = bx; tx <= bd.maxbx; tx += 2) { if (termfunc(bd.getc(tx, by))) { break; } }
 					info.keycell = bd.getobj(bx - 2, by);
 					info.key51num = info.keycell.qnum;
-					if (txx > bx && !evalfunc.call(this, bd.cellinside(bx, by, txx - 2, by), info)) {
+					if (tx > bx && !evalfunc.call(this, bd.cellinside(bx, by, tx - 2, by), info)) {
 						result = false;
 						if (this.checkOnly) { break allloop; }
 					}
-					bx = txx; /* 次のループはbx=tx+2 */
+					bx = tx; /* 次のループはbx=tx+2 */
 				}
 			}
 			/* 縦方向サーチ */
-			info = { keycell: null as BoardPiece | null, key51num: -1, isvert: true };
+			info = { keycell: null, key51num: -1, isvert: true };
 			for (let bx = 1; bx <= bd.maxbx; bx += 2) {
 				for (let by = 1; by <= bd.maxby; by += 2) {
-					let tyy: number = by;
-					for (let ty = by; ty <= bd.maxby; ty += 2) { tyy = ty; if (termfunc(bd.getc(bx, ty))) { break; } }
+					let ty: number
+					for (ty = by; ty <= bd.maxby; ty += 2) { if (termfunc(bd.getc(bx, ty))) { break; } }
 					info.keycell = bd.getobj(bx, by - 2);
 					info.key51num = info.keycell.qnum2;
-					if (tyy > by && !evalfunc.call(this, bd.cellinside(bx, by, bx, tyy - 2), info)) {
+					if (ty > by && !evalfunc.call(this, bd.cellinside(bx, by, bx, ty - 2), info)) {
 						result = false;
 						if (this.checkOnly) { break allloop; }
 					}
-					by = tyy; /* 次のループはbx=ty+2 */
+					by = ty; /* 次のループはbx=ty+2 */
 				}
 			}
 		} while (0);

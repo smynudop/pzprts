@@ -15,9 +15,19 @@ export class BoardPiece extends Position {
 	isnull = true
 
 	// デフォルト値
-	/* 問題データを保持するプロパティ */
-	ques = 0	// cell  :(1:黒マス 2-5:三角形 6:アイス・なべ等 7:盤面外 8:盤面内だが入力不可
-	//         11-17:十字型パーツ 21-22:旗門 31:Hole 41-42:ぬりめいずの○△ 51:カックロ)
+	/**
+	 *  1:黒マス 
+	 *  2-5:三角形 
+	 *  6:アイス・なべ等 
+	 *  7:盤面外 
+	 *  8:盤面内だが入力不可
+	 *  11-17:十字型パーツ 
+	 *  21-22:旗門 
+	 *  31:Hole 
+	 *  41-42:ぬりめいずの○△ 
+	 *  51:カックロ
+	 */
+	ques = 0
 	// cross :(交点の黒点)
 	// border:(問題の境界線)
 	qdir = 0  // cell  :(数字につく矢印の向き)
@@ -160,7 +170,8 @@ export class BoardPiece extends Position {
 
 		//todo
 		if (this.pureObject == null) {
-			this.pureObject = new BoardPiece(this.puzzle)
+			// @ts-ignore
+			this.pureObject = new this.constructor(this.puzzle)
 		}
 
 		//@ts-ignore
@@ -344,7 +355,7 @@ export class Cell extends BoardPiece {
 	// prehook  値の設定前にやっておく処理や、設定禁止処理を行う
 	// posthook 値の設定後にやっておく処理を行う
 	//---------------------------------------------------------------------------
-	override prehook = {
+	override prehook: Record<string, (piece: any, data: any) => any> = {
 		qnum(cell: Cell, num: number) { return (cell.getminnum() > 0 && num === 0); },
 		qnum2(cell: Cell, num: number) { return (cell.getminnum() > 0 && num === 0); },
 		anum(cell: Cell, num: number) { return (cell.getminnum() > 0 && num === 0); }
