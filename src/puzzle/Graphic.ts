@@ -140,7 +140,7 @@ export class Graphic {
 	circleratio = [0.40, 0.35]
 
 	// 枠外の一辺のmargin(セル数換算)
-	margin = 0.15
+	margin = 0.25
 
 	// canvasの大きさを保持する
 	canvasWidth: number = null!
@@ -345,10 +345,13 @@ export class Graphic {
 		const x0 = this.x0
 		const y0 = this.y0
 
+		console.log(this.x0, this.y0)
+
 		// CanvasのOffset位置変更 (SVGの時、小数点以下の端数調整を行う)
 		if (!g.use.canvas) {
 			const rect = getRect(g.canvas);
-			g.translate(x0 - (rect.left % 1), y0 - (rect.top % 1));
+			//g.translate(x0 - (rect.left % 1), y0 - (rect.top % 1));
+			g.translate(x0, y0)
 		}
 		else {
 			g.translate(x0, y0);

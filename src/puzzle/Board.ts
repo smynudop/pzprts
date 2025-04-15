@@ -364,7 +364,6 @@ export class Board<
 		}
 	}
 	setposEXcells() {
-		console.log("setposexcells")
 		const qc = this.cols;
 		const qr = this.rows;
 		for (let id = 0; id < this.excell.length; id++) {
@@ -384,7 +383,6 @@ export class Board<
 				if (i >= 0 && i < qr) { excell.bx = -1; excell.by = i * 2 + 1; } i -= qr;
 				if (i >= 0 && i < qr) { excell.bx = 2 * qc + 1; excell.by = i * 2 + 1; } i -= qr;
 			}
-			console.log(`cols: ${this.cols} rows: ${this.rows} id: ${id} bx: ${excell.bx} by: ${excell.by} ${excell.ques}`)
 
 			excell.initAdjacent();
 		}
