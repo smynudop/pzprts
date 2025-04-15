@@ -123,7 +123,7 @@ export class MouseEvent1 {
 		this.moveTo(addrtarget.bx, addrtarget.by);
 
 		e.stopPropagation();
-		e.preventDefault();
+		//e.preventDefault();
 	}
 	e_mouseup(e: MouseEvent) {
 		if (!this.enableMouse || !this.btn) { return true; }
@@ -131,20 +131,22 @@ export class MouseEvent1 {
 		this.inputEnd();
 
 		e.stopPropagation();
-		e.preventDefault();
+		//e.preventDefault();
 	}
 	e_mousemove(e: MouseEvent) {
 		if (!this.enableMouse || !this.btn) { return true; }
 		//@ts-ignore
 		if (e.touches !== void 0 || e.which === void 0 || e.which !== 0 || (e.type.match(/pointermove/i) && e.buttons > 0)) {
+
 			const addrtarget = this.getBoardAddress(e);
+
 			//@ts-ignore
 			this.lineTo(addrtarget.bx, addrtarget.by);
 		}
 		else { this.mousereset(); }
 
 		e.stopPropagation();
-		e.preventDefault();
+		//e.preventDefault();
 	}
 	e_mousecancel(e: MouseEvent) {
 		this.mousereset();

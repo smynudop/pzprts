@@ -82,8 +82,13 @@
   #puzzle {
     margin: 0 auto;
     max-width: 100%;
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     padding: 4px;
+  }
+
+  :global(#puzzle > div:focus){
+    outline: none; /* デフォルトの枠を消す */
+    box-shadow: 0 0 10px 5px rgba(0, 123, 255, 0.6); /* 青くぼやっと光る */
   }
 
   .mode > div {
@@ -93,6 +98,10 @@
     text-align: center;
     cursor: pointer;
     user-select: none;
+  }
+
+  :global(svg){
+    display: block;
   }
 
   .mode-item:first-child {

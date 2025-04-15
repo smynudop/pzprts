@@ -113,10 +113,10 @@ export abstract class Puzzle<
 		this.clear()
 		this.setCanvas(parent);
 
-		document.addEventListener('keydown', (e: KeyboardEvent) => {
+		this.canvas.addEventListener('keydown', (e: KeyboardEvent) => {
 			this.key.e_keydown(e);
 		});
-		document.addEventListener('keyup', (e: KeyboardEvent) => {
+		this.canvas.addEventListener('keyup', (e: KeyboardEvent) => {
 			this.key.e_keyup(e);
 		});
 	}
@@ -211,6 +211,7 @@ export abstract class Puzzle<
 
 		const rect = getRect(el);
 		const _div = document.createElement('div');
+		_div.setAttribute("tabindex", "1")
 		// _div.style.width = rect.width + 'px';
 		// _div.style.height = rect.height + 'px';
 		el.appendChild(_div);
@@ -586,7 +587,7 @@ function setCanvasEvents(puzzle: Puzzle) {
 		if (!!puzzle.mouse) { puzzle.mouse.e_mousecancel(e); }
 	});
 	puzzle.canvas.oncontextmenu = function () { return false; };
-	puzzle.canvas.style.touchAction = 'pinch-zoom';
+	//puzzle.canvas.style.touchAction = 'pinch-zoom';
 
 	// console.log(puzzle.canvas)
 	// // キー入力イベントの設定
