@@ -4,3 +4,4 @@ customElements.define('slitherlink-player', PenpaPlayer.SlitherlinkPlayer);
 customElements.define("mashu-player", PenpaPlayer.MashuPlayer)
 customElements.define("sudoku-player", PenpaPlayer.SudokuPlayer)
 customElements.define("kakkuro-player", PenpaPlayer.KakkuroPlayer)
+customElements.define("nurikabe-player", PenpaPlayer.NurikabePlayer)

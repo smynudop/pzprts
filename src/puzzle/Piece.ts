@@ -266,6 +266,7 @@ export class BoardPiece extends Position {
 
 }
 
+export type CellOption = Partial<Pick<Cell, "numberRemainsUnshaded">>
 //---------------------------------------------------------------------------
 // ★Cellクラス BoardクラスがCellの数だけ保持する
 //---------------------------------------------------------------------------
@@ -283,7 +284,10 @@ export class Cell extends BoardPiece {
 	numberAsObject = false	// 数字以外でqnum/anumを使用する(同じ値を入力で消去できたり、回答で・が入力できる)
 	numberAsLetter = false	// 数字の代わりにアルファベットを入力する
 
-	numberRemainsUnshaded = false	// 数字のあるマスが黒マスにならないパズル
+	/** 
+	 * 数字のあるマスが黒マスにならないパズル 
+	 */
+	numberRemainsUnshaded = false
 	enableSubNumberArray = false	// 補助数字の配列を作るパズル
 
 
@@ -298,8 +302,9 @@ export class Cell extends BoardPiece {
 	} = null!	// 隣接するセルの情報を保持する
 
 
-	constructor(puzzle: Puzzle) {
+	constructor(puzzle: Puzzle, option?: CellOption) {
 		super(puzzle)
+		this.numberRemainsUnshaded = option?.numberRemainsUnshaded || false
 
 		if (this.enableSubNumberArray) {
 			const anum0 = Cell.anumDefault;

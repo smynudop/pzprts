@@ -468,7 +468,12 @@ export class MouseEvent1 {
 			if (((cell0.bx & 2) ^ (cell0.by & 2)) !== ((cell.bx & 2) ^ (cell.by & 2))) { return; }
 		}
 
-		(this.inputData === 1 ? cell.setShade : cell.clrShade).call(cell);
+
+		if (this.inputData === 1) {
+			cell.setShade()
+		} else {
+			cell.clrShade()
+		}
 		cell.setQsub(this.inputData === 2 ? 1 : 0);
 
 		cell.draw();

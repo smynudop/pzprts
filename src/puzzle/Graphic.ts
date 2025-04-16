@@ -345,8 +345,6 @@ export class Graphic {
 		const x0 = this.x0
 		const y0 = this.y0
 
-		console.log(this.x0, this.y0)
-
 		// CanvasのOffset位置変更 (SVGの時、小数点以下の端数調整を行う)
 		if (!g.use.canvas) {
 			const rect = getRect(g.canvas);
@@ -683,7 +681,7 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	drawShadedCells() {
 		this.vinc('cell_shaded', 'crispEdges', true);
-		this.drawCells_common("c_fulls_", this.getShadedCellColor);
+		this.drawCells_common("c_fulls_", (cell) => this.getShadedCellColor(cell));
 	}
 	getShadedCellColor(cell: Cell) {
 		if (cell.qans !== 1) { return null; }
@@ -692,6 +690,7 @@ export class Graphic {
 		if (info === 2) { return this.errcolor2; }
 		if (cell.trial) { return this.trialcolor; }
 		if (this.puzzle.execConfig('irowakeblk')) { return cell.sblk.color; }
+
 		return this.shadecolor;
 	}
 

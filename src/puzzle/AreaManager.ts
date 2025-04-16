@@ -5,6 +5,14 @@ import { CellList } from './PieceList';
 import { BoardPiece, type Border, type Cell } from './Piece'
 import type { GraphComponent } from "./GraphBase"
 import type { IGroup } from './Board';
+
+export type AreaShadeGraphOption = {
+	enabled?: boolean
+}
+
+export type AreaUnshadeGraphOption = {
+	enabled?: boolean
+}
 //--------------------------------------------------------------------------------
 // ★AreaGraphBaseクラス セルの部屋情報などを保持するクラス
 //   ※このクラスで管理しているroomsは左上からの順番に並ばないので
@@ -105,6 +113,10 @@ export class AreaGraphBase extends GraphBase {
 // ☆AreaNumberGraphクラス 数字情報オブジェクトのクラス
 //--------------------------------------------------------------------------------
 export class AreaShadeGraph extends AreaGraphBase {
+	constructor(puzzle: Puzzle, option?: AreaShadeGraphOption) {
+		super(puzzle)
+		this.enabled = option?.enabled || false
+	}
 	override relation = { 'cell.qans': 'node' }
 	override setComponentRefs(obj: any, component: any) { obj.sblk = component; }
 	override getObjNodeList(nodeobj: any) { return nodeobj.sblknodes; }
@@ -135,6 +147,10 @@ export class AreaShadeGraph extends AreaGraphBase {
 }
 
 export class AreaUnshadeGraph extends AreaGraphBase {
+	constructor(puzzle: Puzzle, option?: AreaUnshadeGraphOption) {
+		super(puzzle)
+		this.enabled = option?.enabled || false
+	}
 	override relation = { 'cell.qans': 'node' }
 	override setComponentRefs(obj: any, component: GraphComponent) { obj.ublk = component; }
 	override getObjNodeList(nodeobj: any) { return nodeobj.ublknodes; }

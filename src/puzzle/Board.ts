@@ -12,7 +12,8 @@ import {
 	Cell,
 	Cross,
 	Border,
-	EXCell
+	EXCell,
+	CellOption
 } from './Piece';
 import { LineGraph, type LineGraphOption } from './LineManager';
 import {
@@ -20,7 +21,9 @@ import {
 	AreaShadeGraph,
 	AreaUnshadeGraph,
 	AreaNumberGraph,
-	type AreaRoomGraphOption
+	type AreaRoomGraphOption,
+	type AreaShadeGraphOption,
+	type AreaUnshadeGraphOption
 } from './AreaManager';
 import type { GraphBase } from './GraphBase';
 import { BoardExec, type IBoardOperation } from './BoardExec';
@@ -37,9 +40,11 @@ type BoardOption = {
 	hasexcell?: 0 | 1 | 2
 	rows?: number
 	cols?: number
+	borderAsLine?: boolean
 	lineGraph?: boolean | LineGraphOption,
 	areaRoomGraph?: boolean | AreaRoomGraphOption,
-	borderAsLine?: boolean
+	areaShadeGraph?: boolean | AreaShadeGraphOption
+	areaUnshadeGraph?: boolean | AreaUnshadeGraphOption
 }
 
 export type IGroup = 'cell' | 'cross' | 'border' | 'excell';
@@ -86,12 +91,12 @@ export class Board<
 	/**
 	 * 1:Border/Lineが操作可能なパズル 2:外枠上も操作可能なパズル
 	 */
-	hasborder = 0
+	hasborder: 0 | 1 | 2 = 0
 
 	/**
 	 *  1:上・左側にセルを用意するパズル 2:四方にセルを用意するパズル
 	 */
-	hasexcell = 0
+	hasexcell: 0 | 1 | 2 = 0
 	borderAsLine = false	// 境界線をlineとして扱う
 	disable_subclear = false	// "補助消去"ボタン不要
 
@@ -141,8 +146,8 @@ export class Board<
 
 		this.linegraph = this.addInfoListInstance(this.createLineGraph(option?.lineGraph || false));			// 交差なし線のグラフ
 		this.roommgr = this.addInfoListInstance(this.createAreaRoomGraph(option?.areaRoomGraph || false));			// 部屋情報を保持する
-		this.sblkmgr = this.addInfoList(AreaShadeGraph);		// 黒マス情報を保持する
-		this.ublkmgr = this.addInfoList(AreaUnshadeGraph);		// 白マス情報を保持する
+		this.sblkmgr = this.addInfoListInstance(this.createAreaShadeGraph(option?.areaShadeGraph || false));		// 黒マス情報を保持する
+		this.ublkmgr = this.addInfoListInstance(this.createAreaUnshadeGraph(option?.areaUnshadeGraph || false));		// 白マス情報を保持する
 		this.nblkmgr = this.addInfoList(AreaNumberGraph);		// 数字情報を保持する
 
 		this.addExtraInfo();
@@ -161,7 +166,6 @@ export class Board<
 		return new LineGraph(this.puzzle, option)
 	}
 
-
 	createAreaRoomGraph(option: boolean | AreaRoomGraphOption) {
 		if (typeof option === "boolean") {
 			option = { enabled: option }
@@ -169,6 +173,24 @@ export class Board<
 			option.enabled = true
 		}
 		return new AreaRoomGraph(this.puzzle, option)
+	}
+
+	createAreaShadeGraph(option: boolean | AreaShadeGraphOption) {
+		if (typeof option === "boolean") {
+			option = { enabled: option }
+		} else {
+			option.enabled = true
+		}
+		return new AreaShadeGraph(this.puzzle, option)
+	}
+
+	createAreaUnshadeGraph(option: boolean | AreaUnshadeGraphOption) {
+		if (typeof option === "boolean") {
+			option = { enabled: option }
+		} else {
+			option.enabled = true
+		}
+		return new AreaUnshadeGraph(this.puzzle, option)
 	}
 
 	createBoardExec() {
