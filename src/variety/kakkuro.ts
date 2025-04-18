@@ -84,8 +84,8 @@ class KakkuroEXCell extends EXCell {
 
 	override qnum = 0
 	override qnum2 = 0
-	override maxnum = () => 45
-	override minnum = () => 1
+	override maxnum = 45
+	override minnum = 1
 
 	disInputHatena = true
 }

@@ -43,7 +43,7 @@ class MashuKeyEvent extends KeyEvent {
 class MashuCell extends Cell {
 	override numberAsObject = true
 
-	override maxnum = () => 2
+	override maxnum = 2
 	override adjacent: { top: MashuCell; bottom: MashuCell; left: MashuCell; right: MashuCell; } = null!;
 
 	setErrorPearl() {

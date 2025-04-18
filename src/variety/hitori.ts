@@ -38,7 +38,7 @@ class HitokureKeyEvent extends KeyEvent {
 class HitokureCell extends Cell {
 	override disInputHatena = true
 
-	override maxnum() {
+	override maxnum = () => {
 		return Math.max(this.board.cols, this.board.rows);
 	}
 

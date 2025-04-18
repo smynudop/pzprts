@@ -62,12 +62,8 @@ class SlitherBoard extends Board<SlitherCell> {
     }
 }
 class SlitherCell extends Cell {
-    override maxnum() {
-        return 3
-    }
-    override minnum() {
-        return 0;
-    }
+    override maxnum = 3
+    override minnum = 0
 
     getdir4BorderLine1() {
         const adb = this.adjborder;

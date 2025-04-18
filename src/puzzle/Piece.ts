@@ -76,10 +76,10 @@ export class BoardPiece extends Position {
 	//clist: CellList | null = null
 
 	// 入力できる最大・最小の数字
-	maxnum() {
+	maxnum: number | (() => number) = () => {
 		return 999;
 	}
-	minnum() {
+	minnum: number | (() => number) = () => {
 		return 1
 	}
 
@@ -234,8 +234,8 @@ export class BoardPiece extends Position {
 	// getmaxnum() 入力できる数字の最大値を返す
 	// getminnum() 入力できる数字の最小値を返す
 	//---------------------------------------------------------------------------
-	getmaxnum() { return this.maxnum() }
-	getminnum() { return this.minnum() }
+	getmaxnum() { return this.maxnum instanceof Function ? this.maxnum() : this.maxnum }
+	getminnum() { return this.minnum instanceof Function ? this.minnum() : this.minnum }
 
 	//---------------------------------------------------------------------------
 	// prehook  値の設定前にやっておく処理や、設定禁止処理を行う
