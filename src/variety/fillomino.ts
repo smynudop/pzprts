@@ -309,22 +309,16 @@ export class Fillomino extends Puzzle<
 		return new FillominoKeyEvent(this)
 	}
 
-	override createFailCode(): Map<string, [string, string]> {
-		const map = super.createFailCode()
-		const add: Record<string, [string, string]> = {
+	override getAdditionalFailCode() {
+		return {
 			bkSizeLt: ["ブロックの大きさより数字のほうが大きいです。", "A number is bigger than the size of block."],
 			bkSizeGt: ["ブロックの大きさよりも数字が小さいです。", "A number is smaller than the size of block."],
 			bkMixedNum: ["1つのブロックに2種類以上の数字が入っています。", "A room has two or more kinds of numbers."],
 			bsSameNum: ["同じ数字のブロックが辺を共有しています。", "Adjacent blocks have the same number."]
-		}
-		for (const [key, item] of Object.entries(add)) {
-			map.set(key, item)
-		}
-
-		return map
+		} as Record<string, [string, string]>
 	}
 
-	override initConverters(): void {
-		this.converters.push(number16)
+	override getConverters() {
+		return [number16]
 	}
 } 

@@ -350,16 +350,16 @@ export class Kakkuro extends Puzzle {
 		return new KakkuroKeyEvent(this)
 	}
 
-	override initConverters(): void {
-		this.converters.push(kakkuroConverter)
+	override getConverters() {
+		return [kakkuroConverter]
 	}
 
 	override createTargetCursor(): TargetCursor {
 		return new KakkuroTargetCursor(this)
 	}
 
-	override createFailCode(): Map<string, [string, string]> {
-		const map = super.createFailCode()
+	override getAdditionalFailCode(): Map<string, [string, string]> {
+		const map = new Map()
 		map.set("nmSumRowNe", ["数字の下か右にある数字の合計が間違っています。", "The sum of the cells is not correct."])
 		map.set("ceNoNum", ["すべてのマスに数字が入っていません。", "There is an empty cell."])
 

@@ -154,15 +154,38 @@ export abstract class Puzzle<
 	abstract createGraphic(): Graphic
 
 	abstract createAnsCheck(): AnsCheck<TCell, TCross, TBorder, TEXCell, TBoard>
-	createFailCode() {
-		return createFailCode()
+	private createFailCode() {
+		let map = createFailCode()
+		const add = this.getAdditionalFailCode()
+		if (add instanceof Map) {
+			map = new Map([...map, ...add])
+		} else {
+			for (const [key, item] of Object.entries(add)) {
+				map.set(key, item)
+			}
+		}
+		return map
 	}
+
+	/**
+	 * 追加分のFailCodeを返す
+	 */
+	abstract getAdditionalFailCode(): Map<string, [string, string]> | Record<string, [string, string]>
+
+
 	abstract createFileIO(): FileIO
 
 	/**
 	 * override用
 	 */
-	abstract initConverters(): void
+	private initConverters() {
+		this.converters.push(...this.getConverters())
+	}
+
+	/**
+	 * 使用するURLのコンバーターを返す
+	 */
+	abstract getConverters(): Converter[]
 
 	createTargetCursor() {
 		return new TargetCursor(this)

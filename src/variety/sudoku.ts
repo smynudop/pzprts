@@ -129,6 +129,10 @@ export class Sudoku extends Puzzle {
 		})
 	}
 
+	override getAdditionalFailCode(): Map<string, [string, string]> | Record<string, [string, string]> {
+		return {}
+	}
+
 	override createFileIO(): FileIO {
 		return new SudokuFileIO(this)
 	}
@@ -145,8 +149,8 @@ export class Sudoku extends Puzzle {
 		return new SudokuMouseEvent(this)
 	}
 
-	override initConverters(): void {
-		this.converters.push(number16)
+	override getConverters() {
+		return [number16]
 	}
 }
 

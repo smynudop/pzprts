@@ -195,8 +195,8 @@ export class Hitokure extends Puzzle<HitokureCell> {
 	override createAnsCheck(): AnsCheck<HitokureCell, Cross, Border, EXCell, Board<HitokureCell, Cross, Border, EXCell>> {
 		return new HitokureAnsCheck(this)
 	}
-	override createFailCode(): Map<string, [string, string]> {
-		return super.createFailCode()
+	override getAdditionalFailCode(): Map<string, [string, string]> {
+		return new Map()
 	}
 
 	override createBoard(): Board<HitokureCell, Cross, Border, EXCell> {
@@ -221,7 +221,7 @@ export class Hitokure extends Puzzle<HitokureCell> {
 		return new HitokureMouseEvent(this)
 	}
 
-	override initConverters(): void {
-		this.converters.push(hitokureConverter)
+	override getConverters() {
+		return [hitokureConverter]
 	}
 }

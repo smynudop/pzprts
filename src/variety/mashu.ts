@@ -257,20 +257,14 @@ export class Mashu extends Puzzle<MashuCell> {
 	override createAnsCheck(): AnsCheck<MashuCell, Cross, Border, EXCell> {
 		return new MashuAnsCheck(this)
 	}
-	override createFailCode(): Map<string, [string, string]> {
-		const f = super.createFailCode()
-		const add: Record<string, [string, string]> = {
+	override getAdditionalFailCode() {
+		return {
 			mashuOnLine: ["線が上を通っていない丸があります。", "Lines don't pass some pearls."],
 			mashuWCurve: ["白丸の上で線が曲がっています。", "Lines curve on white pearl."],
 			mashuWStNbr: ["白丸の隣で線が曲がっていません。", "Lines go straight next to white pearl on each side."],
 			mashuBStrig: ["黒丸の上で線が直進しています。", "Lines go straight on black pearl."],
 			mashuBCvNbr: ["黒丸の隣で線が曲がっています。", "Lines curve next to black pearl."]
-		}
-		for (const [key, item] of Object.entries(add)) {
-			f.set(key, item)
-		}
-		return f
-
+		} as Record<string, [string, string]>
 	}
 
 	override createKeyEvent(): KeyEvent {
@@ -289,8 +283,8 @@ export class Mashu extends Puzzle<MashuCell> {
 		return new MashuMouseEvent(this)
 	}
 
-	override initConverters(): void {
-		this.converters.push(circle)
+	override getConverters() {
+		return [circle]
 	}
 }
 

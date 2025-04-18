@@ -164,8 +164,8 @@ export class SlitherLink extends Puzzle<SlitherCell> {
         });
     }
 
-    override createFailCode() {
-        const map = super.createFailCode()
+    override getAdditionalFailCode() {
+        const map = new Map()
         map.set("nmLineNe", ["数字の周りにある線の本数が違います。", "The number is not equal to the number of lines around it."])
         return map;
     }
@@ -178,8 +178,8 @@ export class SlitherLink extends Puzzle<SlitherCell> {
         return new SlitherAnsCheck(this);
     }
 
-    override initConverters() {
-        this.converters.push(cell4)
+    override getConverters() {
+        return [cell4]
     }
 
 }

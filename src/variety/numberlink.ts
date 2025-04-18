@@ -152,14 +152,14 @@ export class Numberlink extends Puzzle {
 		return new NumberlinkMouseEvent(this)
 	}
 
-	override createFailCode(): Map<string, [string, string]> {
-		const map = super.createFailCode()
+	override getAdditionalFailCode(): Map<string, [string, string]> {
+		const map = new Map<string, [string, string]>()
 		map.set("nmConnDiff", ["異なる数字がつながっています。", "Different numbers are connected."])
 		return map
 	}
 
-	override initConverters(): void {
-		this.converters.push(number16)
+	override getConverters() {
+		return [number16]
 	}
 
 }

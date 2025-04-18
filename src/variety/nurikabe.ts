@@ -126,8 +126,8 @@ export class Nurikabe extends Puzzle {
 		return new NurikabeKeyEvent(this)
 	}
 
-	override createFailCode(): Map<string, [string, string]> {
-		const map = super.createFailCode()
+	override getAdditionalFailCode(): Map<string, [string, string]> {
+		const map = new Map<string, [string, string]>()
 		map.set("bkNoNum", ["数字の入っていないシマがあります。", "An area of unshaded cells has no numbers."])
 		map.set("bkNumGe2", ["1つのシマに2つ以上の数字が入っています。", "An area of unshaded cells has plural numbers."])
 		map.set("bkSizeNe", ["数字とシマの面積が違います。", "The number is not equal to the number of the size of the area."])
@@ -141,7 +141,7 @@ export class Nurikabe extends Puzzle {
 		})
 	}
 
-	override initConverters(): void {
-		this.converters.push(number16)
+	override getConverters() {
+		return [number16]
 	}
 }
