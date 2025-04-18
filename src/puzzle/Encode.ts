@@ -47,7 +47,7 @@ export const encodeURL = (puzzle: Puzzle, converters: Converter[]) => {
 //---------------------------------------------------------------------------
 // enc.include()    文字列caはbottomとupの間にあるか
 //----------------------------------------------------------------------------
-const include = (ca: string, bottom: string, up: string) => {
+export const include = (ca: string, bottom: string, up: string) => {
 	return (bottom <= ca && ca <= up);
 }
 

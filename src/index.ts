@@ -5,6 +5,8 @@ import Sudoku from "./player/sudoku.svelte"
 import Kakkuro from "./player/kakkuro.svelte"
 import Nurikabe from "./player/nurikabe.svelte"
 import Fillomino from "./player/fillomino.svelte"
+import Hitokure from "./player/hitokure.svelte"
+
 //@ts-ignore
 export const SlitherlinkPlayer = Slitherlink.element as new () => HTMLElement
 //@ts-ignore
@@ -19,3 +21,5 @@ export const KakkuroPlayer = Kakkuro.element as new () => HTMLElement
 export const NurikabePlayer = Nurikabe.element as new () => HTMLElement
 //@ts-ignore
 export const FillominoPlayer = Fillomino.element as new () => HTMLElement
+//@ts-ignore
+export const HitokurePlayer = Hitokure.element as new () => HTMLElement
