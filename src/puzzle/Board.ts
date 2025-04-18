@@ -669,6 +669,7 @@ export class Board<
 	//--------------------------------------------------------------------------------
 	rebuildInfo() {
 		this.infolist.forEach(function (info) { info.rebuild(); });
+
 	}
 	modifyInfo(obj: BoardPiece, type: string) {
 		if (!this.isenableInfo()) { return; }

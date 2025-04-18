@@ -39,13 +39,14 @@ export abstract class AnsCheck<
 	TCell extends Cell = Cell,
 	TCross extends Cross = Cross,
 	TBorder extends Border = Border,
-	TEXCell extends EXCell = EXCell
+	TEXCell extends EXCell = EXCell,
+	TBoard extends Board<TCell, TCross, TBorder, TEXCell> = Board<TCell, TCross, TBorder, TEXCell>
 > {
 	inCheck: boolean
 	checkOnly: boolean
-	puzzle: Puzzle<TCell, TCross, TBorder, TEXCell>
+	puzzle: Puzzle<TCell, TCross, TBorder, TEXCell, TBoard>
 	pid: string
-	constructor(puzzle: Puzzle<TCell, TCross, TBorder, TEXCell>) {
+	constructor(puzzle: Puzzle<TCell, TCross, TBorder, TEXCell, TBoard>) {
 		this.puzzle = puzzle
 		this.pid = puzzle.pid
 		this.inCheck = false;
@@ -533,7 +534,11 @@ export abstract class AnsCheck<
 	// ans.checkSideAreaSize() 境界線をはさんで接する部屋のgetvalで得られるサイズが異なることを判定する
 	// ans.checkSideAreaCell() 境界線をはさんでタテヨコに接するセルの判定を行う
 	//---------------------------------------------------------------------------
-	checkSideAreaSize(graph: AreaRoomGraph, getval: (c: GraphComponent) => any, code: string) {
+	checkSideAreaSize<T extends GraphComponent>(
+		graph: AreaGraphBase<T> & { getSideAreaInfo: () => [any, any][] },
+		getval: (c: T) => number,
+		code: string
+	) {
 		const sides = graph.getSideAreaInfo();
 		for (let i = 0; i < sides.length; i++) {
 			const a1 = getval(sides[i][0]);

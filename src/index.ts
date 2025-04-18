@@ -4,7 +4,7 @@ import Numberlink from "./player/numberlink.svelte"
 import Sudoku from "./player/sudoku.svelte"
 import Kakkuro from "./player/kakkuro.svelte"
 import Nurikabe from "./player/nurikabe.svelte"
-
+import Fillomino from "./player/fillomino.svelte"
 //@ts-ignore
 export const SlitherlinkPlayer = Slitherlink.element as new () => HTMLElement
 //@ts-ignore
@@ -17,3 +17,5 @@ export const SudokuPlayer = Sudoku.element as new () => HTMLElement
 export const KakkuroPlayer = Kakkuro.element as new () => HTMLElement
 //@ts-ignore
 export const NurikabePlayer = Nurikabe.element as new () => HTMLElement
+//@ts-ignore
+export const FillominoPlayer = Fillomino.element as new () => HTMLElement

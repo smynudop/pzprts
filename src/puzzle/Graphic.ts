@@ -1254,7 +1254,14 @@ export class Graphic {
 	}
 
 	getBorderColor(border: Border) {
-		return this.getBorderColor_ques(border)
+		switch (this.bordercolor_func) {
+			case "ques":
+				return this.getBorderColor_ques(border)
+			case "qans":
+				return this.getBorderColor_qans(border)
+			case "ice":
+				return this.getBorderColor_ice(border)
+		}
 	}
 	getBorderColor_ques(border: Border) {
 		if (border.isBorder()) { return this.quescolor; }

@@ -39,7 +39,8 @@ export abstract class Puzzle<
 	TCell extends Cell = Cell,
 	TCross extends Cross = Cross,
 	TBorder extends Border = Border,
-	TEXCell extends EXCell = EXCell
+	TEXCell extends EXCell = EXCell,
+	TBoard extends Board<TCell, TCross, TBorder, TEXCell> = Board<TCell, TCross, TBorder, TEXCell>
 > {
 	Config = Config
 	preInitCanvasInfo: {
@@ -48,8 +49,8 @@ export abstract class Puzzle<
 		height: number | null
 		cellsize: number | null
 	}
-	board: Board<TCell, TCross, TBorder, TEXCell>
-	checker: AnsCheck<TCell, TCross, TBorder, TEXCell>
+	board: TBoard
+	checker: AnsCheck<TCell, TCross, TBorder, TEXCell, TBoard>
 	painter: Graphic
 	cursor: TargetCursor
 	mouse: MouseEvent1
@@ -148,11 +149,11 @@ export abstract class Puzzle<
 
 	abstract createMouseEvent(): MouseEvent1
 
-	abstract createBoard(): Board<TCell, TCross, TBorder, TEXCell>
+	abstract createBoard(): TBoard
 
 	abstract createGraphic(): Graphic
 
-	abstract createAnsCheck(): AnsCheck<TCell, TCross, TBorder, TEXCell>
+	abstract createAnsCheck(): AnsCheck<TCell, TCross, TBorder, TEXCell, TBoard>
 	createFailCode() {
 		return createFailCode()
 	}

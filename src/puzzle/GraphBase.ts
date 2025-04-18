@@ -10,16 +10,16 @@ import { Board, type IGroup } from "./Board"
 //---------------------------------------------------------------------------
 // GraphBaseクラスの定義
 
-export abstract class GraphBase {
+export abstract class GraphBase<TComponent extends GraphComponent = GraphComponent> {
 
 	enabled = false
-	relation: any = {}
+	relation: Record<string, string> = {}
 
 	abstract pointgroup: IGroup
 	abstract linkgroup: IGroup | null
 
 	coloring = false
-	components: GraphComponent[] = null!
+	components: TComponent[] = null!
 	modifyNodes: GraphNode[] = null!
 	puzzle: Puzzle
 	constructor(puzzle: Puzzle) {
@@ -72,7 +72,6 @@ export abstract class GraphBase {
 	rebuildmode = false
 	rebuild() {
 		if (!this.enabled) { return; }
-
 		this.rebuildmode = true;
 
 		this.components = [];
@@ -115,8 +114,11 @@ export abstract class GraphBase {
 	// graph.createComponent()  GraphComponentオブジェクトを作成する
 	// graph.deleteComponent()  GraphComponentオブジェクトを削除してNodeをmodifyNodesに戻す
 	//---------------------------------------------------------------------------
+	createComponentInstance() {
+		return new GraphComponent(this.puzzle) as TComponent;
+	}
 	createComponent() {
-		const component = new GraphComponent(this.puzzle);
+		const component = this.createComponentInstance()
 		this.components.push(component);
 		return component;
 	}

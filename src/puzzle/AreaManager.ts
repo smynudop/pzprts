@@ -18,7 +18,7 @@ export type AreaUnshadeGraphOption = {
 //   ※このクラスで管理しているroomsは左上からの順番に並ばないので
 //     回答チェックやURL出力前には一旦resetRoomNumber()等が必要です。
 //--------------------------------------------------------------------------------
-export class AreaGraphBase extends GraphBase {
+export class AreaGraphBase<TComponent extends GraphComponent = GraphComponent> extends GraphBase<TComponent> {
 	pointgroup: IGroup = 'cell'
 	linkgroup: IGroup | null = null
 
@@ -102,7 +102,7 @@ export class AreaGraphBase extends GraphBase {
 	//--------------------------------------------------------------------------------
 	// areagraph.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
-	override setExtraData(component: GraphComponent) {
+	override setExtraData(component: TComponent) {
 		component.clist = new CellList(component.getnodeobjs());
 	}
 }
@@ -159,13 +159,34 @@ export class AreaUnshadeGraph extends AreaGraphBase {
 	override isnodevalid(cell: Cell) { return cell.isUnshade(); }
 }
 
-export class AreaNumberGraph extends AreaGraphBase {
-	override relation = { 'cell.qnum': 'node', 'cell.anum': 'node', 'cell.qsub': 'node' }
+export class AreaNumberGraph<TComponent extends GraphComponent = GraphComponent> extends AreaGraphBase<TComponent> {
+	override relation: Record<string, string> = { 'cell.qnum': 'node', 'cell.anum': 'node', 'cell.qsub': 'node' }
 	override setComponentRefs(obj: any, component: GraphComponent) { obj.nblk = component; }
 	override getObjNodeList(nodeobj: any) { return nodeobj.nblknodes; }
 	override resetObjNodeList(nodeobj: any) { nodeobj.nblknodes = []; }
 
 	override isnodevalid(cell: Cell) { return cell.isNumberObj(); }
+
+	getComponentRefs(cell: any) { return cell.nblk; } // getSideAreaInfo用
+	getSideAreaInfo() {
+		const sides: [any, any][] = [];
+		const len = this.components.length;
+		const adjs: Record<number, boolean> = {};
+		const bd = this.puzzle.board;
+		for (let r = 0; r < this.components.length; r++) { this.components[r].id = r; }
+		for (let id = 0; id < bd.border.length; id++) {
+			const room1 = this.getComponentRefs(bd.border[id].sidecell[0]);
+			const room2 = this.getComponentRefs(bd.border[id].sidecell[1]);
+			if (room1 === room2 || !room1 || !room2) { continue; }
+
+			const key = (room1.id < room2.id ? room1.id * len + room2.id : room2.id * len + room1.id);
+			if (!!adjs[key]) { continue; }
+			adjs[key] = true;
+
+			sides.push([room1, room2]);
+		}
+		return sides;
+	}
 }
 
 //--------------------------------------------------------------------------------
@@ -314,7 +335,7 @@ export class AreaRoomGraph extends AreaGraphBase {
 	getSideAreaInfo() {
 		const sides = [];
 		const len = this.components.length;
-		const adjs: Record<string, boolean> = {};
+		const adjs: Record<number, boolean> = {};
 		const bd = this.puzzle.board;
 		for (let r = 0; r < this.components.length; r++) { this.components[r].id = r; }
 		for (let id = 0; id < bd.border.length; id++) {

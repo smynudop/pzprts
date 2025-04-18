@@ -39,7 +39,7 @@ class SudokuBoard extends Board {
 	override cols = 9
 	override rows = 9
 
-	override hasborder = 1;
+	override hasborder: 0 | 1 | 2 = 1;
 
 	override initBoardSize(col: number, row: number) {
 		super.initBoardSize(col, row)

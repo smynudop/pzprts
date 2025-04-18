@@ -22,7 +22,6 @@ MouseEvent:{
 	},
 	inputqcmp : function(){
 		var cell = this.getcell();
-		console.log(cell); /* eslint-disable-line no-console */
 		if(cell.isnull || cell.noNum()){ return;}
 
 		cell.setQcmp(+!cell.qcmp);
