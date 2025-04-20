@@ -8,9 +8,31 @@ import { CellList } from "./PieceList";
 // ★BoardPieceクラス Cell, Cross, Border, EXCellクラスのベース
 //---------------------------------------------------------------------------
 
+const Q_BLACK = 1
+const Q_TRIANGLE1 = 2
+const Q_TRIANGLE2 = 3
+const Q_TRIANGLE3 = 4
+const Q_TRIANGLE4 = 5
+const Q_ICE = 6
+const Q_OUT = 7
+const Q_NOINPUT = 8
+const Q_CROSS1 = 11
+const Q_CROSS2 = 12
+const Q_CROSS3 = 13
+const Q_CROSS4 = 14
+const Q_CROSS5 = 15
+const Q_CROSS6 = 16
+const Q_CROSS7 = 17
+const Q_GATE1 = 21
+const Q_GATE2 = 22
+const Q_HOLE = 31
+const Q_NURIMAZE_CORRECT = 41
+const Q_NURIMAZE_WRONG = 42
+const Q_KAKKURO = 51
+
 export type IDir = 1 | 2 | 3 | 4
 export class BoardPiece extends Position {
-	group: IGroup2 = 'none'
+	group!: IGroup
 	id: number = null!
 	isnull = true
 
@@ -111,7 +133,7 @@ export class BoardPiece extends Position {
 	setLineVal(val: any) { this.setdata('line', val); }
 	setQsub(val: any) { this.setdata('qsub', val); }
 	setQcmp(val: any) { this.setdata('qcmp', val); }
-	setSnum(val: any, val2: any = null) { this.setdata('snum', val); }
+	//setSnum(val: any, val2: any = null) { this.setdata('snum', val); }
 
 	//---------------------------------------------------------------------------
 	// setdata() Cell,Cross,Border,EXCellの値を設定する
@@ -200,14 +222,14 @@ export class BoardPiece extends Position {
 		}
 		return props;
 	}
-	compare(props: BoardPiece, callback: (group: IGroup, id: number, prop: string) => void) {
+	compare(props: BoardPiece, callback: (group: IGroup, id: number, prop: keyof BoardPiece) => void) {
 		const proplist = this.getproplist(['ques', 'ans', 'sub']);
 		for (let i = 0; i < proplist.length; i++) {
 			const a = proplist[i];
 			const isArray = (Array.isArray(this[a]));
 			const source = (!isArray ? props[a] : props[a].join(','));
 			const target = (!isArray ? this[a] : this[a].join(','));
-			if (source !== target) { callback(this.group as IGroup, this.id, a); }
+			if (source !== target) { callback(this.group, this.id, a); }
 		}
 	}
 
@@ -424,14 +446,14 @@ export class Cell extends BoardPiece {
 	// cell.setSnum() Cellの補助数字を設定する
 	// cell.clrSnum() Cellの補助数字を消去する
 	//---------------------------------------------------------------------------
-	override setSnum(pos: number, num: number = null!) { // todo
+	setSnum(pos: number, num: number = null!) { // todo
 		if (this.isNum() && num !== -1) { return; }
 		if (!this.enableSubNumberArray) {
 			this.setdata('snum', num);	// 1つ目の数字のみ
+			console.warn(`snumがセットされましたが、候補数字が無効です。`)
+			return
 		}
-		else {
-			this.setdata2('snum', pos, num);
-		}
+		this.setdata2('snum', pos, num);
 	}
 	clrSnum() {
 		if (!this.enableSubNumberArray) {

@@ -151,7 +151,6 @@ export class MouseEvent1<TCell extends Cell = Cell> {
 		this.setMouseButton(e);			/* どのボタンが押されたか取得 (mousedown時のみ) */
 		if (!this.btn) { this.mousereset(); return; }
 		const addrtarget = this.getBoardAddress(e);
-		//@ts-ignore
 		this.moveTo(addrtarget.bx, addrtarget.by);
 
 		e.stopPropagation();
@@ -171,8 +170,6 @@ export class MouseEvent1<TCell extends Cell = Cell> {
 		if (e.touches !== void 0 || e.which === void 0 || e.which !== 0 || (e.type.match(/pointermove/i) && e.buttons > 0)) {
 
 			const addrtarget = this.getBoardAddress(e);
-
-			//@ts-ignore
 			this.lineTo(addrtarget.bx, addrtarget.by);
 		}
 		else { this.mousereset(); }
@@ -204,7 +201,7 @@ export class MouseEvent1<TCell extends Cell = Cell> {
 		const pc = puzzle.painter;
 		let pix = { px: Number.NaN, py: Number.NaN };
 		const g = pc.context;
-		if (!g) { return { bx: null, by: null }; }
+		if (!g) { throw new Error(`context is null`) }
 		if (this.puzzle.canvas.children[0] instanceof SVGSVGElement) {
 			const svg = this.puzzle.canvas.children[0]
 			// SVGの座標系でのポイントを作成

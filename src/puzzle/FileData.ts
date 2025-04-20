@@ -141,7 +141,6 @@ export class FileIO {
 			this.decodeData();
 			bd.compareData(bd1, (group, c, a) => {
 				const obj = bd[group][c];
-				// @ts-ignore
 				const old = obj[a];
 				const num = bd1[group][c][a];
 				opes.push(new ObjectOperation(this.puzzle, obj, a, old, num));

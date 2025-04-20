@@ -224,8 +224,7 @@ export class BoardExec {
 		for (let i = 0; i < margin; i++) { groups.pop(); }
 	}
 	isdel(key: number, piece: BoardPiece): boolean {
-		//@ts-ignore
-		return !!this.insex[piece.group as IGroup][this.distObj(key, piece)];
+		return !!this.insex[piece.group][this.distObj(key, piece)];
 	}
 
 	//------------------------------------------------------------------------------

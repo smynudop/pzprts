@@ -717,7 +717,7 @@ export class Board<
 		}
 		return bd2;
 	}
-	compareData(bd2: { [key in IGroup]: any[] }, callback: (group: IGroup, id: number, prop: string) => void) {
+	compareData(bd2: { [key in IGroup]: any[] }, callback: (group: IGroup, id: number, prop: keyof BoardPiece) => void) {
 		for (const g in bd2) {
 			const group = g as IGroup
 			if (!this[group]) { continue; }
