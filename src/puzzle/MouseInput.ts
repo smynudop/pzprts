@@ -15,7 +15,7 @@ import { getMouseButton, getPagePos, getRect } from "../pzpr/util";
 
 type IMode = "edit" | "play"
 
-export class MouseEvent1 {
+export class MouseEvent1<TCell extends Cell = Cell> {
 	puzzle: Puzzle
 	cursor: TargetCursor;	// TargetCursor
 	enableMouse: boolean;	// マウス入力は有効か
@@ -354,7 +354,7 @@ export class MouseEvent1 {
 	// mv.isBorderMode() 境界線入力モードかどうか判定する
 	//---------------------------------------------------------------------------
 	getcell() {
-		return this.getpos(0).getc();
+		return this.getpos(0).getc() as TCell;
 	}
 	getcell_excell() {
 		const pos = this.getpos(0);

@@ -17,7 +17,7 @@ import { pzpr } from "../pzpr/core";
 // AnsCheckクラス
 
 //---------------------------------------------------------
-type CellCheck = (cell: Cell) => boolean
+type CellCheck<T extends Cell = Cell> = (cell: T) => boolean
 type CellCheck2 = (cell1: Cell, cell2: Cell) => boolean
 type AreaCheck = (cols: number, rows: number, a: number, n: number) => boolean
 type CellListCheck = (clist: CellList) => boolean
@@ -185,12 +185,12 @@ export abstract class AnsCheck<
 	//---------------------------------------------------------------------------
 	// ans.checkDir4Cell()  セルの周囲4マスの条件がfunc==trueの時、エラーを設定する
 	//---------------------------------------------------------------------------
-	checkDir4Cell(iscount: boolean, type: number, code: string) { // type = 0:違う 1:numより小さい 2:numより大きい
+	checkDir4Cell(iscount: CellCheck<TCell>, type: number, code: string) { // type = 0:違う 1:numより小さい 2:numより大きい
 		for (let c = 0; c < this.puzzle.board.cell.length; c++) {
 			const cell = this.puzzle.board.cell[c];
 			if (!cell.isValidNum()) { continue; }
 			const num = cell.getNum();
-			const count = cell.countDir4Cell(iscount);
+			const count = cell.countDir4Cell(iscount as any); // TODO
 			if ((type === 0 && num === count) || (type === 1 && num <= count) || (type === 2 && num >= count)) { continue; }
 
 			this.failcode.add(code);

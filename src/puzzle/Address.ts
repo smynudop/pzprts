@@ -77,7 +77,7 @@ export class Position {
 	// pos.getdir() 指定されたPositionがどの方向にいるか判定する
 	// pos.getvert() 指定されたPositionが縦か横か判定する
 	//---------------------------------------------------------------------------
-	getdir(pos: Address, diff: number) {
+	getdir<T extends { bx: number, by: number }>(pos: T, diff: number) {
 		const dx = (pos.bx - this.bx);
 		const dy = (pos.by - this.by);
 		if (dx === 0 && dy === -diff) { return this.UP; }

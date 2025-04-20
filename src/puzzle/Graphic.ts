@@ -659,10 +659,17 @@ export class Graphic {
 	//---------------------------------------------------------------------------
 	drawQuesCells() {
 		this.vinc('cell_front', 'crispEdges', true);
-		this.drawCells_common("c_fullf_", this.getQuesCellColor);
+		this.drawCells_common("c_fullf_", (cell) => this.getQuesCellColor(cell));
 	}
 	getQuesCellColor(cell: Cell) {
-		return this.getQuesCellColor_ques(cell)
+		switch (this.fgcellcolor_func) {
+			case "ques":
+				return this.getQuesCellColor_ques(cell)
+			case "qnum":
+				return this.getQuesCellColor_qnum(cell)
+			default:
+				throw new Error(`invalid fgcellcolor_func`)
+		}
 	}
 	getQuesCellColor_ques(cell: Cell) {
 		if (cell.ques !== 1) { return null; }

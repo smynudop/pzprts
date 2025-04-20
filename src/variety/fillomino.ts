@@ -114,8 +114,7 @@ class FillominoCell extends Cell {
 }
 class FillominoBoard extends Board {
 	override hasborder: 0 | 1 | 2 = 1
-	//@ts-ignore
-	numblkgraph: AreaNumBlockGraph
+	numblkgraph!: AreaNumBlockGraph
 
 
 	override addExtraInfo() {

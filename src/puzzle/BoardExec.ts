@@ -29,11 +29,11 @@ const REDUCEDN = (REDUCE | DN)
 const REDUCELT = (REDUCE | LT)
 const REDUCERT = (REDUCE | RT)
 
-const TURNL = (TURN | 1)
-const TURNR = (TURN | 2)
+export const TURNL = (TURN | 1)
+export const TURNR = (TURN | 2)
 
-const FLIPX = (FLIP | 1)
-const FLIPY = (FLIP | 2)
+export const FLIPX = (FLIP | 1)
+export const FLIPY = (FLIP | 2)
 
 export type IBoardOperation =
 	"expandup" |
