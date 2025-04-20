@@ -34,6 +34,7 @@
       playModes = ["auto", ...puzzle.mouse.inputModes.play] as InputMode[];
       puzzle.redraw(true);
     } catch(e: any){
+      console.error(e)
       err = e.toString()
     }
 

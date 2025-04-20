@@ -23,7 +23,7 @@ export const inputModeText = {
     'arrow': "矢印",
     'crossdot': "？？",
     'border': "罫線",
-    'subline': "？？",
+    'subline': "補助線",
     'shade': "黒マス",
     'unshade': "白マス",
     'line': "線",

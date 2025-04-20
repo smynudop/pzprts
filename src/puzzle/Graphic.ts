@@ -1175,7 +1175,11 @@ export class Graphic {
 		this.drawCircles();
 
 		this.vinc('cell_number', 'auto');
-		this.drawNumbers_com(this.getQuesNumberText, this.getQuesNumberColor, 'cell_text_', { ratio: 0.65 });
+		this.drawNumbers_com(
+			(cell) => this.getQuesNumberText(cell),
+			(cell) => this.getQuesNumberColor(cell),
+			'cell_text_',
+			{ ratio: 0.65 });
 	}
 
 	//---------------------------------------------------------------------------
