@@ -15,6 +15,38 @@ import { getMouseButton, getPagePos, getRect } from "../pzpr/util";
 
 type IMode = "edit" | "play"
 
+export type InputMode =
+	| 'auto'
+	| 'number'
+	| 'number-'
+	| 'clear'
+	| 'cell51'
+	| 'circle-unshade'
+	| 'circle-shade'
+	| 'undef'
+	| 'ice'
+	| 'numexist'
+	| 'numblank'
+	| 'bgcolor'
+	| 'subcircle'
+	| 'bgcolor1'
+	| 'subcross'
+	| 'bgcolor2'
+	| 'completion'
+	| 'objblank'
+	| 'direc'
+	| 'arrow'
+	| 'crossdot'
+	| 'border'
+	| 'subline'
+	| 'shade'
+	| 'unshade'
+	| 'line'
+	| 'peke'
+	| 'bar'
+	| 'info-line'
+	| 'info-blk'
+
 export class MouseEvent1<TCell extends Cell = Cell> {
 	puzzle: Puzzle
 	cursor: TargetCursor;	// TargetCursor

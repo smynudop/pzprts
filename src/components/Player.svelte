@@ -1,31 +1,42 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { Puzzle } from "../puzzle/Puzzle";
+  import {inputModeText} from "../lang/ja"
+  import { type InputMode } from "../puzzle/MouseInput";
 
   export let src: string;
   export let puzzle: Puzzle;
 
   let element: HTMLDivElement | null = null;
 
-  let playModes: string[] = [];
+  let playModes: InputMode[] = [];
   let nowMode = "auto";
   let resultText = "";
   let complete = false;
+  let err: string | null = null;
 
   onMount(() => {
-    puzzle.readURL(src);
-    puzzle.mount(element!);
+    try{
+      if(!src){
+        throw new Error(`URLが指定されていません。`)
+      }
+      puzzle.readURL(src);
+      puzzle.mount(element!);
 
-    puzzle.setMode("play");
-    puzzle.mouse.setInputMode("auto");
+      puzzle.setMode("play");
+      puzzle.mouse.setInputMode("auto");
 
-    puzzle.setCanvasSizeByCellSize(36);
-    if (element) {
-      element.style.maxWidth = `${puzzle.painter.canvasWidth}px`;
+      puzzle.setCanvasSizeByCellSize(36);
+      if (element) {
+        element.style.maxWidth = `${puzzle.painter.canvasWidth}px`;
+      }
+
+      playModes = ["auto", ...puzzle.mouse.inputModes.play] as InputMode[];
+      puzzle.redraw(true);
+    } catch(e: any){
+      err = e.toString()
     }
 
-    playModes = ["auto", ...puzzle.mouse.inputModes.play];
-    puzzle.redraw(true);
   });
 
   const changeMode = (newMode: string) => {
@@ -52,7 +63,7 @@
         class:active={nowMode === mode}
         on:click={() => changeMode(mode)}
       >
-        {mode}
+        {inputModeText[mode] ?? mode }
       </div>
     {/each}
   </div>
@@ -64,6 +75,9 @@
   <div class="tool">
     <button on:click={check}>Check</button>
   </div>
+  {#if err != null}
+    <div class="error">{err}</div>
+  {/if}
 </div>
 
 <style>
