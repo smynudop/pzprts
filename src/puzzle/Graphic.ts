@@ -25,25 +25,12 @@ const TOPLEFT = 5;
 //---------------------------------------------------------
 export class Graphic {
 	puzzle: Puzzle
-	pid: string
+	//pid: string
 	imgtile: any
 	constructor(puzzle: Puzzle) {
 		this.puzzle = puzzle
-		this.pid = puzzle.pid
+		//this.pid = puzzle.pid
 		this.gridcolor = this.gridcolor_list[this.gridcolor_type] || this.gridcolor;
-
-		// var pc = this;
-		// [
-		// 	['getQuesCellColor', this.fgcellcolor_func],
-		// 	['getBGCellColor', this.bgcellcolor_func],
-		// 	['getBorderColor', this.bordercolor_func],
-		// 	['getQuesNumberColor', this.numbercolor_func],
-		// 	['getCircleFillColor', this.circlefillcolor_func],
-		// 	['getCircleStrokeColor', this.circlestrokecolor_func]
-		// ].forEach(function (item) {
-		// 	if (pc[item[0]] !== pzpr.common.Graphic.prototype[item[0]]) { return; } // パズル個別の関数が定義されている場合はそのまま使用
-		// 	pc[item[0]] = pc[item[0] + '_' + item[1]] || pc[item[0]];
-		// });
 
 		this.resetRange();
 
@@ -421,15 +408,20 @@ export class Graphic {
 		}
 	}
 
-	//---------------------------------------------------------------------------
-	// pc.prepaint()    paint関数を呼び出す
+	//--------------------------------------------------------------------------- 
 	// pc.paint()       座標(x1,y1)-(x2,y2)を再描画する。各パズルのファイルでオーバーライドされる。
 	//
 	// pc.setRange()       rangeオブジェクトを設定する
 	// pc.setRangeObject() 描画対象となるオブジェクトを取得する
 	// pc.resetRange()     rangeオブジェクトを初期化する
 	//---------------------------------------------------------------------------
-	prepaint() {
+
+	/**
+	 * paint関数を呼び出す
+	 * @param option starbattleでy1margin=0.
+	 * @returns 
+	 */
+	prepaint(option: { y1margin: number } | null = null) {
 		if (this.suspended || !this.context) { return; }
 
 		this.isSupportMaxWidth = ((this.context.use.svg && pzpr.env.API.svgTextLength) ||
@@ -441,7 +433,12 @@ export class Graphic {
 		const y1 = this.range.y1;
 		const x2 = this.range.x2;
 		const y2 = this.range.y2;
-		if (x1 > x2 || y1 > y2 || x1 >= bd.maxbx + bm || y1 >= bd.maxby + bm || x2 <= bd.minbx - bm || y2 <= bd.minby - (bm + (this.pid === 'starbattle' ? 2 : 0))) {
+		if (x1 > x2
+			|| y1 > y2
+			|| x1 >= bd.maxbx + bm
+			|| y1 >= bd.maxby + bm
+			|| x2 <= bd.minbx - bm
+			|| y2 <= bd.minby - (bm + (option?.y1margin || 0))) {
 			/* 入力が範囲外ならば何もしない */
 		}
 		else if (!this.useBuffer) {
@@ -842,29 +839,29 @@ export class Graphic {
 		}
 	}
 
+	getAllowParameter() {
+		return {
+			al: this.cw * 0.35,		// ArrowLength
+			aw: this.cw * 0.12,		// ArrowWidth
+			tl: 0,					// 矢じりの長さの座標(中心-長さ)
+			tw: this.cw * 0.35		// 矢じりの幅
+		}
+	}
+
 	//---------------------------------------------------------------------------
 	// pc.drawCellArrows() 矢印だけをCanvasに書き込む
 	//---------------------------------------------------------------------------
 	drawCellArrows() {
 		const g = this.vinc('cell_arrow', 'auto');
-		let al: number;
-		let aw: number;
-		let tl: number;
-		let tw: number;
 
-		if (this.pid !== "nagare") {
-			al = this.cw * 0.4;		// ArrowLength
-			aw = this.cw * 0.03;		// ArrowWidth
-			tl = this.cw * 0.16;		// 矢じりの長さの座標(中心-長さ)
-			tw = this.cw * 0.16;		// 矢じりの幅
-		}
-		else {
-			/* 太い矢印 */
-			al = this.cw * 0.35;		// ArrowLength
-			aw = this.cw * 0.12;		// ArrowWidth
-			tl = 0;					// 矢じりの長さの座標(中心-長さ)
-			tw = this.cw * 0.35;		// 矢じりの幅
-		}
+		// if (this.pid !== "nagare") {
+		// 	al = this.cw * 0.4;		// ArrowLength
+		// 	aw = this.cw * 0.03;		// ArrowWidth
+		// 	tl = this.cw * 0.16;		// 矢じりの長さの座標(中心-長さ)
+		// 	tw = this.cw * 0.16;		// 矢じりの幅
+		// }
+
+		let { al, aw, tl, tw } = this.getAllowParameter()
 		aw = (aw >= 1 ? aw : 1);
 		tw = (tw >= 5 ? tw : 5);
 
@@ -900,13 +897,20 @@ export class Graphic {
 		return null;
 	}
 
-	//---------------------------------------------------------------------------
-	// pc.drawSlashes() 斜線をCanvasに書き込む
-	//---------------------------------------------------------------------------
+	/**
+	 * ごきげんななめでオーバーライドされる
+	 */
+	slashWidth() {
+		return Math.max(this.bw / 4, 2)
+	}
+
+	/**
+	 * 斜線をCanvasに書き込む
+	 */
 	drawSlashes() {
 		const g = this.vinc('cell_slash', 'auto');
 
-		const basewidth = Math.max(this.bw / 4, 2);
+		const slashwidth = this.slashWidth()
 		const irowake = this.puzzle.execConfig('irowake');
 
 		const clist = this.range.cells;
@@ -915,12 +919,12 @@ export class Graphic {
 			g.vid = `c_slash_${cell.id}`;
 			if (cell.qans !== 0) {
 				const info = cell.error || cell.qinfo;
-				let addwidth = 0;
+				//let addwidth = 0;
 				let color: string;
-				if (this.pid === 'gokigen' || this.pid === 'wagiri') {
-					if (cell.trial && this.puzzle.execConfig('irowake')) { addwidth = -basewidth / 2; }
-					else if (info === 1 || info === 3) { addwidth = basewidth / 2; }
-				}
+				// if (this.pid === 'gokigen' || this.pid === 'wagiri') {
+				// 	if (cell.trial && this.puzzle.execConfig('irowake')) { addwidth = -basewidth / 2; }
+				// 	else if (info === 1 || info === 3) { addwidth = basewidth / 2; }
+				// }
 
 				if (info === 1) { color = this.errcolor1; }
 				else if (info === 2) { color = this.errcolor2; }
@@ -929,7 +933,7 @@ export class Graphic {
 				else if (cell.trial) { color = this.trialcolor; }
 				else { color = "black"; }
 
-				g.lineWidth = basewidth + addwidth;
+				g.lineWidth = slashwidth;
 				g.strokeStyle = color;
 				g.beginPath();
 				const px = cell.bx * this.bw;
@@ -1002,8 +1006,16 @@ export class Graphic {
 
 		return this.getNumberTextCore_letter(num);
 	}
-	getNumberTextCore(num: number) {
-		const hideHatena = (this.pid !== "yajirin" ? this.hideHatena : this.puzzle.getConfig('disptype_yajilin') === 2);
+
+	/**
+	 * 
+	 * @param num 
+	 * @param forceHideHatena ヤジリンでdisptype_yajilin==2のときtrueだった
+	 * @returns 
+	 */
+	getNumberTextCore(num: number, forceHideHatena: boolean = false) {
+		const hideHatena = this.hideHatena || forceHideHatena
+		//const hideHatena = (this.pid !== "yajirin" ? this.hideHatena : this.puzzle.getConfig('disptype_yajilin') === 2);
 		return (num >= 0 ? `${num}` : ((!hideHatena && num === -2) ? "?" : ""));
 	}
 	getNumberTextCore_letter(num: number) {
@@ -1325,7 +1337,7 @@ export class Graphic {
 
 	//---------------------------------------------------------------------------
 	// pc.drawBorderQsubs() 境界線用の補助記号をCanvasに書き込む
-	// pc.drawBoxBorders()  境界線と黒マスの間の線を描画する
+	// pc.drawBoxBorders()  
 	//---------------------------------------------------------------------------
 	drawBorderQsubs() {
 		const g = this.vinc('border_qsub', 'crispEdges', true);
@@ -1347,7 +1359,10 @@ export class Graphic {
 		}
 	}
 
-	// 外枠がない場合は考慮していません
+	/**
+	 * 境界線と黒マスの間の線を描画する
+	 * @param tileflag 
+	 */
 	drawBoxBorders(tileflag: boolean) {
 		const g = this.vinc('boxborder', 'crispEdges');
 
@@ -1361,8 +1376,8 @@ export class Graphic {
 		const clist = this.range.cells;
 		for (let i = 0; i < clist.length; i++) {
 			const cell = clist[i];
-			let isdraw = (cell.qans === 1);
-			if (this.pid === 'stostone' && this.puzzle.board.falling) { isdraw = false; }
+			const isdraw = (cell.qans === 1);
+			//if (this.pid === 'stostone' && this.puzzle.board.falling) { isdraw = false; }
 
 			g.vid = `c_bb_${cell.id}`;
 			if (isdraw) {
@@ -1549,7 +1564,7 @@ export class Graphic {
 
 	//---------------------------------------------------------------------------
 	// pc.drawTriangle()   三角形をCanvasに書き込む
-	// pc.drawTriangle1()  三角形をCanvasに書き込む(1マスのみ)
+	// pc.drawTriangle1()  
 	//---------------------------------------------------------------------------
 	drawTriangle() {
 		const g = this.vinc('cell_triangle', 'auto');
@@ -1570,9 +1585,15 @@ export class Graphic {
 	getTriangleColor(cell: Cell) {
 		return this.quescolor;
 	}
-	drawTriangle1(px: number, py: number, num: number) {
+	/**
+	 * 三角形をCanvasに書き込む(1マスのみ)
+	 * @param px 
+	 * @param py 
+	 * @param num 
+	 * @param mgn リフレクトリンクで1だった
+	 */
+	drawTriangle1(px: number, py: number, num: number, mgn: number = 0) {
 		const g = this.context;
-		const mgn = (this.pid === "reflect" ? 1 : 0);
 		const bw = this.bw + 1 - mgn;
 		const bh = this.bh + 1 - mgn;
 		g.beginPath();
@@ -1612,19 +1633,22 @@ export class Graphic {
 	}
 
 	//---------------------------------------------------------------------------
-	// pc.drawCircles()          数字や白丸黒丸等を表すCellの丸を書き込む
 	// pc.getCircleStrokeColor() 描画する円の線の色を設定する
 	// pc.getCircleFillColor()   描画する円の背景色を設定する
 	//---------------------------------------------------------------------------
-	drawCircles() {
+
+	/**  
+	 * 数字や白丸黒丸等を表すCellの丸を書き込む
+	 * @param margin fillとstrokeの間に線を描画するスキマ (環状線スペシャルで0.10だった)
+	 */
+	drawCircles(margin: number = 0) {
 		let g = this.vinc('cell_circle', 'auto', true);
 
 		const ra = this.circleratio;
 		const rsize_stroke = this.cw * (ra[0] + ra[1]) / 2;
-		let rsize_fill = this.cw * ra[0];
 
 		/* fillとstrokeの間に線を描画するスキマを与える */
-		if (this.pid === 'loopsp') { rsize_fill -= this.cw * 0.10; }
+		const rsize_fill = this.cw * (ra[0] - margin);
 
 		const clist = this.range.cells;
 		for (let i = 0; i < clist.length; i++) {
@@ -2154,7 +2178,7 @@ export class Graphic {
 	// pc.drawChassis()     外枠をCanvasに書き込む
 	// pc.drawChassis_ex1() bd.hasexcell==1の時の外枠をCanvasに書き込む
 	//---------------------------------------------------------------------------
-	drawChassis() {
+	drawChassis(option: { lw: number, lm: number } | null = null) {
 		const g = this.vinc('chassis', 'crispEdges', true);
 		const bd = this.puzzle.board;
 
@@ -2168,9 +2192,8 @@ export class Graphic {
 
 		const boardWidth = bd.cols * this.cw;
 		const boardHeight = bd.rows * this.ch;
-		let lw = this.lw;
-		let lm = this.lm;
-		if (this.pid === 'bosanowa') { lw = 1; lm = 0.5; }
+		// ボサノワでは1 / 0.5だった
+		const { lw, lm } = option || { lw: this.lw, lm: this.lm }
 		g.fillStyle = this.quescolor;
 		g.vid = "chs1_"; g.fillRect(-lm, -lm, lw, boardHeight + lw);
 		g.vid = "chs2_"; g.fillRect(boardWidth - lm, -lm, lw, boardHeight + lw);

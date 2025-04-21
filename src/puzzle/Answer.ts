@@ -210,14 +210,14 @@ export abstract class AnsCheck<
 		for (let c = 0; c < bd.cell.length; c++) {
 			const cell = bd.cell[c];
 			let cell2 = cell.adjacent.right;
-			if (cell.bx < bd.maxbx - 1 && func(cell, cell2 as Cell)) {
+			if (cell.bx < bd.maxbx - 1 && func(cell, cell2)) {
 				result = false;
 				if (this.checkOnly) { break; }
 				cell.seterr(1);
 				cell2.seterr(1);
 			}
 			cell2 = cell.adjacent.bottom;
-			if (cell.by < bd.maxby - 1 && func(cell, cell2 as Cell)) {
+			if (cell.by < bd.maxby - 1 && func(cell, cell2)) {
 				result = false;
 				if (this.checkOnly) { break; }
 				cell.seterr(1);
