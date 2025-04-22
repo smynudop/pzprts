@@ -238,9 +238,17 @@ export class Config {
 		const puzzle = this.puzzle;
 		if (!this.getexec(name)) { return; }
 		switch (name) {
-			case 'irowake': case 'irowakeblk': case 'dispmove': case 'cursor': case 'undefcell':
-			case 'autocmp': case 'autoerr':
-			case 'snakebd': case 'disptype_pipelinkr': case 'disptype_yajilin': case 'dispqnumbg':
+			case 'irowake':
+			case 'irowakeblk':
+			case 'dispmove':
+			case 'cursor':
+			case 'undefcell':
+			case 'autocmp':
+			case 'autoerr':
+			case 'snakebd':
+			case 'disptype_pipelinkr':
+			case 'disptype_yajilin':
+			case 'dispqnumbg':
 				puzzle.redraw();
 				break;
 
@@ -250,8 +258,17 @@ export class Config {
 				break;
 
 			case 'multierr':
+				puzzle.checker.multierr = newval
 				puzzle.checker.resetCache();
 				break;
+
+			case "allowempty":
+				puzzle.checker.allowempty = newval
+				break
+
+			case "forceallcell":
+				puzzle.checker.forceallcell = newval
+				break
 
 			case 'disptype_bosanowa':
 				puzzle.setCanvasSizeByCellSize();	/* セルのサイズを変えないために、この関数を引数なしで呼び出す */

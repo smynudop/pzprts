@@ -113,7 +113,7 @@ export class Shikaku extends Puzzle {
 	}
 
 	override createAnsCheck(): AnsCheck<Cell, Cross, Border, EXCell, Board<Cell, Cross, Border, EXCell>> {
-		return new ShikakuAnsCheck(this)
+		return new ShikakuAnsCheck(this.board)
 	}
 
 	override getAdditionalFailCode(): Map<string, [string, string]> | Record<string, [string, string]> {

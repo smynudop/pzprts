@@ -94,20 +94,20 @@ class NurikabeAnsCheck extends AnsCheck {
 	}
 
 	checkDoubleNumberInUnshade() {
-		this.checkAllBlock(this.puzzle.board.ublkmgr, function (cell) { return cell.isNum(); }, function (w, h, a, n) { return (a < 2); }, "bkNumGe2");
+		this.checkAllBlock(this.board.ublkmgr, function (cell) { return cell.isNum(); }, function (w, h, a, n) { return (a < 2); }, "bkNumGe2");
 	}
 	checkNumberAndUnshadeSize() {
-		this.checkAllArea(this.puzzle.board.ublkmgr, function (w, h, a, n) { return (n <= 0 || n === a); }, "bkSizeNe");
+		this.checkAllArea(this.board.ublkmgr, function (w, h, a, n) { return (n <= 0 || n === a); }, "bkSizeNe");
 	}
 	checkNoNumberInUnshade() {
-		this.checkAllBlock(this.puzzle.board.ublkmgr, function (cell) { return cell.isNum(); }, function (w, h, a, n) { return (a !== 0); }, "bkNoNum");
+		this.checkAllBlock(this.board.ublkmgr, function (cell) { return cell.isNum(); }, function (w, h, a, n) { return (a !== 0); }, "bkNoNum");
 	}
 }
 
 
 export class Nurikabe extends Puzzle {
 	override createAnsCheck(): AnsCheck<Cell, Cross, Border, EXCell> {
-		return new NurikabeAnsCheck(this)
+		return new NurikabeAnsCheck(this.board)
 	}
 
 	override createMouseEvent(): MouseEvent1 {

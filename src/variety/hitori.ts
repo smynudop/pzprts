@@ -193,7 +193,7 @@ class HitokureAnsCheck extends AnsCheck<HitokureCell> {
 
 export class Hitokure extends Puzzle<HitokureCell> {
 	override createAnsCheck(): AnsCheck<HitokureCell, Cross, Border, EXCell, Board<HitokureCell, Cross, Border, EXCell>> {
-		return new HitokureAnsCheck(this)
+		return new HitokureAnsCheck(this.board)
 	}
 	override getAdditionalFailCode(): Map<string, [string, string]> {
 		return new Map()

@@ -65,8 +65,8 @@ class NumberlinkGraphic extends Graphic {
 	drawCellSquare() {
 		const g = this.vinc('cell_number_base', 'crispEdges', true);
 
-		const rw = this.bw * (this.pid !== 'arukone' ? 0.7 : 0.5) - 1;
-		const rh = this.bh * (this.pid !== 'arukone' ? 0.7 : 0.5) - 1;
+		const rw = this.bw * 0.5 - 1;
+		const rh = this.bh * 0.5 - 1;
 
 		const clist = this.range.cells;
 		for (let i = 0; i < clist.length; i++) {
@@ -113,7 +113,7 @@ class NumberlinkAnsCheck extends AnsCheck {
 	}
 
 	checkLinkSameNumber() {
-		this.checkSameObjectInRoom(this.puzzle.board.linegraph, function (cell) { return cell.qnum; }, "nmConnDiff");
+		this.checkSameObjectInRoom(this.board.linegraph, function (cell) { return cell.qnum; }, "nmConnDiff");
 	}
 }
 
@@ -123,7 +123,7 @@ class NumberlinkAnsCheck extends AnsCheck {
 
 export class Numberlink extends Puzzle {
 	override createAnsCheck(): AnsCheck<Cell, Cross, Border, EXCell> {
-		return new NumberlinkAnsCheck(this)
+		return new NumberlinkAnsCheck(this.board)
 	}
 
 	override createBoard(): Board<Cell, Cross, Border, EXCell> {

@@ -44,11 +44,13 @@ export abstract class AnsCheck<
 > {
 	inCheck: boolean
 	checkOnly: boolean
-	puzzle: Puzzle<TCell, TCross, TBorder, TEXCell, TBoard>
-	pid: string
-	constructor(puzzle: Puzzle<TCell, TCross, TBorder, TEXCell, TBoard>) {
-		this.puzzle = puzzle
-		this.pid = puzzle.pid
+	allowempty: boolean = false
+	multierr: boolean = false
+	forceallcell: boolean = false
+	board: TBoard
+
+	constructor(board: TBoard) {
+		this.board = board
 		this.inCheck = false;
 		this.checkOnly = false;
 
@@ -72,12 +74,12 @@ export abstract class AnsCheck<
 		let order = [];
 		for (let i = 0; i < checklist.length; i++) {
 			let item = checklist[i];
-			let isexist = true;
+			const isexist = true;
 			let prio = 0;
-			if (item.match('@')) {
-				isexist = checkpid(item.substr(item.indexOf('@') + 1), this.puzzle.pid);
-				item = item.substr(0, item.indexOf('@'));
-			}
+			// if (item.match('@')) {
+			// 	isexist = checkpid(item.substr(item.indexOf('@') + 1), this.puzzle.pid);
+			// 	item = item.substr(0, item.indexOf('@'));
+			// }
 			if (isexist) {
 				prio = (item.match(/\+/) || []).length;
 				item = item.replace(/\+/g, "");
@@ -99,8 +101,8 @@ export abstract class AnsCheck<
 	// ans.checkAns()  答えのチェックを行い、エラーコードを返す(nullはNo Error)
 	//---------------------------------------------------------------------------
 	check(activemode: boolean) {
-		const puzzle = this.puzzle;
-		const bd = this.puzzle.board;
+		//const puzzle = this.puzzle;
+		const bd = this.board;
 		this.inCheck = true;
 
 		if (!!activemode) {
@@ -108,7 +110,8 @@ export abstract class AnsCheck<
 			this.checkAns(false);
 			if (!this.failcode.complete) {
 				bd.haserror = true;
-				puzzle.redraw(true);	/* 描画キャッシュを破棄して描画し直す */
+				this.failcode.shouldForceRedraw = true
+				//puzzle.redraw(true);	/* 描画キャッシュを破棄して描画し直す */
 			}
 		}
 		/* activemodeでなく、前回の判定結果が残っていない場合はチェックします */
@@ -125,14 +128,14 @@ export abstract class AnsCheck<
 		return this.failcode;
 	}
 	checkAns(break_if_error: boolean) {
-		this.failcode = new CheckInfo(this.puzzle);
-		const checkSingleError = (!this.puzzle.getConfig("multierr") || break_if_error);
+		this.failcode = new CheckInfo();
+		const checkSingleError = (!this.multierr || break_if_error);
 		const checklist = ((this.checkOnly && checkSingleError) ? this.checklist_auto : this.checklist_normal);
 		for (let i = 0; i < checklist.length; i++) {
 			checklist[i].call(this);
 			if (checkSingleError && (this.failcode.list.length > 0)) { break; }
 		}
-		if (!break_if_error) { this.failcode.text = this.failcode.gettext(); }
+		//if (!break_if_error) { this.failcode.text = this.failcode.gettext(); }
 	}
 
 	//---------------------------------------------------------------------------
@@ -154,8 +157,8 @@ export abstract class AnsCheck<
 	// ans.checkLineOverLetter()  線が数字などを通過しているか判定する
 	//---------------------------------------------------------------------------
 	checkAllCell(func: (cell: TCell) => boolean, code: string) {
-		for (let c = 0; c < this.puzzle.board.cell.length; c++) {
-			const cell = this.puzzle.board.cell[c];
+		for (let c = 0; c < this.board.cell.length; c++) {
+			const cell = this.board.cell[c];
 			if (!func(cell)) { continue; }
 
 			this.failcode.add(code);
@@ -179,15 +182,15 @@ export abstract class AnsCheck<
 		this.checkAllCell(function (cell) { return (cell.lcnt === 0 && cell.isNum()); }, "nmNoLine");
 	}
 	checkLineOverLetter() {
-		this.checkAllCell(function (cell) { return (cell.lcnt >= 2 && cell.isNum()); }, (this.puzzle.board.linegraph.moveline ? "laOnNum" : "lcOnNum"));
+		this.checkAllCell(function (cell) { return (cell.lcnt >= 2 && cell.isNum()); }, (this.board.linegraph.moveline ? "laOnNum" : "lcOnNum"));
 	}
 
 	//---------------------------------------------------------------------------
 	// ans.checkDir4Cell()  セルの周囲4マスの条件がfunc==trueの時、エラーを設定する
 	//---------------------------------------------------------------------------
 	checkDir4Cell(iscount: CellCheck<TCell>, type: number, code: string) { // type = 0:違う 1:numより小さい 2:numより大きい
-		for (let c = 0; c < this.puzzle.board.cell.length; c++) {
-			const cell = this.puzzle.board.cell[c];
+		for (let c = 0; c < this.board.cell.length; c++) {
+			const cell = this.board.cell[c];
 			if (!cell.isValidNum()) { continue; }
 			const num = cell.getNum();
 			const count = cell.countDir4Cell(iscount as any); // TODO
@@ -206,7 +209,7 @@ export abstract class AnsCheck<
 	//---------------------------------------------------------------------------
 	checkSideCell(func: CellCheck2, code: string) {
 		let result = true;
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		for (let c = 0; c < bd.cell.length; c++) {
 			const cell = bd.cell[c];
 			let cell2 = cell.adjacent.right;
@@ -239,7 +242,7 @@ export abstract class AnsCheck<
 	// ans.check2x2UnshadeCell() 2x2のセルが白マスの時、エラーを設定する
 	//---------------------------------------------------------------------------
 	check2x2Block(func: CellCheck, code: string) {
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		for (let c = 0; c < bd.cell.length; c++) {
 			const cell = bd.cell[c];
 			if (cell.bx >= bd.maxbx - 1 || cell.by >= bd.maxby - 1) { continue; }
@@ -265,7 +268,7 @@ export abstract class AnsCheck<
 	// ans.checkSameColorTile() 白マスと黒マスが混ざったタイルがないかどうかチェックする
 	//---------------------------------------------------------------------------
 	checkSameColorTile() {
-		this.checkSameObjectInRoom(this.puzzle.board.roommgr, function (cell) { return (cell.isShade() ? 1 : 2); }, "bkMixed");
+		this.checkSameObjectInRoom(this.board.roommgr, function (cell) { return (cell.isShade() ? 1 : 2); }, "bkMixed");
 	}
 
 	//---------------------------------------------------------------------------
@@ -275,9 +278,9 @@ export abstract class AnsCheck<
 	// ans.checkOneArea()  白マス/黒マス/線がひとつながりかどうかを判定する
 	// ans.checkConnectUnshadeRB() 連黒分断禁のパズルで白マスが分断されているかチェックする
 	//---------------------------------------------------------------------------
-	checkConnectShade() { this.checkOneArea(this.puzzle.board.sblkmgr, "csDivide"); }
-	checkConnectUnshade() { this.checkOneArea(this.puzzle.board.ublkmgr, "cuDivide"); }
-	checkConnectNumber() { this.checkOneArea(this.puzzle.board.nblkmgr, "nmDivide"); }
+	checkConnectShade() { this.checkOneArea(this.board.sblkmgr, "csDivide"); }
+	checkConnectUnshade() { this.checkOneArea(this.board.ublkmgr, "cuDivide"); }
+	checkConnectNumber() { this.checkOneArea(this.board.nblkmgr, "nmDivide"); }
 	checkOneArea(graph: GraphBase, code: string) {
 		if (graph.components.length > 1) {
 			this.failcode.add(code);
@@ -286,10 +289,10 @@ export abstract class AnsCheck<
 	}
 
 	checkConnectUnshadeRB() {
-		if (this.puzzle.board.ublkmgr.components.length > 1) {
+		if (this.board.ublkmgr.components.length > 1) {
 			this.failcode.add("cuDivideRB");
 			const errclist = new CellList();
-			const clist = this.puzzle.board.cell.filter(function (cell) { return cell.isShade(); });
+			const clist = this.board.cell.filter(function (cell) { return cell.isShade(); });
 			for (let i = 0; i < clist.length; i++) {
 				const cell = clist[i];
 				const list = cell.getdir4clist();
@@ -310,8 +313,8 @@ export abstract class AnsCheck<
 	// ans.checkShadeCellExist()  盤面に少なくとも一つは黒マスがあることを判定する
 	//---------------------------------------------------------------------------
 	checkShadeCellExist() {
-		if (!this.puzzle.execConfig('allowempty')) {
-			const bd = this.puzzle.board;
+		if (!this.allowempty) {
+			const bd = this.board;
 			if (bd.sblkmgr.enabled) {
 				if (bd.sblkmgr.components.length > 0) { return; }
 			}
@@ -329,7 +332,7 @@ export abstract class AnsCheck<
 	// ans.checkOneLoop()  盤面に引かれているループが一つに繋がっていることを判定する
 	//---------------------------------------------------------------------------
 	checkOneLoop() {
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		const paths = bd.linegraph.components;
 		if (paths.length > 1) {
 			this.failcode.add("lnPlLoop");
@@ -342,8 +345,8 @@ export abstract class AnsCheck<
 	// ans.checkNumberExist()  盤面に少なくとも一つは数字があることを判定する
 	//---------------------------------------------------------------------------
 	checkNumberExist() {
-		if (!this.puzzle.execConfig('allowempty')) {
-			if (this.puzzle.board.cell.some(function (cell) { return cell.isValidNum(); })) { return; }
+		if (!this.allowempty) {
+			if (this.board.cell.some(function (cell) { return cell.isValidNum(); })) { return; }
 			this.failcode.add("brNoValidNum");
 		}
 	}
@@ -352,7 +355,7 @@ export abstract class AnsCheck<
 	// ans.checkConnectAllNumber() 盤面に引かれている線が一つに繋がっていることを判定する
 	//---------------------------------------------------------------------------
 	checkConnectAllNumber() {
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		const paths = bd.linegraph.components;
 		if (paths.length > 1) {
 			this.failcode.add("lcDivided");
@@ -366,8 +369,8 @@ export abstract class AnsCheck<
 	// ans.checkLineExist()  盤面に少なくとも一本は線が引かれていることを判定する
 	//---------------------------------------------------------------------------
 	checkLineExist() {
-		if (!this.puzzle.execConfig('allowempty')) {
-			const bd = this.puzzle.board;
+		if (!this.allowempty) {
+			const bd = this.board;
 			if (bd.linegraph.ltotal[0] !== (!bd.borderAsLine ? bd.cell : bd.cross).length) { return; }
 			this.failcode.add("brNoLine");
 		}
@@ -382,7 +385,7 @@ export abstract class AnsCheck<
 	checkNoLine() { this.checkLineCount(0, "ceNoLine"); }
 	checkLineCount(val: number, code: string) {
 		let result = true;
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		if (!bd.linegraph.ltotal[val]) { return; }
 
 		if (!bd.borderAsLine) {
@@ -413,7 +416,7 @@ export abstract class AnsCheck<
 	checkBranchConnectLine() { this.checkConnectLineCount(3, "lnBranch"); }
 	checkDeadendConnectLine() { this.checkConnectLineCount(1, "lnDeadEnd"); }
 	checkConnectLineCount(val: number, code: string) {
-		if (!this.puzzle.board.linegraph.ltotal[val]) { return; }
+		if (!this.board.linegraph.ltotal[val]) { return; }
 
 		this.checkAllCell(function (cell) { return (cell.noNum() && cell.lcnt === val); }, code);
 	}
@@ -422,7 +425,7 @@ export abstract class AnsCheck<
 	// ans.checkenableLineParts() '一部があかされている'線の部分に、線が引かれているか判定する
 	//---------------------------------------------------------------------------
 	checkenableLineParts() {
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		for (let c = 0; c < bd.cell.length; c++) {
 			const cell = bd.cell[c];
 			const adb = cell.adjborder;
@@ -439,12 +442,19 @@ export abstract class AnsCheck<
 
 	//---------------------------------------------------------------------------
 	// ans.checkAllArea()    すべてのエリアがevalfuncを満たすかどうか判定する
-	// ans.checkAllBlock()   すべてのfuncを満たすマスで構成されるエリアが
-	//                       evalfuncを満たすかどうか判定する
 	// ans.checkAllArea2()   すべてのエリアがareaを引数に取るevalfuncを満たすかどうか判定する
 	//---------------------------------------------------------------------------
 	checkAllArea(graph: AreaGraphBase, evalfunc: AreaCheck, code: string) { this.checkAllBlock(graph, null, evalfunc, code); }
-	checkAllBlock(graph: AreaGraphBase, filterfunc: CellCheck | null, evalfunc: AreaCheck, code: string) {
+
+	/**
+	 * すべてのfuncを満たすマスで構成されるエリアがevalfuncを満たすかどうか判定する
+	 * @param graph 
+	 * @param filterfunc 
+	 * @param evalfunc 
+	 * @param code 
+	 * @param errCode tateyokoでは4
+	 */
+	checkAllBlock(graph: AreaGraphBase, filterfunc: CellCheck | null, evalfunc: AreaCheck, code: string, errCode: number = 1) {
 		const areas = graph.components;
 		for (let id = 0; id < areas.length; id++) {
 			const area = areas[id];
@@ -459,11 +469,11 @@ export abstract class AnsCheck<
 			if (this.checkOnly) { break; }
 			//@ts-ignore
 
-			if (areas !== this.puzzle.board.linegraph) {
-				clist.seterr(this.pid !== "tateyoko" ? 1 : 4);
+			if (areas !== this.board.linegraph) {
+				clist.seterr(errCode);
 			}
 			else {
-				this.puzzle.board.border.setnoerr();
+				this.board.border.setnoerr();
 				//@ts-ignore
 
 				area.objs.seterr(1);
@@ -475,22 +485,22 @@ export abstract class AnsCheck<
 	// ans.checkNumberAndSize()  部屋にある数字と面積が等しいか判定する
 	// ans.checkRoomRect()       領域が全て四角形であるかどうか判定する
 	//---------------------------------------------------------------------------
-	checkNumberAndSize() { this.checkAllArea(this.puzzle.board.roommgr, function (w, h, a, n) { return (n <= 0 || n === a); }, "bkSizeNe"); }
-	checkRoomRect() { this.checkAllArea(this.puzzle.board.roommgr, function (w, h, a, n) { return (w * h === a); }, "bkNotRect"); }
+	checkNumberAndSize() { this.checkAllArea(this.board.roommgr, function (w, h, a, n) { return (n <= 0 || n === a); }, "bkSizeNe"); }
+	checkRoomRect() { this.checkAllArea(this.board.roommgr, function (w, h, a, n) { return (w * h === a); }, "bkNotRect"); }
 
 	//---------------------------------------------------------------------------
 	// ans.checkNoNumber()       部屋に数字が含まれていないかの判定を行う
 	// ans.checkDoubleNumber()   部屋に数字が2つ以上含まれていないように判定を行う
 	//---------------------------------------------------------------------------
-	checkNoNumber() { this.checkAllBlock(this.puzzle.board.roommgr, function (cell) { return cell.isNum(); }, function (w, h, a, n) { return (a !== 0); }, "bkNoNum"); }
-	checkDoubleNumber() { this.checkAllBlock(this.puzzle.board.roommgr, function (cell) { return cell.isNum(); }, function (w, h, a, n) { return (a < 2); }, "bkNumGe2"); }
+	checkNoNumber() { this.checkAllBlock(this.board.roommgr, function (cell) { return cell.isNum(); }, function (w, h, a, n) { return (a !== 0); }, "bkNoNum"); }
+	checkDoubleNumber() { this.checkAllBlock(this.board.roommgr, function (cell) { return cell.isNum(); }, function (w, h, a, n) { return (a < 2); }, "bkNumGe2"); }
 
 	//---------------------------------------------------------------------------
 	// ans.checkShadeCellCount() 領域内の数字と黒マスの数が等しいか判定する
 	// ans.checkNoShadeCellInArea()  部屋に黒マスがあるか判定する
 	//---------------------------------------------------------------------------
-	checkShadeCellCount() { this.checkAllBlock(this.puzzle.board.roommgr, function (cell) { return cell.isShade(); }, function (w, h, a, n) { return (n < 0 || n === a); }, "bkShadeNe"); }
-	checkNoShadeCellInArea() { this.checkAllBlock(this.puzzle.board.roommgr, function (cell) { return cell.isShade(); }, function (w, h, a, n) { return (a > 0); }, "bkNoShade"); }
+	checkShadeCellCount() { this.checkAllBlock(this.board.roommgr, function (cell) { return cell.isShade(); }, function (w, h, a, n) { return (n < 0 || n === a); }, "bkShadeNe"); }
+	checkNoShadeCellInArea() { this.checkAllBlock(this.board.roommgr, function (cell) { return cell.isShade(); }, function (w, h, a, n) { return (a > 0); }, "bkNoShade"); }
 
 	//---------------------------------------------------------------------------
 	// ans.checkLinesInArea()  領域の中で線が通っているセルの数を判定する
@@ -508,25 +518,25 @@ export abstract class AnsCheck<
 	// ans.checkTripleObject()   数字が線で3つ以上繋がっていないように判定を行う
 	// ans.checkConnectObjectCount() 上記関数の共通処理
 	//---------------------------------------------------------------------------
-	checkDisconnectLine() { this.checkConnectObjectCount(function (a) { return (a > 0); }, (this.puzzle.board.linegraph.moveline ? "laIsolate" : "lcIsolate")); }
+	checkDisconnectLine() { this.checkConnectObjectCount(function (a) { return (a > 0); }, (this.board.linegraph.moveline ? "laIsolate" : "lcIsolate")); }
 	checkConnectObject() { this.checkConnectObjectCount(function (a) { return (a < 2); }, "nmConnected"); }
 	checkTripleObject() { this.checkConnectObjectCount(function (a) { return (a < 3); }, "lcTripleNum"); }
 	checkConnectObjectCount(evalfunc: (a: number) => boolean, code: string) {
 		let result = true;
-		const paths = this.puzzle.board.linegraph.components;
+		const paths = this.board.linegraph.components;
 		for (let id = 0; id < paths.length; id++) {
 			const clist = paths[id].clist;
 			if (evalfunc(clist.filter(function (cell) { return cell.isNum(); }).length)) { continue; }
 
 			result = false;
 			if (this.checkOnly) { break; }
-			this.puzzle.board.border.setnoerr();
+			this.board.border.setnoerr();
 			paths[id].setedgeerr(1);
 			paths[id].clist.seterr(4);
 		}
 		if (!result) {
 			this.failcode.add(code);
-			this.puzzle.board.border.setnoerr();
+			this.board.border.setnoerr();
 		}
 	}
 
@@ -553,8 +563,8 @@ export abstract class AnsCheck<
 	}
 
 	checkSideAreaCell(func: CellCheck2, flag: boolean, code: string) {
-		for (let id = 0; id < this.puzzle.board.border.length; id++) {
-			const border = this.puzzle.board.border[id];
+		for (let id = 0; id < this.board.border.length; id++) {
+			const border = this.board.border[id];
 			if (!border.isBorder()) { continue; }
 			const cell1 = border.sidecell[0];
 			const cell2 = border.sidecell[1];
@@ -589,11 +599,11 @@ export abstract class AnsCheck<
 				else {
 					this.failcode.add(code);
 					if (this.checkOnly) { break allloop; }
-					if (areas !== this.puzzle.board.linegraph.components) {
+					if (areas !== this.board.linegraph.components) {
 						clist.seterr(1);
 					}
 					else {
-						this.puzzle.board.border.setnoerr();
+						this.board.border.setnoerr();
 						areas[id].setedgeerr(1);
 					}
 				}
@@ -602,7 +612,7 @@ export abstract class AnsCheck<
 	}
 
 	checkDifferentNumberInRoom() {
-		this.checkDifferentNumberInRoom_main(this.puzzle.board.roommgr, this.isDifferentNumberInClist);
+		this.checkDifferentNumberInRoom_main(this.board.roommgr, this.isDifferentNumberInClist);
 	}
 	checkDifferentNumberInRoom_main(graph: AreaGraphBase, evalfunc: CellListCheck) {
 		const areas = graph.components;
@@ -642,7 +652,7 @@ export abstract class AnsCheck<
 	/* ともにevalfuncはAnswerクラスの関数限定 */
 	checkRowsCols(evalfunc: CellListCheck, code: string) {
 		let result = true;
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		allloop: do {
 			/* 横方向サーチ */
 			for (let by = 1; by <= bd.maxby; by += 2) {
@@ -680,7 +690,7 @@ export abstract class AnsCheck<
 		code: string
 	) {
 		let result = true
-		const bd = this.puzzle.board
+		const bd = this.board
 		let info = { keycell: null! as BoardPiece | null, key51num: 0, isvert: false };
 		allloop: do {
 			/* 横方向サーチ */
@@ -730,7 +740,7 @@ export abstract class AnsCheck<
 	checkBorderDeadend() { this.checkBorderCount(1, 0, "bdDeadEnd"); }
 	checkBorderCount(val: number, bp: number, code: string) {
 		let result = true;
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		const crosses = (bd.hascross === 2 ? bd.cross : bd.crossinside(bd.minbx + 2, bd.minby + 2, bd.maxbx - 2, bd.maxby - 2));
 		for (let c = 0; c < crosses.length; c++) {
 			const cross = crosses[c];
@@ -766,7 +776,7 @@ export abstract class AnsCheck<
 		}
 		if (!result) {
 			this.failcode.add(code);
-			this.puzzle.board.border.setnoerr();
+			this.board.border.setnoerr();
 		}
 	}
 	checkLineShapeDeadend() {
@@ -780,7 +790,7 @@ export abstract class AnsCheck<
 	getLineShapeInfo() {
 		if (this._info.num) { return this._info.num; }
 
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		const pathsegs = [];
 		const passed: boolean[] = [];
 		for (let id = 0; id < bd.border.length; id++) { passed[id] = false; }
@@ -818,7 +828,7 @@ export abstract class AnsCheck<
 				const cell = pos.getc();
 				const adb = cell.adjborder;
 				if (cell.isnull || cell1 === cell || cell.isNum()) { break; }
-				if (this.puzzle.board.linegraph.iscrossing(cell) && cell.lcnt >= 3) { }
+				if (this.board.linegraph.iscrossing(cell) && cell.lcnt >= 3) { }
 				else if (dir !== 1 && adb.bottom.isLine()) { if (dir !== 2) { pathseg.ccnt++; } dir = 2; }
 				else if (dir !== 2 && adb.top.isLine()) { if (dir !== 1) { pathseg.ccnt++; } dir = 1; }
 				else if (dir !== 3 && adb.right.isLine()) { if (dir !== 4) { pathseg.ccnt++; } dir = 4; }
@@ -848,14 +858,13 @@ export abstract class AnsCheck<
 // ★CheckInfoクラス ans.checkで返すインスタンスのクラス
 //---------------------------------------------------------------------------
 class CheckInfo {
-	puzzle: Puzzle
 	list: string[]
-	constructor(puzzle: Puzzle) {
-		this.puzzle = puzzle
+	constructor() {
 		this.list = []
 	}
 	complete = true
 	text = ''
+	shouldForceRedraw = false
 
 	lastcode: string | null = null
 
@@ -867,9 +876,7 @@ class CheckInfo {
 		}
 		this.complete = false;
 	}
-	gettext(lang?: string) {
-		const puzzle = this.puzzle;
-		const textlist = puzzle.faillist;
+	gettext(textlist: Map<string, [string, string]>, lang?: string) {
 		const texts = [];
 		const langcode = ((lang || pzpr.lang) === "ja" ? 0 : 1);
 		if (this.list.length === 0) {

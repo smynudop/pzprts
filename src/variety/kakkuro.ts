@@ -339,7 +339,7 @@ export class Kakkuro extends Puzzle {
 	}
 
 	override createAnsCheck(): AnsCheck<Cell, Cross, Border, EXCell> {
-		return new KakkuroAnsCheck(this)
+		return new KakkuroAnsCheck(this.board)
 	}
 
 	override createMouseEvent(): MouseEvent1 {

@@ -171,7 +171,7 @@ export class SlitherLink extends Puzzle<SlitherCell> {
     }
 
     override createAnsCheck() {
-        return new SlitherAnsCheck(this);
+        return new SlitherAnsCheck(this.board);
     }
 
     override getConverters() {

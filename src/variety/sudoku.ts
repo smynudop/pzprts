@@ -120,7 +120,7 @@ class SudokuAnsCheck extends AnsCheck {
 
 export class Sudoku extends Puzzle {
 	override createAnsCheck(): AnsCheck<Cell, Cross, Border, EXCell> {
-		return new SudokuAnsCheck(this)
+		return new SudokuAnsCheck(this.board)
 	}
 
 	override createBoard(): Board<Cell, Cross, Border, EXCell> {

@@ -404,7 +404,12 @@ export abstract class Puzzle<
 			this.key.keyreset();
 			this.mouse.mousereset();
 		}
-		return this.checker.check(activemode);
+		const result = this.checker.check(activemode);
+		if (result.shouldForceRedraw) {
+			this.redraw(true)
+		}
+		result.text = result.gettext(this.faillist)
+		return result
 	}
 
 	//------------------------------------------------------------------------------

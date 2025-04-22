@@ -234,7 +234,7 @@ class FillominoAnsCheck extends AnsCheck<FillominoCell,
 
 	checkSideAreaNumberSize() {
 		this.checkSideAreaSize(
-			this.puzzle.board.numblkgraph,
+			this.board.numblkgraph,
 			function (area) { return area.number; },
 			"bsSameNum"
 		);
@@ -261,7 +261,7 @@ class FillominoAnsCheck extends AnsCheck<FillominoCell,
 		}, "bkNoNum");
 	}
 	checkAllErrorRoom(evalfunc: (area: FillominoGraphComponent) => boolean, code: string) {
-		const rooms = this.puzzle.board.numblkgraph.components;
+		const rooms = this.board.numblkgraph.components;
 		for (let id = 0; id < rooms.length; id++) {
 			const area = rooms[id];
 			if (!area || evalfunc(area)) { continue; }
@@ -272,7 +272,7 @@ class FillominoAnsCheck extends AnsCheck<FillominoCell,
 		}
 	}
 	checkNoNumCell_fillomino() {
-		if (this.puzzle.getConfig('forceallcell')) {
+		if (this.forceallcell) {
 			this.checkAllCell(function (cell) { return cell.noNum(); }, "ceNoNum");
 		}
 	}
@@ -289,7 +289,7 @@ export class Fillomino extends Puzzle<
 	}
 
 	override createAnsCheck(): AnsCheck<FillominoCell, Cross, Border, EXCell, FillominoBoard> {
-		return new FillominoAnsCheck(this)
+		return new FillominoAnsCheck(this.board)
 	}
 
 	override createBoard(): FillominoBoard {

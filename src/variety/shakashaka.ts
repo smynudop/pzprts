@@ -404,8 +404,8 @@ class ShakashakaAnsCheck extends AnsCheck<ShakashakaCell, Cross, Border, EXCell,
 	}
 
 	checkTriangleExist() {
-		if (!this.puzzle.execConfig('allowempty')) {
-			if (this.puzzle.board.cell.some(function (cell) { return cell.qans > 0; })) { return; }
+		if (!this.allowempty) {
+			if (this.board.cell.some(function (cell) { return cell.qans > 0; })) { return; }
 			this.failcode.add("brNoTriangle");
 		}
 	}
@@ -418,7 +418,7 @@ class ShakashakaAnsCheck extends AnsCheck<ShakashakaCell, Cross, Border, EXCell,
 	}
 
 	checkWhiteArea() {
-		const areas = this.puzzle.board.wrectmgr.components;
+		const areas = this.board.wrectmgr.components;
 		for (let id = 0; id < areas.length; id++) {
 			const clist = areas[id].clist;
 			const d = clist.getRectSize();
@@ -450,7 +450,7 @@ class ShakashakaAnsCheck extends AnsCheck<ShakashakaCell, Cross, Border, EXCell,
 
 export class Shakashaka extends Puzzle<ShakashakaCell, Cross, Border, EXCell, ShakashakaBoard> {
 	override createAnsCheck(): AnsCheck<ShakashakaCell, Cross, Border, EXCell, ShakashakaBoard> {
-		return new ShakashakaAnsCheck(this)
+		return new ShakashakaAnsCheck(this.board)
 	}
 
 	override createBoard(): ShakashakaBoard {

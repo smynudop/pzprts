@@ -160,7 +160,7 @@ class MashuAnsCheck extends AnsCheck<MashuCell> {
 
 	checkWhitePearl1() {
 		let result = true;
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		for (let c = 0; c < bd.cell.length; c++) {
 			const cell = bd.cell[c];
 			if (!(cell.qnum === 1 && cell.isLineCurve())) { continue; }
@@ -176,7 +176,7 @@ class MashuAnsCheck extends AnsCheck<MashuCell> {
 	}
 	checkBlackPearl1() {
 		let result = true;
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		for (let c = 0; c < bd.cell.length; c++) {
 			const cell = bd.cell[c];
 			if (!(cell.qnum === 2 && cell.isLineStraight())) { continue; }
@@ -193,7 +193,7 @@ class MashuAnsCheck extends AnsCheck<MashuCell> {
 
 	checkWhitePearl2() {
 		let result = true;
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		for (let c = 0; c < bd.cell.length; c++) {
 			const cell = bd.cell[c];
 			if (cell.qnum !== 1 || cell.lcnt !== 2) { continue; }
@@ -217,7 +217,7 @@ class MashuAnsCheck extends AnsCheck<MashuCell> {
 	}
 	checkBlackPearl2() {
 		let result = true;
-		const bd = this.puzzle.board;
+		const bd = this.board;
 		for (let c = 0; c < bd.cell.length; c++) {
 			const cell = bd.cell[c];
 			const adc = cell.adjacent;
@@ -255,7 +255,7 @@ export class Mashu extends Puzzle<MashuCell> {
 		})
 	}
 	override createAnsCheck(): AnsCheck<MashuCell, Cross, Border, EXCell> {
-		return new MashuAnsCheck(this)
+		return new MashuAnsCheck(this.board)
 	}
 	override getAdditionalFailCode() {
 		return {
