@@ -47,6 +47,13 @@ export type InputMode =
 	| 'info-line'
 	| 'info-blk'
 
+export type MouseEventOption = {
+	RBShadeCell?: boolean
+	use?: boolean,
+	inputModes?: { edit: string[], play: string[] },
+	mouseinput_auto: (this: MouseEvent1) => void
+}
+
 export class MouseEvent1<TCell extends Cell = Cell> {
 	puzzle: Puzzle
 	cursor: TargetCursor;	// TargetCursor
@@ -65,7 +72,9 @@ export class MouseEvent1<TCell extends Cell = Cell> {
 	mouseend: boolean;	// mouseup/touchendイベントかどうか
 	cancelEvent: boolean;	// イベントキャンセルフラグ
 
-	constructor(puzzle: Puzzle) {
+	constructor(puzzle: Puzzle, option?: MouseEventOption) {
+		Object.assign(this, option)
+
 		this.puzzle = puzzle;
 		this.cursor = puzzle.cursor;
 		this.pid = puzzle.pid

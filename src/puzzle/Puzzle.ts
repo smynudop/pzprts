@@ -1,14 +1,14 @@
 // Puzzle.js v3.6.0
 import { Config } from './Config.js';
-import type { Board, IGroup } from './Board';
-import type { AnsCheck } from './Answer';
+import { Board, type BoardChildOption, type BoardOption, type IGroup } from './Board';
+import { AnsCheck, type AnsCheckExtend, type AnsCheckOption } from './Answer';
 import { createFailCode } from './FailCode.js';
 import { OperationManager } from './Operation';
-import type { MouseEvent1 } from './MouseInput';
-import { type KeyEvent, TargetCursor } from './KeyInput';
-import { Graphic } from './Graphic';
+import { MouseEvent1, type MouseEventOption } from './MouseInput';
+import { KeyEvent, type KeyEventOption, TargetCursor } from './KeyInput';
+import { Graphic, type GraphicOption } from './Graphic';
 import { decodeURL, encodeURL, type Converter } from './Encode.js';
-import type { FileIO } from './FileData.js';
+import { FileIO, type FileIOOption } from './FileData.js';
 import * as MetaData from '../pzpr/metadata.js';
 import type { Cell, Cross, Border, EXCell } from "./Piece"
 import Candle from '../candle/';
@@ -17,9 +17,10 @@ import type { WrapperBase } from '../candle/';
 
 import { pzpr } from '../pzpr/core.js';
 import { getRect, currentTime, addEvent, unselectable } from '../pzpr/util.js';
+import type { VarityOption } from '../variety/createVariety.js';
 
 type Handler = (puzzle: Puzzle, ...args: any[]) => void;
-type IConfig = {
+export type IConfig = {
 	type?: "player" | "editor" | "viewer"
 	width?: number
 	height?: number
@@ -56,11 +57,12 @@ export abstract class Puzzle<
 	mouse: MouseEvent1
 	key: KeyEvent
 	opemgr: OperationManager
+	fio: FileIO
 	faillist: Map<string, [string, string]>
 	converters: Converter[]
 
 
-	constructor(option?: IConfig) {
+	constructor(option?: IConfig, varietyOption?: VarityOption) {
 
 		option = option || {};
 
@@ -89,22 +91,32 @@ export abstract class Puzzle<
 
 		this.converters = []
 		this.initConverters()
+		if (varietyOption?.Encode) {
+			this.converters.push(...varietyOption.Encode)
+		}
 
 		//if (!!canvas) { this.setCanvas(canvas); }
 
 		// クラス初期化
-		this.board = this.createBoard();		// 盤面オブジェクト
+		this.board = this.createBoard({
+			...varietyOption?.Board,
+			areaRoomGraph: varietyOption?.AreaRoomGraph,
+			areaShadeGraph: varietyOption?.AreaShadeGraph,
+			areaUnshadeGraph: varietyOption?.AreaUnshadeGraph,
+			lineGraph: varietyOption?.LineGraph,
+		});		// 盤面オブジェクト
 
-		this.checker = this.createAnsCheck();	// 正解判定オブジェクト
-		this.painter = this.createGraphic();		// 描画系オブジェクト
+		this.checker = this.createAnsCheck(varietyOption?.AnsCheck, varietyOption?.AnsCheckExtend);	// 正解判定オブジェクト
+		this.painter = this.createGraphic(varietyOption?.Graphic);		// 描画系オブジェクト
 
 		this.cursor = this.createTargetCursor();	// 入力用カーソルオブジェクト
-		this.mouse = this.createMouseEvent();	// マウス入力オブジェクト
-		this.key = this.createKeyEvent();		// キーボード入力オブジェクト
+		this.mouse = this.createMouseEvent(varietyOption?.MouseEvent);	// マウス入力オブジェクト
+		this.key = this.createKeyEvent(varietyOption?.KeyEvent);		// キーボード入力オブジェクト
+		this.fio = this.createFileIO(varietyOption?.FileIO)
 
 		this.opemgr = new OperationManager(this);	// 操作情報管理オブジェクト
 
-		this.faillist = this.createFailCode();	// 正答判定文字列を保持するオブジェクト
+		this.faillist = this.createFailCode(varietyOption?.FailCode);	// 正答判定文字列を保持するオブジェクト
 
 		this.ready = true
 		this.emit("ready")
@@ -145,17 +157,34 @@ export abstract class Puzzle<
 	// モード設定用定数
 
 
-	abstract createKeyEvent(): KeyEvent
+	createKeyEvent(option: KeyEventOption | undefined) {
+		return new KeyEvent(this, option)
+	}
 
-	abstract createMouseEvent(): MouseEvent1
+	createMouseEvent(option: MouseEventOption | undefined) {
+		return new MouseEvent1(this, option)
+	}
 
-	abstract createBoard(): TBoard
+	createBoard(option: BoardOption & BoardChildOption | undefined) {
+		return new Board(this, option) as TBoard
+	}
 
-	abstract createGraphic(): Graphic
+	createGraphic(option: GraphicOption | undefined) {
+		return new Graphic(this, option)
+	}
 
-	abstract createAnsCheck(): AnsCheck<TCell, TCross, TBorder, TEXCell, TBoard>
-	private createFailCode() {
+	createAnsCheck(option: AnsCheckOption | undefined, extend: AnsCheckExtend | undefined): AnsCheck<TCell, TCross, TBorder, TEXCell, TBoard> {
+		return new AnsCheck(this.board, option, extend)
+	}
+	private createFailCode(custom: Record<string, [string, string]> | undefined) {
 		let map = createFailCode()
+
+		if (custom) {
+			for (const [key, item] of Object.entries(custom)) {
+				map.set(key, item)
+			}
+		}
+
 		const add = this.getAdditionalFailCode()
 		if (add instanceof Map) {
 			map = new Map([...map, ...add])
@@ -170,10 +199,14 @@ export abstract class Puzzle<
 	/**
 	 * 追加分のFailCodeを返す
 	 */
-	abstract getAdditionalFailCode(): Map<string, [string, string]> | Record<string, [string, string]>
+	getAdditionalFailCode(): Map<string, [string, string]> | Record<string, [string, string]> {
+		return {}
+	}
 
 
-	abstract createFileIO(): FileIO
+	createFileIO(option: FileIOOption | undefined) {
+		return new FileIO(this, option)
+	}
 
 	/**
 	 * override用
@@ -185,7 +218,9 @@ export abstract class Puzzle<
 	/**
 	 * 使用するURLのコンバーターを返す
 	 */
-	abstract getConverters(): Converter[]
+	getConverters(): Converter[] {
+		return []
+	}
 
 	createTargetCursor() {
 		return new TargetCursor(this)
@@ -317,7 +352,7 @@ export abstract class Puzzle<
 		return encodeURL(this, this.converters);
 	}
 	getFileData(type: number, option: any) {
-		return this.createFileIO().fileencode(type, option);
+		return this.fio.fileencode(type, option);
 	}
 
 	readURL(url: string) {

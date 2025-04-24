@@ -288,7 +288,11 @@ export class BoardPiece extends Position {
 
 }
 
-export type CellOption = Partial<Pick<Cell, "numberRemainsUnshaded">>
+export type CellOption = {
+	numberRemainsUnshaded?: boolean
+	maxnum?: number | ((this: Cell) => number)
+	minnum?: number | ((this: Cell) => number)
+}
 //---------------------------------------------------------------------------
 // ★Cellクラス BoardクラスがCellの数だけ保持する
 //---------------------------------------------------------------------------
@@ -326,7 +330,7 @@ export class Cell extends BoardPiece {
 
 	constructor(puzzle: Puzzle, option?: CellOption) {
 		super(puzzle)
-		this.numberRemainsUnshaded = option?.numberRemainsUnshaded || false
+		Object.assign(this, option)
 
 		if (this.enableSubNumberArray) {
 			const anum0 = Cell.anumDefault;

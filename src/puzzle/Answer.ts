@@ -33,9 +33,15 @@ type IPathSeg = {
 
 import type { Board } from "./Board";
 
+export type AnsCheckOption = {
+	checklist: string[]
+}
 
+export type AnsCheckExtend = {
+	[key: string]: (this: AnsCheck) => void
+}
 
-export abstract class AnsCheck<
+export class AnsCheck<
 	TCell extends Cell = Cell,
 	TCross extends Cross = Cross,
 	TBorder extends Border = Border,
@@ -49,10 +55,15 @@ export abstract class AnsCheck<
 	forceallcell: boolean = false
 	board: TBoard
 
-	constructor(board: TBoard) {
+	constructor(board: TBoard, option?: AnsCheckOption, extend?: AnsCheckExtend) {
 		this.board = board
 		this.inCheck = false;
 		this.checkOnly = false;
+
+		this.checklist = option?.checklist || []
+		this.checklist.push(...this.getCheckList())
+		console.log(extend)
+		Object.assign(this, extend)
 
 		this.makeCheckList();
 	}
@@ -63,14 +74,16 @@ export abstract class AnsCheck<
 	checklist_normal: any[] = []
 	checklist_auto: any[] = []
 
+	getCheckList(): string[] {
+		return []
+	}
 
 	//---------------------------------------------------------------------------
 	// ans.makeCheckList() 最初にchecklistの配列を生成する
 	//---------------------------------------------------------------------------
-	abstract getCheckList(): string[]
 	makeCheckList() {
 		/* 当該パズルで使用しないchecklistのアイテムをフィルタリング */
-		const checklist = this.getCheckList();
+		const checklist = this.checklist;
 		let order = [];
 		for (let i = 0; i < checklist.length; i++) {
 			let item = checklist[i];
@@ -685,7 +698,7 @@ export abstract class AnsCheck<
 	// ans.checkRowsColsFor51cell()   [＼]で分かれるタテ列・ヨコ列の数字の判定を行う
 	//---------------------------------------------------------------------------
 	checkRowsColsPartly(
-		evalfunc: (clist: CellList, info: any) => boolean,
+		evalfunc: (clist: CellList, info: any, bd: Board) => boolean,
 		termfunc: CellCheck,
 		code: string
 	) {
@@ -701,7 +714,7 @@ export abstract class AnsCheck<
 					for (tx = bx; tx <= bd.maxbx; tx += 2) { if (termfunc(bd.getc(tx, by))) { break; } }
 					info.keycell = bd.getobj(bx - 2, by);
 					info.key51num = info.keycell.qnum;
-					if (tx > bx && !evalfunc.call(this, bd.cellinside(bx, by, tx - 2, by), info)) {
+					if (tx > bx && !evalfunc.call(this, bd.cellinside(bx, by, tx - 2, by), info, bd)) {
 						result = false;
 						if (this.checkOnly) { break allloop; }
 					}
@@ -716,7 +729,7 @@ export abstract class AnsCheck<
 					for (ty = by; ty <= bd.maxby; ty += 2) { if (termfunc(bd.getc(bx, ty))) { break; } }
 					info.keycell = bd.getobj(bx, by - 2);
 					info.key51num = info.keycell.qnum2;
-					if (ty > by && !evalfunc.call(this, bd.cellinside(bx, by, bx, ty - 2), info)) {
+					if (ty > by && !evalfunc.call(this, bd.cellinside(bx, by, bx, ty - 2), info, bd)) {
 						result = false;
 						if (this.checkOnly) { break allloop; }
 					}

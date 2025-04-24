@@ -8,6 +8,7 @@ import Fillomino from "./player/fillomino.svelte"
 import Hitokure from "./player/hitokure.svelte"
 import Shakashaka from "./player/shakashaka.svelte"
 import Shikaku from "./player/shikaku.svelte"
+import Heyawake from "./player/heyawake.svelte"
 //@ts-ignore
 export const SlitherlinkPlayer = Slitherlink.element as new () => HTMLElement
 //@ts-ignore
@@ -28,3 +29,5 @@ export const HitokurePlayer = Hitokure.element as new () => HTMLElement
 export const ShakashakaPlayer = Shakashaka.element as new () => HTMLElement
 //@ts-ignore
 export const ShikakuPlayer = Shikaku.element as new () => HTMLElement
+//@ts-ignore
+export const HeyawakePlayer = Heyawake.element as new () => HTMLElement

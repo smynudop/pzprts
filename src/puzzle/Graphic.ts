@@ -23,12 +23,21 @@ const TOPLEFT = 5;
 // Graphicクラスの定義
 
 //---------------------------------------------------------
+
+export type GraphicOption = {
+	gridcolor_type?: "DARK" | "LIGHT" | "DLIGHT" | "SLIGHT" | "THIN",
+	enablebcolor?: boolean,
+	bgcellcolor_func?: string,
+	paint: (this: Graphic) => void
+}
+
 export class Graphic {
 	puzzle: Puzzle
 	//pid: string
 	imgtile: any
-	constructor(puzzle: Puzzle) {
+	constructor(puzzle: Puzzle, option?: GraphicOption) {
 		this.puzzle = puzzle
+		Object.assign(this, option)
 		//this.pid = puzzle.pid
 		this.gridcolor = this.gridcolor_list[this.gridcolor_type] || this.gridcolor;
 

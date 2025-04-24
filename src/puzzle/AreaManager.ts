@@ -194,12 +194,14 @@ export class AreaNumberGraph<TComponent extends GraphComponent = GraphComponent>
 //--------------------------------------------------------------------------------
 export type AreaRoomGraphOption = {
 	enabled?: boolean
+	hastop?: boolean
 }
 
 export class AreaRoomGraph extends AreaGraphBase {
 	constructor(puzzle: Puzzle, option?: AreaRoomGraphOption) {
 		super(puzzle)
 		this.enabled = option?.enabled || false
+		this.hastop = option?.hastop || false
 	}
 
 	override relation = { 'cell.ques': 'node', 'border.ques': 'separator', 'border.qans': 'separator' }

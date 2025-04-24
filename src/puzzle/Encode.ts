@@ -19,7 +19,7 @@ export const decodeURL = (puzzle: Puzzle, url: string, converters: Converter[]) 
 
 	let bstr = pzl.body
 	for (const cnv of converters) {
-		bstr += cnv.decode(puzzle, bstr)
+		bstr = cnv.decode(puzzle, bstr)
 	}
 
 	bd.rebuildInfo();
@@ -236,7 +236,7 @@ export const number16 = {
 		return cm;
 	}
 }
-const roomNumber16 = {
+export const roomNumber16 = {
 	//---------------------------------------------------------------------------
 	// enc.decodeRoomNumber16()  部屋＋部屋の一つのquesが0～8192?までの場合、デコードする
 	// enc.encodeRoomNumber16()  部屋＋部屋の一つのquesが0～8192?までの場合、問題部をエンコードする
@@ -245,12 +245,13 @@ const roomNumber16 = {
 		let r = 0;
 		let i = 0;
 		const bd = puzzle.board;
+		console.log(bstr)
 		bd.roommgr.rebuild();
 		for (i = 0; i < bstr.length; i++) {
 			const ca = bstr.charAt(i);
 			const top = bd.roommgr.components[r].top;
 
-			if (include(ca, "0", "9") || include(ca, "a", "f")) { top.qnum = Number.parseInt(ca, 16); }
+			if (include(ca, "0", "9") || include(ca, "a", "f")) { console.log(ca); top.qnum = Number.parseInt(ca, 16); }
 			else if (ca === '-') { top.qnum = Number.parseInt(bstr.substr(i + 1, 2), 16); i += 2; }
 			else if (ca === '+') { top.qnum = Number.parseInt(bstr.substr(i + 1, 3), 16); i += 3; }
 			else if (ca === '=') { top.qnum = Number.parseInt(bstr.substr(i + 1, 3), 16) + 4096; i += 3; }
@@ -350,7 +351,7 @@ const arrowNumber16 = {
 	}
 }
 
-const border = {
+export const border = {
 	//---------------------------------------------------------------------------
 	// enc.decodeBorder() 問題の境界線をデコードする
 	// enc.encodeBorder() 問題の境界線をエンコードする
@@ -392,6 +393,7 @@ const border = {
 		}
 
 		bd.roommgr.rebuild();
+		console.log(pos2)
 		return bstr.substring(pos2);
 	},
 	encode: (puzzle: Puzzle): string => {

@@ -23,6 +23,10 @@ function throwNoImplementation() { throw "no Implemention"; }
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------
+export type FileIOOption = {
+	decodeData: (this: FileIO) => void
+	encodeData: (this: FileIO) => void
+}
 export class FileIO {
 	filever = 0
 	lineseek = 0
@@ -30,8 +34,9 @@ export class FileIO {
 	datastr = ""
 	currentType = 0
 	puzzle: Puzzle
-	constructor(puzzle: Puzzle) {
+	constructor(puzzle: Puzzle, option?: FileIOOption) {
 		this.puzzle = puzzle
+		Object.assign(this, option)
 	}
 
 	//---------------------------------------------------------------------------

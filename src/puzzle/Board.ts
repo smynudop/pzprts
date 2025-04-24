@@ -13,7 +13,7 @@ import {
 	Cross,
 	Border,
 	EXCell,
-	CellOption
+	type CellOption
 } from './Piece';
 import { LineGraph, type LineGraphOption } from './LineManager';
 import {
@@ -35,16 +35,20 @@ import { BoardClearOperation } from "./Operation"
 
 //---------------------------------------------------------
 
-type BoardOption = {
+export type BoardOption = {
 	hasborder?: 0 | 1 | 2
 	hasexcell?: 0 | 1 | 2
 	rows?: number
 	cols?: number
 	borderAsLine?: boolean
+}
+
+export type BoardChildOption = {
 	lineGraph?: boolean | LineGraphOption,
 	areaRoomGraph?: boolean | AreaRoomGraphOption,
 	areaShadeGraph?: boolean | AreaShadeGraphOption
 	areaUnshadeGraph?: boolean | AreaUnshadeGraphOption
+	cell?: CellOption
 }
 
 export type IGroup = 'cell' | 'cross' | 'border' | 'excell';
@@ -100,8 +104,10 @@ export class Board<
 	borderAsLine = false	// 境界線をlineとして扱う
 	disable_subclear = false	// "補助消去"ボタン不要
 
+	celloption: CellOption | undefined
 
-	constructor(puzzle: Puzzle, option?: BoardOption) {
+
+	constructor(puzzle: Puzzle, option?: BoardOption & BoardChildOption) {
 		this.puzzle = puzzle;
 		// 盤面の範囲
 		this.minbx = 0;
@@ -124,6 +130,8 @@ export class Board<
 
 		// Info表示中かどうか
 		this.hasinfo = false;
+
+		this.celloption = option?.cell
 
 		// 盤面上にあるセル・境界線等のオブジェクト
 		this.cell = new CellList();
@@ -243,7 +251,7 @@ export class Board<
 	}
 
 	createCell() {
-		return new Cell(this.puzzle) as TCell;
+		return new Cell(this.puzzle, this.celloption) as TCell;
 	}
 
 	createCross() { return new Cross(this.puzzle) as TCross; }
