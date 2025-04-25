@@ -111,6 +111,7 @@ export abstract class Puzzle<
 			areaShadeGraph: varietyOption?.AreaShadeGraph,
 			areaUnshadeGraph: varietyOption?.AreaUnshadeGraph,
 			lineGraph: varietyOption?.LineGraph,
+			cell: varietyOption?.Cell
 		});		// 盤面オブジェクト
 
 		this.checker = this.createAnsCheck(varietyOption?.AnsCheck);	// 正解判定オブジェクト

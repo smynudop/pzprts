@@ -12,15 +12,15 @@ import type { Cell, CellOption } from "../puzzle/Piece"
 import { type IConfig, Puzzle } from "../puzzle/Puzzle"
 
 export type VarityOption = {
-    MouseEvent: MouseEventOption,
+    MouseEvent: MouseEventOption & { [key: string]: any } & ThisType<MouseEvent1>,
     KeyEvent: KeyEventOption,
-    Cell: CellOption
+    Cell: CellOption & { [key: string]: any } & ThisType<Cell>
     Board: BoardOption
     LineGraph?: LineGraphOption
     AreaShadeGraph?: AreaShadeGraphOption
     AreaUnshadeGraph?: AreaUnshadeGraphOption
     AreaRoomGraph?: AreaRoomGraphOption
-    Graphic: GraphicOption,
+    Graphic: GraphicOption & { [key: string]: any } & ThisType<Graphic>,
     Encode: (EncodeOption) | Converter[]
     FileIO: FileIOOption
     AnsCheck: AnsCheckOption & { [key: string]: any }

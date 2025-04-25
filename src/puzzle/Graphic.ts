@@ -25,10 +25,13 @@ const TOPLEFT = 5;
 //---------------------------------------------------------
 
 export type GraphicOption = {
+	irowake?: boolean
+	numbercolor_func?: string
 	gridcolor_type?: "DARK" | "LIGHT" | "DLIGHT" | "SLIGHT" | "THIN",
 	enablebcolor?: boolean,
 	bgcellcolor_func?: string,
 	paint: (this: Graphic) => void
+	margin?: number
 }
 
 export class Graphic {
