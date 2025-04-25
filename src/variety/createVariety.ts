@@ -25,7 +25,7 @@ export type VarityOption = {
     FileIO: FileIOOption
     AnsCheck: AnsCheckOption & { [key: string]: any }
     //AnsCheckExtend: AnsCheckExtend
-    FailCode: { [key: string]: [string, string] }
+    FailCode?: { [key: string]: [string, string] }
 
 }
 export const createVariety = (varietyOption: VarityOption) => {

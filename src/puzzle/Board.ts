@@ -107,7 +107,7 @@ export class Board<
 	celloption: CellOption | undefined
 
 
-	constructor(puzzle: Puzzle, option?: BoardOption & BoardChildOption) {
+	constructor(puzzle: Puzzle, option?: { board?: BoardOption } & BoardChildOption) {
 		this.puzzle = puzzle;
 		// 盤面の範囲
 		this.minbx = 0;
@@ -115,15 +115,15 @@ export class Board<
 		this.maxbx = 0;
 		this.maxby = 0;
 
-		this.rows = option?.rows || 10
-		this.cols = option?.cols || 10
-		this.hasexcell = option?.hasexcell || 0
+		this.rows = 10
+		this.cols = 10
+		this.hasexcell = 0
 
 		// エラー設定可能状態かどうか
 		this.diserror = 0;
 
-		this.hasborder = option?.hasborder || 0
-		this.borderAsLine = option?.borderAsLine || false
+		this.hasborder = 0
+		this.borderAsLine = false
 
 		// エラー表示中かどうか
 		this.haserror = false;
@@ -132,6 +132,9 @@ export class Board<
 		this.hasinfo = false;
 
 		this.celloption = option?.cell
+
+		Object.assign(this, option?.board)
+		this.celloption = option?.cell || undefined
 
 		// 盤面上にあるセル・境界線等のオブジェクト
 		this.cell = new CellList();

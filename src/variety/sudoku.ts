@@ -1,156 +1,109 @@
+//
+// パズル固有スクリプト部 数独版 sudoku.js
 
-//---------------------------------------------------------
-
-import { AnsCheck } from "../puzzle/Answer";
 import { Board } from "../puzzle/Board";
-import { number16 } from "../puzzle/Encode";
-import { FileIO } from "../puzzle/FileData";
-import { Graphic } from "../puzzle/Graphic";
-import { KeyEvent } from "../puzzle/KeyInput";
-import { MouseEvent1 } from "../puzzle/MouseInput";
-import { type Border, Cell, type Cross, type EXCell } from "../puzzle/Piece";
-import { Puzzle } from "../puzzle/Puzzle";
+import { createVariety } from "./createVariety";
 
-// マウス入力系
-class SudokuMouseEvent extends MouseEvent1 {
-	override inputModes = { edit: ['number', 'clear'], play: ['number', 'clear'] }
-	override mouseinput_auto() {
-		if (this.mousestart) { this.inputqnum(); }
-	}
-}
-
-//---------------------------------------------------------
-// キーボード入力系
-class SudokuKeyEvent extends KeyEvent {
-	override enablemake = true
-	override enableplay = true
-}
-
-//---------------------------------------------------------
-// 盤面管理系
-class SudokuCell extends Cell {
-	override enableSubNumberArray = true
-
-	override maxnum = () => {
-		return Math.max(this.board.cols, this.board.rows);
-	}
-}
-class SudokuBoard extends Board {
-	override cols = 9
-	override rows = 9
-
-	override hasborder: 0 | 1 | 2 = 1;
-
-	override initBoardSize(col: number, row: number) {
-		super.initBoardSize(col, row)
-
-
-
-		let roomsizex = (Math.sqrt(this.cols) | 0) * 2;
-		const roomsizey = (Math.sqrt(this.cols) | 0) * 2;
-		if (this.cols === 6) { roomsizex = 6; }
-		for (let i = 0; i < this.border.length; i++) {
-			const border = this.border[i];
-			if (border.bx % roomsizex === 0 || border.by % roomsizey === 0) { border.ques = 1; }
+//
+export const Sudoku = createVariety({
+	//---------------------------------------------------------
+	// マウス入力系
+	MouseEvent: {
+		inputModes: { edit: ['number', 'clear'], play: ['number', 'clear'] },
+		mouseinput_auto: function () {
+			if (this.mousestart) { this.inputqnum(); }
 		}
-		this.rebuildInfo();
-	}
+	},
 
-	override createCell(): Cell {
-		return new SudokuCell(this.puzzle)
-	}
-}
+	//---------------------------------------------------------
+	// キーボード入力系
+	KeyEvent: {
+		enablemake: true,
+		enableplay: true
+	},
 
-// AreaRoomGraph: {
-// 	enabled: true
-// },
+	//---------------------------------------------------------
+	// 盤面管理系
+	Cell: {
+		enableSubNumberArray: true,
 
-//---------------------------------------------------------
-// 画像表示系
-class SudokuGraphic extends Graphic {
-	override paint() {
-		this.drawBGCells();
-		this.drawTargetSubNumber();
-		this.drawGrid();
-		this.drawBorders();
+		maxnum: function () {
+			return Math.max(this.board.cols, this.board.rows);
+		}
+	},
+	Board: {
+		cols: 9,
+		rows: 9,
 
-		this.drawSubNumbers();
-		this.drawAnsNumbers();
-		this.drawQuesNumbers();
+		hasborder: 1,
 
-		this.drawChassis();
+		initBoardSize: function (col: number, row: number) {
+			Board.prototype.initBoardSize.call(this, col, row);
 
-		this.drawCursor();
-	}
-}
+			let roomsizex: number
+			let roomsizey: number
+			roomsizex = roomsizey = (Math.sqrt(this.cols) | 0) * 2;
+			if (this.cols === 6) { roomsizex = 6; }
+			for (let i = 0; i < this.border.length; i++) {
+				const border = this.border[i];
+				if (border.bx % roomsizex === 0 || border.by % roomsizey === 0) { border.ques = 1; }
+			}
+			this.rebuildInfo();
+		}
+	},
 
-//---------------------------------------------------------
-// URLエンコード/デコード処理
-// Encode: {
-// 	decodePzpr: function(type) {
-// 		this.decodeNumber16();
-// 	},
-// 	encodePzpr: function(type) {
-// 		this.encodeNumber16();
-// 	},
-// },
-//---------------------------------------------------------
-class SudokuFileIO extends FileIO {
-	override decodeData() {
-		this.decodeCellQnum();
-		this.decodeCellAnumsub();
-	}
-	override encodeData() {
-		this.encodeCellQnum();
-		this.encodeCellAnumsub();
-	}
-}
+	AreaRoomGraph: {
+		enabled: true
+	},
 
-//---------------------------------------------------------
-// 正解判定処理実行部
-class SudokuAnsCheck extends AnsCheck {
-	override getCheckList() {
-		return [
+	//---------------------------------------------------------
+	// 画像表示系
+	Graphic: {
+		paint: function () {
+			this.drawBGCells();
+			this.drawTargetSubNumber();
+			this.drawGrid();
+			this.drawBorders();
+
+			this.drawSubNumbers();
+			this.drawAnsNumbers();
+			this.drawQuesNumbers();
+
+			this.drawChassis();
+
+			this.drawCursor();
+		}
+	},
+
+	//---------------------------------------------------------
+	// URLエンコード/デコード処理
+	Encode: {
+		decodePzpr: function (type) {
+			this.decodeNumber16();
+		},
+		encodePzpr: function (type) {
+			this.encodeNumber16();
+		},
+	},
+	//---------------------------------------------------------
+	FileIO: {
+		decodeData: function () {
+			this.decodeCellQnum();
+			this.decodeCellAnumsub();
+		},
+		encodeData: function () {
+			this.encodeCellQnum();
+			this.encodeCellAnumsub();
+		},
+	},
+
+	//---------------------------------------------------------
+	// 正解判定処理実行部
+	AnsCheck: {
+		checklist: [
 			"checkDifferentNumberInRoom",
 			"checkDifferentNumberInLine",
 			"checkNoNumCell+"
 		]
 	}
-}
-
-export class Sudoku extends Puzzle {
-	override createAnsCheck(): AnsCheck<Cell, Cross, Border, EXCell> {
-		return new SudokuAnsCheck(this.board)
-	}
-
-	override createBoard(): Board<Cell, Cross, Border, EXCell> {
-		return new SudokuBoard(this, {
-			areaRoomGraph: true
-		})
-	}
-
-	override getAdditionalFailCode(): Map<string, [string, string]> | Record<string, [string, string]> {
-		return {}
-	}
-
-	override createFileIO(): FileIO {
-		return new SudokuFileIO(this)
-	}
-
-	override createGraphic(): Graphic {
-		return new SudokuGraphic(this)
-	}
-
-	override createKeyEvent(): KeyEvent {
-		return new SudokuKeyEvent(this)
-	}
-
-	override createMouseEvent(): MouseEvent1 {
-		return new SudokuMouseEvent(this)
-	}
-
-	override getConverters() {
-		return [number16]
-	}
-}
-
+});

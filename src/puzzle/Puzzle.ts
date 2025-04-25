@@ -106,7 +106,7 @@ export abstract class Puzzle<
 
 		// クラス初期化
 		this.board = this.createBoard({
-			...varietyOption?.Board,
+			board: varietyOption?.Board,
 			areaRoomGraph: varietyOption?.AreaRoomGraph,
 			areaShadeGraph: varietyOption?.AreaShadeGraph,
 			areaUnshadeGraph: varietyOption?.AreaUnshadeGraph,
@@ -173,7 +173,7 @@ export abstract class Puzzle<
 		return new MouseEvent1(this, option)
 	}
 
-	createBoard(option: BoardOption & BoardChildOption | undefined) {
+	createBoard(option: ({ board?: BoardOption } & BoardChildOption) | undefined) {
 		return new Board(this, option) as TBoard
 	}
 
