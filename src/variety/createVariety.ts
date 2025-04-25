@@ -2,6 +2,7 @@ import type { AnsCheck, AnsCheckExtend, AnsCheckOption } from "../puzzle/Answer"
 import type { AreaRoomGraph, AreaRoomGraphOption, AreaShadeGraph, AreaShadeGraphOption, AreaUnshadeGraphOption } from "../puzzle/AreaManager"
 import type { BoardOption } from "../puzzle/Board"
 import type { Converter } from "../puzzle/Encode"
+import type { EncodeOption } from "../puzzle/Encode2"
 import type { FileIO, FileIOOption } from "../puzzle/FileData"
 import type { Graphic, GraphicOption } from "../puzzle/Graphic"
 import type { KeyEventOption } from "../puzzle/KeyInput"
@@ -20,10 +21,10 @@ export type VarityOption = {
     AreaUnshadeGraph?: AreaUnshadeGraphOption
     AreaRoomGraph?: AreaRoomGraphOption
     Graphic: GraphicOption,
-    Encode: Converter[]
+    Encode: (EncodeOption) | Converter[]
     FileIO: FileIOOption
-    AnsCheck: AnsCheckOption
-    AnsCheckExtend: AnsCheckExtend
+    AnsCheck: AnsCheckOption & { [key: string]: any }
+    //AnsCheckExtend: AnsCheckExtend
     FailCode: { [key: string]: [string, string] }
 
 }

@@ -11,6 +11,7 @@ import { decodeURL, encodeURL, type Converter } from './Encode.js';
 import { FileIO, type FileIOOption } from './FileData.js';
 import * as MetaData from '../pzpr/metadata.js';
 import type { Cell, Cross, Border, EXCell } from "./Piece"
+import { Encode, type EncodeOption } from './Encode2';
 import Candle from '../candle/';
 
 import type { WrapperBase } from '../candle/';
@@ -18,6 +19,7 @@ import type { WrapperBase } from '../candle/';
 import { pzpr } from '../pzpr/core.js';
 import { getRect, currentTime, addEvent, unselectable } from '../pzpr/util.js';
 import type { VarityOption } from '../variety/createVariety.js';
+import { URL_PZPRV3 } from '../pzpr/constants.js';
 
 type Handler = (puzzle: Puzzle, ...args: any[]) => void;
 export type IConfig = {
@@ -58,8 +60,9 @@ export abstract class Puzzle<
 	key: KeyEvent
 	opemgr: OperationManager
 	fio: FileIO
+	encode: Encode | null
 	faillist: Map<string, [string, string]>
-	converters: Converter[]
+	converters: Converter[] | null
 
 
 	constructor(option?: IConfig, varietyOption?: VarityOption) {
@@ -89,10 +92,14 @@ export abstract class Puzzle<
 		if (option.config !== void 0) { this.config.setAll(option.config); }
 		if (option.mode !== void 0) { this.setMode(option.mode); }
 
-		this.converters = []
-		this.initConverters()
-		if (varietyOption?.Encode) {
-			this.converters.push(...varietyOption.Encode)
+		if (Array.isArray(varietyOption?.Encode) || varietyOption?.Encode === undefined) {
+			this.converters = []
+			this.initConverters()
+			this.converters.push(...(varietyOption?.Encode ?? []))
+			this.encode = null
+		} else {
+			this.converters = null
+			this.encode = this.createEncode(varietyOption?.Encode)
 		}
 
 		//if (!!canvas) { this.setCanvas(canvas); }
@@ -106,7 +113,7 @@ export abstract class Puzzle<
 			lineGraph: varietyOption?.LineGraph,
 		});		// 盤面オブジェクト
 
-		this.checker = this.createAnsCheck(varietyOption?.AnsCheck, varietyOption?.AnsCheckExtend);	// 正解判定オブジェクト
+		this.checker = this.createAnsCheck(varietyOption?.AnsCheck);	// 正解判定オブジェクト
 		this.painter = this.createGraphic(varietyOption?.Graphic);		// 描画系オブジェクト
 
 		this.cursor = this.createTargetCursor();	// 入力用カーソルオブジェクト
@@ -173,8 +180,12 @@ export abstract class Puzzle<
 		return new Graphic(this, option)
 	}
 
-	createAnsCheck(option: AnsCheckOption | undefined, extend: AnsCheckExtend | undefined): AnsCheck<TCell, TCross, TBorder, TEXCell, TBoard> {
-		return new AnsCheck(this.board, option, extend)
+	createAnsCheck(option: AnsCheckOption & { [key: string]: any } | undefined): AnsCheck<TCell, TCross, TBorder, TEXCell, TBoard> {
+		return new AnsCheck(this.board, option)
+	}
+
+	createEncode(option: EncodeOption & { [key: string]: any } | undefined): Encode {
+		return new Encode(this, option)
 	}
 	private createFailCode(custom: Record<string, [string, string]> | undefined) {
 		let map = createFailCode()
@@ -212,7 +223,7 @@ export abstract class Puzzle<
 	 * override用
 	 */
 	private initConverters() {
-		this.converters.push(...this.getConverters())
+		this.converters!.push(...this.getConverters())
 	}
 
 	/**
@@ -349,14 +360,24 @@ export abstract class Puzzle<
 	// owner.getFileData() ファイルデータを取得する
 	//---------------------------------------------------------------------------
 	getURL(type: number) {
-		return encodeURL(this, this.converters);
+		if (this.converters != null) {
+			return encodeURL(this, this.converters);
+		}
+		if (this.encode != null) {
+			return this.encode.encodeURL(URL_PZPRV3)
+		}
 	}
 	getFileData(type: number, option: any) {
 		return this.fio.fileencode(type, option);
 	}
 
 	readURL(url: string) {
-		return decodeURL(this, url, this.converters);
+		if (this.converters != null) {
+			return decodeURL(this, url, this.converters);
+		}
+		if (this.encode != null) {
+			return this.encode.decodeURL(url)
+		}
 	}
 
 	//---------------------------------------------------------------------------

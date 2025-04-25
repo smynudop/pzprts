@@ -81,7 +81,7 @@ class ShikakuFileIO extends FileIO {
 //---------------------------------------------------------
 // 正解判定処理実行部
 class ShikakuAnsCheck extends AnsCheck {
-	getCheckList() {
+	override getCheckList() {
 		return [
 			"checkNoNumber",
 			"checkDoubleNumber",

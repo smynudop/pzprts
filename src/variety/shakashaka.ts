@@ -394,7 +394,7 @@ class ShakashakaFileIO extends FileIO {
 //---------------------------------------------------------
 // 正解判定処理実行部
 class ShakashakaAnsCheck extends AnsCheck<ShakashakaCell, Cross, Border, EXCell, ShakashakaBoard> {
-	getCheckList() {
+	override getCheckList() {
 		return [
 			"checkTriangleExist",
 			"checkOverTriangle",

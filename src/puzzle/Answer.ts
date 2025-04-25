@@ -55,15 +55,13 @@ export class AnsCheck<
 	forceallcell: boolean = false
 	board: TBoard
 
-	constructor(board: TBoard, option?: AnsCheckOption, extend?: AnsCheckExtend) {
+	constructor(board: TBoard, option?: AnsCheckOption & { [key: string]: any }) {
 		this.board = board
 		this.inCheck = false;
 		this.checkOnly = false;
 
-		this.checklist = option?.checklist || []
+		Object.assign(this, option)
 		this.checklist.push(...this.getCheckList())
-		console.log(extend)
-		Object.assign(this, extend)
 
 		this.makeCheckList();
 	}

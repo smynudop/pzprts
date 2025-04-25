@@ -3,6 +3,7 @@
 //
 import type { Board } from "../puzzle/Board";
 import { border, roomNumber16 } from "../puzzle/Encode";
+import type { Cell } from "../puzzle/Piece";
 import type { CellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 export const Heyawake = createVariety({
@@ -91,7 +92,16 @@ export const Heyawake = createVariety({
 
 	//---------------------------------------------------------
 	// URLエンコード/デコード処理
-	Encode: [border, roomNumber16],
+	Encode: {
+		decodePzpr: function (type) {
+			this.decodeBorder();
+			this.decodeRoomNumber16();
+		},
+		encodePzpr: function (type) {
+			this.encodeBorder();
+			this.encodeRoomNumber16();
+		},
+	},
 	//---------------------------------------------------------
 	FileIO: {
 		decodeData: function () {
@@ -117,8 +127,7 @@ export const Heyawake = createVariety({
 			"checkShadeCellCount",
 			"checkCountinuousUnshadeCell"
 		],
-	},
-	AnsCheckExtend: {
+
 		checkFractal: function () {
 			const rooms = this.board.roommgr.components;
 			allloop:
@@ -142,7 +151,7 @@ export const Heyawake = createVariety({
 		checkCountinuousUnshadeCell: function () {
 			const savedflag = this.checkOnly;
 			this.checkOnly = true;	/* エラー判定を一箇所だけにしたい */
-			this.checkRowsColsPartly(isBorderCount, function (cell) { return cell.isShade(); }, "bkUnshadeConsecGt3");
+			this.checkRowsColsPartly(isBorderCount, function (cell: Cell) { return cell.isShade(); }, "bkUnshadeConsecGt3");
 			this.checkOnly = savedflag;
 		},
 

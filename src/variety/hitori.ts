@@ -173,7 +173,7 @@ class HitokureFileIO extends FileIO {
 //---------------------------------------------------------
 // 正解判定処理実行部
 class HitokureAnsCheck extends AnsCheck<HitokureCell> {
-	getCheckList() {
+	override getCheckList() {
 		return [
 			"checkShadeCellExist",
 			"checkAdjacentShadeCell",

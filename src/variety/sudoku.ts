@@ -109,7 +109,7 @@ class SudokuFileIO extends FileIO {
 //---------------------------------------------------------
 // 正解判定処理実行部
 class SudokuAnsCheck extends AnsCheck {
-	getCheckList() {
+	override getCheckList() {
 		return [
 			"checkDifferentNumberInRoom",
 			"checkDifferentNumberInLine",
