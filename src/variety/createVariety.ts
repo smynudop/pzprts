@@ -1,6 +1,6 @@
 import type { AnsCheck, AnsCheckExtend, AnsCheckOption } from "../puzzle/Answer"
 import type { AreaRoomGraph, AreaRoomGraphOption, AreaShadeGraph, AreaShadeGraphOption, AreaUnshadeGraphOption } from "../puzzle/AreaManager"
-import type { BoardOption } from "../puzzle/Board"
+import type { Board, BoardOption } from "../puzzle/Board"
 import type { Converter } from "../puzzle/Encode"
 import type { EncodeOption } from "../puzzle/Encode2"
 import type { FileIO, FileIOOption } from "../puzzle/FileData"
@@ -15,7 +15,7 @@ export type VarityOption = {
     MouseEvent: MouseEventOption & { [key: string]: any } & ThisType<MouseEvent1>,
     KeyEvent: KeyEventOption,
     Cell: CellOption & { [key: string]: any } & ThisType<Cell>
-    Board: BoardOption
+    Board: BoardOption & { [key: string]: any } & ThisType<Board>
     LineGraph?: LineGraphOption
     AreaShadeGraph?: AreaShadeGraphOption
     AreaUnshadeGraph?: AreaUnshadeGraphOption
