@@ -15,7 +15,7 @@ import { type IConfig, Puzzle } from "../puzzle/Puzzle"
 export type VarityOption = {
     MouseEvent: MouseEventOption & { [key: string]: any } & ThisType<MouseEvent1>,
     KeyEvent: KeyEventOption & { [key: string]: any } & ThisType<KeyEvent>,
-    Cell: CellOption & { [key: string]: any } & ThisType<Cell>
+    Cell?: CellOption & { [key: string]: any } & ThisType<Cell>
     EXCell?: EXCellOption & { [key: string]: any } & ThisType<EXCell>
     Board: BoardOption & { [key: string]: any } & ThisType<Board>
     BoardExec?: { [key: string]: any } & ThisType<BoardExec>

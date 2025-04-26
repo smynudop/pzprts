@@ -15,8 +15,7 @@ export type LineGraphOption = {
 export class LineGraph extends GraphBase {
 	constructor(puzzle: Puzzle, option?: LineGraphOption) {
 		super(puzzle);
-		this.enabled = option?.enabled || false
-		this.makeClist = option?.makeClist ?? false
+		Object.assign(this, option)
 
 		if (this.moveline) { this.relation['cell.qnum'] = 'move'; }
 	}
