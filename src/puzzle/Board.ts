@@ -13,7 +13,8 @@ import {
 	Cross,
 	Border,
 	EXCell,
-	type CellOption
+	type CellOption,
+	type EXCellOption
 } from './Piece';
 import { LineGraph, type LineGraphOption } from './LineManager';
 import {
@@ -44,11 +45,13 @@ export type BoardOption = {
 }
 
 export type BoardChildOption = {
+	boardExec?: any
 	lineGraph?: boolean | LineGraphOption,
 	areaRoomGraph?: boolean | AreaRoomGraphOption,
 	areaShadeGraph?: boolean | AreaShadeGraphOption
 	areaUnshadeGraph?: boolean | AreaUnshadeGraphOption
 	cell?: CellOption
+	excell?: EXCellOption
 }
 
 export type IGroup = 'cell' | 'cross' | 'border' | 'excell';
@@ -105,7 +108,7 @@ export class Board<
 	disable_subclear = false	// "補助消去"ボタン不要
 
 	celloption: CellOption | undefined
-
+	excelloption: EXCellOption | undefined
 
 	constructor(puzzle: Puzzle, option?: { board?: BoardOption } & BoardChildOption) {
 		this.puzzle = puzzle;
@@ -135,6 +138,7 @@ export class Board<
 
 		Object.assign(this, option?.board)
 		this.celloption = option?.cell || undefined
+		this.excelloption = option?.excell || undefined
 
 		// 盤面上にあるセル・境界線等のオブジェクト
 		this.cell = new CellList();
@@ -163,7 +167,7 @@ export class Board<
 
 		this.addExtraInfo();
 
-		this.exec = this.createBoardExec();
+		this.exec = this.createBoardExec(option?.boardExec);
 		this.exec.insex.cross = (this.hascross === 1 ? { 2: true } : { 0: true });
 
 		this.trialstage = 0;	// TrialMode
@@ -204,8 +208,8 @@ export class Board<
 		return new AreaUnshadeGraph(this.puzzle, option)
 	}
 
-	createBoardExec() {
-		return new BoardExec(this.puzzle)
+	createBoardExec(option?: any) {
+		return new BoardExec(this.puzzle, option)
 	}
 
 	addInfoListInstance<T extends GraphBase>(instance: T, enabled?: boolean): T {
@@ -259,7 +263,7 @@ export class Board<
 
 	createCross() { return new Cross(this.puzzle) as TCross; }
 	createBorder() { return new Border(this.puzzle) as TBorder; }
-	createEXCell() { return new EXCell(this.puzzle) as TEXCell; }
+	createEXCell() { const e = new EXCell(this.puzzle, this.excelloption) as TEXCell; return e }
 
 	createExtraObject() { }
 	initExtraObject(col: number, row: number) { }
@@ -406,6 +410,8 @@ export class Board<
 			excell.isnull = false;
 
 			if (this.hasexcell === 1) {
+				console.log(excell.ques)
+				//console.trace()
 				if (i >= 0 && i < qc) { excell.bx = i * 2 + 1; excell.by = -1; } i -= qc;
 				if (i >= 0 && i < qr) { excell.bx = -1; excell.by = i * 2 + 1; } i -= qr;
 				if (i === 0 && excell.ques === 51) { excell.bx = -1; excell.by = -1; } i--;	/* 左上角のEXCellを追加 */

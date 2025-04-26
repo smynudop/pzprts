@@ -107,17 +107,19 @@ export abstract class Puzzle<
 		// クラス初期化
 		this.board = this.createBoard({
 			board: varietyOption?.Board,
+			boardExec: varietyOption?.BoardExec,
 			areaRoomGraph: varietyOption?.AreaRoomGraph,
 			areaShadeGraph: varietyOption?.AreaShadeGraph,
 			areaUnshadeGraph: varietyOption?.AreaUnshadeGraph,
 			lineGraph: varietyOption?.LineGraph,
-			cell: varietyOption?.Cell
+			cell: varietyOption?.Cell,
+			excell: varietyOption?.EXCell
 		});		// 盤面オブジェクト
 
 		this.checker = this.createAnsCheck(varietyOption?.AnsCheck);	// 正解判定オブジェクト
 		this.painter = this.createGraphic(varietyOption?.Graphic);		// 描画系オブジェクト
 
-		this.cursor = this.createTargetCursor();	// 入力用カーソルオブジェクト
+		this.cursor = this.createTargetCursor(varietyOption?.TargetCursor);	// 入力用カーソルオブジェクト
 		this.mouse = this.createMouseEvent(varietyOption?.MouseEvent);	// マウス入力オブジェクト
 		this.key = this.createKeyEvent(varietyOption?.KeyEvent);		// キーボード入力オブジェクト
 		this.fio = this.createFileIO(varietyOption?.FileIO)
@@ -234,8 +236,8 @@ export abstract class Puzzle<
 		return []
 	}
 
-	createTargetCursor() {
-		return new TargetCursor(this)
+	createTargetCursor(option?: any) {
+		return new TargetCursor(this, option)
 	}
 
 	//---------------------------------------------------------------------------

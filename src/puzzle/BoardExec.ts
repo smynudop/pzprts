@@ -92,9 +92,10 @@ export class BoardExec {
 
 	puzzle: Puzzle
 	board: Board
-	constructor(puzzle: Puzzle) {
+	constructor(puzzle: Puzzle, option?: any) {
 		this.puzzle = puzzle;
 		this.board = puzzle.board;
+		Object.assign(this, option)
 	}
 
 	//------------------------------------------------------------------------------

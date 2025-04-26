@@ -492,8 +492,9 @@ export class TargetCursor extends Address {
 	modesnum: boolean
 	pid: string
 
-	constructor(puzzle: Puzzle, bx?: number, by?: number) {
-		super(puzzle, bx, by);
+	constructor(puzzle: Puzzle, option: any) {
+		super(puzzle);
+		Object.assign(this, option)
 		this.pid = puzzle.pid
 		this.bx = 1;
 		this.by = 1;

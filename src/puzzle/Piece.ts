@@ -49,14 +49,12 @@ export class BoardPiece extends Position {
 	 *  41-42:ぬりめいずの○△ 
 	 *  51:カックロ
 	 */
-	ques = 0
+	ques: number = 0
 	// cross :(交点の黒点)
 	// border:(問題の境界線)
 	qdir = 0  // cell  :(数字につく矢印の向き)
 	// border:(アイスバーンの矢印/マイナリズムの不等号)
 	qnum = -1	// cell  :(セルの数字/○△□/マカロ以外の単体矢印/白丸黒丸/カックロの右側
-
-	static qnumDefault = -1
 
 	// cross :(交点の数字)
 	// border:(マイナリズムの数字/天体ショーの星)
@@ -67,7 +65,6 @@ export class BoardPiece extends Position {
 	qans = 0	// cell  :(1:黒マス/あかり 2-5:三角形 11-13:棒 31-32:斜線 41-50:ふとん)
 	// border:(回答の境界線)
 	anum = -1	// cell  :(セルの数字/○△□/単体矢印)
-	static anumDefault = -1
 	line = 0	// border:(ましゅやスリリンなどの線)
 
 	/* 補助データを保持するプロパティ */
@@ -116,7 +113,12 @@ export class BoardPiece extends Position {
 
 
 	room: any
-	pureObject: BoardPiece | null = null
+	pureObject: this
+
+	constructor(puzzle: Puzzle) {
+		super(puzzle)
+		this.pureObject = { ...this }
+	}
 
 
 
@@ -333,9 +335,10 @@ export class Cell extends BoardPiece {
 		Object.assign(this, option)
 
 		if (this.enableSubNumberArray) {
-			const anum0 = Cell.anumDefault;
+			const anum0 = this.pureObject.anum;
 			this.snum = [anum0, anum0, anum0, anum0];
 		}
+		this.pureObject = { ...this }
 	}
 
 	//---------------------------------------------------------------------------
@@ -440,10 +443,10 @@ export class Cell extends BoardPiece {
 	// cell.isNumberObj() 該当するCellに数字or○があるか返す
 	// cell.sameNumber()  ２つのCellに同じ有効な数字があるか返す
 	//-----------------------------------------------------------------------
-	isNum() { return !this.isnull && (this.qnum !== Cell.qnumDefault || this.anum !== Cell.anumDefault); }
-	noNum() { return !this.isnull && (this.qnum === Cell.qnumDefault && this.anum === Cell.anumDefault); }
-	isValidNum() { return !this.isnull && (this.qnum >= 0 || (this.anum >= 0 && this.qnum === Cell.qnumDefault)); }
-	isNumberObj() { return (this.qnum !== Cell.qnumDefault || this.anum !== Cell.anumDefault || (this.numberWithMB && this.qsub === 1)); }
+	isNum() { return !this.isnull && (this.qnum !== this.pureObject.qnum || this.anum !== this.pureObject.anum); }
+	noNum() { return !this.isnull && (this.qnum === this.pureObject.qnum && this.anum === this.pureObject.anum); }
+	isValidNum() { return !this.isnull && (this.qnum >= 0 || (this.anum >= 0 && this.qnum === this.pureObject.qnum)); }
+	isNumberObj() { return (this.qnum !== this.pureObject.qnum || this.anum !== this.pureObject.anum || (this.numberWithMB && this.qsub === 1)); }
 	sameNumber(cell: Cell) { return (this.isValidNum() && (this.getNum() === cell.getNum())); }
 
 	//---------------------------------------------------------------------------
@@ -770,7 +773,22 @@ export class Border extends BoardPiece {
 //---------------------------------------------------------------------------
 // ボードメンバデータの定義(4)
 // EXCellクラスの定義
+
+export type EXCellOption = {
+	ques?: number,
+	qnum?: number
+	qnum2?: number
+	maxnum?: number
+	minnum?: number
+	disInputHatena?: boolean
+}
 export class EXCell extends BoardPiece {
+	constructor(puzzle: Puzzle, option?: EXCellOption) {
+		super(puzzle)
+		Object.assign(this, option)
+		this.pureObject = { ...this }
+	}
+
 	override group: IGroup = 'excell'
 	adjacent: {
 		top: Cell,
