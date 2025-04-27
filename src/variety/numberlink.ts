@@ -125,9 +125,9 @@ export const Numberlink = createVariety({
 		checkLinkSameNumber: function () {
 			this.checkSameObjectInRoom(this.board.linegraph, function (cell: Cell) { return cell.qnum; }, "nmConnDiff");
 		},
-		checkNoLine_arukone: function () {
-			if (this.puzzle.getConfig('passallcell')) { this.checkNoLine(); }
-		}
+		// checkNoLine_arukone: function () {
+		// 	if (this.puzzle.getConfig('passallcell')) { this.checkNoLine(); }
+		// }
 	},
 
 	FailCode: {

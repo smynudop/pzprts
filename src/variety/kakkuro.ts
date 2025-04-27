@@ -262,6 +262,7 @@ export const Kakkuro = createVariety({
 		],
 
 		checkSameNumberInLine: function () {
+			//@ts-ignore
 			this.checkRowsColsPartly(this.isSameNumber, function (cell: Cell) { return cell.is51cell(); }, "nmDupRow");
 		},
 		isSameNumber: function (clist: CellList, info: any) {
@@ -271,6 +272,7 @@ export const Kakkuro = createVariety({
 		},
 
 		checkSumOfNumberInLine: function () {
+			//@ts-ignore
 			this.checkRowsColsPartly(this.isTotalNumber, function (cell: Cell) { return cell.is51cell(); }, "nmSumRowNe");
 		},
 		isTotalNumber: function (clist: CellList, info: any) {

@@ -175,6 +175,7 @@ export const Mashu = createVariety({
 
 				result = false;
 				if (this.checkOnly) { break; }
+				//@ts-ignore
 				cell.setCellLineError(1);
 			}
 			if (!result) {
@@ -191,6 +192,7 @@ export const Mashu = createVariety({
 
 				result = false;
 				if (this.checkOnly) { break; }
+				//@ts-ignore
 				cell.setCellLineError(1);
 			}
 			if (!result) {
@@ -216,6 +218,7 @@ export const Mashu = createVariety({
 
 				result = false;
 				if (this.checkOnly) { break; }
+				//@ts-ignore
 				cell.setErrorPearl();
 			}
 			if (!result) {
@@ -238,6 +241,7 @@ export const Mashu = createVariety({
 
 				result = false;
 				if (this.checkOnly) { break; }
+				//@ts-ignore
 				cell.setErrorPearl();
 			}
 			if (!result) {
