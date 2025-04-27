@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@udop/penpa-player Demo</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div style="margin: 0 auto; width: 640px; max-width: 100%; text-align: center; padding: .25em;">
+        <h1>penpa-player Demo</h1>
+        <div>
+            <a href="https://github.com/smynudop/pzprts" target="_blank">repository</a>
+        </div>
+
+        <slitherlink-player src="http://pzv.jp/p.html?slither/5/5/cbcbcddad"></slitherlink-player>
+        <mashu-player src="http://pzv.jp/p.html?mashu/6/6/1063000i3000"></mashu-player>
+        <sudoku-player src="http://pzv.jp/p.html?sudoku/4/4/g1k23k3g"></sudoku-player>
+        <kakkuro-player src="http://pzv.jp/p.html?kakuro/5/5/48la0.na0lh3l0Bn.0cl.c4a3"></kakkuro-player>
+        <numberlink-player src="https://puzz.link/p?numlin/5/5/1j2h3m1h2j3"></numberlink-player>
+        <nurikabe-player src="http://pzv.jp/p.html?nurikabe/5/5/g5k2o1k3g"></nurikabe-player>
+        <fillomino-player src="https://puzz.link/p?fillomino/6/6/h4j53g2k5233k2g14j3h"></fillomino-player>
+        <hitokure-player src="http://pzv.jp/p.html?hitori/4/4/1114142333214213"></hitokure-player>
+        <shakashaka-player src="http://pzv.jp/p.html?shakashaka/6/6/cgbhdhegdrb"></shakashaka-player>
+        <shikaku-player src="http://pzv.jp/p.html?shikaku/6/6/j3g56h6t6h23g5j"></shikaku-player>
+        <heyawake-player src="http://pzv.jp/p.html?heyawake/6/6/lll155007rs12222j"></heyawake-player>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@udop/penpa-player@0.1.0/dist/index.umd.js"></script>
+    <script>
+        customElements.define('slitherlink-player', PenpaPlayer.SlitherlinkPlayer);
+        customElements.define("mashu-player", PenpaPlayer.MashuPlayer)
+        customElements.define("sudoku-player", PenpaPlayer.SudokuPlayer)
+        customElements.define("kakkuro-player", PenpaPlayer.KakkuroPlayer)
+        customElements.define("numberlink-player", PenpaPlayer.NumberlinkPlayer)
+        customElements.define("nurikabe-player", PenpaPlayer.NurikabePlayer)
+        customElements.define("fillomino-player", PenpaPlayer.FillominoPlayer)
+        customElements.define("hitokure-player", PenpaPlayer.HitokurePlayer)
+        customElements.define("shakashaka-player", PenpaPlayer.ShakashakaPlayer)
+        customElements.define("shikaku-player", PenpaPlayer.ShikakuPlayer)
+        customElements.define("heyawake-player", PenpaPlayer.HeyawakePlayer)
+    </script>
+</body>
+
+</html>
