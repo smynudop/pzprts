@@ -33,7 +33,8 @@
         "noParameterAssign": "off",
         "noNonNullAssertion": "off",
         "noUnusedTemplateLiteral": "off",
-        "noInferrableTypes": "off"
+        "noInferrableTypes": "off",
+        "useImportType": "info"
       },
       "correctness": {
         "noConstantCondition": "off"
