@@ -1,227 +1,195 @@
+//
+// パズル固有スクリプト部 ひとりにしてくれ hitori.js
 
-//---------------------------------------------------------
-
-import { AnsCheck } from "../puzzle/Answer";
-import { Board } from "../puzzle/Board";
-import { type Converter, include } from "../puzzle/Encode";
-import { FileIO } from "../puzzle/FileData";
-import { Graphic } from "../puzzle/Graphic";
-import { KeyEvent } from "../puzzle/KeyInput";
-import { MouseEvent1 } from "../puzzle/MouseInput";
-import { type Border, Cell, type Cross, type EXCell } from "../puzzle/Piece";
 import type { CellList } from "../puzzle/PieceList";
-import { Puzzle } from "../puzzle/Puzzle";
+import { createVariety } from "./createVariety";
 
-// マウス入力系
-class HitokureMouseEvent extends MouseEvent1 {
-	override RBShadeCell = true
-	override use = true
-	override inputModes = { edit: ['number', 'clear', 'info-blk'], play: ['shade', 'unshade', 'info-blk'] }
-	override mouseinput_auto() {
-		if (this.puzzle.playmode) {
-			if (this.mousestart || this.mousemove) { this.inputcell(); }
+//
+export const Hitokure = createVariety({
+	//---------------------------------------------------------
+	// マウス入力系
+	MouseEvent: {
+		RBShadeCell: true,
+		use: true,
+		inputModes: { edit: ['number', 'clear', 'info-blk'], play: ['shade', 'unshade', 'info-blk'] },
+		mouseinput_auto: function () {
+			if (this.puzzle.playmode) {
+				if (this.mousestart || this.mousemove) { this.inputcell(); }
+			}
+			else if (this.puzzle.editmode) {
+				if (this.mousestart) { this.inputqnum(); }
+			}
 		}
-		else if (this.puzzle.editmode) {
-			if (this.mousestart) { this.inputqnum(); }
-		}
-	}
-}
-
-//---------------------------------------------------------
-// キーボード入力系
-class HitokureKeyEvent extends KeyEvent {
-	override enablemake = true
-}
-
-//---------------------------------------------------------
-// 盤面管理系
-class HitokureCell extends Cell {
-	override disInputHatena = true
-
-	override maxnum = () => {
-		return Math.max(this.board.cols, this.board.rows);
-	}
-
-	override posthook = {
-		qnum(cell: Cell, num: any) { redDisp(cell); },
-		qans(cell: Cell, num: any) { redDisp(cell); }
-	}
-
-
-}
-const redDisp = (cell: Cell) => {
-	const puzzle = cell.puzzle;
-	const bd = cell.board;
-	if (puzzle.getConfig('autoerr')) {
-		puzzle.painter.paintRange(bd.minbx - 1, cell.by - 1, bd.maxbx + 1, cell.by + 1);
-		puzzle.painter.paintRange(cell.bx - 1, bd.minby - 1, cell.bx + 1, bd.maxby + 1);
-	}
-}
-class HitokureBoard extends Board<HitokureCell> {
-	override cols = 8
-	override rows = 8
-
-	override createCell(): HitokureCell {
-		return new HitokureCell(this.puzzle)
-	}
-}
-
-//---------------------------------------------------------
-// 画像表示系
-class HitokureGraphic extends Graphic {
-	override gridcolor_type: "DARK" | "LIGHT" | "DLIGHT" | "SLIGHT" | "THIN" = "LIGHT"
-
-	override enablebcolor = true
-	override bgcellcolor_func = "qsub1"
-
-	override errcolor1 = "red"
-	override fontShadecolor = "rgb(96,96,96)"
-
-	override paint() {
-		this.drawBGCells();
-		this.drawGrid();
-		this.drawShadedCells();
-
-		this.drawQuesNumbers_hitori();
-
-		this.drawChassis();
-
-		this.drawTarget();
-	}
-
-	drawQuesNumbers_hitori() {
-		const puzzle = this.puzzle;
-		const bd = puzzle.board;
-		const chk = puzzle.checker;
-		if (!bd.haserror && !bd.hasinfo && puzzle.getConfig('autoerr')) {
-			// const pt = puzzle.klass.CellList.prototype;
-			// const seterr = pt.seterr;
-			// const fcd = chk.failcode;
-			// chk.inCheck = true;
-			// chk.checkOnly = false;
-			// chk.failcode = { add: function () { } };
-			// pt.seterr = pt.setinfo;
-			// chk.checkRowsColsSameQuesNumber();
-			// pt.seterr = seterr;
-			// chk.failcode = fcd;
-			// chk.inCheck = false;
-
-			// const clist = this.range.cells;
-			// this.range.cells = bd.cell;
-			this.drawQuesNumbers();
-			// this.range.cells = clist;
-
-			// bd.cell.setinfo(0);
-		}
-		else {
-			this.drawQuesNumbers();
-		}
-	}
-}
-const hitokureConverter: Converter = {
-	decode(puzzle, bstr) {
-		let c = 0;
-		let i = 0;
-		const bd = puzzle.board;
-		for (i = 0; i < bstr.length; i++) {
-			const cell = bd.cell[c];
-			const ca = bstr.charAt(i);
-
-			if (include(ca, "0", "9") || include(ca, "a", "z")) { cell.qnum = Number.parseInt(ca, 36); }
-			else if (ca === '-') { cell.qnum = Number.parseInt(bstr.substr(i + 1, 2), 36); i += 2; }
-			else if (ca === '%') { cell.qnum = -2; }
-
-			c++;
-			if (!bd.cell[c]) { break; }
-		}
-		return bstr.substring(i);
 	},
-	encode(puzzle) {
-		let count = 0;
-		let cm = "";
-		const bd = puzzle.board;
-		for (let c = 0; c < bd.cell.length; c++) {
-			let pstr = "";
-			const qn = bd.cell[c].qnum;
 
-			if (qn === -2) { pstr = "%"; }
-			else if (qn >= 0 && qn < 16) { pstr = qn.toString(36); }
-			else if (qn >= 16 && qn < 256) { pstr = `-${qn.toString(36)}`; }
-			else { count++; }
+	//---------------------------------------------------------
+	// キーボード入力系
+	KeyEvent: {
+		enablemake: true
+	},
 
-			if (count === 0) { cm += pstr; }
-			else { cm += "."; count = 0; }
+	//---------------------------------------------------------
+	// 盤面管理系
+	Cell: {
+		disInputHatena: true,
+
+		maxnum: function () {
+			return Math.max(this.board.cols, this.board.rows);
+		},
+
+		// posthook: {
+		// 	qnum: function (num) { this.redDisp(); },
+		// 	qans: function (num) { this.redDisp(); }
+		// },
+
+		redDisp: function () {
+			const puzzle = this.puzzle;
+			const bd = puzzle.board;
+			if (puzzle.getConfig('autoerr')) {
+				puzzle.painter.paintRange(bd.minbx - 1, this.by - 1, bd.maxbx + 1, this.by + 1);
+				puzzle.painter.paintRange(this.bx - 1, bd.minby - 1, this.bx + 1, bd.maxby + 1);
+			}
 		}
-		if (count > 0) { cm += "."; }
+	},
+	Board: {
+		cols: 8,
+		rows: 8
+	},
 
-		return cm;
-	}
-}
+	AreaUnshadeGraph: {
+		enabled: true
+	},
 
-//---------------------------------------------------------
-class HitokureFileIO extends FileIO {
-	override decodeData() {
-		this.decodeCellQnum();
-		this.decodeCellAns();
-	}
-	override encodeData() {
-		this.encodeCellQnum();
-		this.encodeCellAns();
-	}
-}
+	//---------------------------------------------------------
+	// 画像表示系
+	Graphic: {
+		gridcolor_type: "LIGHT",
 
-//---------------------------------------------------------
-// 正解判定処理実行部
-class HitokureAnsCheck extends AnsCheck<HitokureCell> {
-	override getCheckList() {
-		return [
+		enablebcolor: true,
+		bgcellcolor_func: "qsub1",
+
+		errcolor1: "red",
+		fontShadecolor: "rgb(96,96,96)",
+
+		paint: function () {
+			this.drawBGCells();
+			this.drawGrid();
+			this.drawShadedCells();
+
+			//@ts-ignore
+			this.drawQuesNumbers_hitori();
+
+			this.drawChassis();
+
+			this.drawTarget();
+		},
+
+		drawQuesNumbers_hitori: function () {
+			this.drawQuesNumbers();
+
+			// var puzzle = this.puzzle, bd = puzzle.board, chk = puzzle.checker;
+			// if (!bd.haserror && !bd.hasinfo && puzzle.getConfig('autoerr')) {
+			// 	var pt = puzzle.klass.CellList.prototype, seterr = pt.seterr, fcd = chk.failcode;
+			// 	chk.inCheck = true;
+			// 	chk.checkOnly = false;
+			// 	chk.failcode = { add: function () { } };
+			// 	pt.seterr = pt.setinfo;
+			// 	chk.checkRowsColsSameQuesNumber();
+			// 	pt.seterr = seterr;
+			// 	chk.failcode = fcd;
+			// 	chk.inCheck = false;
+
+			// 	var clist = this.range.cells;
+			// 	this.range.cells = bd.cell;
+			// 	this.drawQuesNumbers();
+			// 	this.range.cells = clist;
+
+			// 	bd.cell.setinfo(0);
+			// }
+			// else {
+			// 	this.drawQuesNumbers();
+			// }
+		}
+	},
+
+	//---------------------------------------------------------
+	// URLエンコード/デコード処理
+	Encode: {
+		decodePzpr: function (type) {
+			//@ts-ignore
+			this.decodeHitori();
+		},
+		encodePzpr: function (type) {
+			//@ts-ignore
+			this.encodeHitori();
+		},
+
+		decodeHitori: function () {
+			let c = 0;
+			let i = 0;
+			const bstr = this.outbstr;
+			const bd = this.puzzle.board;
+			for (i = 0; i < bstr.length; i++) {
+				const cell = bd.cell[c];
+				const ca = bstr.charAt(i);
+
+				if (this.include(ca, "0", "9") || this.include(ca, "a", "z")) { cell.qnum = Number.parseInt(ca, 36); }
+				else if (ca === '-') { cell.qnum = Number.parseInt(bstr.substr(i + 1, 2), 36); i += 2; }
+				else if (ca === '%') { cell.qnum = -2; }
+
+				c++;
+				if (!bd.cell[c]) { break; }
+			}
+			this.outbstr = bstr.substr(i);
+		},
+		encodeHitori: function () {
+			let count = 0;
+			let cm = "";
+			const bd = this.puzzle.board;
+			for (let c = 0; c < bd.cell.length; c++) {
+				let pstr = "";
+				const qn = bd.cell[c].qnum;
+
+				if (qn === -2) { pstr = "%"; }
+				else if (qn >= 0 && qn < 16) { pstr = qn.toString(36); }
+				else if (qn >= 16 && qn < 256) { pstr = `-${qn.toString(36)}`; }
+				else { count++; }
+
+				if (count === 0) { cm += pstr; }
+				else { cm += "."; count = 0; }
+			}
+			if (count > 0) { cm += "."; }
+
+			this.outbstr += cm;
+		},
+	},
+	//---------------------------------------------------------
+	FileIO: {
+		decodeData: function () {
+			this.decodeCellQnum();
+			this.decodeCellAns();
+		},
+		encodeData: function () {
+			this.encodeCellQnum();
+			this.encodeCellAns();
+		},
+	},
+
+	//---------------------------------------------------------
+	// 正解判定処理実行部
+	AnsCheck: {
+		checklist: [
 			"checkShadeCellExist",
 			"checkAdjacentShadeCell",
 			"checkConnectUnshadeRB",
 			"checkRowsColsSameQuesNumber"
-		]
-	}
+		],
 
-	checkRowsColsSameQuesNumber() {
-		this.checkRowsCols(this.isDifferentNumberInClist_hitori, "nmDupRow");
+		checkRowsColsSameQuesNumber: function () {
+			this.checkRowsCols((clist) => {
+				const clist2 = clist.filter(function (cell) { return (cell.isUnshade() && cell.isNum()); }) as CellList;
+				return this.isIndividualObject(clist2, function (cell) { return cell.qnum; });
+			}, "nmDupRow");
+		},
 	}
-	isDifferentNumberInClist_hitori(clist: CellList) {
-		const clist2 = clist.filter(function (cell) { return (cell.isUnshade() && cell.isNum()); }) as CellList;
-		return this.isIndividualObject(clist2, function (cell) { return cell.qnum; });
-	}
-}
-
-export class Hitokure extends Puzzle<HitokureCell> {
-	override createAnsCheck(): AnsCheck<HitokureCell, Cross, Border, EXCell, Board<HitokureCell, Cross, Border, EXCell>> {
-		return new HitokureAnsCheck(this.board)
-	}
-	override getAdditionalFailCode(): Map<string, [string, string]> {
-		return new Map()
-	}
-
-	override createBoard(): Board<HitokureCell, Cross, Border, EXCell> {
-		return new HitokureBoard(this, {
-			areaUnshadeGraph: true
-		})
-	}
-
-	override createFileIO(): FileIO {
-		return new HitokureFileIO(this)
-	}
-
-	override createGraphic(): Graphic {
-		return new HitokureGraphic(this)
-	}
-
-	override createKeyEvent(): KeyEvent {
-		return new HitokureKeyEvent(this)
-	}
-
-	override createMouseEvent(): MouseEvent1 {
-		return new HitokureMouseEvent(this)
-	}
-
-	override getConverters() {
-		return [hitokureConverter]
-	}
-}
+});
