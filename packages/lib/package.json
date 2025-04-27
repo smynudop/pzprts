@@ -1,6 +1,6 @@
 {
   "name": "@udop/penpa-player-lib",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Scripts for handling puzzle objects",
   "type": "module",
   "sideEffects": "none",
