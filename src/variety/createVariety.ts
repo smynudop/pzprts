@@ -26,7 +26,7 @@ export type VarityOption = {
     AreaRoomGraph?: AreaRoomGraphOption
     Graphic: GraphicOption & { [key: string]: any } & ThisType<Graphic>,
     Encode: (EncodeOption & { [key: string]: any } & ThisType<Encode>) | Converter[]
-    FileIO: FileIOOption
+    FileIO: FileIOOption & { [key: string]: any } & ThisType<FileIO>
     AnsCheck: AnsCheckOption & { [key: string]: any } & ThisType<AnsCheck>
     //AnsCheckExtend: AnsCheckExtend
     FailCode?: { [key: string]: [string, string] }
