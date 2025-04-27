@@ -3,6 +3,10 @@
 
 pzprv3形式のURLに対応する、ペンシルパズルを解くためのWeb Componentsです。
 
+## Demo
+[こちら](https://smynudop.github.io/pzprts/)
+
+
 ## 使い方
 
 ぱずぷれv3形式のURLのみに対応しています。
