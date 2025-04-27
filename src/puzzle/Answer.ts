@@ -94,6 +94,8 @@ export class AnsCheck<
 			if (isexist) {
 				prio = (item.match(/\+/) || []).length;
 				item = item.replace(/\+/g, "");
+				//@ts-ignore
+				if (!this[item]) console.warn(`anscheck warning: ${item} is null!`)
 				// @ts-ignore
 				order.push([this[item], prio]);
 			}

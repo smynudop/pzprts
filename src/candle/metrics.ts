@@ -1,7 +1,7 @@
 // candle.metrics.js
 
 
-const _doc = window.document
+const _doc = globalThis.window?.document
 let metricsElement: any = null;
 
 export default {

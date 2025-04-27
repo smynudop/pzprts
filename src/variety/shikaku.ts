@@ -104,9 +104,9 @@ export const Shikaku = createVariety({
 		checklist: [
 			"checkNoNumber",
 			"checkDoubleNumber",
-			"checkRoomRect@shikaku",
-			"checkAhoSquare@aho",
-			"checkLshapeArea@aho",
+			"checkRoomRect",
+			//"checkAhoSquare@aho",
+			//"checkLshapeArea@aho",
 			"checkNumberAndSize",
 			"checkBorderDeadend+"
 		],

@@ -13,6 +13,7 @@ import type { Cell, CellOption, EXCell, EXCellOption } from "../puzzle/Piece"
 import { type IConfig, Puzzle } from "../puzzle/Puzzle"
 
 export type VarityOption = {
+    pid?: string
     MouseEvent: MouseEventOption & { [key: string]: any } & ThisType<MouseEvent1>,
     KeyEvent: KeyEventOption & { [key: string]: any } & ThisType<KeyEvent>,
     Cell?: CellOption & { [key: string]: any } & ThisType<Cell>
@@ -35,7 +36,7 @@ export type VarityOption = {
 export const createVariety = (varietyOption: VarityOption) => {
     return class extends Puzzle {
         constructor(option?: IConfig) {
-            super(option, varietyOption)
+            super({ ...option, pid: varietyOption.pid }, varietyOption)
         }
     }
 }

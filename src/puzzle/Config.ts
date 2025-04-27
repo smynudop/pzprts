@@ -124,7 +124,7 @@ export class Config {
 	set(argname: string, newval: any) {
 		const names = this.getNormalizedName(argname);
 		const name = names.name;
-		if (!this.list[name]) { return; }
+		if (this.list[name] === undefined) { return; }
 		newval = this.setproper(names, newval);
 		this.configevent(name, newval);
 		this.puzzle.emit('config', name, newval);

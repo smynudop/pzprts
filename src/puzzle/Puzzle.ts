@@ -23,6 +23,7 @@ import { URL_PZPRV3 } from '../pzpr/constants.js';
 
 type Handler = (puzzle: Puzzle, ...args: any[]) => void;
 export type IConfig = {
+	pid?: string
 	type?: "player" | "editor" | "viewer"
 	width?: number
 	height?: number
@@ -68,7 +69,11 @@ export abstract class Puzzle<
 	constructor(option?: IConfig, varietyOption?: VarityOption) {
 
 		option = option || {};
+		if (!option.pid) {
+			console.warn("pidを指定してください。")
+		}
 
+		this.pid = option?.pid ?? ""
 		this.instancetype = option.type || 'editor';
 		const modeid = { editor: 0, player: 1, viewer: 2 }[this.instancetype];
 		this.playeronly = !!modeid;			// 回答モードのみで動作する
@@ -89,8 +94,6 @@ export abstract class Puzzle<
 		this.metadata = MetaData.createEmtpyMetaData();
 
 		this.config = new this.Config(this);
-		if (option.config !== void 0) { this.config.setAll(option.config); }
-		if (option.mode !== void 0) { this.setMode(option.mode); }
 
 		if (Array.isArray(varietyOption?.Encode) || varietyOption?.Encode === undefined) {
 			this.converters = []
@@ -127,6 +130,9 @@ export abstract class Puzzle<
 		this.opemgr = new OperationManager(this);	// 操作情報管理オブジェクト
 
 		this.faillist = this.createFailCode(varietyOption?.FailCode);	// 正答判定文字列を保持するオブジェクト
+
+		if (option?.config !== void 0) { this.config.setAll(option.config); }
+		if (option?.mode !== void 0) { this.setMode(option.mode); }
 
 		this.ready = true
 		this.emit("ready")
@@ -383,6 +389,9 @@ export abstract class Puzzle<
 		}
 	}
 
+	readFile(txt: string) {
+		this.fio.filedecode(txt)
+	}
 	//---------------------------------------------------------------------------
 	// puzzle.clone()      オブジェクトを複製する
 	//---------------------------------------------------------------------------

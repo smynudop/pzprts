@@ -245,13 +245,12 @@ export const roomNumber16 = {
 		let r = 0;
 		let i = 0;
 		const bd = puzzle.board;
-		console.log(bstr)
 		bd.roommgr.rebuild();
 		for (i = 0; i < bstr.length; i++) {
 			const ca = bstr.charAt(i);
 			const top = bd.roommgr.components[r].top;
 
-			if (include(ca, "0", "9") || include(ca, "a", "f")) { console.log(ca); top.qnum = Number.parseInt(ca, 16); }
+			if (include(ca, "0", "9") || include(ca, "a", "f")) { top.qnum = Number.parseInt(ca, 16); }
 			else if (ca === '-') { top.qnum = Number.parseInt(bstr.substr(i + 1, 2), 16); i += 2; }
 			else if (ca === '+') { top.qnum = Number.parseInt(bstr.substr(i + 1, 3), 16); i += 3; }
 			else if (ca === '=') { top.qnum = Number.parseInt(bstr.substr(i + 1, 3), 16) + 4096; i += 3; }
@@ -393,7 +392,6 @@ export const border = {
 		}
 
 		bd.roommgr.rebuild();
-		console.log(pos2)
 		return bstr.substring(pos2);
 	},
 	encode: (puzzle: Puzzle): string => {

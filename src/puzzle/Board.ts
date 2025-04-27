@@ -410,8 +410,6 @@ export class Board<
 			excell.isnull = false;
 
 			if (this.hasexcell === 1) {
-				console.log(excell.ques)
-				//console.trace()
 				if (i >= 0 && i < qc) { excell.bx = i * 2 + 1; excell.by = -1; } i -= qc;
 				if (i >= 0 && i < qr) { excell.bx = -1; excell.by = i * 2 + 1; } i -= qr;
 				if (i === 0 && excell.ques === 51) { excell.bx = -1; excell.by = -1; } i--;	/* 左上角のEXCellを追加 */
