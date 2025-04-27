@@ -17,7 +17,7 @@ export type VarityOption = {
     KeyEvent: KeyEventOption & { [key: string]: any } & ThisType<KeyEvent>,
     Cell?: CellOption & { [key: string]: any } & ThisType<Cell>
     EXCell?: EXCellOption & { [key: string]: any } & ThisType<EXCell>
-    Board: BoardOption & { [key: string]: any } & ThisType<Board>
+    Board?: BoardOption & { [key: string]: any } & ThisType<Board>
     BoardExec?: { [key: string]: any } & ThisType<BoardExec>
     TargetCursor?: { [key: string]: any } & ThisType<TargetCursor>
     LineGraph?: LineGraphOption
@@ -27,7 +27,7 @@ export type VarityOption = {
     Graphic: GraphicOption & { [key: string]: any } & ThisType<Graphic>,
     Encode: (EncodeOption & { [key: string]: any } & ThisType<Encode>) | Converter[]
     FileIO: FileIOOption
-    AnsCheck: AnsCheckOption & { [key: string]: any }
+    AnsCheck: AnsCheckOption & { [key: string]: any } & ThisType<AnsCheck>
     //AnsCheckExtend: AnsCheckExtend
     FailCode?: { [key: string]: [string, string] }
 
