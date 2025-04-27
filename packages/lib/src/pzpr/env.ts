@@ -56,6 +56,7 @@ export const getEnv = () => {
 
 export const getLang = function () {
 	const env = getEnv();
-	const userlang = (env.node ? process.env.LANG : (navigator.language));
+	//const userlang = (env.node ? process.env.LANG : (navigator.language));
+	const userlang = navigator.language;
 	return ((!userlang || userlang.substr(0, 2) === 'ja') ? 'ja' : 'en');
 };

@@ -1,4 +1,4 @@
-import * as PenpaPlayer from "./index"
+import * as PenpaPlayer from "./player"
 
 customElements.define('slitherlink-player', PenpaPlayer.SlitherlinkPlayer);
 customElements.define("mashu-player", PenpaPlayer.MashuPlayer)

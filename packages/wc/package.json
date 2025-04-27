@@ -1,9 +1,8 @@
 {
-  "name": "@udop/penpa-player-lib",
+  "name": "@udop/penpa-player",
   "version": "0.0.3",
   "description": "Scripts for handling puzzle objects",
   "type": "module",
-  "sideEffects": "none",
   "directories": {
     "test": "test"
   },
@@ -26,21 +25,11 @@
   "files": [
     "dist"
   ],
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/lang/index.d.ts"
-    },
-    "./lang/*": {
-      "import": "./dist/lang/*.js",
-      "types": "./dist/lang/*.d.ts"
-    }
-  },
+  "main": "dist/index.es.js",
   "scripts": {
-    "build": "tsc --noEmit && vite build",
-    "check": "tsc --noEmit",
+    "dev": "vite",
+    "build": "svelte-check && vite build",
+    "check": "svelte-check",
     "lint": "biome lint",
     "lint-fix": "biome lint --write",
     "lint-fix-unsafe": "biome lint --write --unsafe",
@@ -48,12 +37,18 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "rollup-plugin-visualizer": "^5.14.0",
     "source-map-explorer": "^2.5.3",
+    "svelte": "^5.26.2",
+    "svelte-check": "^4.1.6",
     "terser": "^5.39.0",
     "typescript": "^5.8.2",
     "vite": "^6.2.5",
     "vite-plugin-dts": "^4.5.3",
     "vitest": "^3.1.2"
+  },
+  "dependencies": {
+    "@udop/penpa-player-lib": "0.0.3"
   }
 }

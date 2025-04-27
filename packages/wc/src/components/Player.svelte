@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { Puzzle } from "../puzzle/Puzzle";
-  import {inputModeText} from "../lang/ja"
-  import { type InputMode } from "../puzzle/MouseInput";
+  import type { Puzzle } from "@udop/penpa-player-lib";
+  import { ja } from "@udop/penpa-player-lib";
+  import { type InputMode } from "@udop/penpa-player-lib";
 
   export let src: string;
   export let puzzle: Puzzle;
@@ -16,9 +16,9 @@
   let err: string | null = null;
 
   onMount(() => {
-    try{
-      if(!src){
-        throw new Error(`URLが指定されていません。`)
+    try {
+      if (!src) {
+        throw new Error(`URLが指定されていません。`);
       }
       puzzle.readURL(src);
       puzzle.mount(element!);
@@ -33,18 +33,17 @@
 
       playModes = ["auto", ...puzzle.mouse.inputModes.play] as InputMode[];
       puzzle.redraw(true);
-    } catch(e: any){
-      console.error(e)
-      err = e.toString()
+    } catch (e: any) {
+      console.error(e);
+      err = e.toString();
     }
-
   });
 
   const changeMode = (newMode: string) => {
     if (nowMode === newMode) return;
     nowMode = newMode;
     if (puzzle) {
-        puzzle.mouse.setInputMode(newMode);
+      puzzle.mouse.setInputMode(newMode);
     }
   };
 
@@ -64,13 +63,13 @@
         class:active={nowMode === mode}
         on:click={() => changeMode(mode)}
       >
-        {inputModeText[mode] ?? mode }
+        {ja.inputModeText[mode] ?? mode}
       </div>
     {/each}
   </div>
 
   <div id="puzzle" bind:this={element}></div>
-  <div class="result" class:complete={complete}>
+  <div class="result" class:complete>
     {resultText}
   </div>
   <div class="tool">
@@ -101,7 +100,7 @@
     padding: 4px;
   }
 
-  :global(#puzzle > div:focus){
+  :global(#puzzle > div:focus) {
     outline: none; /* デフォルトの枠を消す */
     box-shadow: 0 0 10px 5px rgba(0, 123, 255, 0.6); /* 青くぼやっと光る */
   }
@@ -115,7 +114,7 @@
     user-select: none;
   }
 
-  :global(svg){
+  :global(svg) {
     display: block;
   }
 

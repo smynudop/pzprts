@@ -1,45 +1,28 @@
 import { defineConfig } from "vite"
-
-
-import { svelte } from '@sveltejs/vite-plugin-svelte'
-import { visualizer } from 'rollup-plugin-visualizer';
-//import dts from 'vite-plugin-dts'
+//import { visualizer } from 'rollup-plugin-visualizer';
+import dts from 'vite-plugin-dts'
 
 export default defineConfig({
-    plugins: [
-        svelte({ compilerOptions: { customElement: true } })
-    ],
-    resolve: {
-    },
-    server: {
-        port: 7638,
-    },
+    plugins: [dts({
+        outDir: './dist', // 型定義ファイルの出力先を指定
+        //rollupTypes: true, // 型定義ファイルをrollupで処理
+        insertTypesEntry: true, // 型定義のエントリーポイントを作成
+        include: ["./src"]
+    })],
     build: {
         lib: {
             entry: [
                 "./src/index.ts",
             ],
             name: "PenpaPlayer",
-            //fileName: (format, entry) => `${entry}.${format}.js`,
-            //formats: ["es", "umd"]
-        },
-        minify: "esbuild",
-        rollupOptions: {
+            formats: ["es"],
 
-            output: [
-                {
-                    format: 'es',
-                    dir: 'dist/es',
-                    preserveModules: true, // モジュール構造を保持（オプション）
-                },
-                {
-                    format: 'umd',
-                    dir: 'dist/umd',
-                    name: "umd-test",
-                    globals: {
-                    },
-                }
-            ]
+        },
+        outDir: "./dist",
+        rollupOptions: {
+            output: {
+                preserveModules: true
+            }
         },
         //sourcemap: true
     },

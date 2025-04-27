@@ -1,17 +1,17 @@
 import { mount } from "svelte";
-import type { IConfig, Puzzle } from "../puzzle/Puzzle";
+import type { IConfig, Puzzle } from "@udop/penpa-player-lib";
 import PlayerBase from "../components/Player.svelte"
-import { SlitherLink } from "../variety/slither";
-import { Mashu } from "../variety/mashu";
-import { Sudoku } from "../variety/sudoku";
-import { Kakkuro } from "../variety/kakkuro";
-import { Numberlink } from "../variety/numberlink";
-import { Nurikabe } from "../variety/nurikabe";
-import { Hitokure } from "../variety/hitori";
-import { Shakashaka } from "../variety/shakashaka";
-import { Shikaku } from "../variety/shikaku";
-import { Fillomino } from "../variety/fillomino";
-import { Heyawake } from "../variety/heyawake";
+import { SlitherLink } from "@udop/penpa-player-lib";
+import { Mashu } from "@udop/penpa-player-lib";
+import { Sudoku } from "@udop/penpa-player-lib";
+import { Kakkuro } from "@udop/penpa-player-lib";
+import { Numberlink } from "@udop/penpa-player-lib";
+import { Nurikabe } from "@udop/penpa-player-lib";
+import { Hitokure } from "@udop/penpa-player-lib";
+import { Shakashaka } from "@udop/penpa-player-lib";
+import { Shikaku } from "@udop/penpa-player-lib";
+import { Fillomino } from "@udop/penpa-player-lib";
+import { Heyawake } from "@udop/penpa-player-lib";
 
 const createPlayer = (puzzleClass: new (info: IConfig) => Puzzle) => {
     return class extends HTMLElement {

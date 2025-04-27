@@ -115,9 +115,10 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 	}
 	initFunction() {
 		function btoa(bin: string) {
-			if (isBrowser) { return window.btoa(bin); }
-			if (Buffer.isBuffer(bin)) { return bin.toString('base64'); }
-			return new Buffer(bin.toString(), 'binary').toString('base64');
+			return window.btoa(bin);
+			// if (isBrowser) { return window.btoa(bin); }
+			// if (Buffer.isBuffer(bin)) { return bin.toString('base64'); }
+			// return new Buffer(bin.toString(), 'binary').toString('base64');
 		}
 		const xmldeclare = '<?xml version="1.0" encoding="UTF-8"?>\n';
 		function getOuterHTML(el: SVGSVGElement) { return el.outerHTML; }

@@ -87,8 +87,9 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 	}
 	initFunction() {
 		function atob(base64: string) {
-			if (isBrowser) { return window.atob(base64); }
-			return new Buffer(RegExp.$2, 'base64').toString('binary');
+			return window.atob(base64);
+			// if (isBrowser) { return window.atob(base64); }
+			// return new Buffer(RegExp.$2, 'base64').toString('binary');
 		}
 
 		const root = this.child!;
@@ -112,9 +113,9 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 		};
 		this.canvas.toBuffer = function (type: string, quality: number) {
 			const dataurl = root.toDataURL(type || void 0, quality).replace(/^data:image\/\w+?;base64,/, '');
-			if (env.node) {
-				return new Buffer(dataurl, 'base64');
-			}
+			// if (env.node) {
+			// 	return new Buffer(dataurl, 'base64');
+			// }
 			let data: Uint8Array | string;
 			if (typeof Uint8Array !== 'undefined') {
 				const binary = atob(dataurl);

@@ -7,35 +7,27 @@
 をES2015のclassベースで書き直し、TS化したものです。
 
 
-
-
 ## 使い方
 
-### Web Components
-ぱずぷれv3形式のURLのみに対応しています。
+```ts
+import { SlitherLink } from "@udop/penpa-player";
 
-* ES Module(バンドルサイズが大きいため非推奨)
+const puzzle = new SlitherLink({
+    type: "player"
+})
+puzzle.readURL("/* your url */")
+puzzle.mount(document.querySelector("#puzzle"));
 
-```html
+puzzle.setMode("play");
 
-<slitherlink-player src="/* your url */"/>
+//change input mode
+puzzle.mouse.setInputMode("auto");
 
-<script type="module"> 
-import { SlitherlinkPlayer } from "https://cdn.jsdelivr.net/npm/@udop/penpa-player/dist/index.es.js";
-customElements.define('slitherlink-player', SlitherlinkPlayer);
-</script>
-```
+//set cell Size
+puzzle.setCanvasSizeByCellSize(36);
 
-* UMD
-```html
-
-<slitherlink-player src="/* your url */"/>
-
-<script src="https://cdn.jsdelivr.net/npm/@udop/penpa-player/dist/index.umd.js"></script>
-<script> 
-const { SlitherlinkPlayer } = PenpaPlayer;
-customElements.define('slitherlink-player', SlitherlinkPlayer);
-</script>
+//refresh
+puzzle.redraw(true);
 ```
 
 ## パズルの追加・コンバート方法

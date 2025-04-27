@@ -40,19 +40,19 @@ else if (api.touchevent) {
 
 //---------------------------------------------------------------
 // pzpr.jsが読み込まれているスクリプトのパスを取得する
-export const getpath = function () {
-	if (env.browser) {
-		const srcs = document.getElementsByTagName('script');
-		for (let i = 0; i < srcs.length; i++) {
-			const result = srcs[i].src.match(/^(.*\/)pzpr\.js(?:\?.*)?$/);
-			if (result) { return result[1] + (!result[1].match(/\/$/) ? '/' : ''); }
-		}
-	}
-	else {
-		return `${require('node:path').dirname(__filename)}/${__filename.match('pzpr.js') ? '' : '../'}`;
-	}
-	return "";
-}
+// export const getpath = function () {
+// 	if (env.browser) {
+// 		const srcs = document.getElementsByTagName('script');
+// 		for (let i = 0; i < srcs.length; i++) {
+// 			const result = srcs[i].src.match(/^(.*\/)pzpr\.js(?:\?.*)?$/);
+// 			if (result) { return result[1] + (!result[1].match(/\/$/) ? '/' : ''); }
+// 		}
+// 	}
+// 	else {
+// 		return `${require('node:path').dirname(__filename)}/${__filename.match('pzpr.js') ? '' : '../'}`;
+// 	}
+// 	return "";
+// }
 
 //---------------------------------------------------------------
 // 現在の時間を取得
