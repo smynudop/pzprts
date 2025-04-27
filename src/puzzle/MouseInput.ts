@@ -9,7 +9,7 @@ import type { Puzzle } from "./Puzzle";
 import { RawAddress, Address, type Position } from "./Address";
 import type { TargetCursor } from "./KeyInput";
 import { CellList, CrossList } from "./PieceList";
-import { type Border, Cell, type Cross, type EXCell } from "./Piece";
+import type { Border, Cell, Cross, EXCell } from "./Piece";
 import { pzpr } from "../pzpr/core";
 import { getMouseButton, getPagePos, getRect } from "../pzpr/util";
 
@@ -73,7 +73,6 @@ export class MouseEvent1<TCell extends Cell = Cell> {
 	cancelEvent: boolean;	// イベントキャンセルフラグ
 
 	constructor(puzzle: Puzzle, option?: MouseEventOption) {
-		Object.assign(this, option)
 
 		this.puzzle = puzzle;
 		this.cursor = puzzle.cursor;
@@ -101,6 +100,8 @@ export class MouseEvent1<TCell extends Cell = Cell> {
 
 		this.inputMode = 'auto';
 		this.savedInputMode = { edit: 'auto', play: 'auto' };
+
+		Object.assign(this, option)
 
 		this.mousereset();
 	}
@@ -583,7 +584,7 @@ export class MouseEvent1<TCell extends Cell = Cell> {
 	inputqnum_main(cell: Cell) { // todo
 		let cell0 = cell;
 		const puzzle = this.puzzle;
-		if (puzzle.playmode && cell.qnum !== Cell.qnumDefault && puzzle.pid !== 'factors') { return; }
+		if (puzzle.playmode && cell.qnum !== cell.pureObject.qnum && puzzle.pid !== 'factors') { return; }
 
 		if (puzzle.editmode && puzzle.board.roommgr.hastop) {
 			cell0 = cell = cell.room.top;
