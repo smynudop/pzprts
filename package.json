@@ -1,51 +1,14 @@
 {
-  "name": "@udop/penpa-player",
-  "version": "0.0.3",
-  "description": "Scripts for handling puzzle objects",
-  "type": "module",
-  "directories": {
-    "test": "test"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": [
-    "pencil puzzle"
-  ],
-  "author": "udop",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/smynudop/pzprts"
-  },
-  "homepage": "https://github.com/smynudop/pzprts",
-  "engines": {
-    "node": ">= 20"
-  },
-  "files": [
-    "dist"
-  ],
-  "main": "dist/index.es.js",
+  "name": "pzprts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "svelte-check && vite build",
-    "check": "svelte-check",
-    "lint": "biome lint",
-    "lint-fix": "biome lint --write",
-    "lint-fix-unsafe": "biome lint --write --unsafe",
-    "test": "vitest"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@sveltejs/vite-plugin-svelte": "^5.0.3",
-    "rollup-plugin-visualizer": "^5.14.0",
-    "source-map-explorer": "^2.5.3",
-    "svelte": "^5.26.2",
-    "svelte-check": "^4.1.6",
-    "terser": "^5.39.0",
-    "typescript": "^5.8.2",
-    "vite": "^6.2.5",
-    "vite-plugin-dts": "^4.5.3",
-    "vitest": "^3.1.2"
-  }
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.9.0"
 }
