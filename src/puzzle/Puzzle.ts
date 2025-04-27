@@ -196,7 +196,7 @@ export abstract class Puzzle<
 	createEncode(option: EncodeOption & { [key: string]: any } | undefined): Encode {
 		return new Encode(this, option)
 	}
-	private createFailCode(custom: Record<string, [string, string]> | undefined) {
+	createFailCode(custom: Record<string, [string, string]> | undefined) {
 		let map = createFailCode()
 
 		if (custom) {
@@ -231,7 +231,7 @@ export abstract class Puzzle<
 	/**
 	 * override用
 	 */
-	private initConverters() {
+	initConverters() {
 		this.converters!.push(...this.getConverters())
 	}
 
