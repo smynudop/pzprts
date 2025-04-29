@@ -683,6 +683,12 @@ function setCanvasEvents(puzzle: Puzzle) {
 	ae("mousecancel", (e: any) => {
 		if (!!puzzle.mouse) { puzzle.mouse.e_mousecancel(e); }
 	});
+
+	puzzle.canvas.addEventListener("touchmove", e => {
+		if (e.cancelable) {
+			e.preventDefault()
+		}
+	}, { passive: false })
 	puzzle.canvas.oncontextmenu = function () { return false; };
 	//puzzle.canvas.style.touchAction = 'pinch-zoom';
 

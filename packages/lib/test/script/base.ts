@@ -1,4 +1,4 @@
-import { Puzzle } from "../../src/puzzle/Puzzle"
+import type { Puzzle } from "../../src/puzzle/Puzzle"
 import { test, expect } from "vitest"
 type TestInfo = {
     url: string

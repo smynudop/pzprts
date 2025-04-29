@@ -75,14 +75,16 @@ export const unselectable = function (el: HTMLElement) {
 //----------------------------------------------------------------------
 // pzpr.util.addEvent()          addEventListener()を呼び出す
 //----------------------------------------------------------------------
-export const addEvent = function (el: HTMLElement, type: string, self: Puzzle, callback: (e: any) => void, capt: any = false) {
+export const addEvent = function (el: HTMLElement, type: string, self: Puzzle, callback: (e: any) => void, capt: boolean = false) {
 	let types = [type];
 	if (type === "mousedown") { types = eventMouseDown; }
 	else if (type === "mousemove") { types = eventMouseMove; }
 	else if (type === "mouseup") { types = eventMouseUp; }
 	else if (type === "mousecancel") { types = eventMouseCancel; }
 
-	types.forEach(function (type) { el.addEventListener(type, callback, !!capt); });
+	types.forEach(function (type) {
+		el.addEventListener(type, callback, { passive: !!capt });
+	});
 
 	return function remover() {
 		types.forEach(function (type) { el.removeEventListener(type, callback, !!capt); });

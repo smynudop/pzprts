@@ -9,6 +9,7 @@ export default defineConfig({
     ],
     server: {
         port: 7638,
+        host: true
     },
     build: {
         lib: {

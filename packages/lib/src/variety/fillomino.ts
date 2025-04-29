@@ -214,7 +214,6 @@ export const Fillomino = createVariety({
 			}
 		},
 		checkNoNumCell_fillomino: function () {
-			console.log(`forceallcell is...` + this.forceallcell)
 			if (this.forceallcell) {
 				this.checkAllCell(function (cell) { return cell.noNum(); }, "ceNoNum");
 			}
