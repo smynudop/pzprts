@@ -40,11 +40,7 @@ const MODE_PLAYER = 3
 // ★Puzzleクラス ぱずぷれv3のベース処理やその他の処理を行う
 //---------------------------------------------------------------------------
 export abstract class Puzzle<
-	TCell extends Cell = Cell,
-	TCross extends Cross = Cross,
-	TBorder extends Border = Border,
-	TEXCell extends EXCell = EXCell,
-	TBoard extends Board<TCell, TCross, TBorder, TEXCell> = Board<TCell, TCross, TBorder, TEXCell>
+	TBoard extends Board = Board
 > {
 	Config = Config
 	preInitCanvasInfo: {
@@ -54,7 +50,7 @@ export abstract class Puzzle<
 		cellsize: number | null
 	}
 	board: TBoard
-	checker: AnsCheck<TCell, TCross, TBorder, TEXCell, TBoard>
+	checker: AnsCheck<TBoard>
 	painter: Graphic
 	cursor: TargetCursor
 	mouse: MouseEvent1
@@ -189,7 +185,7 @@ export abstract class Puzzle<
 		return new Graphic(this, option)
 	}
 
-	createAnsCheck(option: AnsCheckOption & { [key: string]: any } | undefined): AnsCheck<TCell, TCross, TBorder, TEXCell, TBoard> {
+	createAnsCheck(option: AnsCheckOption & { [key: string]: any } | undefined): AnsCheck<TBoard> {
 		return new AnsCheck(this.board, option)
 	}
 

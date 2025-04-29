@@ -554,7 +554,7 @@ export class Cell extends BoardPiece {
 	//---------------------------------------------------------------------------
 	// cell.countDir4Cell()  上下左右4方向で条件func==trueになるマスの数をカウントする
 	//---------------------------------------------------------------------------
-	countDir4Cell(func: (cell: Cell) => boolean) {
+	countDir4Cell(func: (cell: this) => boolean) {
 		const adc = this.adjacent;
 		let cnt = 0;
 		const cells = [adc.top, adc.bottom, adc.left, adc.right];

@@ -22,6 +22,10 @@ type CellCheck2 = (cell1: Cell, cell2: Cell) => boolean
 type AreaCheck = (cols: number, rows: number, a: number, n: number) => boolean
 type CellListCheck = (clist: CellList) => boolean
 
+type CellOfBoard<TBoard extends Board> = TBoard["cell"][number]
+
+type ColsPartlyInfo = { keycell: BoardPiece | null, key51num: number, isvert: boolean }
+
 type IPathSeg = {
 	objs: BorderList
 	cells: [Cell, Cell]	// 出発したセル、到達したセル
@@ -34,14 +38,10 @@ type IPathSeg = {
 import type { Board } from "./Board";
 
 export type AnsCheckOption = Partial<AnsCheck>
-
+export type Checker = () => void
 
 export class AnsCheck<
-	TCell extends Cell = Cell,
-	TCross extends Cross = Cross,
-	TBorder extends Border = Border,
-	TEXCell extends EXCell = EXCell,
-	TBoard extends Board<TCell, TCross, TBorder, TEXCell> = Board<TCell, TCross, TBorder, TEXCell>
+	TBoard extends Board = Board
 > {
 	inCheck: boolean
 	checkOnly: boolean
@@ -62,10 +62,12 @@ export class AnsCheck<
 	}
 	failcodemode = false
 	failcode: CheckInfo = null!
-	_info: any = (void 0)
-	checklist: any = []
-	checklist_normal: any[] = []
-	checklist_auto: any[] = []
+	_info: {
+		num?: IPathSeg[]
+	} = null!
+	checklist: string[] = []
+	checklist_normal: Checker[] = []
+	checklist_auto: Checker[] = []
 
 	getCheckList(): string[] {
 		return []
@@ -164,7 +166,7 @@ export class AnsCheck<
 	// ans.checkNoLineObject()    線が出ていない数字や○がないかどうか判定する
 	// ans.checkLineOverLetter()  線が数字などを通過しているか判定する
 	//---------------------------------------------------------------------------
-	checkAllCell(func: (cell: TCell) => boolean, code: string) {
+	checkAllCell(func: (cell: CellOfBoard<TBoard>) => boolean, code: string) {
 		for (let c = 0; c < this.board.cell.length; c++) {
 			const cell = this.board.cell[c];
 			if (!func(cell)) { continue; }
@@ -196,12 +198,12 @@ export class AnsCheck<
 	//---------------------------------------------------------------------------
 	// ans.checkDir4Cell()  セルの周囲4マスの条件がfunc==trueの時、エラーを設定する
 	//---------------------------------------------------------------------------
-	checkDir4Cell(iscount: CellCheck<TCell>, type: number, code: string) { // type = 0:違う 1:numより小さい 2:numより大きい
+	checkDir4Cell(iscount: CellCheck<CellOfBoard<TBoard>>, type: number, code: string) { // type = 0:違う 1:numより小さい 2:numより大きい
 		for (let c = 0; c < this.board.cell.length; c++) {
 			const cell = this.board.cell[c];
 			if (!cell.isValidNum()) { continue; }
 			const num = cell.getNum();
-			const count = cell.countDir4Cell(iscount as any); // TODO
+			const count = cell.countDir4Cell(iscount);
 			if ((type === 0 && num === count) || (type === 1 && num <= count) || (type === 2 && num >= count)) { continue; }
 
 			this.failcode.add(code);
@@ -257,7 +259,7 @@ export class AnsCheck<
 
 			const bx = cell.bx;
 			const by = cell.by;
-			const clist = bd.cellinside(bx, by, bx + 2, by + 2).filter(func) as CellList<TCell>;
+			const clist = bd.cellinside(bx, by, bx + 2, by + 2).filter(func) as CellList<CellOfBoard<TBoard>>;
 			if (clist.length < 4) { continue; }
 
 			this.failcode.add(code);
@@ -553,7 +555,7 @@ export class AnsCheck<
 	// ans.checkSideAreaCell() 境界線をはさんでタテヨコに接するセルの判定を行う
 	//---------------------------------------------------------------------------
 	checkSideAreaSize<T extends GraphComponent>(
-		graph: AreaGraphBase<T> & { getSideAreaInfo: () => [any, any][] },
+		graph: AreaGraphBase<T> & { getSideAreaInfo: () => [T, T][] },
 		getval: (c: T) => number,
 		code: string
 	) {
@@ -693,7 +695,7 @@ export class AnsCheck<
 	// ans.checkRowsColsFor51cell()   [＼]で分かれるタテ列・ヨコ列の数字の判定を行う
 	//---------------------------------------------------------------------------
 	checkRowsColsPartly(
-		evalfunc: (clist: CellList, info: any, bd: Board) => boolean,
+		evalfunc: (clist: CellList, info: ColsPartlyInfo, bd: Board) => boolean,
 		termfunc: CellCheck,
 		code: string
 	) {
@@ -737,7 +739,7 @@ export class AnsCheck<
 			this.failcode.add(code);
 		}
 	}
-	checkRowsColsFor51cell(evalfunc: (clist: CellList, info: any) => boolean, code: string) {
+	checkRowsColsFor51cell(evalfunc: (clist: CellList, info: ColsPartlyInfo) => boolean, code: string) {
 		this.checkRowsColsPartly(evalfunc, function (cell) { return cell.is51cell(); }, code);
 	}
 

@@ -385,8 +385,7 @@ export const Shakashaka = createVariety({
 		},
 
 		checkWhiteArea: function () {
-			// @ts-ignore
-			const areas = this.board.wrectmgr.components as GraphComponent[];
+			const areas = this.board.wrectmgr.components;
 			for (let id = 0; id < areas.length; id++) {
 				const clist = areas[id].clist;
 				const d = clist.getRectSize();

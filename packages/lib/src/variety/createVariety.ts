@@ -37,7 +37,7 @@ export type VarityOption<
     Graphic: GraphicExtend & ThisType<Graphic & GraphicExtend>,
     Encode: (EncodeExtend & ThisType<Encode & EncodeExtend>) | Converter[]
     FileIO: FileIOExtend & ThisType<FileIO & FileIOExtend>
-    AnsCheck: AnsCheckExtend & ThisType<AnsCheck<Cell & CellExtend> & AnsCheckExtend>
+    AnsCheck: AnsCheckExtend & ThisType<AnsCheck<Board<Cell & CellExtend> & BoardExtend> & AnsCheckExtend>
     FailCode?: { [key: string]: [string, string] }
 
 }

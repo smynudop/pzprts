@@ -183,7 +183,6 @@ export const Fillomino = createVariety({
 		],
 
 		checkSideAreaNumberSize: function () {
-			// @ts-ignore
 			this.checkSideAreaSize(this.board.numblkgraph, function (area) { return area.number; }, "bsSameNum");
 		},
 
@@ -203,7 +202,6 @@ export const Fillomino = createVariety({
 			this.checkAllErrorRoom(function (area: any) { return area.numkind >= 1; }, "bkNoNum");
 		},
 		checkAllErrorRoom: function (evalfunc: (area: any) => boolean, code: string): void {
-			// @ts-ignore
 			const rooms = this.board.numblkgraph.components;
 			for (let id = 0; id < rooms.length; id++) {
 				const area = rooms[id];
