@@ -143,8 +143,7 @@ export const SlitherLink = createVariety({
 			"checkDeadendLine+",
 		],
 		checkdir4BorderLine: function () {
-			//@ts-ignore
-			this.checkAllCell(function (cell: Cell) { return (cell.qnum >= 0 && cell.getdir4BorderLine1() !== cell.qnum); }, "nmLineNe");
+			this.checkAllCell(function (cell) { return (cell.qnum >= 0 && cell.getdir4BorderLine1() !== cell.qnum); }, "nmLineNe");
 		}
 	},
 

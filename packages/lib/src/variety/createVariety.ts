@@ -13,6 +13,7 @@ import type { Cell, CellOption, EXCell, EXCellOption } from "../puzzle/Piece"
 import { type IConfig, Puzzle } from "../puzzle/Puzzle"
 
 export type VarityOption<
+    CellExtend extends CellOption,
     BoardExtend extends BoardOption,
     MouseExtend extends MouseEventOption,
     KeyExtend extends KeyEventOption,
@@ -22,9 +23,9 @@ export type VarityOption<
     AnsCheckExtend extends AnsCheckOption,
 > = {
     pid?: string
-    MouseEvent: MouseExtend & ThisType<MouseEvent1 & MouseExtend>,
+    Cell?: CellExtend & ThisType<Cell & CellExtend>
+    MouseEvent: MouseExtend & ThisType<MouseEvent1<Cell & CellExtend> & MouseExtend>,
     KeyEvent: KeyExtend & ThisType<KeyEvent & KeyExtend>,
-    Cell?: CellOption & { [key: string]: any } & ThisType<Cell>
     EXCell?: EXCellOption & { [key: string]: any } & ThisType<EXCell>
     Board?: BoardExtend & ThisType<Board & BoardExtend>
     BoardExec?: { [key: string]: any } & ThisType<BoardExec>
@@ -36,14 +37,15 @@ export type VarityOption<
     Graphic: GraphicExtend & ThisType<Graphic & GraphicExtend>,
     Encode: (EncodeExtend & ThisType<Encode & EncodeExtend>) | Converter[]
     FileIO: FileIOExtend & ThisType<FileIO & FileIOExtend>
-    AnsCheck: AnsCheckExtend & ThisType<AnsCheck & AnsCheckExtend>
+    AnsCheck: AnsCheckExtend & ThisType<AnsCheck<Cell & CellExtend> & AnsCheckExtend>
     FailCode?: { [key: string]: [string, string] }
 
 }
 
-export type VarietyAnyOption = VarityOption<any, any, any, any, any, any, any>
+export type VarietyAnyOption = VarityOption<any, any, any, any, any, any, any, any>
 
 export const createVariety = <
+    CellExtend extends CellOption,
     BoardExtend extends BoardOption,
     MouseExtend extends MouseEventOption,
     KeyExtend extends KeyEventOption,
@@ -52,6 +54,7 @@ export const createVariety = <
     GraphicExtend extends GraphicOption,
     AnsCheckExtend extends AnsCheckOption,
 >(varietyOption: VarityOption<
+    CellExtend,
     BoardExtend,
     MouseExtend,
     KeyExtend,

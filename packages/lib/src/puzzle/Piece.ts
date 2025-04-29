@@ -290,10 +290,12 @@ export class BoardPiece extends Position {
 
 }
 
-export type CellOption = {
-	numberRemainsUnshaded?: boolean
-	maxnum?: number | ((this: Cell) => number)
-	minnum?: number | ((this: Cell) => number)
+export type CellOption = Partial<Cell>
+type Adjacent<T> = {
+	top: T,
+	bottom: T,
+	left: T,
+	right: T
 }
 //---------------------------------------------------------------------------
 // ★Cellクラス BoardクラスがCellの数だけ保持する
@@ -322,12 +324,7 @@ export class Cell extends BoardPiece {
 	path: any
 	sblk: any = null
 
-	adjacent: {
-		top: Cell,
-		bottom: Cell,
-		left: Cell,
-		right: Cell
-	} = null!	// 隣接するセルの情報を保持する
+	adjacent: Adjacent<this> = null!	// 隣接するセルの情報を保持する
 
 
 	constructor(puzzle: Puzzle, option?: CellOption) {
@@ -347,10 +344,10 @@ export class Cell extends BoardPiece {
 	//---------------------------------------------------------------------------
 	initAdjacent() {
 		this.adjacent = {
-			top: this.relobj(0, -2),
-			bottom: this.relobj(0, 2),
-			left: this.relobj(-2, 0),
-			right: this.relobj(2, 0)
+			top: this.relobj(0, -2) as this,
+			bottom: this.relobj(0, 2) as this,
+			left: this.relobj(-2, 0) as this,
+			right: this.relobj(2, 0) as this
 		};
 	}
 

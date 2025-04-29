@@ -40,17 +40,12 @@ export const Mashu = createVariety({
 		maxnum: 2,
 
 		setErrorPearl: function () {
-			//@ts-ignore
 			this.setCellLineError(1);
 			const adc = this.adjacent;
 			const adb = this.adjborder;
-			//@ts-ignore
 			if (adb.top.isLine()) { adc.top.setCellLineError(0); }
-			//@ts-ignore
 			if (adb.bottom.isLine()) { adc.bottom.setCellLineError(0); }
-			//@ts-ignore
 			if (adb.left.isLine()) { adc.left.setCellLineError(0); }
-			//@ts-ignore
 			if (adb.right.isLine()) { adc.right.setCellLineError(0); }
 		},
 
@@ -175,7 +170,6 @@ export const Mashu = createVariety({
 
 				result = false;
 				if (this.checkOnly) { break; }
-				//@ts-ignore
 				cell.setCellLineError(1);
 			}
 			if (!result) {
@@ -192,7 +186,6 @@ export const Mashu = createVariety({
 
 				result = false;
 				if (this.checkOnly) { break; }
-				//@ts-ignore
 				cell.setCellLineError(1);
 			}
 			if (!result) {
@@ -218,7 +211,6 @@ export const Mashu = createVariety({
 
 				result = false;
 				if (this.checkOnly) { break; }
-				//@ts-ignore
 				cell.setErrorPearl();
 			}
 			if (!result) {
@@ -241,7 +233,6 @@ export const Mashu = createVariety({
 
 				result = false;
 				if (this.checkOnly) { break; }
-				//@ts-ignore
 				cell.setErrorPearl();
 			}
 			if (!result) {

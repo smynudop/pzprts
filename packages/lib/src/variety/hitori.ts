@@ -33,7 +33,7 @@ export const Hitokure = createVariety({
 	Cell: {
 		disInputHatena: true,
 
-		maxnum: function () {
+		maxnum: function (): number {
 			return Math.max(this.board.cols, this.board.rows);
 		},
 
@@ -42,7 +42,7 @@ export const Hitokure = createVariety({
 		// 	qans: function (num) { this.redDisp(); }
 		// },
 
-		redDisp: function () {
+		redDisp: function (): void {
 			const puzzle = this.puzzle;
 			const bd = puzzle.board;
 			if (puzzle.getConfig('autoerr')) {
@@ -114,14 +114,14 @@ export const Hitokure = createVariety({
 	//---------------------------------------------------------
 	// URLエンコード/デコード処理
 	Encode: {
-		decodePzpr: function (type) {
+		decodePzpr: function (type): void {
 			this.decodeHitori();
 		},
-		encodePzpr: function (type) {
+		encodePzpr: function (type): void {
 			this.encodeHitori();
 		},
 
-		decodeHitori: function () {
+		decodeHitori: function (): void {
 			let c = 0;
 			let i = 0;
 			const bstr = this.outbstr;
@@ -139,7 +139,7 @@ export const Hitokure = createVariety({
 			}
 			this.outbstr = bstr.substr(i);
 		},
-		encodeHitori: function () {
+		encodeHitori: function (): void {
 			let count = 0;
 			let cm = "";
 			const bd = this.puzzle.board;

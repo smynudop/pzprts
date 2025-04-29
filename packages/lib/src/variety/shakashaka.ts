@@ -72,7 +72,6 @@ export const Shakashaka = createVariety({
 			if (cell.isnull) { return; }
 			this.inputData = this.checkCornerData(cell);
 
-			//@ts-ignore
 			cell.setAnswer(this.inputData);
 			this.mouseCell = cell;
 			cell.draw();
@@ -195,7 +194,6 @@ export const Shakashaka = createVariety({
 			}
 
 			if (ret !== null) {
-				//@ts-ignore
 				cell.setAnswer(ret);
 				this.inputData = ret;
 				this.mouseCell = cell;
@@ -207,7 +205,6 @@ export const Shakashaka = createVariety({
 			if (cell.isnull || cell.isNum()) { return; }
 
 			if (this.inputData === null) { this.inputData = (cell.qsub === 1 ? 0 : -1); }
-			//@ts-ignore
 			cell.setAnswer(this.inputData);
 			this.mouseCell = cell;
 			cell.draw();
@@ -217,12 +214,10 @@ export const Shakashaka = createVariety({
 			const cell = this.getcell();
 			if (cell.isnull || cell.isNum()) { return; }
 
-			//@ts-ignore
 			const ans = cell.getAnswer();
 			if (this.btn === 'left') { this.inputData = [0, 2, 1, 3, 4, 5, -1][ans + 1]; }
 			else if (this.btn === 'right') { this.inputData = [5, -1, 1, 0, 2, 3, 4][ans + 1]; }
 
-			//@ts-ignore
 			cell.setAnswer(this.inputData);
 			this.mouseCell = cell;
 			cell.draw();
@@ -269,8 +264,8 @@ export const Shakashaka = createVariety({
 		isWall: function () { return (this.qsub === 1 || this.isnull || this.isNum()); }
 	},
 	Board: {
+		wrectmgr: null! as AreaWrectGraph,
 		addExtraInfo: function () {
-			//@ts-ignore
 			this.wrectmgr = this.addInfoList(AreaWrectGraph);
 		}
 	},
@@ -383,11 +378,9 @@ export const Shakashaka = createVariety({
 		},
 
 		checkOverTriangle: function () {
-			//@ts-ignore
 			this.checkDir4Cell(function (cell) { return cell.isTri(); }, 2, "nmTriangleGt");
 		},
 		checkLessTriangle: function () {
-			//@ts-ignore
 			this.checkDir4Cell(function (cell) { return cell.isTri(); }, 1, "nmTriangleLt");
 		},
 
