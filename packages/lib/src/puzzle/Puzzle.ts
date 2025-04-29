@@ -1,7 +1,7 @@
 // Puzzle.js v3.6.0
 import { Config } from './Config.js';
 import { Board, type BoardChildOption, type BoardOption, type IGroup } from './Board';
-import { AnsCheck, type AnsCheckExtend, type AnsCheckOption } from './Answer';
+import { AnsCheck, type AnsCheckOption } from './Answer';
 import { createFailCode } from './FailCode.js';
 import { OperationManager } from './Operation';
 import { MouseEvent1, type MouseEventOption } from './MouseInput';
@@ -18,7 +18,7 @@ import type { WrapperBase } from '../candle/';
 
 import { pzpr } from '../pzpr/core.js';
 import { getRect, currentTime, addEvent, unselectable } from '../pzpr/util.js';
-import type { VarityOption } from '../variety/createVariety.js';
+import type { VarietyAnyOption, VarityOption } from '../variety/createVariety.js';
 import { URL_PZPRV3 } from '../pzpr/constants.js';
 
 type Handler = (puzzle: Puzzle, ...args: any[]) => void;
@@ -66,7 +66,7 @@ export abstract class Puzzle<
 	converters: Converter[] | null
 
 
-	constructor(option?: IConfig, varietyOption?: VarityOption) {
+	constructor(option?: IConfig, varietyOption?: VarietyAnyOption) {
 
 		option = option || {};
 		if (!option.pid) {

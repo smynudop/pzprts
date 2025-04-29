@@ -18,10 +18,8 @@ export const Shakashaka = createVariety({
 				const use = +this.puzzle.getConfig('use_tri');
 				if (use === 1) {
 					if (this.btn === 'left') {
-						//@ts-ignore
 						if (this.mousestart) { this.inputTriangle_corner_start(); }
 						else if (this.mousemove && this.inputData !== null) {
-							//@ts-ignore
 							this.inputMove();
 						}
 					}
@@ -32,19 +30,15 @@ export const Shakashaka = createVariety({
 				else if (use === 2) {
 					if (this.btn === 'left') {
 						if (this.mousestart) {
-							//@ts-ignore
 							this.inputTriangle_pull_start();
 						}
 						else if (this.mousemove && this.inputData === null) {
-							//@ts-ignore
 							this.inputTriangle_pull_move();
 						}
 						else if (this.mousemove && this.inputData !== null) {
-							//@ts-ignore
 							this.inputMove();
 						}
 						else if (this.mouseend && this.notInputted()) {
-							//@ts-ignore
 							this.inputTriangle_pull_end();
 						}
 					}
@@ -54,7 +48,6 @@ export const Shakashaka = createVariety({
 				}
 				else if (use === 3) {
 					if (this.mousestart) {
-						//@ts-ignore
 						this.inputTriangle_onebtn();
 					}
 				}
@@ -67,7 +60,6 @@ export const Shakashaka = createVariety({
 
 		inputMove: function () {
 			if (this.inputData >= 2 && this.inputData <= 5) {
-				//@ts-ignore
 				this.inputTriangle_drag();
 			}
 			else if (this.inputData === 0 || this.inputData === -1) {
@@ -78,7 +70,6 @@ export const Shakashaka = createVariety({
 		inputTriangle_corner_start: function () {
 			const cell = this.getcell();
 			if (cell.isnull) { return; }
-			//@ts-ignore
 			this.inputData = this.checkCornerData(cell);
 
 			//@ts-ignore
@@ -173,7 +164,6 @@ export const Shakashaka = createVariety({
 
 			const dbx = cell.bx - this.mouseCell.bx;
 			const dby = cell.by - this.mouseCell.by;
-			//@ts-ignore
 			const tri = this.checkCornerData(cell);
 			let ret = null;
 			const cur = this.inputData;
@@ -351,23 +341,21 @@ export const Shakashaka = createVariety({
 	FileIO: {
 		decodeData: function () {
 			this.decodeCellQnumb();
-			//@ts-ignore
 			this.decodeCellQanssubcmp();
 		},
 		encodeData: function () {
 			this.encodeCellQnumb();
-			//@ts-ignore
 			this.encodeCellQanssubcmp();
 		},
 
-		decodeCellQanssubcmp: function () {
+		decodeCellQanssubcmp: function (): void {
 			this.decodeCell(function (cell, ca) {
 				if (ca === "+") { cell.qsub = 1; }
 				else if (ca === "-") { cell.qcmp = 1; }
 				else if (ca !== ".") { cell.qans = +ca; }
 			});
 		},
-		encodeCellQanssubcmp: function () {
+		encodeCellQanssubcmp: function (): void {
 			this.encodeCell(function (cell) {
 				if (cell.qans !== 0) { return `${cell.qans} `; }
 				if (cell.qsub === 1) { return "+ "; }
@@ -410,7 +398,6 @@ export const Shakashaka = createVariety({
 				const clist = areas[id].clist;
 				const d = clist.getRectSize();
 				const cnt = clist.filter(function (cell) { return (cell.qans === 0); }).length;
-				//@ts-ignore
 				if (d.cols * d.rows === cnt || this.isAreaRect_slope(areas[id])) {
 					continue;
 				}

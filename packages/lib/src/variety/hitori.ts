@@ -76,7 +76,6 @@ export const Hitokure = createVariety({
 			this.drawGrid();
 			this.drawShadedCells();
 
-			//@ts-ignore
 			this.drawQuesNumbers_hitori();
 
 			this.drawChassis();
@@ -116,11 +115,9 @@ export const Hitokure = createVariety({
 	// URLエンコード/デコード処理
 	Encode: {
 		decodePzpr: function (type) {
-			//@ts-ignore
 			this.decodeHitori();
 		},
 		encodePzpr: function (type) {
-			//@ts-ignore
 			this.encodeHitori();
 		},
 

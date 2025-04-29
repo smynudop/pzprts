@@ -23,10 +23,7 @@ function throwNoImplementation() { throw "no Implemention"; }
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------
-export type FileIOOption = {
-	decodeData: (this: FileIO) => void
-	encodeData: (this: FileIO) => void
-}
+export type FileIOOption = Partial<FileIO>
 export class FileIO {
 	filever = 0
 	lineseek = 0

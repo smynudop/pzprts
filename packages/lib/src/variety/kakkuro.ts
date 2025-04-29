@@ -127,17 +127,17 @@ export const Kakkuro = createVariety({
 		},
 
 		// オーバーライド drawBGCells用
-		getBGCellColor: function (cell: Cell) {
+		getBGCellColor: function (cell: Cell): string | null {
 			if (cell.error === 1) { return this.errbcolor1; }
 			if (cell.ques === 51) { return "rgb(192,192,192)"; }
 			return null;
 		},
-		getBGEXcellColor: function (excell: EXCell) {
+		getBGEXcellColor: function (excell: EXCell): string {
 			if (excell.error) { return this.errbcolor1; }
 			return "rgb(192,192,192)";
 		},
 		// オーバーライド 境界線用
-		getBorderColor: function (border: Border) {
+		getBorderColor: function (border: Border): string | null {
 			const cell1 = border.sidecell[0];
 			const cell2 = border.sidecell[1];
 			if (!cell1.isnull && !cell2.isnull && ((cell1.ques === 51) !== (cell2.ques === 51))) {
@@ -146,7 +146,7 @@ export const Kakkuro = createVariety({
 			return null;
 		},
 
-		getAnsNumberText: function (cell: Cell) {
+		getAnsNumberText: function (cell: Cell): string {
 			return ((!cell.is51cell() && cell.anum > 0) ? `${cell.anum}` : "");
 		}
 	},
@@ -155,12 +155,10 @@ export const Kakkuro = createVariety({
 	// URLエンコード/デコード処理
 	Encode: {
 		decodePzpr: function (type) {
-			//@ts-ignore
 			this.decodeKakuro();
 		},
 		encodePzpr: function (type) {
-			//@ts-ignore
-			this.encodeKakuro();
+			this.encodeKakuro(type);
 		},
 
 		decodeKakuro: function () {
@@ -262,7 +260,6 @@ export const Kakkuro = createVariety({
 		],
 
 		checkSameNumberInLine: function () {
-			//@ts-ignore
 			this.checkRowsColsPartly(this.isSameNumber, function (cell: Cell) { return cell.is51cell(); }, "nmDupRow");
 		},
 		isSameNumber: function (clist: CellList, info: any) {
@@ -272,9 +269,9 @@ export const Kakkuro = createVariety({
 		},
 
 		checkSumOfNumberInLine: function () {
-			//@ts-ignore
 			this.checkRowsColsPartly(this.isTotalNumber, function (cell: Cell) { return cell.is51cell(); }, "nmSumRowNe");
 		},
+
 		isTotalNumber: function (clist: CellList, info: any) {
 			const number = info.key51num;
 			let sum = 0;

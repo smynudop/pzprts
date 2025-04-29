@@ -7,10 +7,7 @@ import { type BoardPiece, Cell, EXCell } from "./Piece.js";
 //---------------------------------------------------------------------------
 // パズル共通 キーボード入力部
 // KeyEventクラスを定義
-export type KeyEventOption = {
-	enablemake?: boolean
-	enableplay?: boolean
-}
+export type KeyEventOption = Partial<KeyEvent>
 //---------------------------------------------------------
 export class KeyEvent {
 	cursor: TargetCursor

@@ -12,10 +12,8 @@ import { URL_PZPRV3 } from "../pzpr/constants"
 
 //---------------------------------------------------------
 
-export type EncodeOption = {
-    decodePzpr: (this: Encode, type: number) => void
-    encodePzpr: (this: Encode, type: number) => void
-}
+export type EncodeOption = Partial<Encode>
+
 export class Encode {
     constructor(puzzle: Puzzle, option?: EncodeOption) {
         this.puzzle = puzzle

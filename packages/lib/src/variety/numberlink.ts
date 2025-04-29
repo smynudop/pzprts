@@ -54,7 +54,6 @@ export const Numberlink = createVariety({
 			this.drawPekes();
 			this.drawLines();
 
-			//@ts-ignore
 			this.drawCellSquare();
 			this.drawQuesNumbers();
 

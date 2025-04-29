@@ -47,12 +47,7 @@ export type InputMode =
 	| 'info-line'
 	| 'info-blk'
 
-export type MouseEventOption = {
-	RBShadeCell?: boolean
-	use?: boolean,
-	inputModes?: { edit: string[], play: string[] },
-	mouseinput_auto: (this: MouseEvent1) => void
-}
+export type MouseEventOption = Partial<MouseEvent1>
 
 export class MouseEvent1<TCell extends Cell = Cell> {
 	puzzle: Puzzle

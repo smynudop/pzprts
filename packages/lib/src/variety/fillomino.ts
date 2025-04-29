@@ -15,14 +15,12 @@ export const Fillomino = createVariety({
 	MouseEvent: {
 		inputModes: { edit: ['number', 'clear'], play: ['copynum', 'number', 'clear', 'border', 'subline'] },
 		mouseinput_other: function () {
-			// @ts-ignore
 			if (this.inputMode === 'copynum') { this.dragnumber_fillomino(); }
 		},
 		mouseinput_auto: function () {
 			if (this.puzzle.playmode && (this.mousestart || this.mousemove)) {
 				if (this.btn === 'left') {
 					if (this.isBorderMode()) { this.inputborder(); }
-					// @ts-ignore
 					else { this.dragnumber_fillomino(); }
 				}
 				else if (this.btn === 'right') { this.inputQsubLine(); }
@@ -70,15 +68,14 @@ export const Fillomino = createVariety({
 	KeyEvent: {
 		enablemake: true,
 		enableplay: true,
-		moveTarget: function (ca: string) {
+		moveTarget: function (ca: string): boolean {
 			if (this.puzzle.playmode && (this.isCTRL || this.isX || this.isZ)) {
-				// @ts-ignore
 				return this.move_fillomino(ca);
 			}
 			return this.moveTCell(ca);
 		},
 
-		move_fillomino: function (ca: string) {
+		move_fillomino: function (ca: string): boolean {
 			const cell = this.cursor.getc();
 			if (cell.isnull) { return false; }
 
@@ -115,9 +112,9 @@ export const Fillomino = createVariety({
 	},
 	Board: {
 		hasborder: 1,
+		numblkgraph: null! as AreaNumBlockGraph,
 
 		addExtraInfo: function () {
-			//@ts-ignore
 			this.numblkgraph = this.addInfoList(AreaNumBlockGraph);
 		}
 	},
@@ -189,19 +186,23 @@ export const Fillomino = createVariety({
 			// @ts-ignore
 			this.checkSideAreaSize(this.board.numblkgraph, function (area) { return area.number; }, "bsSameNum");
 		},
-		// @ts-ignore
 
-		checkSmallArea: function () { this.checkAllErrorRoom(function (area: any) { return !(area.number > area.clist.length && area.number > 0); }, "bkSizeLt"); },
-		// @ts-ignore
+		checkSmallArea: function () {
+			this.checkAllErrorRoom(function (area: any) { return !(area.number > area.clist.length && area.number > 0); }, "bkSizeLt");
+		},
 
-		checkLargeArea: function () { this.checkAllErrorRoom(function (area: any) { return !(area.number < area.clist.length && area.number > 0); }, "bkSizeGt"); },
-		// @ts-ignore
+		checkLargeArea: function () {
+			this.checkAllErrorRoom(function (area: any) { return !(area.number < area.clist.length && area.number > 0); }, "bkSizeGt");
+		},
 
-		checkNumKinds: function () { this.checkAllErrorRoom(function (area: any) { return area.numkind <= 1; }, "bkMixedNum"); },
-		// @ts-ignore
+		checkNumKinds: function () {
+			this.checkAllErrorRoom(function (area: any) { return area.numkind <= 1; }, "bkMixedNum");
+		},
 
-		checkNoNumArea: function () { this.checkAllErrorRoom(function (area: any) { return area.numkind >= 1; }, "bkNoNum"); },
-		checkAllErrorRoom: function (evalfunc: (area: any) => boolean, code: string) {
+		checkNoNumArea: function () {
+			this.checkAllErrorRoom(function (area: any) { return area.numkind >= 1; }, "bkNoNum");
+		},
+		checkAllErrorRoom: function (evalfunc: (area: any) => boolean, code: string): void {
 			// @ts-ignore
 			const rooms = this.board.numblkgraph.components;
 			for (let id = 0; id < rooms.length; id++) {

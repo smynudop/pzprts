@@ -14,7 +14,6 @@ export const SlitherLink = createVariety({
 		mouseinput_auto: function () {
 			const puzzle = this.puzzle;
 			if (puzzle.playmode) {
-				//@ts-ignore
 				if (this.checkInputBGcolor()) {
 					this.inputBGcolor();
 				}

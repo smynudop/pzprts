@@ -1,4 +1,4 @@
-import type { AnsCheck, AnsCheckExtend, AnsCheckOption } from "../puzzle/Answer"
+import type { AnsCheck, AnsCheckOption } from "../puzzle/Answer"
 import type { AreaRoomGraph, AreaRoomGraphOption, AreaShadeGraph, AreaShadeGraphOption, AreaUnshadeGraphOption } from "../puzzle/AreaManager"
 import type { Board, BoardOption } from "../puzzle/Board"
 import type { BoardExec } from "../puzzle/BoardExec"
@@ -12,28 +12,54 @@ import type { MouseEvent1, MouseEventOption } from "../puzzle/MouseInput"
 import type { Cell, CellOption, EXCell, EXCellOption } from "../puzzle/Piece"
 import { type IConfig, Puzzle } from "../puzzle/Puzzle"
 
-export type VarityOption = {
+export type VarityOption<
+    BoardExtend extends BoardOption,
+    MouseExtend extends MouseEventOption,
+    KeyExtend extends KeyEventOption,
+    EncodeExtend extends EncodeOption,
+    FileIOExtend extends FileIOOption,
+    GraphicExtend extends GraphicOption,
+    AnsCheckExtend extends AnsCheckOption,
+> = {
     pid?: string
-    MouseEvent: MouseEventOption & { [key: string]: any } & ThisType<MouseEvent1>,
-    KeyEvent: KeyEventOption & { [key: string]: any } & ThisType<KeyEvent>,
+    MouseEvent: MouseExtend & ThisType<MouseEvent1 & MouseExtend>,
+    KeyEvent: KeyExtend & ThisType<KeyEvent & KeyExtend>,
     Cell?: CellOption & { [key: string]: any } & ThisType<Cell>
     EXCell?: EXCellOption & { [key: string]: any } & ThisType<EXCell>
-    Board?: BoardOption & { [key: string]: any } & ThisType<Board>
+    Board?: BoardExtend & ThisType<Board & BoardExtend>
     BoardExec?: { [key: string]: any } & ThisType<BoardExec>
     TargetCursor?: { [key: string]: any } & ThisType<TargetCursor>
     LineGraph?: LineGraphOption
     AreaShadeGraph?: AreaShadeGraphOption
     AreaUnshadeGraph?: AreaUnshadeGraphOption
     AreaRoomGraph?: AreaRoomGraphOption
-    Graphic: GraphicOption & { [key: string]: any } & ThisType<Graphic>,
-    Encode: (EncodeOption & { [key: string]: any } & ThisType<Encode>) | Converter[]
-    FileIO: FileIOOption & { [key: string]: any } & ThisType<FileIO>
-    AnsCheck: AnsCheckOption & { [key: string]: any } & ThisType<AnsCheck>
-    //AnsCheckExtend: AnsCheckExtend
+    Graphic: GraphicExtend & ThisType<Graphic & GraphicExtend>,
+    Encode: (EncodeExtend & ThisType<Encode & EncodeExtend>) | Converter[]
+    FileIO: FileIOExtend & ThisType<FileIO & FileIOExtend>
+    AnsCheck: AnsCheckExtend & ThisType<AnsCheck & AnsCheckExtend>
     FailCode?: { [key: string]: [string, string] }
 
 }
-export const createVariety = (varietyOption: VarityOption) => {
+
+export type VarietyAnyOption = VarityOption<any, any, any, any, any, any, any>
+
+export const createVariety = <
+    BoardExtend extends BoardOption,
+    MouseExtend extends MouseEventOption,
+    KeyExtend extends KeyEventOption,
+    EncodeExtend extends EncodeOption,
+    FileIOExtend extends FileIOOption,
+    GraphicExtend extends GraphicOption,
+    AnsCheckExtend extends AnsCheckOption,
+>(varietyOption: VarityOption<
+    BoardExtend,
+    MouseExtend,
+    KeyExtend,
+    EncodeExtend,
+    FileIOExtend,
+    GraphicExtend,
+    AnsCheckExtend
+>) => {
     return class extends Puzzle {
         constructor(option?: IConfig) {
             super({ ...option, pid: varietyOption.pid }, varietyOption)

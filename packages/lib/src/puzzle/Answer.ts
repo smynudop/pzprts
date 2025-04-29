@@ -33,13 +33,8 @@ type IPathSeg = {
 
 import type { Board } from "./Board";
 
-export type AnsCheckOption = {
-	checklist: string[]
-}
+export type AnsCheckOption = Partial<AnsCheck>
 
-export type AnsCheckExtend = {
-	[key: string]: (this: AnsCheck) => void
-}
 
 export class AnsCheck<
 	TCell extends Cell = Cell,

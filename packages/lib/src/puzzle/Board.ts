@@ -36,13 +36,7 @@ import { BoardClearOperation } from "./Operation"
 
 //---------------------------------------------------------
 
-export type BoardOption = {
-	hasborder?: 0 | 1 | 2
-	hasexcell?: 0 | 1 | 2
-	rows?: number
-	cols?: number
-	borderAsLine?: boolean
-}
+export type BoardOption = Partial<Board>
 
 export type BoardChildOption = {
 	boardExec?: any
