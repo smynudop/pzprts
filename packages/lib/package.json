@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Scripts for handling puzzle objects",
   "type": "module",
-  "sideEffects": "none",
+  "sideEffects": false,
   "directories": {
     "test": "test"
   },

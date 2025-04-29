@@ -643,6 +643,8 @@ export class Cross extends BoardPiece {
 // ★Borderクラス BoardクラスがBorderの数だけ保持する(hasborder>0の時)
 //---------------------------------------------------------------------------
 // ボードメンバデータの定義(3)
+
+export type BorderOption = Partial<Border>
 export class Border extends BoardPiece {
 	sidecell: [Cell | EXCell, Cell | EXCell]
 	sidecross: [Cross, Cross]
