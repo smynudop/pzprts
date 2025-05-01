@@ -649,11 +649,12 @@ export class Border extends BoardPiece {
 	sidecell: [Cell | EXCell, Cell | EXCell]
 	sidecross: [Cross, Cross]
 	sideobj: any[]	// LineManager用
-	constructor(puzzle: Puzzle) {
+	constructor(puzzle: Puzzle, option?: any) {
 		super(puzzle)
 		this.sidecell = [null!, null!];	// 隣接セルのオブジェクト
 		this.sidecross = [null!, null!];	// 隣接交点のオブジェクト
 		this.sideobj = [];			// LineManager用
+		Object.assign(this, option)
 	}
 	override group: IGroup = 'border'
 

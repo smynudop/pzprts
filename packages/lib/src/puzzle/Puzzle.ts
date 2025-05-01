@@ -112,6 +112,7 @@ export abstract class Puzzle<
 			areaUnshadeGraph: varietyOption?.AreaUnshadeGraph,
 			lineGraph: varietyOption?.LineGraph,
 			cell: varietyOption?.Cell,
+			border: varietyOption?.Border,
 			excell: varietyOption?.EXCell
 		});		// 盤面オブジェクト
 

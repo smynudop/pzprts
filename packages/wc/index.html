@@ -6,12 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        .container {
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+        }
 
+        .container>* {
+            flex-basis: 360px;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 
 <body>
-    <div style="margin: 0 auto; width: 640px; max-width: 100%;">
+    <div class="container">
         <slitherlink-player src="http://pzv.jp/p.html?slither/5/5/cbcbcddad"></slitherlink-player>
         <mashu-player src="http://pzv.jp/p.html?mashu/6/6/1063000i3000"></mashu-player>
         <sudoku-player src="http://pzv.jp/p.html?sudoku/4/4/g1k23k3g"></sudoku-player>

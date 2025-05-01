@@ -14,7 +14,8 @@ import {
 	Border,
 	EXCell,
 	type CellOption,
-	type EXCellOption
+	type EXCellOption,
+	type BorderOption
 } from './Piece';
 import { LineGraph, type LineGraphOption } from './LineManager';
 import {
@@ -45,6 +46,7 @@ export type BoardChildOption = {
 	areaShadeGraph?: boolean | AreaShadeGraphOption
 	areaUnshadeGraph?: boolean | AreaUnshadeGraphOption
 	cell?: CellOption
+	border?: BorderOption
 	excell?: EXCellOption
 }
 
@@ -102,6 +104,8 @@ export class Board<
 	disable_subclear = false	// "補助消去"ボタン不要
 
 	celloption: CellOption | undefined
+	borderoption: any | undefined
+
 	excelloption: EXCellOption | undefined
 
 	constructor(puzzle: Puzzle, option?: { board?: BoardOption } & BoardChildOption) {
@@ -132,6 +136,7 @@ export class Board<
 
 		Object.assign(this, option?.board)
 		this.celloption = option?.cell || undefined
+		this.borderoption = option?.border || undefined
 		this.excelloption = option?.excell || undefined
 
 		// 盤面上にあるセル・境界線等のオブジェクト
@@ -256,7 +261,7 @@ export class Board<
 	}
 
 	createCross() { return new Cross(this.puzzle) as TCross; }
-	createBorder() { return new Border(this.puzzle) as TBorder; }
+	createBorder() { return new Border(this.puzzle, this.borderoption) as TBorder; }
 	createEXCell() { const e = new EXCell(this.puzzle, this.excelloption) as TEXCell; return e }
 
 	createExtraObject() { }
