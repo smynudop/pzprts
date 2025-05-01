@@ -369,6 +369,7 @@ export class OperationList extends Array<Operation<any>> {
 // ★OperationManagerクラス 操作情報を扱い、Undo/Redoの動作を実装する
 //---------------------------------------------------------------------------
 // OperationManagerクラス
+export type OperationManagerOption = Partial<OperationManager>
 export class OperationManager {
 	puzzle: Puzzle
 	lastope: Operation<any> | null = null;	// this.opeの最後に追加されたOperationへのポインタ

@@ -8,6 +8,7 @@ import { pzpr } from "../pzpr/core";
 import { getEnv } from "../pzpr/env";
 import type { WrapperBase } from "../candle";
 import { getRect } from "../pzpr/util";
+import type { Board } from "./Board";
 
 
 const CENTER = 1;
@@ -26,11 +27,11 @@ const TOPLEFT = 5;
 
 export type GraphicOption = Partial<Graphic>
 
-export class Graphic {
-	puzzle: Puzzle
+export class Graphic<TBoard extends Board = Board> {
+	puzzle: Puzzle<TBoard>
 	//pid: string
 	imgtile: any
-	constructor(puzzle: Puzzle, option?: GraphicOption) {
+	constructor(puzzle: Puzzle<TBoard>, option?: GraphicOption) {
 		this.puzzle = puzzle
 		Object.assign(this, option)
 		//this.pid = puzzle.pid

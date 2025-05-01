@@ -13,8 +13,8 @@ const DN = 0x02 as const;
 const LT = 0x03 as const;
 const RT = 0x04 as const;
 const EXPAND = 0x10 as const;
-const REDUCE = 0x20 as const;
-const TURN = 0x40 as const;
+export const REDUCE = 0x20 as const;
+export const TURN = 0x40 as const;
 const FLIP = 0x80 as const;
 
 const TURNFLIP = (TURN | FLIP)
@@ -58,7 +58,8 @@ export type ID = {
 //---------------------------------------------------------------------------
 // ★BoardExecクラス 盤面の拡大縮小、反転回転等を行う (MenuExec.js, Board.jsから移動)
 //---------------------------------------------------------------------------
-export class BoardExec {
+export type BoardExecOption = Partial<BoardExec>
+export class BoardExec<TBoard extends Board = Board> {
 	// 拡大縮小・回転反転用定数
 
 
@@ -90,9 +91,9 @@ export class BoardExec {
 		excell: { 1: true }
 	}
 
-	puzzle: Puzzle
-	board: Board
-	constructor(puzzle: Puzzle, option?: any) {
+	puzzle: Puzzle<TBoard>
+	board: TBoard
+	constructor(puzzle: Puzzle<TBoard>, option?: any) {
 		this.puzzle = puzzle;
 		this.board = puzzle.board;
 		Object.assign(this, option)

@@ -4,6 +4,7 @@ import type { Puzzle } from "./Puzzle"
 import { URLData } from "../pzpr/urlData"
 import { parseURL } from "../pzpr/parser"
 import { URL_PZPRV3 } from "../pzpr/constants"
+import type { Board } from "./Board"
 //---------------------------------------------------------------------------
 // ★Encodeクラス URLのエンコード/デコードを扱う
 //---------------------------------------------------------------------------
@@ -14,12 +15,12 @@ import { URL_PZPRV3 } from "../pzpr/constants"
 
 export type EncodeOption = Partial<Encode>
 
-export class Encode {
-    constructor(puzzle: Puzzle, option?: EncodeOption) {
+export class Encode<TBoard extends Board = Board> {
+    constructor(puzzle: Puzzle<TBoard>, option?: EncodeOption) {
         this.puzzle = puzzle
         Object.assign(this, option)
     }
-    puzzle: Puzzle
+    puzzle: Puzzle<TBoard>
 
     pflag: string | null = ""
     outpflag: string | null = ''

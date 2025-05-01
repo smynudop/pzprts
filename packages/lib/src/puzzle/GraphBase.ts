@@ -3,14 +3,17 @@
 import type { Puzzle } from "./Puzzle"
 import type { CellList } from "./PieceList"
 import type { BoardPiece, Border, Cell } from "./Piece"
-import { Board, type IGroup } from "./Board"
+import type { Board, IGroup } from "./Board"
 
 //---------------------------------------------------------------------------
 // ★GraphBaseクラス 線や領域情報を管理する
 //---------------------------------------------------------------------------
 // GraphBaseクラスの定義
 
-export abstract class GraphBase<TComponent extends GraphComponent = GraphComponent> {
+export abstract class GraphBase<
+	TComponent extends GraphComponent = GraphComponent,
+	TBoard extends Board = Board
+> {
 
 	enabled = false
 	relation: Record<string, string> = {}
@@ -20,9 +23,9 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 
 	coloring = false
 	components: TComponent[] = null!
-	modifyNodes: GraphNode[] = null!
+	modifyNodes: GraphNode<TComponent>[] = null!
 	puzzle: Puzzle
-	constructor(puzzle: Puzzle) {
+	constructor(puzzle: Puzzle<TBoard>) {
 		this.puzzle = puzzle
 	}
 
@@ -42,7 +45,7 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 	//--------------------------------------------------------------------------------
 	setComponentRefs(obj: any, component: GraphComponent | null) { }
 
-	getObjNodeList(nodeobj: BoardPiece) { return [] as GraphNode[]; }
+	getObjNodeList(nodeobj: BoardPiece) { return [] as GraphNode<TComponent>[]; }
 	resetObjNodeList(nodeobj: any) { }
 
 	//--------------------------------------------------------------------------------
@@ -122,7 +125,7 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 		this.components.push(component);
 		return component;
 	}
-	deleteComponent(component: GraphComponent) {
+	deleteComponent(component: TComponent) {
 		for (let i = 0; i < component.nodes.length; i++) {
 			this.modifyNodes.push(component.nodes[i]);
 			this.setComponentRefs(component.nodes[i].obj, null);
@@ -136,12 +139,12 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 	// graph.deleteNode()    GraphNodeオブジェクトをグラフから削除する (先にEdgeを0本にしてください)
 	//---------------------------------------------------------------------------
 	createNode(cell: BoardPiece) {
-		const node = new GraphNode(cell);
+		const node = new GraphNode<TComponent>(cell);
 		this.getObjNodeList(cell).push(node);
 		this.modifyNodes.push(node);
 		return node;
 	}
-	deleteNode(node: GraphNode) {
+	deleteNode(node: GraphNode<TComponent>) {
 		const cell = node.obj;
 		this.setComponentRefs(cell, null);
 		this.removeFromArray(this.getObjNodeList(cell), node);
@@ -181,7 +184,7 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 	// graph.addEdge()    Node間にEdgeを追加する
 	// graph.removeEdge() Node間からEdgeを除外する
 	//---------------------------------------------------------------------------
-	addEdge(node1: GraphNode, node2: GraphNode) {
+	addEdge(node1: GraphNode<TComponent>, node2: GraphNode<TComponent>) {
 		if (node1.nodes.indexOf(node2) >= 0) { return; } // 多重辺にしないため
 		node1.nodes.push(node2);
 		node2.nodes.push(node1);
@@ -191,7 +194,7 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 			if (this.modifyNodes.indexOf(node2) < 0) { this.modifyNodes.push(node2); }
 		}
 	}
-	removeEdge(node1: GraphNode, node2: GraphNode) {
+	removeEdge(node1: GraphNode<TComponent>, node2: GraphNode<TComponent>) {
 		if (node1.nodes.indexOf(node2) < 0) { return; } // 存在しない辺を削除しない
 		this.removeFromArray(node1.nodes, node2);
 		this.removeFromArray(node2.nodes, node1);
@@ -309,7 +312,7 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 	//---------------------------------------------------------------------------
 	// graph.attachNode()    指定されたオブジェクトを別Componentにくっつけて終了する
 	//---------------------------------------------------------------------------
-	attachNode(node: GraphNode, component: GraphComponent) {
+	attachNode(node: GraphNode<TComponent>, component: TComponent) {
 		node.component = component;
 		component.nodes.push(node);
 		this.setComponentInfo(component);
@@ -349,7 +352,7 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 		}
 		return remakeComponents;
 	}
-	checkDividedComponent(component: GraphComponent) {
+	checkDividedComponent(component: TComponent) {
 		// 1つだけsubgraphを生成してみる
 		for (let i = 0, len = this.modifyNodes.length; i < len; i++) {
 			const node = this.modifyNodes[i];
@@ -372,7 +375,7 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 		}
 		// subgraphがひとつながりでないなら再探索ルーチンを回す
 	}
-	remakeMaximalComonents(remakeComponents: GraphComponent[]) {
+	remakeMaximalComonents(remakeComponents: TComponent[]) {
 		const longColor = (this.coloring ? this.getLongColor(remakeComponents) : null);
 		for (let p = 0; p < remakeComponents.length; p++) {
 			this.deleteComponent(remakeComponents[p]);
@@ -417,7 +420,7 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 	//--------------------------------------------------------------------------------
 	// graph.setComponentInfo() Componentオブジェクトのデータを設定する
 	//--------------------------------------------------------------------------------
-	setComponentInfo(component: GraphComponent) {
+	setComponentInfo(component: TComponent) {
 		let edges = 0;
 		for (let i = 0; i < component.nodes.length; i++) {
 			const node = component.nodes[i];
@@ -435,7 +438,7 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 	// graph.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
 	resetExtraData(nodeobj: BoardPiece) { }
-	setExtraData(component: GraphComponent) { }
+	setExtraData(component: TComponent) { }
 
 	//--------------------------------------------------------------------------------
 	// graph.getLongColor() ブロックを設定した時、ブロックにつける色を取得する
@@ -486,7 +489,7 @@ export abstract class GraphBase<TComponent extends GraphComponent = GraphCompone
 	}
 }
 export class GraphComponent {
-	nodes: GraphNode[]
+	nodes: GraphNode<this>[]
 	color: string | null
 	circuits: number
 	puzzle: Puzzle
@@ -565,10 +568,10 @@ export class GraphComponent {
 		for (let i = 0; i < objs.length; i++) { objs[i].setinfo(val); }
 	}
 }
-export class GraphNode {
+export class GraphNode<TComponent extends GraphComponent = GraphComponent> {
 	obj: any
-	nodes: GraphNode[]
-	component: GraphComponent | null
+	nodes: GraphNode<TComponent>[]
+	component: TComponent | null
 	constructor(obj: any) {
 		this.obj = obj;
 		this.nodes = [];	// Array of Linked GraphNode

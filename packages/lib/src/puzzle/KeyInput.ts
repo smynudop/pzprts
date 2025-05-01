@@ -2,6 +2,7 @@
 import { Address, type Position } from "./Address.js";
 import type { Puzzle } from "./Puzzle.js";
 import { type BoardPiece, Cell, EXCell } from "./Piece.js";
+import type { Board } from "./Board.js";
 //---------------------------------------------------------------------------
 // ★KeyEventクラス キーボード入力に関する情報の保持とイベント処理を扱う
 //---------------------------------------------------------------------------
@@ -9,11 +10,11 @@ import { type BoardPiece, Cell, EXCell } from "./Piece.js";
 // KeyEventクラスを定義
 export type KeyEventOption = Partial<KeyEvent>
 //---------------------------------------------------------
-export class KeyEvent {
+export class KeyEvent<TBoard extends Board = Board> {
 	cursor: TargetCursor
 	enableKey: boolean
 
-	constructor(puzzle: Puzzle, option?: KeyEventOption) {
+	constructor(puzzle: Puzzle<TBoard>, option?: KeyEventOption) {
 		this.puzzle = puzzle;
 		Object.assign(this, option)
 
@@ -39,7 +40,7 @@ export class KeyEvent {
 
 		//this.keyreset();
 	}
-	puzzle: Puzzle
+	puzzle: Puzzle<TBoard>
 	enablemake = true
 	enableplay = true
 	keyup_event = false	/* keyupイベントでもパズル個別のキーイベント関数を呼び出す */

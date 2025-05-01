@@ -4,7 +4,7 @@ import type { Puzzle } from './Puzzle';
 import { CellList } from './PieceList';
 import { BoardPiece, type Border, type Cell } from './Piece'
 import type { GraphComponent } from "./GraphBase"
-import type { IGroup } from './Board';
+import type { Board, IGroup } from './Board';
 
 export type AreaShadeGraphOption = {
 	enabled?: boolean
@@ -18,7 +18,11 @@ export type AreaUnshadeGraphOption = {
 //   ※このクラスで管理しているroomsは左上からの順番に並ばないので
 //     回答チェックやURL出力前には一旦resetRoomNumber()等が必要です。
 //--------------------------------------------------------------------------------
-export class AreaGraphBase<TComponent extends GraphComponent = GraphComponent> extends GraphBase<TComponent> {
+export class AreaGraphBase<
+	TComponent extends GraphComponent = GraphComponent,
+	TBoard extends Board = Board
+
+> extends GraphBase<TComponent, TBoard> {
 	pointgroup: IGroup = 'cell'
 	linkgroup: IGroup | null = null
 
@@ -192,12 +196,9 @@ export class AreaNumberGraph<TComponent extends GraphComponent = GraphComponent>
 //--------------------------------------------------------------------------------
 // ☆AreaRoomGraphクラス 部屋情報オブジェクトのクラス
 //--------------------------------------------------------------------------------
-export type AreaRoomGraphOption = {
-	enabled?: boolean
-	hastop?: boolean
-}
+export type AreaRoomGraphOption<TComponent extends GraphComponent = GraphComponent> = Partial<AreaRoomGraph<TComponent>>
 
-export class AreaRoomGraph extends AreaGraphBase {
+export class AreaRoomGraph<TComponent extends GraphComponent = GraphComponent> extends AreaGraphBase<TComponent> {
 	constructor(puzzle: Puzzle, option?: AreaRoomGraphOption) {
 		super(puzzle)
 		this.enabled = option?.enabled || false
@@ -305,7 +306,7 @@ export class AreaRoomGraph extends AreaGraphBase {
 	//--------------------------------------------------------------------------------
 	// roommgr.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
-	override setExtraData(component: GraphComponent) {
+	override setExtraData(component: TComponent) {
 		component.clist = new CellList(component.getnodeobjs());
 		const clist = component.clist;
 		if (this.hastop) {

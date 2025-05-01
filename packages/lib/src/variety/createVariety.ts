@@ -1,7 +1,8 @@
+import { TaskBase } from "vitest"
 import type { AnsCheck, AnsCheckOption } from "../puzzle/Answer"
 import type { AreaRoomGraph, AreaRoomGraphOption, AreaShadeGraph, AreaShadeGraphOption, AreaUnshadeGraphOption } from "../puzzle/AreaManager"
 import type { Board, BoardOption } from "../puzzle/Board"
-import type { BoardExec } from "../puzzle/BoardExec"
+import type { BoardExec, BoardExecOption } from "../puzzle/BoardExec"
 import type { Converter } from "../puzzle/Encode"
 import type { Encode, EncodeOption } from "../puzzle/Encode2"
 import type { FileIO, FileIOOption } from "../puzzle/FileData"
@@ -9,65 +10,109 @@ import type { Graphic, GraphicOption } from "../puzzle/Graphic"
 import type { KeyEvent, KeyEventOption, TargetCursor } from "../puzzle/KeyInput"
 import type { LineGraphOption } from "../puzzle/LineManager"
 import type { MouseEvent1, MouseEventOption } from "../puzzle/MouseInput"
-import type { Border, BorderOption, Cell, CellOption, EXCell, EXCellOption } from "../puzzle/Piece"
+import type { OperationManager, OperationManagerOption } from "../puzzle/Operation"
+import type { Border, BorderOption, Cell, CellOption, CrossOption, EXCell, EXCellOption } from "../puzzle/Piece"
 import { type IConfig, Puzzle } from "../puzzle/Puzzle"
+import { GraphComponent } from "../puzzle/GraphBase"
 
+type ExtendClass<TBase, TExtend> = TExtend & ThisType<TBase & TExtend>
 export type VarityOption<
     CellExtend extends CellOption,
     BorderExtend extends BorderOption,
     BoardExtend extends BoardOption,
+    BoardExecExtend extends BoardExecOption,
     MouseExtend extends MouseEventOption,
     KeyExtend extends KeyEventOption,
     EncodeExtend extends EncodeOption,
     FileIOExtend extends FileIOOption,
     GraphicExtend extends GraphicOption,
     AnsCheckExtend extends AnsCheckOption,
-> = {
-    pid?: string
-    Cell?: CellExtend & ThisType<Cell & CellExtend>,
-    Border?: BorderExtend & ThisType<Border & BorderExtend>
-    MouseEvent: MouseExtend & ThisType<MouseEvent1<Cell & CellExtend> & MouseExtend>,
-    KeyEvent: KeyExtend & ThisType<KeyEvent & KeyExtend>,
-    EXCell?: EXCellOption & { [key: string]: any } & ThisType<EXCell>
-    Board?: BoardExtend & ThisType<Board & BoardExtend>
-    BoardExec?: { [key: string]: any } & ThisType<BoardExec>
-    TargetCursor?: { [key: string]: any } & ThisType<TargetCursor>
-    LineGraph?: LineGraphOption
-    AreaShadeGraph?: AreaShadeGraphOption
-    AreaUnshadeGraph?: AreaUnshadeGraphOption
-    AreaRoomGraph?: AreaRoomGraphOption
-    Graphic: GraphicExtend & ThisType<Graphic & GraphicExtend>,
-    Encode: (EncodeExtend & ThisType<Encode & EncodeExtend>) | Converter[]
-    FileIO: FileIOExtend & ThisType<FileIO & FileIOExtend>
-    AnsCheck: AnsCheckExtend & ThisType<AnsCheck<Board<Cell & CellExtend> & BoardExtend> & AnsCheckExtend>
-    FailCode?: { [key: string]: [string, string] }
-
-}
-
-export type VarietyAnyOption = VarityOption<any, any, any, any, any, any, any, any, any>
-
-export const createVariety = <
-    CellExtend extends CellOption,
-    BorderExtend extends BorderOption,
-    BoardExtend extends BoardOption,
-    MouseExtend extends MouseEventOption,
-    KeyExtend extends KeyEventOption,
-    EncodeExtend extends EncodeOption,
-    FileIOExtend extends FileIOOption,
-    GraphicExtend extends GraphicOption,
-    AnsCheckExtend extends AnsCheckOption,
->(varietyOption: VarityOption<
+    OperationManagerExtend extends OperationManagerOption,
+    GraphComponentExtend
+> = VarityOptionInner<
+    Board<Cell & CellExtend> & BoardExtend,
     CellExtend,
     BorderExtend,
     BoardExtend,
+    BoardExecExtend,
     MouseExtend,
     KeyExtend,
     EncodeExtend,
     FileIOExtend,
     GraphicExtend,
-    AnsCheckExtend
+    AnsCheckExtend,
+    OperationManagerExtend,
+    GraphComponentExtend
+>
+
+export type VarityOptionInner<
+    TBoard extends Board,
+    CellExtend extends CellOption,
+    BorderExtend extends BorderOption,
+    BoardExtend extends BoardOption,
+    BoardExecExtend extends BoardExecOption,
+    MouseExtend extends MouseEventOption,
+    KeyExtend extends KeyEventOption,
+    EncodeExtend extends EncodeOption,
+    FileIOExtend extends FileIOOption,
+    GraphicExtend extends GraphicOption,
+    AnsCheckExtend extends AnsCheckOption,
+    OperationManagerExtend extends OperationManagerOption,
+    GraphComponentExtend
+> = {
+    pid?: string
+    Cell?: ExtendClass<Cell, CellExtend>,
+    Cross?: CrossOption,
+    Border?: ExtendClass<Border, BorderExtend>
+    MouseEvent: ExtendClass<MouseEvent1<TBoard>, MouseExtend>,
+    KeyEvent: ExtendClass<KeyEvent<TBoard>, KeyExtend>,
+    EXCell?: EXCellOption & { [key: string]: any } & ThisType<EXCell>
+    Board?: ExtendClass<Board, BoardExtend>
+    BoardExec?: ExtendClass<BoardExec<TBoard>, BoardExecExtend>
+    TargetCursor?: { [key: string]: any } & ThisType<TargetCursor>
+    GraphComponent: GraphComponentExtend
+    LineGraph?: LineGraphOption
+    AreaShadeGraph?: AreaShadeGraphOption
+    AreaUnshadeGraph?: AreaUnshadeGraphOption
+    AreaRoomGraph?: AreaRoomGraphOption<GraphComponent & GraphComponentExtend> & ThisType<AreaRoomGraph<GraphComponent & GraphComponentExtend>>
+    Graphic: ExtendClass<Graphic<TBoard>, GraphicExtend>,
+    Encode: (ExtendClass<Encode<TBoard>, EncodeExtend>) | Converter[]
+    FileIO: ExtendClass<FileIO<TBoard>, FileIOExtend>
+    AnsCheck: ExtendClass<AnsCheck<TBoard>, AnsCheckExtend>
+    FailCode?: { [key: string]: [string, string] }
+    OperationManager?: ExtendClass<OperationManager, OperationManagerExtend>
+}
+
+export type VarietyAnyOption = VarityOption<any, any, any, any, any, any, any, any, any, any, any, any>
+
+export const createVariety = <
+    CellExtend extends CellOption,
+    BorderExtend extends BorderOption,
+    BoardExtend extends BoardOption,
+    BoardExecExtend extends BoardExecOption,
+    MouseExtend extends MouseEventOption,
+    KeyExtend extends KeyEventOption,
+    EncodeExtend extends EncodeOption,
+    FileIOExtend extends FileIOOption,
+    GraphicExtend extends GraphicOption,
+    AnsCheckExtend extends AnsCheckOption,
+    OperationManagerExtend extends OperationManagerOption,
+    GraphComponentExtend
+>(varietyOption: VarityOption<
+    CellExtend,
+    BorderExtend,
+    BoardExtend,
+    BoardExecExtend,
+    MouseExtend,
+    KeyExtend,
+    EncodeExtend,
+    FileIOExtend,
+    GraphicExtend,
+    AnsCheckExtend,
+    OperationManagerExtend,
+    GraphComponentExtend
 >) => {
-    return class extends Puzzle {
+    return class extends Puzzle<Board<Cell & CellExtend> & BoardExtend> {
         constructor(option?: IConfig) {
             super({ ...option, pid: varietyOption.pid }, varietyOption)
         }

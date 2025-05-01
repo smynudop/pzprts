@@ -7,7 +7,7 @@ import {
 
 } from "./Operation";
 import type { BoardPiece, Cell } from "./Piece";
-import { Board, IGroup, type IGroup2 } from "./Board";
+import { type Board, IGroup, type IGroup2 } from "./Board";
 import { pzpr } from "../pzpr/core";
 import { parseFile } from "../pzpr/parser";
 import { FileData } from "../pzpr/fileData";
@@ -24,14 +24,14 @@ function throwNoImplementation() { throw "no Implemention"; }
 
 //---------------------------------------------------------
 export type FileIOOption = Partial<FileIO>
-export class FileIO {
+export class FileIO<TBoard extends Board = Board> {
 	filever = 0
 	lineseek = 0
 	dataarray: string[] | null = null
 	datastr = ""
 	currentType = 0
-	puzzle: Puzzle
-	constructor(puzzle: Puzzle, option?: FileIOOption) {
+	puzzle: Puzzle<TBoard>
+	constructor(puzzle: Puzzle<TBoard>, option?: FileIOOption) {
 		this.puzzle = puzzle
 		Object.assign(this, option)
 	}

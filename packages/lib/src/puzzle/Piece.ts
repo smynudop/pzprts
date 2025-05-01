@@ -611,6 +611,7 @@ export class Cell extends BoardPiece {
 //---------------------------------------------------------------------------
 // ボードメンバデータの定義(2)
 // Crossクラスの定義
+export type CrossOption = Partial<Cross>
 export class Cross extends BoardPiece {
 	override group: IGroup = 'cross'
 
@@ -836,3 +837,8 @@ export class EXCell extends BoardPiece {
 		return false;
 	}
 }
+
+export const isCell = (piece: BoardPiece): piece is Cell => (piece.group === "cell")
+export const isBorder = (piece: BoardPiece): piece is Border => (piece.group === "border")
+export const isCross = (piece: BoardPiece): piece is Cross => (piece.group === "cross")
+export const isEXCell = (piece: BoardPiece): piece is EXCell => (piece.group === "excell")

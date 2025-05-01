@@ -12,6 +12,8 @@ import { CellList, CrossList } from "./PieceList";
 import type { Border, Cell, Cross, EXCell } from "./Piece";
 import { pzpr } from "../pzpr/core";
 import { getMouseButton, getPagePos, getRect } from "../pzpr/util";
+import type { Board } from "./Board";
+import type { CellOfBoard } from "./Answer";
 
 type IMode = "edit" | "play"
 
@@ -49,8 +51,8 @@ export type InputMode =
 
 export type MouseEventOption = Partial<MouseEvent1>
 
-export class MouseEvent1<TCell extends Cell = Cell> {
-	puzzle: Puzzle
+export class MouseEvent1<TBoard extends Board = Board> {
+	puzzle: Puzzle<TBoard>
 	cursor: TargetCursor;	// TargetCursor
 	enableMouse: boolean;	// マウス入力は有効か
 	mouseCell: any;	// 入力されたセル等のID
@@ -67,7 +69,7 @@ export class MouseEvent1<TCell extends Cell = Cell> {
 	mouseend: boolean;	// mouseup/touchendイベントかどうか
 	cancelEvent: boolean;	// イベントキャンセルフラグ
 
-	constructor(puzzle: Puzzle, option?: MouseEventOption) {
+	constructor(puzzle: Puzzle<TBoard>, option?: MouseEventOption) {
 
 		this.puzzle = puzzle;
 		this.cursor = puzzle.cursor;
@@ -388,7 +390,7 @@ export class MouseEvent1<TCell extends Cell = Cell> {
 	// mv.isBorderMode() 境界線入力モードかどうか判定する
 	//---------------------------------------------------------------------------
 	getcell() {
-		return this.getpos(0).getc() as TCell;
+		return this.getpos(0).getc() as CellOfBoard<TBoard>;
 	}
 	getcell_excell() {
 		const pos = this.getpos(0);
