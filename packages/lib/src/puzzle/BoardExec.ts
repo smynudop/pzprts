@@ -371,7 +371,7 @@ export class BoardExec<TBoard extends Board = Board> {
 		for (let i = 0; i < qnums.length; i++) {
 			const data = qnums[i];
 			const area = data.area;
-			const tcell = area.clist.getTopCell();
+			const tcell = area.clist.getTopCell()!;
 			if (tcell.isnull) {
 				const opemgr = this.puzzle.opemgr;
 				if (!opemgr.undoExec && !opemgr.redoExec) {

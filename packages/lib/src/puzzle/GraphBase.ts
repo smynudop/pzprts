@@ -488,6 +488,8 @@ export abstract class GraphBase<
 		}
 	}
 }
+
+export type GraphComponentOption = Partial<GraphComponent>
 export class GraphComponent {
 	nodes: GraphNode<this>[]
 	color: string | null
@@ -512,7 +514,7 @@ export class GraphComponent {
 	//---------------------------------------------------------------------------
 	// component.getLinkObjByNodes()  node間のオブジェクトを取得する
 	//---------------------------------------------------------------------------
-	getLinkObjByNodes(node1: GraphNode, node2: GraphNode) {
+	getLinkObjByNodes(node1: GraphNode, node2: GraphNode): BoardPiece | null {
 		const bx1 = node1.obj.bx;
 		const by1 = node1.obj.by;
 		const bx2 = node2.obj.bx;
@@ -525,12 +527,12 @@ export class GraphComponent {
 	// component.getnodeobjs()  nodeのオブジェクトリストを取得する
 	// component.getedgeobjs()  edgeのオブジェクトリストを取得する
 	//---------------------------------------------------------------------------
-	getnodeobjs() {
+	getnodeobjs(): CellList {
 		const objs = (this.puzzle.board.getGroup(this.nodes[0].obj.group).clone)();
 		for (let i = 0; i < this.nodes.length; i++) { objs.add(this.nodes[i].obj); }
 		return objs as CellList;
 	}
-	getedgeobjs() {
+	getedgeobjs(): Border[] {
 		const objs: Border[] = [];
 		for (let i = 0; i < this.nodes.length; i++) {
 			const node = this.nodes[i];
@@ -545,8 +547,8 @@ export class GraphComponent {
 	//---------------------------------------------------------------------------
 	// component.checkAutoCmp()  autocmp設定有効時に条件を満たしているかチェックして背景を描画する
 	//---------------------------------------------------------------------------
-	checkAutoCmp() {
-		const iscmp = (!!this.clist.checkCmp ? this.clist.checkCmp() : false);
+	checkAutoCmp(): void {
+		const iscmp = this.checkCmp();
 		if (this.cmp !== iscmp) {
 			this.cmp = iscmp;
 			if (this.puzzle.execConfig('autocmp')) {
@@ -555,15 +557,23 @@ export class GraphComponent {
 		}
 	}
 
+	/**
+	 * cellList.checkCmp()から引っ越し
+	 * @returns 
+	 */
+	checkCmp(): boolean {
+		return false
+	}
+
 	//---------------------------------------------------------------------------
 	// component.setedgeerr()   edgeにerror値を設定する
 	// component.setedgeinfo()  edgeにqinfo値を設定する
 	//---------------------------------------------------------------------------
-	setedgeerr(val: number) {
+	setedgeerr(val: number): void {
 		const objs = this.getedgeobjs();
 		for (let i = 0; i < objs.length; i++) { objs[i].seterr(val); }
 	}
-	setedgeinfo(val: number) {
+	setedgeinfo(val: number): void {
 		const objs = this.getedgeobjs();
 		for (let i = 0; i < objs.length; i++) { objs[i].setinfo(val); }
 	}

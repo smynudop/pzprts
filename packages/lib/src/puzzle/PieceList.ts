@@ -119,7 +119,10 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 	//---------------------------------------------------------------------------
 	// clist.getRectSize()  指定されたCellのリストの上下左右の端と、セルの数を返す
 	//---------------------------------------------------------------------------
-	checkCmp: any = null
+
+	// checkCmp:廃止 各GraphComponentに定義してください
+	// checkCmp: any = null
+
 	getRectSize() {
 		//ロジック変更 バグらないといいなぁ……
 		if (this.length === 0) {

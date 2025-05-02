@@ -231,7 +231,7 @@ export const Tentaisho = createVariety({
 	AreaRoomGraph: {
 		enabled: true,
 
-		setExtraData: function (component): void {
+		setExtraData: function (component) {
 			component.clist = new CellList(component.getnodeobjs());
 			// @ts-ignore
 			const ret = this.puzzle.board.getAreaStarInfo(component.clist);
@@ -241,7 +241,7 @@ export const Tentaisho = createVariety({
 	},
 	GraphComponent: {
 		error: 0,
-		star: null as Star | null
+		star: null as (Star | null),
 	},
 
 	//---------------------------------------------------------

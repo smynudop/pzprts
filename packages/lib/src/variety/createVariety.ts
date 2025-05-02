@@ -13,7 +13,7 @@ import type { MouseEvent1, MouseEventOption } from "../puzzle/MouseInput"
 import type { OperationManager, OperationManagerOption } from "../puzzle/Operation"
 import type { Border, BorderOption, Cell, CellOption, Cross, CrossOption, EXCell, EXCellOption } from "../puzzle/Piece"
 import { type IConfig, Puzzle } from "../puzzle/Puzzle"
-import type { GraphComponent } from "../puzzle/GraphBase"
+import type { GraphComponent, GraphComponentOption } from "../puzzle/GraphBase"
 
 type ExtendClass<TBase, TExtend> = TExtend & ThisType<TBase & TExtend>
 export type VarityOption<
@@ -28,7 +28,7 @@ export type VarityOption<
     GraphicExtend extends GraphicOption,
     AnsCheckExtend extends AnsCheckOption,
     OperationManagerExtend extends OperationManagerOption,
-    GraphComponentExtend
+    GraphComponentExtend //extends GraphComponentOption
 > = VarityOptionInner<
     Board<Cell & CellExtend, Cross, Border & BorderExtend, EXCell, GraphComponent & GraphComponentExtend> & BoardExtend,
     CellExtend,
@@ -58,19 +58,19 @@ export type VarityOptionInner<
     GraphicExtend extends GraphicOption,
     AnsCheckExtend extends AnsCheckOption,
     OperationManagerExtend extends OperationManagerOption,
-    GraphComponentExtend
+    GraphComponentExtend //extends GraphComponentOption
 > = {
     pid?: string
     Cell?: ExtendClass<Cell, CellExtend>,
     Cross?: CrossOption,
     Border?: ExtendClass<Border, BorderExtend>
     MouseEvent: ExtendClass<MouseEvent1<TBoard>, MouseExtend>,
-    KeyEvent: ExtendClass<KeyEvent<TBoard>, KeyExtend>,
+    KeyEvent?: ExtendClass<KeyEvent<TBoard>, KeyExtend>,
     EXCell?: EXCellOption & { [key: string]: any } & ThisType<EXCell>
     Board?: ExtendClass<Board, BoardExtend>
     BoardExec?: ExtendClass<BoardExec<TBoard>, BoardExecExtend>
     TargetCursor?: { [key: string]: any } & ThisType<TargetCursor>
-    GraphComponent?: GraphComponentExtend
+    GraphComponent?: GraphComponentExtend & ThisType<GraphComponent & GraphComponentExtend>
     LineGraph?: LineGraphOption
     AreaShadeGraph?: AreaShadeGraphOption
     AreaUnshadeGraph?: AreaUnshadeGraphOption
@@ -97,7 +97,7 @@ export const createVariety = <
     GraphicExtend extends GraphicOption,
     AnsCheckExtend extends AnsCheckOption,
     OperationManagerExtend extends OperationManagerOption,
-    GraphComponentExtend
+    GraphComponentExtend //extends GraphComponentOption
 >(varietyOption: VarityOption<
     CellExtend,
     BorderExtend,
