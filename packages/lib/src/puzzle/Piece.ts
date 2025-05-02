@@ -4,6 +4,7 @@ import { Board, type IGroup, type IGroup2 } from "./Board";
 import type { Puzzle } from "./Puzzle";
 import { ObjectOperation } from "./Operation";
 import { CellList } from "./PieceList";
+import { GraphComponent } from "./GraphBase";
 //---------------------------------------------------------------------------
 // ★BoardPieceクラス Cell, Cross, Border, EXCellクラスのベース
 //---------------------------------------------------------------------------
@@ -112,7 +113,7 @@ export class BoardPiece extends Position {
 	}
 
 
-	room: any
+	room!: GraphComponent
 	pureObject: this
 
 	constructor(puzzle: Puzzle) {
@@ -229,7 +230,9 @@ export class BoardPiece extends Position {
 		for (let i = 0; i < proplist.length; i++) {
 			const a = proplist[i];
 			const isArray = (Array.isArray(this[a]));
+			//@ts-ignore
 			const source = (!isArray ? props[a] : props[a].join(','));
+			//@ts-ignore
 			const target = (!isArray ? this[a] : this[a].join(','));
 			if (source !== target) { callback(this.group, this.id, a); }
 		}

@@ -27,7 +27,7 @@ import {
 	type AreaShadeGraphOption,
 	type AreaUnshadeGraphOption
 } from './AreaManager';
-import type { GraphBase } from './GraphBase';
+import type { GraphBase, GraphComponent } from './GraphBase';
 import { BoardExec, type IBoardOperation } from './BoardExec';
 import { BoardClearOperation } from "./Operation"
 //---------------------------------------------------------------------------
@@ -56,7 +56,8 @@ export class Board<
 	TCell extends Cell = Cell,
 	TCross extends Cross = Cross,
 	TBorder extends Border = Border,
-	TEXCell extends EXCell = EXCell
+	TEXCell extends EXCell = EXCell,
+	TComponent extends GraphComponent = GraphComponent
 > {
 	puzzle: Puzzle
 	minbx: number
@@ -78,7 +79,7 @@ export class Board<
 	disrecinfo: number
 	infolist: GraphBase[]
 	linegraph: LineGraph
-	roommgr: AreaRoomGraph
+	roommgr: AreaRoomGraph<TComponent>
 	sblkmgr: AreaShadeGraph
 	ublkmgr: AreaUnshadeGraph
 	nblkmgr: AreaNumberGraph
@@ -186,7 +187,7 @@ export class Board<
 		} else {
 			option.enabled = true
 		}
-		return new AreaRoomGraph(this.puzzle, option)
+		return new AreaRoomGraph<TComponent>(this.puzzle, option)
 	}
 
 	createAreaShadeGraph(option: boolean | AreaShadeGraphOption) {

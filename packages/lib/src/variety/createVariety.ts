@@ -11,9 +11,9 @@ import type { KeyEvent, KeyEventOption, TargetCursor } from "../puzzle/KeyInput"
 import type { LineGraphOption } from "../puzzle/LineManager"
 import type { MouseEvent1, MouseEventOption } from "../puzzle/MouseInput"
 import type { OperationManager, OperationManagerOption } from "../puzzle/Operation"
-import type { Border, BorderOption, Cell, CellOption, CrossOption, EXCell, EXCellOption } from "../puzzle/Piece"
+import type { Border, BorderOption, Cell, CellOption, Cross, CrossOption, EXCell, EXCellOption } from "../puzzle/Piece"
 import { type IConfig, Puzzle } from "../puzzle/Puzzle"
-import { GraphComponent } from "../puzzle/GraphBase"
+import type { GraphComponent } from "../puzzle/GraphBase"
 
 type ExtendClass<TBase, TExtend> = TExtend & ThisType<TBase & TExtend>
 export type VarityOption<
@@ -30,7 +30,7 @@ export type VarityOption<
     OperationManagerExtend extends OperationManagerOption,
     GraphComponentExtend
 > = VarityOptionInner<
-    Board<Cell & CellExtend> & BoardExtend,
+    Board<Cell & CellExtend, Cross, Border & BorderExtend, EXCell, GraphComponent & GraphComponentExtend> & BoardExtend,
     CellExtend,
     BorderExtend,
     BoardExtend,
@@ -70,7 +70,7 @@ export type VarityOptionInner<
     Board?: ExtendClass<Board, BoardExtend>
     BoardExec?: ExtendClass<BoardExec<TBoard>, BoardExecExtend>
     TargetCursor?: { [key: string]: any } & ThisType<TargetCursor>
-    GraphComponent: GraphComponentExtend
+    GraphComponent?: GraphComponentExtend
     LineGraph?: LineGraphOption
     AreaShadeGraph?: AreaShadeGraphOption
     AreaUnshadeGraph?: AreaUnshadeGraphOption
@@ -112,7 +112,7 @@ export const createVariety = <
     OperationManagerExtend,
     GraphComponentExtend
 >) => {
-    return class extends Puzzle<Board<Cell & CellExtend> & BoardExtend> {
+    return class extends Puzzle {
         constructor(option?: IConfig) {
             super({ ...option, pid: varietyOption.pid }, varietyOption)
         }
