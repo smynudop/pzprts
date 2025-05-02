@@ -1,11 +1,11 @@
 //
 // パズル固有スクリプト部 ましゅ版 mashu.js
 
-import type { Cell } from "../puzzle/Piece";
 import { createVariety } from "./createVariety";
 
 //
 export const Mashu = createVariety({
+	pid: "mashu",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {
@@ -63,24 +63,24 @@ export const Mashu = createVariety({
 	Board: {
 		hasborder: 1,
 
-		// uramashu: false,
+		uramashu: false,
 
-		// revCircle: function () {
-		// 	if (!this.uramashu) { return; }
-		// 	this.revCircleMain();
-		// },
-		// revCircleConfig: function (newval: boolean) {
-		// 	if (this.uramashu === newval) { return; }
-		// 	this.uramashu = newval;
-		// 	this.revCircleMain();
-		// },
-		// revCircleMain: function () {
-		// 	for (var c = 0; c < this.cell.length; c++) {
-		// 		var cell = this.cell[c];
-		// 		if (cell.qnum === 1) { cell.setQnum(2); }
-		// 		else if (cell.qnum === 2) { cell.setQnum(1); }
-		// 	}
-		// }
+		revCircle: function () {
+			if (!this.uramashu) { return; }
+			this.revCircleMain();
+		},
+		revCircleConfig: function (newval: boolean) {
+			if (this.uramashu === newval) { return; }
+			this.uramashu = newval;
+			this.revCircleMain();
+		},
+		revCircleMain: function () {
+			for (let c = 0; c < this.cell.length; c++) {
+				const cell = this.cell[c];
+				if (cell.qnum === 1) { cell.setQnum(2); }
+				else if (cell.qnum === 2) { cell.setQnum(1); }
+			}
+		}
 	},
 
 	LineGraph: {
@@ -118,26 +118,27 @@ export const Mashu = createVariety({
 	Encode: {
 		decodePzpr: function (type) {
 			this.decodeCircle();
-			//this.puzzle.board.revCircle();
+			this.puzzle.board.revCircle();
 		},
 		encodePzpr: function (type) {
-			//this.puzzle.board.revCircle();
+			this.puzzle.board.revCircle();
 			this.encodeCircle();
-			//this.puzzle.board.revCircle();
+			this.puzzle.board.revCircle();
 		},
+
 	},
 	//---------------------------------------------------------
 	FileIO: {
 		decodeData: function () {
 			this.decodeCellQnum();
 			this.decodeBorderLine();
-			//this.puzzle.board.revCircle();
+			this.puzzle.board.revCircle();
 		},
 		encodeData: function () {
-			//this.puzzle.board.revCircle();
+			this.puzzle.board.revCircle();
 			this.encodeCellQnum();
 			this.encodeBorderLine();
-			//this.puzzle.board.revCircle();
+			this.puzzle.board.revCircle();
 		},
 	},
 
@@ -158,7 +159,7 @@ export const Mashu = createVariety({
 		],
 
 		checkNoLinePearl: function () {
-			this.checkAllCell(function (cell: Cell) { return (cell.isNum() && cell.lcnt === 0); }, "mashuOnLine");
+			this.checkAllCell(function (cell) { return (cell.isNum() && cell.lcnt === 0); }, "mashuOnLine");
 		},
 
 		checkWhitePearl1: function () {

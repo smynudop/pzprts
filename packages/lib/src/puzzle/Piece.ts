@@ -4,7 +4,7 @@ import { Board, type IGroup, type IGroup2 } from "./Board";
 import type { Puzzle } from "./Puzzle";
 import { ObjectOperation } from "./Operation";
 import { CellList } from "./PieceList";
-import { GraphComponent } from "./GraphBase";
+import type { GraphComponent } from "./GraphBase";
 //---------------------------------------------------------------------------
 // ★BoardPieceクラス Cell, Cross, Border, EXCellクラスのベース
 //---------------------------------------------------------------------------
