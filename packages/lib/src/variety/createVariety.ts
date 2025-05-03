@@ -67,7 +67,7 @@ export type VarityOptionInner<
     MouseEvent: ExtendClass<MouseEvent1<TBoard>, MouseExtend>,
     KeyEvent?: ExtendClass<KeyEvent<TBoard>, KeyExtend>,
     EXCell?: EXCellOption & { [key: string]: any } & ThisType<EXCell>
-    Board?: ExtendClass<Board, BoardExtend>
+    Board?: ExtendClass<TBoard, BoardExtend>
     BoardExec?: ExtendClass<BoardExec<TBoard>, BoardExecExtend>
     TargetCursor?: { [key: string]: any } & ThisType<TargetCursor>
     GraphComponent?: GraphComponentExtend & ThisType<GraphComponent & GraphComponentExtend>

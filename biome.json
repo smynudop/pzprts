@@ -34,7 +34,10 @@
         "noNonNullAssertion": "off",
         "noUnusedTemplateLiteral": "off",
         "noInferrableTypes": "off",
-        "useImportType": "info"
+        "useImportType": "info",
+        "useSingleVarDeclarator": "off",
+        "useTemplate": "off",
+        "noUselessElse": "off"
       },
       "correctness": {
         "noConstantCondition": "off"

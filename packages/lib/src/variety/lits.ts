@@ -2,7 +2,7 @@
 // パズル固有スクリプト部 ＬＩＴＳ・のりのり版 lits.js
 
 import { AreaShadeGraph } from "../puzzle/AreaManager";
-import { GraphComponent } from "../puzzle/GraphBase";
+import type { GraphComponent } from "../puzzle/GraphBase";
 import type { Border, Cell } from "../puzzle/Piece";
 import { CellList } from "../puzzle/PieceList";
 import { URL_PZPRAPP, URL_PZPRV3 } from "../pzpr/constants";
@@ -31,7 +31,7 @@ export const Lits = createVariety({
 	Cell: {
 		tetro: null! as GraphComponent & { shape: string | null },
 		posthook: {
-			qans: function (cell: Cell) { cell.room.checkAutoCmp(); }
+			qans: function () { this.room.checkAutoCmp(); }
 		}
 	},
 

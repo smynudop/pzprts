@@ -49,7 +49,7 @@ export type IBoardOperation =
 	"flipy" |
 	"flipx"
 
-export type ID = {
+export type IRange = {
 	x1: number,
 	y1: number,
 	x2: number,
@@ -134,7 +134,7 @@ export class BoardExec<TBoard extends Board = Board> {
 		puzzle.emit('adjust');
 		puzzle.painter.unsuspend();
 	}
-	execadjust_main(key: number, d: ID) {
+	execadjust_main(key: number, d: IRange) {
 		const bd = this.board;
 		this.adjustBoardData(key, d);
 		if (bd.roommgr.hastop && (key & REDUCE)) { this.reduceRoomNumber(key, d); }
@@ -167,7 +167,7 @@ export class BoardExec<TBoard extends Board = Board> {
 	//------------------------------------------------------------------------------
 	// bd.exec.addOpe() 指定された盤面(拡大・縮小, 回転・反転)操作を追加する
 	//------------------------------------------------------------------------------
-	addOpe(d: ID, name: IBoardOperation) {
+	addOpe(d: IRange, name: IBoardOperation) {
 		const key = this.boardtype[name][1];
 		const puzzle = this.puzzle;
 		let ope: Operation;
@@ -232,7 +232,7 @@ export class BoardExec<TBoard extends Board = Board> {
 	//------------------------------------------------------------------------------
 	// bd.exec.turnflipGroup() execadjust_main()から内部的に呼ばれる回転反転実行部
 	//------------------------------------------------------------------------------
-	turnflipGroup(group: IGroup, key: number, d: ID) {
+	turnflipGroup(group: IGroup, key: number, d: IRange) {
 		const bd = this.board;
 		if (group === 'excell') {
 			if (bd.hasexcell === 1 && (key & FLIP)) {
@@ -355,7 +355,7 @@ export class BoardExec<TBoard extends Board = Board> {
 	//---------------------------------------------------------------------------
 	// bd.exec.reduceRoomNumber()   盤面縮小時に数字つき部屋の処理を行う
 	//---------------------------------------------------------------------------
-	reduceRoomNumber(key: number, d: ID) {
+	reduceRoomNumber(key: number, d: IRange) {
 		const qnums = [];
 		const bd = this.board;
 		for (let c = 0; c < bd.cell.length; c++) {
@@ -390,8 +390,8 @@ export class BoardExec<TBoard extends Board = Board> {
 	// bd.exec.adjustBoardData()    回転・反転開始前に各セルの調節を行う(共通処理)
 	// bd.exec.adjustBoardData2()   回転・反転終了後に各セルの調節を行う(共通処理)
 	//------------------------------------------------------------------------------
-	adjustBoardData(key: number, d: ID) { }
-	adjustBoardData2(key: number, d: ID) { }
+	adjustBoardData(key: number, d: IRange) { }
+	adjustBoardData2(key: number, d: IRange) { }
 
 	//------------------------------------------------------------------------------
 	// bd.exec.adjustBoardData()    回転・反転開始前に各セルの調節を行う(共通処理)
@@ -404,12 +404,12 @@ export class BoardExec<TBoard extends Board = Board> {
 	// bd.exec.adjustCellArrow()    回転・反転開始前の矢印セルの調整
 	// bd.exec.adjustBorderArrow()  回転・反転開始前の境界線にある矢印セル等の調整
 	//------------------------------------------------------------------------------
-	adjustNumberArrow(key: number, d: ID) {
+	adjustNumberArrow(key: number, d: IRange) {
 		if (key & TURNFLIP) {
 			this.adjustCellQdirArrow(key, d);
 		}
 	}
-	adjustCellArrow(key: number, d: ID) {
+	adjustCellArrow(key: number, d: IRange) {
 		if (key & TURNFLIP) {
 			if (this.board.createCell().numberAsObject) {
 				this.adjustCellQnumArrow(key, d);
@@ -419,7 +419,7 @@ export class BoardExec<TBoard extends Board = Board> {
 			}
 		}
 	}
-	adjustCellQdirArrow(key: number, d: ID) {
+	adjustCellQdirArrow(key: number, d: IRange) {
 		const trans = this.getTranslateDir(key);
 		const clist = this.board.cellinside(d.x1, d.y1, d.x2, d.y2);
 		for (let i = 0; i < clist.length; i++) {
@@ -427,7 +427,7 @@ export class BoardExec<TBoard extends Board = Board> {
 			const val = trans[cell.qdir]; if (!!val) { cell.setQdir(val); }
 		}
 	}
-	adjustCellQnumArrow(key: number, d: ID) {
+	adjustCellQnumArrow(key: number, d: IRange) {
 		const trans = this.getTranslateDir(key);
 		const clist = this.board.cellinside(d.x1, d.y1, d.x2, d.y2);
 		for (let i = 0; i < clist.length; i++) {
@@ -437,7 +437,7 @@ export class BoardExec<TBoard extends Board = Board> {
 		}
 	}
 
-	adjustBorderArrow(key: number, d: ID) {
+	adjustBorderArrow(key: number, d: IRange) {
 		if (key & TURNFLIP) {
 			const trans = this.getTranslateDir(key);
 			const blist = this.board.borderinside(d.x1, d.y1, d.x2, d.y2);
@@ -463,7 +463,7 @@ export class BoardExec<TBoard extends Board = Board> {
 	// bd.exec.adjustQues51_1()     回転・反転開始前の[＼]セルの調整
 	// bd.exec.adjustQues51_2()     回転・反転終了後の[＼]セルの調整
 	//------------------------------------------------------------------------------
-	adjustQues51_1(key: number, d: ID) {
+	adjustQues51_1(key: number, d: IRange) {
 		const bx1 = (d.x1 | 1);
 		const by1 = (d.y1 | 1);
 		this.qnumw = [];
@@ -485,7 +485,7 @@ export class BoardExec<TBoard extends Board = Board> {
 			}
 		}
 	}
-	adjustQues51_2(key: number, d: ID) {
+	adjustQues51_2(key: number, d: IRange) {
 		const xx = (d.x1 + d.x2);
 		const yy = (d.y1 + d.y2);
 		const bx1 = (d.x1 | 1);
@@ -561,7 +561,7 @@ export class BoardExec<TBoard extends Board = Board> {
 	//------------------------------------------------------------------------------
 	// bd.exec.getAfterPos()  回転・反転開始前のIN/OUTなどの位置の調整
 	//------------------------------------------------------------------------------
-	getAfterPos(key: number, d: ID, piece: BoardPiece) {
+	getAfterPos(key: number, d: IRange, piece: BoardPiece) {
 		const puzzle = this.puzzle;
 		const bd = puzzle.board;
 		const xx = (d.x1 + d.x2);

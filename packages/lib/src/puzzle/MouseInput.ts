@@ -48,6 +48,7 @@ export type InputMode =
 	| 'bar'
 	| 'info-line'
 	| 'info-blk'
+	| "akari"
 
 export type MouseEventOption = Partial<MouseEvent1>
 

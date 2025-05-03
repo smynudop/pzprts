@@ -695,7 +695,7 @@ export class AnsCheck<
 	// ans.checkRowsColsFor51cell()   [＼]で分かれるタテ列・ヨコ列の数字の判定を行う
 	//---------------------------------------------------------------------------
 	checkRowsColsPartly(
-		evalfunc: (clist: CellList, info: ColsPartlyInfo, bd: Board) => boolean,
+		evalfunc: (clist: CellList<CellOfBoard<TBoard>>, info: ColsPartlyInfo, bd: Board) => boolean,
 		termfunc: CellCheck,
 		code: string
 	) {

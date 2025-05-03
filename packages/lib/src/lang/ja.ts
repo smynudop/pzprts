@@ -31,4 +31,5 @@ export const inputModeText = {
     'bar': "棒",
     'info-line': "線チェック",
     'info-blk': "白マスチェック",
+    "akari": "照明"
 } satisfies { [key in InputMode]: string }

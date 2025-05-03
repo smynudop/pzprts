@@ -9,6 +9,7 @@ import { getEnv } from "../pzpr/env";
 import type { WrapperBase } from "../candle";
 import { getRect } from "../pzpr/util";
 import type { Board } from "./Board";
+import type { CellOfBoard } from "./Answer";
 
 
 const CENTER = 1;
@@ -165,7 +166,7 @@ export class Graphic<TBoard extends Board = Board> {
 		x2: number,
 		y1: number,
 		y2: number,
-		cells: CellList<Cell>,
+		cells: CellList<CellOfBoard<TBoard>>,
 		crosses: CrossList,
 		borders: BorderList,
 		excells: EXCellList
@@ -711,7 +712,7 @@ export class Graphic<TBoard extends Board = Board> {
 		this.vinc('cell_back', 'crispEdges', true);
 		this.drawCells_common("c_fullb_", (cell) => this.getBGCellColor(cell));
 	}
-	getBGCellColor(cell: Cell) {
+	getBGCellColor(cell: CellOfBoard<TBoard>) {
 		switch (this.bgcellcolor_func) {
 			case "error1":
 				return this.getBGCellColor_error1(cell)

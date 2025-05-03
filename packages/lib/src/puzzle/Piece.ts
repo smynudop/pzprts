@@ -148,7 +148,7 @@ export class BoardPiece extends Position {
 
 
 		if (now === num) { return; }
-		if (!!this.prehook[prop]) { if (this.prehook[prop](this, num)) { return; } }
+		if (!!this.prehook[prop]) { if (this.prehook[prop].call(this, num)) { return; } }
 
 		this.addOpe(prop, now, num);
 
@@ -160,7 +160,7 @@ export class BoardPiece extends Position {
 
 		this.board.modifyInfo(this, `${this.group}.${prop}`);
 
-		if (!!this.posthook[prop]) { this.posthook[prop](this, num); }
+		if (!!this.posthook[prop]) { this.posthook[prop].call(this, num); }
 	}
 	addOpe(property: any, old: number, num: number) {
 		if (old === num) { return; }
@@ -268,8 +268,8 @@ export class BoardPiece extends Position {
 	// prehook  値の設定前にやっておく処理や、設定禁止処理を行う
 	// posthook 値の設定後にやっておく処理を行う
 	//---------------------------------------------------------------------------
-	prehook: Record<string, (piece: any, data: any) => any> = {}
-	posthook: Record<string, (piece: any, data: any) => any> = {}
+	prehook: Record<string, (this: any, data: any, data2?: any) => boolean> = {}
+	posthook: Record<string, (this: any, data: any, data2?: any) => boolean> = {}
 
 	//---------------------------------------------------------------------------
 	// seterr()  error値を設定する
@@ -300,6 +300,7 @@ type Adjacent<T> = {
 	left: T,
 	right: T
 }
+type TThis<T> = T
 //---------------------------------------------------------------------------
 // ★Cellクラス BoardクラスがCellの数だけ保持する
 //---------------------------------------------------------------------------
@@ -389,12 +390,12 @@ export class Cell extends BoardPiece {
 	// prehook  値の設定前にやっておく処理や、設定禁止処理を行う
 	// posthook 値の設定後にやっておく処理を行う
 	//---------------------------------------------------------------------------
-	override prehook: Record<string, (piece: any, data: any) => any> = {
-		qnum(cell: Cell, num: number) { return (cell.getminnum() > 0 && num === 0); },
-		qnum2(cell: Cell, num: number) { return (cell.getminnum() > 0 && num === 0); },
-		anum(cell: Cell, num: number) { return (cell.getminnum() > 0 && num === 0); }
+	override prehook: Record<string, (this: any, data: any, data2?: any) => any> = {
+		qnum: function (num: number, num2?: any) { return (this.getminnum() > 0 && num === 0); },
+		qnum2: function (num: number, num2?: any) { return (this.getminnum() > 0 && num === 0); },
+		anum: function (num: number, num2?: any) { return (this.getminnum() > 0 && num === 0); }
 	}
-	override posthook = {}
+	override posthook: Record<string, (this: any, data: any, data2?: any) => any> = {}
 
 	//---------------------------------------------------------------------------
 	// cell.isShade()   該当するCellが黒マスかどうか返す
@@ -696,9 +697,9 @@ export class Border extends BoardPiece {
 	// prehook  値の設定前にやっておく処理や、設定禁止処理を行う
 	// posthook 値の設定後にやっておく処理を行う
 	//---------------------------------------------------------------------------
-	override prehook = {
-		qans(cell: Cell, num: number) { return (cell.ques !== 0); },
-		line(cell: Cell, num: number) { return (cell.checkStableLine(num)); }
+	override prehook: Record<string, (this: any, data: any, data2: any) => boolean> = {
+		qans(num: number) { return (this.ques !== 0); },
+		line(num: number) { return (this.checkStableLine(num)); }
 	}
 
 	override posthook = {}

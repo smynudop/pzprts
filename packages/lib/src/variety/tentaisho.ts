@@ -2,7 +2,7 @@
 // パズル固有スクリプト部 天体ショー版 tentaisho.js
 
 import { Address } from "../puzzle/Address";
-import type { ID } from "../puzzle/BoardExec";
+import type { IRange } from "../puzzle/BoardExec";
 import { MouseEvent1 } from "../puzzle/MouseInput";
 import { BoardPiece, type Cell, isBorder, isCell, isCross } from "../puzzle/Piece";
 import { CellList, PieceList } from "../puzzle/PieceList";
@@ -222,7 +222,7 @@ export const Tentaisho = createVariety({
 		},
 	},
 	BoardExec: {
-		adjustBoardData2: function (key: number, d: ID): void {
+		adjustBoardData2: function (key: number, d: IRange): void {
 			const bd = this.board;
 			bd.initStar(bd.cols, bd.rows);
 		}

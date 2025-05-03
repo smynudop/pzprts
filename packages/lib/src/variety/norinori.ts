@@ -43,7 +43,7 @@ export const Norinori = createVariety({
 	// 盤面管理系
 	Cell: {
 		posthook: {
-			qans: function (cell: Cell) { cell.room.checkAutoCmp(); }
+			qans: function () { this.room.checkAutoCmp(); }
 		}
 	},
 	Board: {
