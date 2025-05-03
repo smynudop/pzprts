@@ -2,7 +2,7 @@
 // パズル固有スクリプト部 ＬＩＴＳ・のりのり版 lits.js
 
 import { MouseEvent1 } from "../puzzle/MouseInput";
-import { Cell } from "../puzzle/Piece";
+import type { Cell } from "../puzzle/Piece";
 import { createVariety } from "./createVariety";
 
 //

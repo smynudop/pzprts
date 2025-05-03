@@ -116,7 +116,7 @@ export class AreaGraphBase<
 // ☆AreaUnshadeGraphクラス  白マス情報オブジェクトのクラス
 // ☆AreaNumberGraphクラス 数字情報オブジェクトのクラス
 //--------------------------------------------------------------------------------
-export class AreaShadeGraph extends AreaGraphBase {
+export class AreaShadeGraph<TComponent extends GraphComponent = GraphComponent> extends AreaGraphBase<TComponent> {
 	constructor(puzzle: Puzzle, option?: AreaShadeGraphOption) {
 		super(puzzle)
 		this.enabled = option?.enabled || false
@@ -131,7 +131,7 @@ export class AreaShadeGraph extends AreaGraphBase {
 	//--------------------------------------------------------------------------------
 	// sblkmgr.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
-	override setExtraData(component: GraphComponent) {
+	override setExtraData(component: TComponent) {
 		component.clist = new CellList(component.getnodeobjs());
 		if (this.coloring && !component.color) {
 			component.color = this.puzzle.painter.getNewLineColor();
