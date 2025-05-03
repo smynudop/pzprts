@@ -143,7 +143,7 @@ export class FileIO<TBoard extends Board = Board> {
 			this.decodeData();
 			bd.compareData(bd1, (group, c, a) => {
 				const obj = bd[group][c];
-				const old = obj[a];
+				const old = obj[a] as number;
 				const num = bd1[group][c][a];
 				opes.push(new ObjectOperation(this.puzzle, obj, a, old, num));
 			});

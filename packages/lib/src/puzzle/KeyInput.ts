@@ -1,8 +1,9 @@
 // KeyInput.js v3.4.1
 import { Address, type Position } from "./Address.js";
 import type { Puzzle } from "./Puzzle.js";
-import { type BoardPiece, Cell, EXCell } from "./Piece.js";
+import { type BoardPiece, Cell, EXCell, IDir } from "./Piece.js";
 import type { Board } from "./Board.js";
+import { DIRS } from "./Constants.js";
 //---------------------------------------------------------------------------
 // ★KeyEventクラス キーボード入力に関する情報の保持とイベント処理を扱う
 //---------------------------------------------------------------------------
@@ -246,12 +247,12 @@ export class KeyEvent<TBoard extends Board = Board> {
 		const cursor = this.cursor;
 		const pos0 = cursor.getaddr();
 		let flag = true;
-		let dir = cursor.NDIR;
+		let dir: 0 | IDir = DIRS.NDIR;
 		switch (ca) {
-			case 'up': if (cursor.by - mv >= cursor.miny) { dir = cursor.UP; } break;
-			case 'down': if (cursor.by + mv <= cursor.maxy) { dir = cursor.DN; } break;
-			case 'left': if (cursor.bx - mv >= cursor.minx) { dir = cursor.LT; } break;
-			case 'right': if (cursor.bx + mv <= cursor.maxx) { dir = cursor.RT; } break;
+			case 'up': if (cursor.by - mv >= cursor.miny) { dir = DIRS.UP; } break;
+			case 'down': if (cursor.by + mv <= cursor.maxy) { dir = DIRS.DN; } break;
+			case 'left': if (cursor.bx - mv >= cursor.minx) { dir = DIRS.LT; } break;
+			case 'right': if (cursor.bx + mv <= cursor.maxx) { dir = DIRS.RT; } break;
 			default: flag = false; break;
 		}
 
@@ -271,31 +272,31 @@ export class KeyEvent<TBoard extends Board = Board> {
 		const cursor = this.cursor;
 		const addr0 = cursor.getaddr();
 		let flag = true;
-		let dir = addr0.NDIR;
+		let dir: IDir | 0 = DIRS.NDIR;
 		switch (ca) {
 			case 'up':
 				if (cursor.by === cursor.maxy && cursor.minx < cursor.bx && cursor.bx < cursor.maxx) { cursor.by = cursor.miny; }
-				else if (cursor.by > cursor.miny) { dir = addr0.UP; }
-				else if (this.pid === "easyasabc" && cursor.by === -1) { dir = addr0.UP; } else { flag = false; }
+				else if (cursor.by > cursor.miny) { dir = DIRS.UP; }
+				else if (this.pid === "easyasabc" && cursor.by === -1) { dir = DIRS.UP; } else { flag = false; }
 				break;
 			case 'down':
 				if (cursor.by === cursor.miny && cursor.minx < cursor.bx && cursor.bx < cursor.maxx) { cursor.by = cursor.maxy; }
-				else if (cursor.by < cursor.maxy) { dir = addr0.DN; }
-				else if (this.pid === "easyasabc" && cursor.by === -3) { dir = addr0.DN; } else { flag = false; }
+				else if (cursor.by < cursor.maxy) { dir = DIRS.DN; }
+				else if (this.pid === "easyasabc" && cursor.by === -3) { dir = DIRS.DN; } else { flag = false; }
 				break;
 			case 'left':
 				if (cursor.bx === cursor.maxx && cursor.miny < cursor.by && cursor.by < cursor.maxy) { cursor.bx = cursor.minx; }
-				else if (cursor.bx > cursor.minx) { dir = addr0.LT; } else { flag = false; }
+				else if (cursor.bx > cursor.minx) { dir = DIRS.LT; } else { flag = false; }
 				break;
 			case 'right':
 				if (cursor.bx === cursor.minx && cursor.miny < cursor.by && cursor.by < cursor.maxy) { cursor.bx = cursor.maxx; }
-				else if (cursor.bx < cursor.maxx) { dir = addr0.RT; } else { flag = false; }
+				else if (cursor.bx < cursor.maxx) { dir = DIRS.RT; } else { flag = false; }
 				break;
 			default: flag = false; break;
 		}
 
 		if (flag) {
-			if (dir !== addr0.NDIR) { cursor.movedir(dir, 2); }
+			if (dir !== DIRS.NDIR) { cursor.movedir(dir, 2); }
 
 			addr0.draw();
 			cursor.draw();
@@ -416,16 +417,16 @@ export class KeyEvent<TBoard extends Board = Board> {
 		const cell = this.cursor.getc();
 		if (arrownum && cell.qnum === -1) { return false; }
 
-		let dir = cell.NDIR;
+		let dir: 0 | IDir = DIRS.NDIR;
 		switch (ca) {
-			case 'shift+up': dir = cell.UP; break;
-			case 'shift+down': dir = cell.DN; break;
-			case 'shift+left': dir = cell.LT; break;
-			case 'shift+right': dir = cell.RT; break;
+			case 'shift+up': dir = DIRS.UP; break;
+			case 'shift+down': dir = DIRS.DN; break;
+			case 'shift+left': dir = DIRS.LT; break;
+			case 'shift+right': dir = DIRS.RT; break;
 		}
 
-		if (dir !== cell.NDIR) {
-			cell.setQdir(cell.qdir !== dir ? dir : cell.NDIR);
+		if (dir !== DIRS.NDIR) {
+			cell.setQdir(cell.qdir !== dir ? dir : DIRS.NDIR);
 			if (!arrownum) { cell.setQnum(-1); }
 			this.cursor.draw();
 			return true;
@@ -454,7 +455,7 @@ export class KeyEvent<TBoard extends Board = Board> {
 		}
 		if (target === 0) { return; }
 
-		const def = Cell.prototype[(target === piece.RT ? 'qnum' : 'qnum2')]; // TODO
+		const def = Cell.prototype[(target === DIRS.RT ? 'qnum' : 'qnum2')]; // TODO
 		const max = piece.getmaxnum();
 		let val = def;
 
@@ -473,11 +474,11 @@ export class KeyEvent<TBoard extends Board = Board> {
 		cursor.draw();
 	}
 	setnum51(piece: BoardPiece, target: number, val: number) { /* piece : cell or excell */
-		if (target === piece.RT) { piece.setQnum(val); }
+		if (target === DIRS.RT) { piece.setQnum(val); }
 		else { piece.setQnum2(val); }
 	}
 	getnum51(piece: BoardPiece, target: number) { /* piece : cell or excell */
-		return (target === piece.RT ? piece.qnum : piece.qnum2);
+		return (target === DIRS.RT ? piece.qnum : piece.qnum2);
 	}
 }
 
@@ -648,16 +649,16 @@ export class TargetCursor extends Address {
 			const invalidRight = (adc.right.isnull || adc.right.ques === 51);
 			const invalidBottom = (adc.bottom.isnull || adc.bottom.ques === 51);
 			if (invalidRight && invalidBottom) { return 0; }
-			if (invalidBottom) { return piece.RT; }
-			if (invalidRight) { return piece.DN; }
+			if (invalidBottom) { return DIRS.RT; }
+			if (invalidRight) { return DIRS.DN; }
 		}
 		else if (piece.group === 'excell') {
 			const adc = (piece as EXCell).adjacent;
 			if (piece.id === bd.cols + bd.rows) { return 0; }
 			if ((piece.by === -1 && adc.bottom.ques === 51) ||
 				(piece.bx === -1 && adc.right.ques === 51)) { return 0; }
-			if (piece.by === -1) { return piece.DN; }
-			if (piece.bx === -1) { return piece.RT; }
+			if (piece.by === -1) { return DIRS.DN; }
+			if (piece.bx === -1) { return DIRS.RT; }
 		}
 		else { return 0; }
 

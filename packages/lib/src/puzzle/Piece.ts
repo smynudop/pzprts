@@ -5,6 +5,7 @@ import type { Puzzle } from "./Puzzle";
 import { ObjectOperation } from "./Operation";
 import { CellList } from "./PieceList";
 import type { GraphComponent } from "./GraphBase";
+import { DIRS } from "./Constants";
 //---------------------------------------------------------------------------
 // ★BoardPieceクラス Cell, Cross, Border, EXCellクラスのベース
 //---------------------------------------------------------------------------
@@ -779,8 +780,8 @@ export class Border extends BoardPiece {
 		const cell1 = this.sidecell[0];
 		const cell2 = this.sidecell[1];
 		return this.isVert()
-			? (cell1.noLP(cell1.RT) || cell2.noLP(cell2.LT))
-			: (cell1.noLP(cell1.DN) || cell2.noLP(cell2.UP));
+			? (cell1.noLP(DIRS.RT) || cell2.noLP(DIRS.LT))
+			: (cell1.noLP(DIRS.DN) || cell2.noLP(DIRS.UP));
 	}
 }
 

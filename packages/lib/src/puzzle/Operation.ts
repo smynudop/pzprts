@@ -16,7 +16,7 @@ export class Operation<TValue = any, TExecValue = TValue> {
 	manager: OperationManager
 	old: TValue = null!
 	num: TValue = null!
-
+	property: string = ""
 	constructor(puzzle: Puzzle) {
 		this.puzzle = puzzle
 		this.manager = puzzle.opemgr
@@ -60,7 +60,6 @@ export class ObjectOperation extends Operation<number> {
 		}
 	}
 	group: IGroup2
-	property = ''
 	pos: number | null = null
 
 	/* 変換テーブル */

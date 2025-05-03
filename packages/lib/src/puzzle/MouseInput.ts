@@ -14,6 +14,7 @@ import { pzpr } from "../pzpr/core";
 import { getMouseButton, getPagePos, getRect } from "../pzpr/util";
 import type { Board } from "./Board";
 import type { CellOfBoard } from "./Answer";
+import { DIRS } from "./Constants";
 
 type IMode = "edit" | "play"
 
@@ -764,7 +765,7 @@ export class MouseEvent1<TBoard extends Board = Board> {
 		if (!cell.isnull) {
 			if (cell.qnum !== -1) {
 				const dir = this.prevPos.getdir(pos, 2);
-				if (dir !== cell.NDIR) {
+				if (dir !== DIRS.NDIR) {
 					cell.setQdir(cell.qdir !== dir ? dir : 0);
 					cell.draw();
 				}
@@ -776,11 +777,11 @@ export class MouseEvent1<TBoard extends Board = Board> {
 		const pos = this.getpos(0);
 		if (this.prevPos.equals(pos) && this.inputData === 1) { return; }
 
-		const dir = pos.NDIR;
+		const dir = DIRS.NDIR;
 		const cell = this.prevPos.getc();
 		if (!cell.isnull) {
 			const dir = this.prevPos.getdir(pos, 2);
-			if (dir !== pos.NDIR) {
+			if (dir !== DIRS.NDIR) {
 				this.inputarrow_cell_main(cell, dir);
 				cell.draw();
 				this.mousereset();

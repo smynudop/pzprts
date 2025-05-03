@@ -8,7 +8,7 @@ import type { GraphBase, GraphComponent } from "./GraphBase";
 import type { AreaGraphBase, AreaRoomGraph } from "./AreaManager";
 import { checkpid } from "../pzpr/util";
 import { pzpr } from "../pzpr/core";
-
+import { DIRS } from "./Constants";
 //---------------------------------------------------------------------------
 // ★AnsCheckクラス 答えチェック関連の関数を扱う
 //---------------------------------------------------------------------------
@@ -26,7 +26,7 @@ export type CellOfBoard<TBoard extends Board> = TBoard["cell"][number]
 
 type ColsPartlyInfo = { keycell: BoardPiece | null, key51num: number, isvert: boolean }
 
-type IPathSeg = {
+export type IPathSeg = {
 	objs: BorderList
 	cells: [Cell, Cell]	// 出発したセル、到達したセル
 	ccnt: number				// 曲がった回数
@@ -439,10 +439,10 @@ export class AnsCheck<
 		for (let c = 0; c < bd.cell.length; c++) {
 			const cell = bd.cell[c];
 			const adb = cell.adjborder;
-			if ((!adb.top.isLine() || !cell.noLP(cell.UP)) &&
-				(!adb.bottom.isLine() || !cell.noLP(cell.DN)) &&
-				(!adb.left.isLine() || !cell.noLP(cell.LT)) &&
-				(!adb.right.isLine() || !cell.noLP(cell.RT))) { continue; }
+			if ((!adb.top.isLine() || !cell.noLP(DIRS.UP)) &&
+				(!adb.bottom.isLine() || !cell.noLP(DIRS.DN)) &&
+				(!adb.left.isLine() || !cell.noLP(DIRS.LT)) &&
+				(!adb.right.isLine() || !cell.noLP(DIRS.RT))) { continue; }
 
 			this.failcode.add("ceAddLine");
 			if (this.checkOnly) { break; }

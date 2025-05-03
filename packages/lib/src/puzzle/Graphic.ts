@@ -10,6 +10,7 @@ import type { WrapperBase } from "../candle";
 import { getRect } from "../pzpr/util";
 import type { Board } from "./Board";
 import type { CellOfBoard } from "./Answer";
+import { DIRS } from "./Constants";
 
 
 const CENTER = 1;
@@ -884,10 +885,10 @@ export class Graphic<TBoard extends Board = Board> {
 				const px = cell.bx * this.bw;
 				const py = cell.by * this.bh;
 				switch (dir) {
-					case cell.UP: g.setOffsetLinePath(px, py, 0, -al, -tw, -tl, -aw, -tl, -aw, al, aw, al, aw, -tl, tw, -tl, true); break;
-					case cell.DN: g.setOffsetLinePath(px, py, 0, al, -tw, tl, -aw, tl, -aw, -al, aw, -al, aw, tl, tw, tl, true); break;
-					case cell.LT: g.setOffsetLinePath(px, py, -al, 0, -tl, -tw, -tl, -aw, al, -aw, al, aw, -tl, aw, -tl, tw, true); break;
-					case cell.RT: g.setOffsetLinePath(px, py, al, 0, tl, -tw, tl, -aw, -al, -aw, -al, aw, tl, aw, tl, tw, true); break;
+					case DIRS.UP: g.setOffsetLinePath(px, py, 0, -al, -tw, -tl, -aw, -tl, -aw, al, aw, al, aw, -tl, tw, -tl, true); break;
+					case DIRS.DN: g.setOffsetLinePath(px, py, 0, al, -tw, tl, -aw, tl, -aw, -al, aw, -al, aw, tl, tw, tl, true); break;
+					case DIRS.LT: g.setOffsetLinePath(px, py, -al, 0, -tl, -tw, -tl, -aw, al, -aw, al, aw, -tl, aw, -tl, tw, true); break;
+					case DIRS.RT: g.setOffsetLinePath(px, py, al, 0, tl, -tw, tl, -aw, -al, -aw, -al, aw, tl, aw, tl, tw, true); break;
 				}
 				g.fill();
 			}
@@ -1159,13 +1160,13 @@ export class Graphic<TBoard extends Board = Board> {
 
 			// 矢印の描画
 			g.vid = `cell_arrow_${cell.id}`;
-			if (!!text && dir !== cell.NDIR) {
+			if (!!text && dir !== DIRS.NDIR) {
 				g.beginPath();
 				switch (dir) {
-					case cell.UP: g.setOffsetLinePath(px + dx[digit], py, 0, -al, -tw, -tl, -aw, -tl, -aw, al, aw, al, aw, -tl, tw, -tl, true); break;
-					case cell.DN: g.setOffsetLinePath(px + dx[digit], py, 0, al, -tw, tl, -aw, tl, -aw, -al, aw, -al, aw, tl, tw, tl, true); break;
-					case cell.LT: g.setOffsetLinePath(px, py + dy, -al, 0, -tl, -tw, -tl, -aw, al, -aw, al, aw, -tl, aw, -tl, tw, true); break;
-					case cell.RT: g.setOffsetLinePath(px, py + dy, al, 0, tl, -tw, tl, -aw, -al, -aw, -al, aw, tl, aw, tl, tw, true); break;
+					case DIRS.UP: g.setOffsetLinePath(px + dx[digit], py, 0, -al, -tw, -tl, -aw, -tl, -aw, al, aw, al, aw, -tl, tw, -tl, true); break;
+					case DIRS.DN: g.setOffsetLinePath(px + dx[digit], py, 0, al, -tw, tl, -aw, tl, -aw, -al, aw, -al, aw, tl, tw, tl, true); break;
+					case DIRS.LT: g.setOffsetLinePath(px, py + dy, -al, 0, -tl, -tw, -tl, -aw, al, -aw, al, aw, -tl, aw, -tl, tw, true); break;
+					case DIRS.RT: g.setOffsetLinePath(px, py + dy, al, 0, tl, -tw, tl, -aw, -al, -aw, -al, aw, tl, aw, tl, tw, true); break;
 				}
 				g.fill();
 			}
@@ -1175,10 +1176,10 @@ export class Graphic<TBoard extends Board = Board> {
 			g.vid = `cell_arnum_${cell.id}`;
 			if (!!text) {
 				const option = { ratio: 0.8 };
-				if (dir !== cell.NDIR) { option.ratio = 0.7; }
+				if (dir !== DIRS.NDIR) { option.ratio = 0.7; }
 
-				if (dir === cell.UP || dir === cell.DN) { px -= this.cw * 0.1; }
-				else if (dir === cell.LT || dir === cell.RT) { py += this.ch * 0.1; }
+				if (dir === DIRS.UP || dir === DIRS.DN) { px -= this.cw * 0.1; }
+				else if (dir === DIRS.LT || dir === DIRS.RT) { py += this.ch * 0.1; }
 
 				this.disptext(text, px, py, option);
 			}

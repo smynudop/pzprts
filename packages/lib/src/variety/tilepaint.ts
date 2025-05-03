@@ -1,6 +1,7 @@
 //
 // パズル固有スクリプト部 タイルペイント版 tilepaint.js
 
+import { DIRS } from "../puzzle/Constants";
 import { MouseEvent1 } from "../puzzle/MouseInput";
 import { createVariety } from "./createVariety";
 
@@ -72,7 +73,7 @@ export const TilePaint = createVariety({
 
 		getmaxnum: function (): number {
 			const bd = this.board, target = this.puzzle.cursor.detectTarget(this);
-			return (target === this.RT ? (bd.cols - (this.bx >> 1) - 1) : (bd.rows - (this.by >> 1) - 1));
+			return (target === DIRS.RT ? (bd.cols - (this.bx >> 1) - 1) : (bd.rows - (this.by >> 1) - 1));
 		},
 		minnum: 0,
 

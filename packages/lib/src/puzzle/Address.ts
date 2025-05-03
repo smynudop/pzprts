@@ -2,26 +2,24 @@
 
 import type { Board } from "./Board"
 import type { Puzzle } from "./Puzzle"
-
-import type { IDir } from "./Piece"
+import { DIRS } from "./Constants"
 //----------------------------------------------------------------------------
 // ★Positionクラス Address, Pieceクラスのベースクラス
 //---------------------------------------------------------------------------
+
+// 方向を表す定数
+
 export class Position {
 	bx: number = null!
 	by: number = null!
 
-	// 方向を表す定数
-	NDIR = 0	// 方向なし
-	UP: IDir = 1	// up, top
-	DN: IDir = 2	// down, bottom
-	LT: IDir = 3	// left
-	RT: IDir = 4	// right
-	board: Board
+
+	get board(): Board {
+		return this.puzzle.board
+	}
 	puzzle: Puzzle
 
 	constructor(puzzle: Puzzle) {
-		this.board = puzzle.board;
 		this.puzzle = puzzle;
 	}
 
@@ -80,16 +78,16 @@ export class Position {
 	getdir<T extends { bx: number, by: number }>(pos: T, diff: number) {
 		const dx = (pos.bx - this.bx);
 		const dy = (pos.by - this.by);
-		if (dx === 0 && dy === -diff) { return this.UP; }
-		if (dx === 0 && dy === diff) { return this.DN; }
-		if (dx === -diff && dy === 0) { return this.LT; }
-		if (dx === diff && dy === 0) { return this.RT; }
-		return this.NDIR;
+		if (dx === 0 && dy === -diff) { return DIRS.UP; }
+		if (dx === 0 && dy === diff) { return DIRS.DN; }
+		if (dx === -diff && dy === 0) { return DIRS.LT; }
+		if (dx === diff && dy === 0) { return DIRS.RT; }
+		return DIRS.NDIR;
 	}
 	getvert(pos: Address, diff: number) {
 		const dir = this.getdir(pos, diff);
-		if (dir === this.UP || dir === this.DN) { return true; }
-		if (dir === this.LT || dir === this.RT) { return false; }
+		if (dir === DIRS.UP || dir === DIRS.DN) { return true; }
+		if (dir === DIRS.LT || dir === DIRS.RT) { return false; }
 		return void 0;
 	}
 
@@ -155,10 +153,10 @@ export class Address extends Position {
 	//---------------------------------------------------------------------------
 	movedir(dir: number, dd: number) {
 		switch (dir) {
-			case this.UP: this.by -= dd; break;
-			case this.DN: this.by += dd; break;
-			case this.LT: this.bx -= dd; break;
-			case this.RT: this.bx += dd; break;
+			case DIRS.UP: this.by -= dd; break;
+			case DIRS.DN: this.by += dd; break;
+			case DIRS.LT: this.bx -= dd; break;
+			case DIRS.RT: this.bx += dd; break;
 		}
 		return this;
 	}
