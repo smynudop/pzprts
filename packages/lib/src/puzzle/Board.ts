@@ -109,6 +109,11 @@ export class Board<
 
 	excelloption: EXCellOption | undefined
 
+	/**
+	 * 補助記号の消去中にtrue
+	 */
+	subclearmode: boolean = false
+
 	constructor(puzzle: Puzzle, option?: { board?: BoardOption } & BoardChildOption) {
 		this.puzzle = puzzle;
 		// 盤面の範囲
@@ -476,10 +481,14 @@ export class Board<
 	subclear() {
 		this.puzzle.opemgr.newOperation();
 
+		this.subclearmode = true
+
 		this.cell.subclear();
 		this.cross.subclear();
 		this.border.subclear();
 		this.excell.subclear();
+
+		this.subclearmode = false
 	}
 
 	errclear() {

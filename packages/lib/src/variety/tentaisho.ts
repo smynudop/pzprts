@@ -482,18 +482,8 @@ export const Tentaisho = createVariety({
 class Star extends BoardPiece {
 	piece: BoardPiece = null!
 
-	// 一部qsubで消したくないものがあるため上書き
-	override propclear(prop: any, isrec: boolean) {
-		//@ts-ignore
-		const def = this.constructor.prototype[prop];
-		//@ts-ignore
-
-		if (this[prop] !== def && !(!!this.board.subclearmode && prop === 'qsub' && this.qsub === 3)) {
-			//@ts-ignore
-			if (isrec && !this.propnorec[prop]) { this.addOpe(prop, this[prop], def); }
-			//@ts-ignore
-			this[prop] = def;
-		}
+	override shouldSkipPropClear(prop: any): boolean {
+		return this.board.subclearmode && prop === 'qsub' && this.qsub === 3;
 	}
 
 	getStar() {
@@ -527,17 +517,3 @@ class Star extends BoardPiece {
 		return (new Address(this.puzzle, this.bx, this.by));
 	}
 }
-/*
-
-
-	CellList: {
-
-		// 一部qsubで消したくないものがあるため上書き
-		subclear: function (prop, isrec) {
-			this.board.subclearmode = true;
-			this.common.subclear.call(this);
-			this.board.subclearmode = false;
-		}
-	},
-
-*/

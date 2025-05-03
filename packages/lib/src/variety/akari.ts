@@ -1,7 +1,7 @@
 //
 // パズル固有スクリプト部 美術館版 lightup.js
 
-import { IRange } from "../puzzle/BoardExec";
+import type { IRange } from "../puzzle/BoardExec";
 import type { Cell } from "../puzzle/Piece";
 import { CellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";

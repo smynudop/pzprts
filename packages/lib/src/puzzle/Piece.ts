@@ -69,8 +69,12 @@ export class BoardPiece extends Position {
 	line = 0	// border:(ましゅやスリリンなどの線)
 
 	/* 補助データを保持するプロパティ */
-	qsub = 0	// cell  :(1:白マス 1-2:背景色/○× 3:絵になる部分)
-	// border:(1:補助線 2:× 11-14:方向記号)
+
+	/**
+	 * cell  :(1:白マス 1-2:背景色/○× 3:絵になる部分)
+	 * border:(1:補助線 2:× 11-14:方向記号)
+	 */
+	qsub = 0
 	qcmp = 0	// cell  :(1:cmpマス 1-2:○×)
 	snum: number[] = []	// cell  :補助数字を保持する
 
@@ -203,12 +207,19 @@ export class BoardPiece extends Position {
 		const def = this.pureObject[prop];
 		//@ts-ignore
 		const now = this[prop]
-		if (now !== def) {
+		if (now !== def && !this.shouldSkipPropClear(prop)) {
 			if (isrec && !this.propnorec[prop]) { this.addOpe(prop, now, def); }
 
 			//@ts-ignore
 			this[prop] = def;
 		}
+	}
+
+	/**
+	 * propclearをスキップしたい場合に条件を指定する
+	 */
+	shouldSkipPropClear(prop: any) {
+		return false
 	}
 
 	//---------------------------------------------------------------------------
@@ -300,7 +311,7 @@ type Adjacent<T> = {
 	left: T,
 	right: T
 }
-type TThis<T> = T
+
 //---------------------------------------------------------------------------
 // ★Cellクラス BoardクラスがCellの数だけ保持する
 //---------------------------------------------------------------------------
@@ -584,7 +595,7 @@ export class Cell extends BoardPiece {
 	getdir4cblist() {
 		const adc = this.adjacent;
 		const adb = this.adjborder;
-		const cblist = [];
+		const cblist: [Cell, Border, number][] = [];
 		const cells = [adc.top, adc.bottom, adc.left, adc.right];
 		const bds = [adb.top, adb.bottom, adb.left, adb.right];
 		for (let i = 0; i < 4; i++) {
