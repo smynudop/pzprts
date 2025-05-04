@@ -3,7 +3,7 @@ import { GraphBase, GraphNode } from './GraphBase';
 import type { Puzzle } from './Puzzle';
 import { CellList } from './PieceList';
 import { BoardPiece, type Border, type Cell } from './Piece'
-import type { GraphComponent } from "./GraphBase"
+import type { GraphComponent, GraphComponentOption } from "./GraphBase"
 import type { Board, IGroup } from './Board';
 
 export type AreaShadeGraphOption = {
@@ -117,8 +117,8 @@ export class AreaGraphBase<
 // ☆AreaNumberGraphクラス 数字情報オブジェクトのクラス
 //--------------------------------------------------------------------------------
 export class AreaShadeGraph<TComponent extends GraphComponent = GraphComponent> extends AreaGraphBase<TComponent> {
-	constructor(puzzle: Puzzle, option?: AreaShadeGraphOption) {
-		super(puzzle)
+	constructor(puzzle: Puzzle, option?: AreaShadeGraphOption, gcoption?: GraphComponentOption) {
+		super(puzzle, gcoption)
 		this.enabled = option?.enabled || false
 	}
 	override relation = { 'cell.qans': 'node' }
@@ -151,8 +151,8 @@ export class AreaShadeGraph<TComponent extends GraphComponent = GraphComponent> 
 }
 
 export class AreaUnshadeGraph extends AreaGraphBase {
-	constructor(puzzle: Puzzle, option?: AreaUnshadeGraphOption) {
-		super(puzzle)
+	constructor(puzzle: Puzzle, option?: AreaUnshadeGraphOption, gcoption?: GraphComponentOption) {
+		super(puzzle, gcoption)
 		this.enabled = option?.enabled || false
 	}
 	override relation = { 'cell.qans': 'node' }
@@ -199,8 +199,8 @@ export class AreaNumberGraph<TComponent extends GraphComponent = GraphComponent>
 export type AreaRoomGraphOption<TComponent extends GraphComponent = GraphComponent> = Partial<AreaRoomGraph<TComponent>>
 
 export class AreaRoomGraph<TComponent extends GraphComponent = GraphComponent> extends AreaGraphBase<TComponent> {
-	constructor(puzzle: Puzzle, option?: AreaRoomGraphOption) {
-		super(puzzle)
+	constructor(puzzle: Puzzle, option?: AreaRoomGraphOption, gcoption?: GraphComponentOption) {
+		super(puzzle, gcoption)
 		Object.assign(this, option)
 	}
 

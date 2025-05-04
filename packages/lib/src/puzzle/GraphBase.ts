@@ -25,12 +25,14 @@ export abstract class GraphBase<
 	components: TComponent[] = null!
 	modifyNodes: GraphNode<TComponent>[] = null!
 	puzzle: Puzzle
+	gcoption: GraphComponentOption | undefined
 
 	get board() {
 		return this.puzzle.board
 	}
-	constructor(puzzle: Puzzle<TBoard>) {
+	constructor(puzzle: Puzzle<TBoard>, gcoption?: GraphComponentOption) {
 		this.puzzle = puzzle
+		this.gcoption = gcoption
 	}
 
 	//--------------------------------------------------------------------------------
@@ -122,7 +124,7 @@ export abstract class GraphBase<
 	// graph.deleteComponent()  GraphComponentオブジェクトを削除してNodeをmodifyNodesに戻す
 	//---------------------------------------------------------------------------
 	createComponentInstance() {
-		return new GraphComponent(this.puzzle) as TComponent;
+		return new GraphComponent(this.puzzle, this.gcoption) as TComponent;
 	}
 	createComponent() {
 		const component = this.createComponentInstance()
@@ -508,11 +510,12 @@ export class GraphComponent {
 	isremake = false
 	id: number = null!
 
-	constructor(puzzle: Puzzle) {
+	constructor(puzzle: Puzzle, option?: GraphComponentOption) {
 		this.puzzle = puzzle
 		this.nodes = [];
 		this.color = '';
 		this.circuits = -1;
+		Object.assign(this, option)
 	}
 
 	//---------------------------------------------------------------------------

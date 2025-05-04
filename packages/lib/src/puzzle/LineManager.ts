@@ -1,5 +1,5 @@
 // LineManager.js
-import { GraphBase, type GraphComponent } from "./GraphBase";
+import { GraphBase, type GraphComponentOption, type GraphComponent } from "./GraphBase";
 import { CellList, BorderList } from "./PieceList";
 import type { Puzzle } from "./Puzzle";
 import type { Border, Cell } from "./Piece";
@@ -13,8 +13,8 @@ export type LineGraphOption = {
 // ★LineGraphクラス 主に線や色分けの情報を管理する
 //---------------------------------------------------------------------------
 export class LineGraph extends GraphBase {
-	constructor(puzzle: Puzzle, option?: LineGraphOption) {
-		super(puzzle);
+	constructor(puzzle: Puzzle, option?: LineGraphOption, gcoption?: GraphComponentOption) {
+		super(puzzle, gcoption);
 		Object.assign(this, option)
 
 		if (this.moveline) { this.relation['cell.qnum'] = 'move'; }

@@ -50,14 +50,14 @@ export const Lits = createVariety({
 		enabled: true
 	},
 	GraphComponent: {
-		checkCmp: function (clist: CellList) {
+		checkCmp: function () {
 			let scnt = 0
 			let sblk = null;
-			for (let i = 0; i < clist.length; i++) {
-				if (clist[i].qans === 1) {
+			for (let i = 0; i < this.clist.length; i++) {
+				if (this.clist[i].qans === 1) {
 					scnt++;
-					if (!sblk) { sblk = clist[i].sblk; }
-					else if (sblk !== clist[i].sblk) { return false; }
+					if (!sblk) { sblk = this.clist[i].sblk; }
+					else if (sblk !== this.clist[i].sblk) { return false; }
 				}
 			}
 			return (scnt === 4);
@@ -228,7 +228,7 @@ class AreaTetrominoGraph extends AreaShadeGraph<GraphComponent & { shape: any }>
 		const len = clist.length;
 		let shape = null;
 		if (len === 4) {
-			const cell0 = clist.sort()[0];
+			const cell0 = clist.sort((a, b) => a.id - b.id)[0];
 			const bx0 = cell0.bx;
 			const by0 = cell0.by;
 			let value = 0;
@@ -245,20 +245,3 @@ class AreaTetrominoGraph extends AreaShadeGraph<GraphComponent & { shape: any }>
 		component.shape = shape;
 	}
 }
-
-// "CellList@lits":{
-// 	sort : function(cond){
-// 		return Array.prototype.sort.call(this, (cond || function(a,b){ return a.id - b.id;}));
-// 	},
-// 	checkCmp : function(){
-// 		var scnt=0, sblk = null;
-// 		for(var i=0;i<this.length;i++){
-// 			if(this[i].qans===1){
-// 				scnt++;
-// 				if(!sblk){ sblk = this[i].sblk;}
-// 				else if(sblk!==this[i].sblk){ return false;}
-// 			}
-// 		}
-// 		return (scnt===4);
-// 	}
-// },

@@ -27,7 +27,7 @@ import {
 	type AreaShadeGraphOption,
 	type AreaUnshadeGraphOption
 } from './AreaManager';
-import type { GraphBase, GraphComponent } from './GraphBase';
+import type { GraphBase, GraphComponent, GraphComponentOption } from './GraphBase';
 import { BoardExec, type IBoardOperation } from './BoardExec';
 import { BoardClearOperation } from "./Operation"
 //---------------------------------------------------------------------------
@@ -41,10 +41,11 @@ export type BoardOption = Partial<Board>
 
 export type BoardChildOption = {
 	boardExec?: any
-	lineGraph?: boolean | LineGraphOption,
-	areaRoomGraph?: boolean | AreaRoomGraphOption,
-	areaShadeGraph?: boolean | AreaShadeGraphOption
-	areaUnshadeGraph?: boolean | AreaUnshadeGraphOption
+	lineGraph?: LineGraphOption,
+	areaRoomGraph?: AreaRoomGraphOption,
+	areaShadeGraph?: AreaShadeGraphOption
+	areaUnshadeGraph?: AreaUnshadeGraphOption
+	graphComponent?: GraphComponentOption
 	cell?: CellOption
 	border?: BorderOption
 	excell?: EXCellOption
@@ -164,10 +165,10 @@ export class Board<
 		this.disrecinfo = 0;
 		this.infolist = [];
 
-		this.linegraph = this.addInfoListInstance(this.createLineGraph(option?.lineGraph || false));			// 交差なし線のグラフ
-		this.roommgr = this.addInfoListInstance(this.createAreaRoomGraph(option?.areaRoomGraph || false));			// 部屋情報を保持する
-		this.sblkmgr = this.addInfoListInstance(this.createAreaShadeGraph(option?.areaShadeGraph || false));		// 黒マス情報を保持する
-		this.ublkmgr = this.addInfoListInstance(this.createAreaUnshadeGraph(option?.areaUnshadeGraph || false));		// 白マス情報を保持する
+		this.linegraph = this.addInfoListInstance(this.createLineGraph(option?.lineGraph, option?.graphComponent));			// 交差なし線のグラフ
+		this.roommgr = this.addInfoListInstance(this.createAreaRoomGraph(option?.areaRoomGraph, option?.graphComponent));			// 部屋情報を保持する
+		this.sblkmgr = this.addInfoListInstance(this.createAreaShadeGraph(option?.areaShadeGraph, option?.graphComponent));		// 黒マス情報を保持する
+		this.ublkmgr = this.addInfoListInstance(this.createAreaUnshadeGraph(option?.areaUnshadeGraph, option?.graphComponent));		// 白マス情報を保持する
 		this.nblkmgr = this.addInfoList(AreaNumberGraph);		// 数字情報を保持する
 
 		this.addExtraInfo();
@@ -177,40 +178,24 @@ export class Board<
 
 		this.trialstage = 0;	// TrialMode
 	}
-	createLineGraph(option: boolean | LineGraphOption) {
-		if (typeof option === "boolean") {
-			option = { enabled: option }
-		} else {
-			option.enabled = true
-		}
-		return new LineGraph(this.puzzle, option)
+	createLineGraph(option: LineGraphOption | undefined, gcoption: GraphComponentOption | undefined) {
+		if (option) option.enabled = true
+		return new LineGraph(this.puzzle, option, gcoption)
 	}
 
-	createAreaRoomGraph(option: boolean | AreaRoomGraphOption) {
-		if (typeof option === "boolean") {
-			option = { enabled: option }
-		} else {
-			option.enabled = true
-		}
-		return new AreaRoomGraph<TComponent>(this.puzzle, option)
+	createAreaRoomGraph(option: AreaRoomGraphOption | undefined, gcoption: GraphComponentOption | undefined) {
+		if (option) option.enabled = true
+		return new AreaRoomGraph<TComponent>(this.puzzle, option, gcoption)
 	}
 
-	createAreaShadeGraph(option: boolean | AreaShadeGraphOption) {
-		if (typeof option === "boolean") {
-			option = { enabled: option }
-		} else {
-			option.enabled = true
-		}
-		return new AreaShadeGraph(this.puzzle, option)
+	createAreaShadeGraph(option: AreaShadeGraphOption | undefined, gcoption: GraphComponentOption | undefined) {
+		if (option) option.enabled = true
+		return new AreaShadeGraph(this.puzzle, option, gcoption)
 	}
 
-	createAreaUnshadeGraph(option: boolean | AreaUnshadeGraphOption) {
-		if (typeof option === "boolean") {
-			option = { enabled: option }
-		} else {
-			option.enabled = true
-		}
-		return new AreaUnshadeGraph(this.puzzle, option)
+	createAreaUnshadeGraph(option: AreaUnshadeGraphOption | undefined, gcoption: GraphComponentOption | undefined) {
+		if (option) option.enabled = true
+		return new AreaUnshadeGraph(this.puzzle, option, gcoption)
 	}
 
 	createBoardExec(option?: any) {
