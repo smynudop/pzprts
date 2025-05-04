@@ -63,13 +63,8 @@
     showDialog = true
   };
 
-  const undo = () => {
-    puzzle.undo()
-  }
-  const redo = () => {
-    puzzle.redo()
-  }
-
+  const undo = () => puzzle.undo()
+  const redo = () => puzzle.redo()
   const hideDialog= () =>{
     showDialog = false
   }

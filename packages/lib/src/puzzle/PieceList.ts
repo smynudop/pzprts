@@ -9,9 +9,9 @@ import type { Cell, Cross, Border, EXCell, BoardPiece } from "./Piece";
 //---------------------------------------------------------------------------
 export class PieceList<T extends BoardPiece> extends Array<T> {
 
-	constructor(list?: T[]) {
+	constructor(list?: T[] | number) {
 		super()
-		if (!!list) { this.extend(list); }
+		if (!!list && typeof list !== "number") { this.extend(list); }
 	}
 
 	clone() {
