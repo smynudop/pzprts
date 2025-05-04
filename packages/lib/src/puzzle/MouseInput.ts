@@ -117,6 +117,10 @@ export class MouseEvent1<TBoard extends Board = Board> {
 	inversion = false	// マウスのボタンを左右反転する
 	pid: string;	// puzzle ID
 
+	get board(): TBoard {
+		return this.board
+	}
+
 	//---------------------------------------------------------------------------
 	// mv.mousereset() マウス入力に関する情報を初期化する
 	// mv.modechange() モード変更時に設定を初期化する

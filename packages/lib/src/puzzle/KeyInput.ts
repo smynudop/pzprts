@@ -1,7 +1,7 @@
 // KeyInput.js v3.4.1
 import { Address, type Position } from "./Address.js";
 import type { Puzzle } from "./Puzzle.js";
-import { type BoardPiece, Cell, EXCell, IDir } from "./Piece.js";
+import { type BoardPiece, Cell, EXCell, type IDir } from "./Piece.js";
 import type { Board } from "./Board.js";
 import { DIRS } from "./Constants.js";
 //---------------------------------------------------------------------------
@@ -60,7 +60,9 @@ export class KeyEvent<TBoard extends Board = Board> {
 	cancelEvent: boolean = false
 	pid: string
 
-
+	get board(): TBoard {
+		return this.board
+	}
 
 	//---------------------------------------------------------------------------
 	// kc.keyreset()     キーボード入力に関する情報を初期化する

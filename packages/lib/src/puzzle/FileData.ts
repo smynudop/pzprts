@@ -31,6 +31,10 @@ export class FileIO<TBoard extends Board = Board> {
 	datastr = ""
 	currentType = 0
 	puzzle: Puzzle<TBoard>
+
+	get board() {
+		return this.puzzle.board
+	}
 	constructor(puzzle: Puzzle<TBoard>, option?: FileIOOption) {
 		this.puzzle = puzzle
 		Object.assign(this, option)

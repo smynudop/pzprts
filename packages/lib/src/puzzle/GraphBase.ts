@@ -25,6 +25,10 @@ export abstract class GraphBase<
 	components: TComponent[] = null!
 	modifyNodes: GraphNode<TComponent>[] = null!
 	puzzle: Puzzle
+
+	get board() {
+		return this.puzzle.board
+	}
 	constructor(puzzle: Puzzle<TBoard>) {
 		this.puzzle = puzzle
 	}

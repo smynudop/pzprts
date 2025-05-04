@@ -601,8 +601,8 @@ export class Board<
 	//---------------------------------------------------------------------------
 	// bd.operate()  BoardExecの拡大縮小・回転反転処理を実行する
 	//---------------------------------------------------------------------------
-	operate(type: IBoardOperation) {
-		this.exec.execadjust(type);
+	operate(type: string) {
+		this.exec.execadjust(type as IBoardOperation);
 	}
 
 	//---------------------------------------------------------------------------

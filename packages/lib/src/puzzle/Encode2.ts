@@ -28,6 +28,10 @@ export class Encode<TBoard extends Board = Board> {
     outrows: number | null = null
     outbstr = ''
 
+    get board() {
+        return this.puzzle.board
+    }
+
     //---------------------------------------------------------------------------
     // enc.checkpflag()   pflagに指定した文字列が含まれているか調べる
     //---------------------------------------------------------------------------

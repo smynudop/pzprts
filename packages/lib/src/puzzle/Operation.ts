@@ -24,6 +24,10 @@ export class Operation<TValue = any, TExecValue = TValue> {
 
 	reqReset = false
 
+	get board() {
+		return this.puzzle.board
+	}
+
 	//---------------------------------------------------------------------------
 	// ope.setData()  オブジェクトのデータを設定する
 	// ope.decode()   ファイル出力された履歴の入力用ルーチン

@@ -26,7 +26,16 @@ const TOPLEFT = 5;
 // Graphicクラスの定義
 
 //---------------------------------------------------------
-
+export type PaintRange<TBoard extends Board = Board> = {
+	x1: number,
+	x2: number,
+	y1: number,
+	y2: number,
+	cells: CellList<CellOfBoard<TBoard>>,
+	crosses: CrossList,
+	borders: BorderList,
+	excells: EXCellList
+}
 export type GraphicOption = Partial<Graphic>
 
 export class Graphic<TBoard extends Board = Board> {
@@ -162,16 +171,7 @@ export class Graphic<TBoard extends Board = Board> {
 	maxYdeg = 0.70
 
 	// その他の描画設定
-	range: {
-		x1: number,
-		x2: number,
-		y1: number,
-		y2: number,
-		cells: CellList<CellOfBoard<TBoard>>,
-		crosses: CrossList,
-		borders: BorderList,
-		excells: EXCellList
-	} = null!				// 描画領域を保持するオブジェクト
+	range: PaintRange<TBoard> = null!				// 描画領域を保持するオブジェクト
 
 	useBuffer = false			// Buffer描画を行うか
 	outputImage = false			// 画像保存中
@@ -192,6 +192,10 @@ export class Graphic<TBoard extends Board = Board> {
 	// 色分け設定
 	irowake = false
 	irowakeblk = false
+
+	get board(): TBoard {
+		return this.puzzle.board
+	}
 
 	//---------------------------------------------------------------------------
 	// pc.initCanvas()       このオブジェクトで使用するキャンバスを設定する
