@@ -7,6 +7,7 @@ import type { Cell } from "../puzzle/Piece";
 import type { CellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 export const Heyawake = createVariety({
+	pid: "heyawake",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

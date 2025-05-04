@@ -80,7 +80,7 @@ export class FileIO<TBoard extends Board = Board> {
 	//---------------------------------------------------------------------------
 	// fio.fileencode() ファイルデータ(文字列)へのエンコード実行関数
 	//---------------------------------------------------------------------------
-	fileencode(filetype: number, option: any) {
+	fileencode(filetype: number, option?: any) {
 		const puzzle = this.puzzle;
 		const bd = puzzle.board;
 		const pzl = new FileData('', puzzle.pid);
@@ -181,9 +181,8 @@ export class FileIO<TBoard extends Board = Board> {
 
 	getItemList(rows: number) {
 		const item = [];
-		let line: string;
 		for (let i = 0; i < rows; i++) {
-			line = this.readLine()
+			const line = this.readLine()
 			if (!line) { continue; }
 			const array1 = line.split(" ");
 			for (let c = 0; c < array1.length; c++) {
@@ -459,7 +458,7 @@ export class FileIO<TBoard extends Board = Board> {
 	getCellSnum(cell: Cell) {
 		const list = [];
 		for (let i = 0; i < cell.snum.length; ++i) {
-			list[i] = (cell.snum[i] !== -1 ? `${cell.snum[i]}` : '');
+			list[i] = (cell.snum[i] !== -1 ? "" + cell.snum[i] : '');
 		}
 		const snumtext = list.join(',');
 		return (snumtext !== ',,,' ? `[${snumtext}]` : '');

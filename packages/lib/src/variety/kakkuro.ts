@@ -7,6 +7,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const Kakkuro = createVariety({
+	pid: "kakkuro",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

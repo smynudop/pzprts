@@ -5,6 +5,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const Nurikabe = createVariety({
+	pid: "nurikabe",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

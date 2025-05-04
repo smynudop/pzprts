@@ -7,6 +7,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const TilePaint = createVariety({
+	pid: "tilepaint",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

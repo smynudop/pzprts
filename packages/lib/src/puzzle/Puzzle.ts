@@ -66,7 +66,7 @@ export abstract class Puzzle<
 
 		option = option || {};
 		if (!option.pid) {
-			console.warn("pidを指定してください。")
+			//console.warn("pidを指定してください。")
 		}
 
 		this.pid = option?.pid ?? ""
@@ -365,7 +365,7 @@ export abstract class Puzzle<
 	// owner.getURL()      URLを取得する
 	// owner.getFileData() ファイルデータを取得する
 	//---------------------------------------------------------------------------
-	getURL(type: number) {
+	getURL() {
 		if (this.converters != null) {
 			return encodeURL(this, this.converters);
 		}
@@ -373,7 +373,7 @@ export abstract class Puzzle<
 			return this.encode.encodeURL(URL_PZPRV3)
 		}
 	}
-	getFileData(type: number, option: any) {
+	getFileData(type: number, option?: any) {
 		return this.fio.fileencode(type, option);
 	}
 

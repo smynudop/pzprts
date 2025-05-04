@@ -6,6 +6,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const Hitokure = createVariety({
+	pid: "hitori",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

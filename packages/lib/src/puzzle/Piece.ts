@@ -197,13 +197,6 @@ export class BoardPiece extends Position {
 	// propclear() 指定されたプロパティの値をクリアする
 	//---------------------------------------------------------------------------
 	propclear(prop: string, isrec: boolean) {
-
-		//todo
-		if (this.pureObject == null) {
-			// @ts-ignore
-			this.pureObject = new this.constructor(this.puzzle)
-		}
-
 		//@ts-ignore
 		const def = this.pureObject[prop];
 		//@ts-ignore
@@ -232,12 +225,13 @@ export class BoardPiece extends Position {
 		const proplist = this.getproplist(['ques', 'ans', 'sub']);
 		for (let i = 0; i < proplist.length; i++) {
 			const a = proplist[i];
-			const isArray = (Array.isArray(this[a]));
-			props[a] = (!isArray ? this[a] : Array.prototype.slice.call(this[a]));
+			const val = this[a]
+			//const isArray = (Array.isArray(this[a]));
+			props[a] = (!Array.isArray(val) ? this[a] : val.slice());
 		}
 		return props;
 	}
-	compare(props: BoardPiece, callback: (group: IGroup, id: number, prop: keyof BoardPiece) => void) {
+	compare(props: BoardPiece, callback: (group: IGroup, id: number, prop: keyof BoardPiece, vals: { source: any, target: any }) => void) {
 		const proplist = this.getproplist(['ques', 'ans', 'sub']);
 		for (let i = 0; i < proplist.length; i++) {
 			const a = proplist[i];
@@ -246,7 +240,7 @@ export class BoardPiece extends Position {
 			const source = (!isArray ? props[a] : props[a].join(','));
 			//@ts-ignore
 			const target = (!isArray ? this[a] : this[a].join(','));
-			if (source !== target) { callback(this.group, this.id, a); }
+			if (source !== target) { callback(this.group, this.id, a, { source, target }); }
 		}
 	}
 
@@ -347,11 +341,12 @@ export class Cell extends BoardPiece {
 		super(puzzle)
 		Object.assign(this, option)
 
-		if (this.enableSubNumberArray) {
+		this.pureObject = { ...this }
+		if (this.enableSubNumberArray || option?.enableSubNumberArray) {
 			const anum0 = this.pureObject.anum;
 			this.snum = [anum0, anum0, anum0, anum0];
+			this.pureObject.snum = this.snum.slice()
 		}
-		this.pureObject = { ...this }
 	}
 
 	//---------------------------------------------------------------------------
@@ -382,14 +377,12 @@ export class Cell extends BoardPiece {
 	override propclear(prop: any, isrec: boolean) {
 		if (prop === 'snum' && this.enableSubNumberArray) {
 			for (let pos = 0; pos < 4; ++pos) {
-				const def = this.constructor.prototype[prop];
-				//@ts-ignore
-				const now = this[prop][pos]
+				const def = this.pureObject.snum[pos];
+				const now = this.snum[pos]
 
 				if (now !== def) {
 					if (isrec) { this.addOpe(prop + pos, now, def); }
-					//@ts-ignore
-					this[prop][pos] = def;
+					this.snum[pos] = def;
 				}
 			}
 		}

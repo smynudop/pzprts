@@ -87,21 +87,29 @@ export class URLData {
     // ★ outputURLType() パズル種類, URL種類からURLを生成する
     //---------------------------------------------------------------------------
     outputURLType() {
-        /* URLの種類からURLを取得する */
-        let domain = (!pzpr.env.node ? document.domain : '');
-        let url = "";
-        const pid = this.pid;
-        if (!!domain) { domain += location.pathname; }
-        else { domain = "pzv.jp/p.html"; }
-        switch (this.type) {
-            case Constants.URL_PZPRV3: url = `http://${domain}?%PID%/`; break;
-            case Constants.URL_KANPEN: url = "http://www.kanpen.net/%KID%.html?problem="; break;
-            case Constants.URL_KANPENP: url = "http://www.kanpen.net/%KID%.html?pzpr="; break;
-            case Constants.URL_HEYAAPP: url = "http://www.geocities.co.jp/heyawake/?problem="; break;
-        }
 
-        return url//.replace("%PID%", pzpr.variety(pid).urlid)
-        //.replace("%KID%", pzpr.variety(pid).kanpenid);
+        if (typeof window !== 'undefined' && window.location) {
+            const { protocol, host, pathname } = window.location;
+            return `${protocol}//${host}${pathname}?${this.pid}/`;
+        } else {
+            // Node.js環境など、windowが存在しない場合
+            return `http://pzv.jp/p.html?${this.pid}/`;
+        }
+        // /* URLの種類からURLを取得する */
+        // let domain = (!pzpr.env.node ? document.domain : '');
+        // let url = "";
+        // const pid = this.pid;
+        // if (!!domain) { domain += location.pathname; }
+        // else { domain = "pzv.jp/p.html"; }
+        // switch (this.type) {
+        //     case Constants.URL_PZPRV3: url = `http://${domain}?%PID%/`; break;
+        //     case Constants.URL_KANPEN: url = "http://www.kanpen.net/%KID%.html?problem="; break;
+        //     case Constants.URL_KANPENP: url = "http://www.kanpen.net/%KID%.html?pzpr="; break;
+        //     case Constants.URL_HEYAAPP: url = "http://www.geocities.co.jp/heyawake/?problem="; break;
+        // }
+
+        // return url//.replace("%PID%", pzpr.variety(pid).urlid)
+        // //.replace("%KID%", pzpr.variety(pid).kanpenid);
     }
 
     //---------------------------------------------------------------------------

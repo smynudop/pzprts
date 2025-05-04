@@ -7,6 +7,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const SlitherLink = createVariety({
+	pid: "slither",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

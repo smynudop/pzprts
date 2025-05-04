@@ -11,6 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: 1.9.4
         version: 1.9.4
+      vite:
+        specifier: ^6.3.3
+        version: 6.3.3(terser@5.39.0)
 
   packages/lib:
     devDependencies:

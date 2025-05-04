@@ -9,6 +9,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const Shakashaka = createVariety({
+	pid: "shakashaka",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

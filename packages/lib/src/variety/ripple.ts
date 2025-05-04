@@ -5,6 +5,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const Ripple = createVariety({
+	pid: "ripple",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

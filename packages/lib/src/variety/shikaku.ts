@@ -7,6 +7,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const Shikaku = createVariety({
+	pid: "shikaku",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

@@ -6,6 +6,7 @@ import { createVariety } from "./createVariety"
 
 // 
 export const Yajilin = createVariety({
+	pid: "yajilin",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

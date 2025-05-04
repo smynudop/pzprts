@@ -6,6 +6,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const Sudoku = createVariety({
+	pid: "sudoku",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

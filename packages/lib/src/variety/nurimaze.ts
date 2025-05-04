@@ -14,6 +14,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const Nurimaze = createVariety({
+	pid: "nurimaze",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {
@@ -180,8 +181,6 @@ export const Nurimaze = createVariety({
 
 
 		createExtraObject: function (): void {
-			console.log("!!")
-			console.dir(this.puzzle, { depth: 2 })
 			this.startpos = new StartAddress(this.puzzle, 1, 1);
 			this.goalpos = new GoalAddress(this.puzzle, this.cols * 2 - 1, this.rows * 2 - 1);
 			this.startpos.partner = this.goalpos;
