@@ -270,7 +270,7 @@ export abstract class Puzzle<
 	emit(eventname: string, ...args: any[]) {
 		const evlist = this.listeners[eventname];
 		if (!!evlist) {
-			args.unshift(this);
+			//args.unshift(this);
 			for (let i = 0; i < evlist.length; i++) {
 				const ev = evlist[i];
 				if (evlist[i].once) { evlist.splice(i, 1); i--; }
@@ -464,7 +464,7 @@ export abstract class Puzzle<
 	//------------------------------------------------------------------------------
 	// owner.check()          正答判定処理を行う
 	//------------------------------------------------------------------------------
-	check(activemode: boolean) {
+	check(activemode: boolean = true) {
 		if (!!activemode) {
 			this.key.keyreset();
 			this.mouse.mousereset();

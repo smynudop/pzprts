@@ -92,10 +92,11 @@ export class BoardExec<TBoard extends Board = Board> {
 	}
 
 	puzzle: Puzzle<TBoard>
-	board: TBoard
+	get board(): TBoard {
+		return this.puzzle.board
+	}
 	constructor(puzzle: Puzzle<TBoard>, option?: any) {
 		this.puzzle = puzzle;
-		this.board = puzzle.board;
 		Object.assign(this, option)
 	}
 

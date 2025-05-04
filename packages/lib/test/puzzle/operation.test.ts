@@ -1,14 +1,15 @@
 // test/puzzle/operation_test.js
 
-var assert = require('assert');
+import { describe, it, assert } from "vitest";
+import { Nurikabe } from "../../src";
 
-var pzpr = require('../../dist/pzpr.js');
+describe('Trial mode test', function () {
+	it('Enter test', function () {
+		const puzzle = new Nurikabe()
+		puzzle.readURL('nurikabe/5/5');
 
-describe('Trial mode test', function(){
-	it('Enter test', function(){
-		var puzzle = new pzpr.Puzzle().open('nurikabe/5/5');
 		puzzle.setMode('play');
-		puzzle.mouse.inputPath(1,1);
+		puzzle.mouse.inputPath(1, 1);
 		assert.equal(puzzle.board.trialstage, 0);
 		assert.deepEqual(puzzle.opemgr.trialpos, []);
 		assert.equal(puzzle.opemgr.position, 1);
@@ -18,23 +19,25 @@ describe('Trial mode test', function(){
 		assert.deepEqual(puzzle.opemgr.trialpos, [1]);
 		assert.equal(puzzle.opemgr.position, 2);
 
-		puzzle.mouse.inputPath(1,3);
+		puzzle.mouse.inputPath(1, 3);
 		assert.equal(puzzle.board.trialstage, 1);
 		assert.deepEqual(puzzle.opemgr.trialpos, [1]);
 		assert.equal(puzzle.opemgr.position, 3);
 
 		puzzle.enterTrial();
 		assert.equal(puzzle.board.trialstage, 2);
-		assert.deepEqual(puzzle.opemgr.trialpos, [1,3]);
+		assert.deepEqual(puzzle.opemgr.trialpos, [1, 3]);
 		assert.equal(puzzle.opemgr.position, 4);
 	});
 
-	it('Accept test', function(){
-		var puzzle = new pzpr.Puzzle().open('nurikabe/5/5');
+	it('Accept test', function () {
+		const puzzle = new Nurikabe()
+		puzzle.readURL('nurikabe/5/5');
+
 		puzzle.setMode('play');
-		puzzle.mouse.inputPath(1,1);
+		puzzle.mouse.inputPath(1, 1);
 		puzzle.enterTrial();
-		puzzle.mouse.inputPath(1,3);
+		puzzle.mouse.inputPath(1, 3);
 
 		puzzle.acceptTrial();
 		assert.equal(puzzle.board.trialstage, 0);
@@ -42,12 +45,14 @@ describe('Trial mode test', function(){
 		assert.equal(puzzle.opemgr.position, 4);
 	});
 
-	it('Reject test', function(){
-		var puzzle = new pzpr.Puzzle().open('nurikabe/5/5');
+	it('Reject test', function () {
+		const puzzle = new Nurikabe()
+		puzzle.readURL('nurikabe/5/5');
+
 		puzzle.setMode('play');
-		puzzle.mouse.inputPath(1,1);
+		puzzle.mouse.inputPath(1, 1);
 		puzzle.enterTrial();
-		puzzle.mouse.inputPath(1,3);
+		puzzle.mouse.inputPath(1, 3);
 
 		puzzle.rejectTrial();
 		assert.equal(puzzle.board.trialstage, 0);
@@ -55,14 +60,16 @@ describe('Trial mode test', function(){
 		assert.equal(puzzle.opemgr.position, 1);
 	});
 
-	it('Multi accept test', function(){
-		var puzzle = new pzpr.Puzzle().open('nurikabe/5/5');
+	it('Multi accept test', function () {
+		const puzzle = new Nurikabe()
+		puzzle.readURL('nurikabe/5/5');
+
 		puzzle.setMode('play');
-		puzzle.mouse.inputPath(1,1);
+		puzzle.mouse.inputPath(1, 1);
 		puzzle.enterTrial();
-		puzzle.mouse.inputPath(1,3);
+		puzzle.mouse.inputPath(1, 3);
 		puzzle.enterTrial();
-		puzzle.mouse.inputPath(1,5);
+		puzzle.mouse.inputPath(1, 5);
 
 		puzzle.acceptTrial();
 		assert.equal(puzzle.board.trialstage, 0);
@@ -70,14 +77,16 @@ describe('Trial mode test', function(){
 		assert.equal(puzzle.opemgr.position, 6);
 	});
 
-	it('Multi reject test', function(){
-		var puzzle = new pzpr.Puzzle().open('nurikabe/5/5');
+	it('Multi reject test', function () {
+		const puzzle = new Nurikabe()
+		puzzle.readURL('nurikabe/5/5');
+
 		puzzle.setMode('play');
-		puzzle.mouse.inputPath(1,1);
+		puzzle.mouse.inputPath(1, 1);
 		puzzle.enterTrial();
-		puzzle.mouse.inputPath(1,3);
+		puzzle.mouse.inputPath(1, 3);
 		puzzle.enterTrial();
-		puzzle.mouse.inputPath(1,5);
+		puzzle.mouse.inputPath(1, 5);
 
 		puzzle.rejectCurrentTrial();
 		assert.equal(puzzle.board.trialstage, 1);
@@ -85,19 +94,21 @@ describe('Trial mode test', function(){
 		assert.equal(puzzle.opemgr.position, 3);
 
 		puzzle.enterTrial();
-		puzzle.mouse.inputPath(1,5);
+		puzzle.mouse.inputPath(1, 5);
 		puzzle.rejectTrial();
 		assert.equal(puzzle.board.trialstage, 0);
 		assert.deepEqual(puzzle.opemgr.trialpos, []);
 		assert.equal(puzzle.opemgr.position, 1);
 	});
 
-	it('Undo/Redo test in trial mode', function(){
-		var puzzle = new pzpr.Puzzle().open('nurikabe/5/5');
+	it('Undo/Redo test in trial mode', function () {
+		const puzzle = new Nurikabe()
+		puzzle.readURL('nurikabe/5/5');
+
 		puzzle.setMode('play');
-		puzzle.mouse.inputPath(1,1);
+		puzzle.mouse.inputPath(1, 1);
 		puzzle.enterTrial();
-		puzzle.mouse.inputPath(1,3);
+		puzzle.mouse.inputPath(1, 3);
 
 		puzzle.undoall();
 		assert.equal(puzzle.board.trialstage, 1);
@@ -110,18 +121,20 @@ describe('Trial mode test', function(){
 		assert.equal(puzzle.opemgr.position, 3);
 	});
 
-	it('Undo/Redo test after trial mode', function(){
-		var puzzle = new pzpr.Puzzle().open('nurikabe/5/5');
+	it('Undo/Redo test after trial mode', function () {
+		const puzzle = new Nurikabe()
+		puzzle.readURL('nurikabe/5/5');
+
 		puzzle.setMode('play');
-		puzzle.mouse.inputPath(1,1);
+		puzzle.mouse.inputPath(1, 1);
 		puzzle.enterTrial();
-		puzzle.mouse.inputPath(1,3);
+		puzzle.mouse.inputPath(1, 3);
 		puzzle.acceptTrial();
 		assert.equal(puzzle.board.trialstage, 0);
 		assert.deepEqual(puzzle.opemgr.trialpos, []);
 		assert.equal(puzzle.opemgr.position, 4);
 
-		puzzle.on('trial', function(p,i){assert.equal(i,1);});
+		puzzle.on('trial', function (p, i) { assert.equal(i, 1); });
 		puzzle.undo();
 		puzzle.listeners.trial = [];
 		assert.equal(puzzle.board.trialstage, 1);
@@ -133,7 +146,7 @@ describe('Trial mode test', function(){
 		assert.deepEqual(puzzle.opemgr.trialpos, [1]);
 		assert.equal(puzzle.opemgr.position, 2);
 
-		puzzle.on('trial', function(p,i){assert.equal(i,0);});
+		puzzle.on('trial', function (p, i) { assert.equal(i, 0); });
 		puzzle.undo();
 		puzzle.listeners.trial = [];
 		assert.equal(puzzle.board.trialstage, 0);
@@ -150,7 +163,7 @@ describe('Trial mode test', function(){
 		assert.deepEqual(puzzle.opemgr.trialpos, []);
 		assert.equal(puzzle.opemgr.position, 1);
 
-		puzzle.on('trial', function(p,i){assert.equal(i,1);});
+		puzzle.on('trial', function (p, i) { assert.equal(i, 1); });
 		puzzle.redo();
 		puzzle.listeners.trial = [];
 		assert.equal(puzzle.board.trialstage, 1);
@@ -162,7 +175,7 @@ describe('Trial mode test', function(){
 		assert.deepEqual(puzzle.opemgr.trialpos, [1]);
 		assert.equal(puzzle.opemgr.position, 3);
 
-		puzzle.on('trial', function(p,i){assert.equal(i,0);});
+		puzzle.on('trial', function (p, i) { assert.equal(i, 0); });
 		puzzle.redo();
 		puzzle.listeners.trial = [];
 		assert.equal(puzzle.board.trialstage, 0);
@@ -170,10 +183,12 @@ describe('Trial mode test', function(){
 		assert.equal(puzzle.opemgr.position, 4);
 	});
 
-	it('No operation test', function(){
-		var puzzle = new pzpr.Puzzle().open('nurikabe/5/5');
+	it('No operation test', function () {
+		const puzzle = new Nurikabe()
+		puzzle.readURL('nurikabe/5/5');
+
 		puzzle.setMode('play');
-		puzzle.mouse.inputPath(1,1);
+		puzzle.mouse.inputPath(1, 1);
 		puzzle.enterTrial();
 		puzzle.enterTrial();
 

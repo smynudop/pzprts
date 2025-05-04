@@ -1,19 +1,33 @@
 import type { Puzzle } from "../../src/puzzle/Puzzle"
 import { test, expect, describe, it, assert } from "vitest"
 import { FILE_PZPR } from "../../src/pzpr/constants"
+import type { Board } from "../../src/puzzle/Board"
+import type { IBoardOperation } from "../../src/puzzle/BoardExec"
+
 type TestInfo = {
     url: string
     failcheck: [code: string | null, board: string][],
     inputs: { input: string[], result?: string }[]
+    fullfile?: string
 }
 
+function assert_equal_board(bd1: Board, bd2: any) {
+    let cnt = 0
+    bd1.compareData(bd2, function (group, c, a) {
+        cnt++
+    });
+    return cnt
+}
 export const testPuzzle = (puzzle: Puzzle, info: TestInfo) => {
+    const fullfile = info.failcheck.at(-1)![1].split("/").join("\n")
+    const pid = puzzle.pid
+
     describe(puzzle.pid, function () {
         test("pid is set", () => {
             assert(puzzle.pid !== "", "pid is not set!")
         })
         describe("fileio", () => {
-            puzzle.readFile(info.failcheck.at(-1)![1].split("/").join("\n"))
+            puzzle.readFile(fullfile)
             it('pzpr file', function () {
                 const bd2 = puzzle.board.freezecopy();
                 const outputstr = puzzle.getFileData(FILE_PZPR);
@@ -58,6 +72,115 @@ export const testPuzzle = (puzzle: Puzzle, info: TestInfo) => {
             //     });
             // });
         });
+        return;
+        // describe('boardexec test', function () {
+        //     describe('Turn', function () {
+        //         puzzle.readFile(fullfile)
+        //         const relyonupdn = (pid === 'dosufuwa' || pid === 'box' || pid === 'cojun' || pid === 'shugaku');
+        //         const relyon90deg = (pid === 'stostone');
 
+        //         if (puzzle.pid === 'tawa') { return; }
+        //         it('turn right', function () {
+        //             const bd2 = puzzle.board.freezecopy();
+        //             for (let i = 0; i < 4; i++) {
+        //                 puzzle.board.operate('turnr');
+        //                 if (relyonupdn && i !== 3) { continue; }
+        //                 if (relyon90deg && (i !== 1 && i !== 3)) { continue; }
+        //                 assert.equal(puzzle.check().list[0], null);
+        //             }
+        //             assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
+        //         });
+        //         it('turn right undo', function () {
+        //             const bd2 = puzzle.board.freezecopy();
+        //             for (let i = 0; i < 4; i++) {
+        //                 puzzle.undo();
+        //                 if (relyonupdn && i !== 3) { continue; }
+        //                 if (relyon90deg && (i !== 1 && i !== 3)) { continue; }
+        //                 assert.equal(puzzle.check().list[0], null);
+        //             }
+        //             assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
+        //         });
+        //         it('turn left', function () {
+        //             const bd2 = puzzle.board.freezecopy();
+        //             for (let i = 0; i < 4; i++) {
+        //                 puzzle.board.operate('turnl');
+        //                 if (relyonupdn && i !== 3) { continue; }
+        //                 if (relyon90deg && (i !== 1 && i !== 3)) { continue; }
+        //                 assert.equal(puzzle.check().list[0], null);
+        //             }
+        //             assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
+        //         });
+        //         it('turn left undo', function () {
+        //             const bd2 = puzzle.board.freezecopy();
+        //             for (let i = 0; i < 4; i++) {
+        //                 puzzle.undo();
+        //                 if (relyonupdn && i !== 3) { continue; }
+        //                 if (relyon90deg && (i !== 1 && i !== 3)) { continue; }
+        //                 assert.equal(puzzle.check().list[0], null);
+        //             }
+        //             assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
+        //         });
+        //     });
+        //     describe('Flip', function () {
+        //         puzzle.readFile(fullfile);
+        //         const relyonupdn = (pid === 'dosufuwa' || pid === 'box' || pid === 'cojun' || pid === 'shugaku' || pid === 'tawa');
+        //         const relyonanydir = (pid === 'box' || pid === 'shugaku');
+
+        //         it('flipX', function () {
+        //             const bd2 = puzzle.board.freezecopy();
+        //             for (let i = 0; i < 4; i++) {
+        //                 puzzle.board.operate('flipx');
+        //                 if (relyonanydir && i !== 3) { continue; }
+        //                 assert.equal(puzzle.check().list[0], null);
+        //             }
+        //             assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
+        //         });
+        //         it('flipX undo', function () {
+        //             const bd2 = puzzle.board.freezecopy();
+        //             for (let i = 0; i < 4; i++) {
+        //                 puzzle.undo();
+        //                 if (relyonanydir && i !== 3) { continue; }
+        //                 assert.equal(puzzle.check().list[0], null);
+        //             }
+        //             assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
+        //         });
+        //         it('flipY', function () {
+        //             const bd2 = puzzle.board.freezecopy();
+        //             for (let i = 0; i < 4; i++) {
+        //                 puzzle.board.operate('flipy');
+        //                 if (relyonupdn && i !== 3) { continue; }
+        //                 assert.equal(puzzle.check().list[0], null);
+        //             }
+        //             assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
+        //         });
+        //         it('flipY undo', function () {
+        //             const bd2 = puzzle.board.freezecopy();
+        //             for (let i = 0; i < 4; i++) {
+        //                 puzzle.undo();
+        //                 if (relyonupdn && i !== 3) { continue; }
+        //                 assert.equal(puzzle.check().list[0], null);
+        //             }
+        //             assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
+        //         });
+        //     });
+        //     describe('Adjust', function () {
+        //         puzzle.readFile(fullfile);
+        //         it('expand/reduce', function () {
+        //             const bd2 = puzzle.board.freezecopy();
+        //             const opes: IBoardOperation[] = ['expandup', 'expanddn', 'expandlt', 'expandrt', 'reduceup', 'reducedn', 'reducelt', 'reducert']
+        //             opes.forEach(function (a) { puzzle.board.operate(a); });
+
+        //             assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
+        //             assert.equal(puzzle.check().list[0], null);
+        //         });
+        //         it('expand/reduce undo', function () {
+        //             const bd2 = puzzle.board.freezecopy();
+        //             for (let i = 0; i < 8; i++) { puzzle.undo(); }
+
+        //             assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
+        //             assert.equal(puzzle.check().list[0], null);
+        //         });
+        //     });
+        // });
     });
 }
