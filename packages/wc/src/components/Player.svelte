@@ -14,12 +14,20 @@
   let resultText = "";
   let complete = false;
   let err: string | null = null;
+  let showDialog = false
+
+  let enableUndo = false
+  let enableRedo = false
 
   onMount(() => {
     try {
       if (!src) {
         throw new Error(`URLが指定されていません。`);
       }
+      puzzle.on("history", () => {
+        enableUndo = puzzle.opemgr.enableUndo
+        enableRedo = puzzle.opemgr.enableRedo
+      })
       puzzle.readURL(src);
       puzzle.mount(element!);
 
@@ -51,11 +59,29 @@
     const result = puzzle.check(true);
     resultText = result.text;
     complete = result.complete;
+
+    showDialog = true
   };
+
+  const undo = () => {
+    puzzle.undo()
+  }
+  const redo = () => {
+    puzzle.redo()
+  }
+
+  const hideDialog= () =>{
+    showDialog = false
+  }
 </script>
 
 <div class="container">
+  <h1>{puzzle.pid}</h1>
   <div class="mode">
+
+    <div>
+      入力モード｜
+    </div>
     {#each playModes as mode}
       <!-- svelte-ignore a11y-click-events-have-key-events a11y_no_static_element_interactions -->
       <div
@@ -69,29 +95,37 @@
   </div>
 
   <div id="puzzle" bind:this={element}></div>
-  <div class="result" class:complete>
-    {resultText}
-  </div>
   <div class="tool">
-    <button on:click={check}>Check</button>
+    <button on:click={check} class="check-button">チェック</button>
+    <button on:click={undo} disabled={!enableUndo}>戻</button>
+    <button on:click={redo} disabled={!enableRedo}>進</button>
   </div>
   {#if err != null}
     <div class="error">{err}</div>
   {/if}
+  {#if showDialog}
+    <div class="dialog" on:click={hideDialog}>
+      <div class="message">
+        {resultText}
+      </div>
+    </div>
+  {/if}
 </div>
 
 <style>
+  h1{
+    font-size: 150%;
+    text-align: center;
+    margin: .5em 0;
+    font-weight: normal;
+  }
   .container {
     max-width: 100%;
     margin: 0 auto;
+    position: relative;
   }
 
-  .mode {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 0.5rem 0;
-  }
+
 
   #puzzle {
     margin: 0 auto;
@@ -105,52 +139,78 @@
     box-shadow: 0 0 10px 5px rgba(0, 123, 255, 0.6); /* 青くぼやっと光る */
   }
 
-  .mode > div {
-    border: 1px solid #ccc;
-    border-right-width: 0px;
-    padding: 0.25em 0.5em;
-    text-align: center;
-    cursor: pointer;
-    user-select: none;
-  }
-
   :global(svg) {
     display: block;
   }
 
-  .mode-item:first-child {
-    border-radius: 4px 0 0 4px;
+  .mode {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2px;
   }
 
-  .mode-item:last-child {
-    border-radius: 0 4px 4px 0;
-    border-right-width: 1px;
+  .mode > div{
+    user-select: none;
+    padding: 2px;
+  }
+
+  .mode-item {
+    cursor: pointer;
   }
 
   .active {
-    background-color: aquamarine;
+    background-color: #efefef;
+    color: maroon;
+    font-weight: bold;
   }
 
   button {
     border: 1px solid #ccc;
     border-radius: 0.5em;
-    padding: 1em;
-    background-color: rgb(120, 214, 214);
-    transition: all 0.3s;
+    padding: .25em .5em;
+    transition: all 0.2s;
     cursor: pointer;
+    background: linear-gradient(to bottom, white, silver);
   }
 
-  button:hover {
-    background-color: rgb(163, 228, 228);
+  button.check-button{
+    background:linear-gradient(to bottom, #83bdff, rgb(53, 56, 209)) ;
+    color: white;
+  }
+
+  button:hover{
+    filter: brightness(1.1); /* 1.1 = 少し明るく */
   }
 
   .tool {
     padding: 0.5em 0;
     display: flex;
+    gap: 0.5em;
     justify-content: center;
   }
 
   .result {
     text-align: center;
+  }
+
+  .dialog{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.35);
+    padding: .25em;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .dialog .message{
+    background-color: white;
+    border-radius: 3px;
+    padding: .5em;
+
   }
 </style>
