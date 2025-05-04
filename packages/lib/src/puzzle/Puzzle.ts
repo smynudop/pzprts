@@ -42,7 +42,6 @@ const MODE_PLAYER = 3
 export abstract class Puzzle<
 	TBoard extends Board = Board
 > {
-	Config = Config
 	preInitCanvasInfo: {
 		type: string
 		width: number | null
@@ -89,7 +88,7 @@ export abstract class Puzzle<
 
 		this.metadata = MetaData.createEmtpyMetaData();
 
-		this.config = new this.Config(this);
+		this.config = new Config(this);
 
 		if (Array.isArray(varietyOption?.Encode) || varietyOption?.Encode === undefined) {
 			this.converters = []
