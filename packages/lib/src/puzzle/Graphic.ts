@@ -734,6 +734,8 @@ export class Graphic<TBoard extends Board = Board> {
 				return this.getBGCellColor_qsub2(cell)
 			case "qsub3":
 				return this.getBGCellColor_qsub3(cell)
+			case "icebarn":
+				return this.getBGCellColor_icebarn(cell)
 			default:
 				console.warn(`bgcellcolor_func(${this.bgcellcolor_func}) is invalid`)
 				return this.getBGCellColor_error1(cell)

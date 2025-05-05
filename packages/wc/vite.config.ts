@@ -1,6 +1,10 @@
 import { defineConfig } from "vite"
-import { svelte } from '@sveltejs/vite-plugin-svelte'
-import { visualizer } from 'rollup-plugin-visualizer';
+import { svelte } from "@sveltejs/vite-plugin-svelte"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 //import dts from 'vite-plugin-dts'
 
 export default defineConfig({
@@ -10,6 +14,11 @@ export default defineConfig({
     server: {
         port: 7638,
         host: true
+    },
+    resolve: {
+        // alias: {
+        //     "@udop/penpa-player-lib": path.resolve(__dirname, "../lib/src")
+        // }
     },
     build: {
         lib: {

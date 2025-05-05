@@ -568,9 +568,9 @@ export class MouseEvent1<TBoard extends Board = Board> {
 	// mv.inputqnum()      Cellのqnum(数字データ)に数字を入力する
 	// mv.inputqnum_main() Cellのqnum(数字データ)に数字を入力する(メイン処理)
 	//---------------------------------------------------------------------------
-	inputqnum() {
+	inputqnum(cell?: CellOfBoard<TBoard>) {
 
-		const cell = this.getcell();
+		if (!cell) { cell = this.getcell(); }
 		if (cell.isnull || cell === this.mouseCell) { return; }
 
 		if (this.cursor.modesnum && this.puzzle.playmode && !this.cursor.checksnum(this.inputPoint) && cell.noNum()) {

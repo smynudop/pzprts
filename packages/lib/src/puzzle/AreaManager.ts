@@ -208,7 +208,7 @@ export class AreaRoomGraph<TComponent extends GraphComponent = GraphComponent> e
 
 	hastop = false
 
-	getComponentRefs(obj: any): GraphComponent { return obj.room; } // getSideAreaInfo用
+	getComponentRefs(obj: any): TComponent { return obj.room; } // getSideAreaInfo用
 	override setComponentRefs(obj: any, component: GraphComponent) { obj.room = component; }
 	override getObjNodeList(nodeobj: any) { return nodeobj.roomnodes; }
 	override resetObjNodeList(nodeobj: any) { nodeobj.roomnodes = []; }
@@ -335,7 +335,7 @@ export class AreaRoomGraph<TComponent extends GraphComponent = GraphComponent> e
 	// roommgr.getSideAreaInfo()  接しているが異なる領域部屋の情報を取得する
 	//---------------------------------------------------------------------------
 	getSideAreaInfo() {
-		const sides = [];
+		const sides: [TComponent, TComponent][] = [];
 		const len = this.components.length;
 		const adjs: Record<number, boolean> = {};
 		const bd = this.puzzle.board;
