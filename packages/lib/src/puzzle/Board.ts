@@ -70,7 +70,7 @@ export class Board<
 	hasinfo: boolean
 	cell: CellList<TCell>
 	cross: CrossList
-	border: BorderList
+	border: BorderList<TBorder>
 	excell: EXCellList
 	nullobj: BoardPiece
 	emptycell: TCell
@@ -540,7 +540,7 @@ export class Board<
 		}
 		return this.emptycross;
 	}
-	getb(bx: number, by: number) {
+	getb(bx: number, by: number): TBorder {
 		let id = null;
 		const qc = this.cols;
 		const qr = this.rows;

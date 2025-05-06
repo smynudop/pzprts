@@ -68,6 +68,7 @@
   const hideDialog= () =>{
     showDialog = false
   }
+  const rotate = () => puzzle.board.operate("turnr")
 </script>
 
 <div class="container">
@@ -94,6 +95,7 @@
     <button on:click={check} class="check-button">チェック</button>
     <button on:click={undo} disabled={!enableUndo}>戻</button>
     <button on:click={redo} disabled={!enableRedo}>進</button>
+    <button on:click={rotate} >回</button>
   </div>
   {#if err != null}
     <div class="error">{err}</div>

@@ -77,7 +77,7 @@ export const Slalom = createVariety({
 			}
 		},
 		inputGate: function (cell: Cell): void {
-			let pos = cell.getaddr(), input = false;
+			let pos = cell.getaddr() as any, input = false;
 
 			// 黒マス上なら何もしない
 			if (cell.ques === 1) { }

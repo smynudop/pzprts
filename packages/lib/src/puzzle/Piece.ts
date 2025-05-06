@@ -54,8 +54,12 @@ export class BoardPiece extends Position {
 	ques: number = 0
 	// cross :(交点の黒点)
 	// border:(問題の境界線)
-	qdir = 0  // cell  :(数字につく矢印の向き)
-	// border:(アイスバーンの矢印/マイナリズムの不等号)
+
+	/**
+	 * cell  :(数字につく矢印の向き)
+	 * border:(アイスバーンの矢印/マイナリズムの不等号)
+	 */
+	qdir = 0
 	qnum = -1	// cell  :(セルの数字/○△□/マカロ以外の単体矢印/白丸黒丸/カックロの右側
 
 	// cross :(交点の数字)
@@ -64,8 +68,12 @@ export class BoardPiece extends Position {
 	qchar = 0	// excell:キンコンカンの文字
 
 	/* 回答データを保持するプロパティ */
-	qans = 0	// cell  :(1:黒マス/あかり 2-5:三角形 11-13:棒 31-32:斜線 41-50:ふとん)
-	// border:(回答の境界線)
+
+	/**
+	 * cell  :(1:黒マス/あかり 2-5:三角形 11-13:棒 31-32:斜線 41-50:ふとん)
+	 * border:(回答の境界線)
+	 */
+	qans = 0
 	anum = -1	// cell  :(セルの数字/○△□/単体矢印)
 	line = 0	// border:(ましゅやスリリンなどの線)
 
@@ -656,7 +664,8 @@ export class Cross extends BoardPiece {
 
 export type BorderOption = Partial<Border>
 export class Border extends BoardPiece {
-	sidecell: [Cell | EXCell, Cell | EXCell]
+	sidecell: [Cell, Cell]
+	//sidecell: [Cell | EXCell, Cell | EXCell]
 	sidecross: [Cross, Cross]
 	sideobj: any[]	// LineManager用
 	constructor(puzzle: Puzzle, option?: any) {
@@ -682,13 +691,17 @@ export class Border extends BoardPiece {
 	initSideObject() {
 		const allowexcell = (this.board.hasborder === 2 && this.board.hasexcell === 2);
 		if (this.isvert) {
+			//@ts-ignore
 			this.sidecell[0] = ((!allowexcell || this.bx > 0) ? this.relcell(-1, 0) : this.relexcell(-1, 0));
+			//@ts-ignore
 			this.sidecell[1] = ((!allowexcell || this.bx < this.board.cols * 2) ? this.relcell(1, 0) : this.relexcell(1, 0));
 			this.sidecross[0] = this.relcross(0, -1);
 			this.sidecross[1] = this.relcross(0, 1);
 		}
 		else {
+			//@ts-ignore
 			this.sidecell[0] = ((!allowexcell || this.by > 0) ? this.relcell(0, -1) : this.relexcell(0, -1));
+			//@ts-ignore
 			this.sidecell[1] = ((!allowexcell || this.by < this.board.rows * 2) ? this.relcell(0, 1) : this.relexcell(0, 1));
 			this.sidecross[0] = this.relcross(-1, 0);
 			this.sidecross[1] = this.relcross(1, 0);

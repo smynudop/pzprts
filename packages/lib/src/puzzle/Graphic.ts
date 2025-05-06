@@ -902,7 +902,7 @@ export class Graphic<TBoard extends Board = Board> {
 			else { g.vhide(); }
 		}
 	}
-	getCellArrowColor(cell: Cell) {
+	getCellArrowColor(cell: CellOfBoard<TBoard>) {
 		const dir = (!cell.numberAsObject ? cell.qdir : cell.getNum());
 		if (dir >= 1 && dir <= 4) {
 			if (!cell.numberAsObject || cell.qnum !== -1) { return this.quescolor; }

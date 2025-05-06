@@ -13,6 +13,7 @@ import { parseFile } from "../pzpr/parser";
 import { FileData } from "../pzpr/fileData";
 import * as Constants from "../pzpr/constants"
 import * as MetaData from "../pzpr/metadata"
+import type { CellOfBoard } from "./Answer";
 
 type IDecodeFunc<TValue, TPiece extends BoardPiece = BoardPiece> = (piece: TPiece, str: TValue) => void
 type IEncodeFunc<TValue, TPiece extends BoardPiece = BoardPiece> = (piece: TPiece) => TValue
@@ -212,20 +213,20 @@ export class FileIO<TBoard extends Board = Board> {
 	// fio.decodeBorder()  配列で、個別文字列から個別Borderの設定を行う
 	// fio.decodeCellExcell()  配列で、個別文字列から個別セル/Excellの設定を行う
 	//---------------------------------------------------------------------------
-	decodeObj(func: IDecodeFunc<string>, group: IGroup2, startbx: number, startby: number, endbx: number, endby: number) {
+	decodeObj<T extends BoardPiece>(func: IDecodeFunc<string, T>, group: IGroup2, startbx: number, startby: number, endbx: number, endby: number) {
 		let bx = startbx;
 		let by = startby;
 		const step = 2;
 		const item = this.getItemList((endby - startby) / step + 1);
 		for (let i = 0; i < item.length; i++) {
-			func.call(this, this.puzzle.board.getObjectPos(group, bx, by), item[i]);
+			func.call(this, this.puzzle.board.getObjectPos(group, bx, by) as T, item[i]);
 
 			bx += step;
 			if (bx > endbx) { bx = startbx; by += step; }
 			if (by > endby) { break; }
 		}
 	}
-	decodeCell(func: IDecodeFunc<string, BoardPiece>) {
+	decodeCell(func: IDecodeFunc<string, CellOfBoard<TBoard>>) {
 		this.decodeObj(func, 'cell', 1, 1, 2 * this.puzzle.board.cols - 1, 2 * this.puzzle.board.rows - 1);
 	}
 	decodeCross(func: IDecodeFunc<string>) {

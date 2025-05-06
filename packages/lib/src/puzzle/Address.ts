@@ -3,23 +3,24 @@
 import type { Board } from "./Board"
 import type { Puzzle } from "./Puzzle"
 import { DIRS } from "./Constants"
+import type { BorderOfBoard, CellOfBoard } from "./Answer"
 //----------------------------------------------------------------------------
 // ★Positionクラス Address, Pieceクラスのベースクラス
 //---------------------------------------------------------------------------
 
 // 方向を表す定数
 
-export class Position {
+export class Position<TBoard extends Board = Board> {
 	bx: number = null!
 	by: number = null!
 
 
-	get board(): Board {
+	get board(): TBoard {
 		return this.puzzle.board
 	}
-	puzzle: Puzzle
+	puzzle: Puzzle<TBoard>
 
-	constructor(puzzle: Puzzle) {
+	constructor(puzzle: Puzzle<TBoard>) {
 		this.puzzle = puzzle;
 	}
 
@@ -33,8 +34,8 @@ export class Position {
 	//---------------------------------------------------------------------------
 	// pos.getaddr() 位置をAddressクラスのオブジェクトで取得する
 	//---------------------------------------------------------------------------
-	getaddr() {
-		return (new Address(this.puzzle, this.bx, this.by));
+	getaddr(): Address<TBoard> {
+		return (new Address<TBoard>(this.puzzle, this.bx, this.by));
 	}
 
 	//---------------------------------------------------------------------------
@@ -119,8 +120,8 @@ export class Position {
 //----------------------------------------------------------------------------
 // ★Addressクラス (bx,by)座標を扱う
 //---------------------------------------------------------------------------
-export class Address extends Position {
-	constructor(puzzle: Puzzle, bx?: number, by?: number) {
+export class Address<TBoard extends Board = Board> extends Position<TBoard> {
+	constructor(puzzle: Puzzle<TBoard>, bx?: number, by?: number) {
 		super(puzzle);
 		if (bx != null && by != null) { this.init(bx, by); }
 	}
@@ -142,9 +143,9 @@ export class Address extends Position {
 	//---------------------------------------------------------------------------
 	// getc(), getx(), getb(), getex(), getobj() Positionに存在するオブジェクトを返す
 	//---------------------------------------------------------------------------
-	getc() { return this.board.getc(this.bx, this.by); }
+	getc(): CellOfBoard<TBoard> { return this.board.getc(this.bx, this.by); }
 	getx() { return this.board.getx(this.bx, this.by); }
-	getb() { return this.board.getb(this.bx, this.by); }
+	getb(): BorderOfBoard<TBoard> { return this.board.getb(this.bx, this.by); }
 	getex() { return this.board.getex(this.bx, this.by); }
 	getobj() { return this.board.getobj(this.bx, this.by); }
 

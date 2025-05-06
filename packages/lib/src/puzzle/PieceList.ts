@@ -207,7 +207,7 @@ export class CrossList extends PieceList<Cross> { }
 //----------------------------------------------------------------------------
 // ★BorderListクラス Borderの配列を扱う
 //---------------------------------------------------------------------------
-export class BorderList extends PieceList<Border> {
+export class BorderList<TBorder extends Border = Border> extends PieceList<TBorder> {
 	//---------------------------------------------------------------------------
 	// blist.cellinside()  線が重なるセルのリストを取得する
 	// blist.crossinside() 線が重なる交点のリストを取得する

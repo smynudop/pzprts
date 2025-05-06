@@ -127,6 +127,7 @@ export class BoardExec<TBoard extends Board = Board> {
 		this.execadjust_main(this.boardtype[name][1], d);
 		this.addOpe(d, name);
 
+
 		bd.setminmax();
 		bd.rebuildInfo();
 
@@ -138,6 +139,7 @@ export class BoardExec<TBoard extends Board = Board> {
 	execadjust_main(key: number, d: IRange) {
 		const bd = this.board;
 		this.adjustBoardData(key, d);
+
 		if (bd.roommgr.hastop && (key & REDUCE)) { this.reduceRoomNumber(key, d); }
 
 		if (key & TURN) {

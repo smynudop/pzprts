@@ -51,7 +51,7 @@ export abstract class Puzzle<
 	board: TBoard
 	checker: AnsCheck<TBoard>
 	painter: Graphic
-	cursor: TargetCursor
+	cursor: TargetCursor<TBoard>
 	mouse: MouseEvent1
 	key: KeyEvent
 	opemgr: OperationManager

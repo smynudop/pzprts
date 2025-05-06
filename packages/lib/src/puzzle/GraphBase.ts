@@ -509,6 +509,9 @@ export class GraphComponent {
 	top: any = null
 	isremake = false
 	id: number = null!
+	get board() {
+		return this.puzzle.board
+	}
 
 	constructor(puzzle: Puzzle, option?: GraphComponentOption) {
 		this.puzzle = puzzle

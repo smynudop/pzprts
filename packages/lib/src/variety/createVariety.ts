@@ -69,7 +69,7 @@ export type VarityOptionInner<
     EXCell?: EXCellOption & { [key: string]: any } & ThisType<EXCell>
     Board?: ExtendClass<TBoard, BoardExtend>
     BoardExec?: ExtendClass<BoardExec<TBoard>, BoardExecExtend>
-    TargetCursor?: { [key: string]: any } & ThisType<TargetCursor>
+    TargetCursor?: { [key: string]: any } & ThisType<TargetCursor<TBoard>>
     GraphComponent?: GraphComponentExtend & ThisType<GraphComponent & GraphComponentExtend>
     LineGraph?: LineGraphOption
     AreaShadeGraph?: AreaShadeGraphOption

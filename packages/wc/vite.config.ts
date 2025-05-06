@@ -16,9 +16,9 @@ export default defineConfig({
         host: true
     },
     resolve: {
-        // alias: {
-        //     "@udop/penpa-player-lib": path.resolve(__dirname, "../lib/src")
-        // }
+        alias: {
+            "@udop/penpa-player-lib": path.resolve(__dirname, "../lib/src")
+        }
     },
     build: {
         lib: {

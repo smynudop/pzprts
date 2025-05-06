@@ -55,14 +55,14 @@ export type MouseEventOption = Partial<MouseEvent1>
 
 export class MouseEvent1<TBoard extends Board = Board> {
 	puzzle: Puzzle<TBoard>
-	cursor: TargetCursor;	// TargetCursor
+	cursor: TargetCursor<TBoard>;	// TargetCursor
 	enableMouse: boolean;	// マウス入力は有効か
 	mouseCell: any;	// 入力されたセル等のID
 	firstCell: any;	// mousedownされた時のセルのID(連黒分断禁用)
 	inputPoint: RawAddress;	// 入力イベントが発生したborder座標 ※端数あり
 	firstPoint: RawAddress;	// mousedownされた時のborder座標 ※端数あり
 
-	prevPos: Address;	// 前回のマウス入力イベントのborder座標
+	prevPos: Address<TBoard>;	// 前回のマウス入力イベントのborder座標
 	btn: string;	// 押されているボタン
 	inputData: any;	// 入力中のデータ番号(実装依存)
 	bordermode: boolean;	// 境界線を入力中かどうか
@@ -794,7 +794,7 @@ export class MouseEvent1<TBoard extends Board = Board> {
 		}
 		this.prevPos = pos;
 	}
-	inputarrow_cell_main(cell: Cell, dir: number) {
+	inputarrow_cell_main(cell: CellOfBoard<TBoard>, dir: number) {
 		if (cell.numberAsObject) { cell.setNum(dir); }
 	}
 
@@ -1011,7 +1011,7 @@ export class MouseEvent1<TBoard extends Board = Board> {
 			return;
 		}
 
-		let pos: Address;
+		let pos: Address<TBoard>;
 		let border: Border;
 		if (!this.puzzle.board.borderAsLine) {
 			pos = this.getpos(0);
@@ -1037,7 +1037,7 @@ export class MouseEvent1<TBoard extends Board = Board> {
 		if (cell.isnull) { return; }
 
 		const cell0 = this.mouseCell;
-		const pos = cell.getaddr();
+		const pos = cell.getaddr() as any;
 		/* 初回はこの中に入ってきます。 */
 		if (this.mousestart && cell.isDestination()) {
 			this.mouseCell = cell;

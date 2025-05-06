@@ -12,7 +12,7 @@ import { DIRS } from "./Constants.js";
 export type KeyEventOption = Partial<KeyEvent>
 //---------------------------------------------------------
 export class KeyEvent<TBoard extends Board = Board> {
-	cursor: TargetCursor
+	cursor: TargetCursor<TBoard>
 	enableKey: boolean
 
 	constructor(puzzle: Puzzle<TBoard>, option?: KeyEventOption) {
@@ -487,13 +487,13 @@ export class KeyEvent<TBoard extends Board = Board> {
 //---------------------------------------------------------------------------
 // ★TargetCursorクラス キー入力のターゲットを保持する
 //---------------------------------------------------------------------------
-export class TargetCursor extends Address {
+export class TargetCursor<TBoard extends Board> extends Address<TBoard> {
 
 	mode51: boolean
 	modesnum: boolean
 	pid: string
 
-	constructor(puzzle: Puzzle, option: any) {
+	constructor(puzzle: Puzzle<TBoard>, option: any) {
 		super(puzzle);
 		Object.assign(this, option)
 		this.pid = puzzle.pid

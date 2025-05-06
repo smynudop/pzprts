@@ -23,6 +23,7 @@ type AreaCheck = (cols: number, rows: number, a: number, n: number) => boolean
 type CellListCheck = (clist: CellList) => boolean
 
 export type CellOfBoard<TBoard extends Board> = TBoard["cell"][number]
+export type BorderOfBoard<TBoard extends Board> = TBoard["border"][number]
 
 type ColsPartlyInfo = { keycell: BoardPiece | null, key51num: number, isvert: boolean }
 
