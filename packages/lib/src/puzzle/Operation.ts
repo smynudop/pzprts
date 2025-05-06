@@ -4,14 +4,14 @@ import { Position } from "./Address";
 import { IGroup, type IGroup2 } from "./Board";
 import type { BoardPiece } from "./Piece";
 import type { Puzzle } from "./Puzzle";
-import type { IBoardOperation } from "./BoardExec";
+import type { IBoardOperation, IRange } from "./BoardExec";
 
 // 入力情報管理クラス
 // Operationクラス
 //---------------------------------------------------------------------------
 // ★Operation(派生)クラス 単体の操作情報を保持する
 //---------------------------------------------------------------------------
-export class Operation<TValue = any, TExecValue = TValue> {
+export class Operation<TValue = any> {
 	puzzle: Puzzle
 	manager: OperationManager
 	old: TValue = null!
@@ -34,7 +34,7 @@ export class Operation<TValue = any, TExecValue = TValue> {
 	// ope.toString() ファイル出力する履歴の出力用ルーチン
 	// ope.toJSON()   ファイル保存時に使用するルーチン
 	//---------------------------------------------------------------------------
-	decode(strs?: any[]) { return false; }
+	decode(strs?: string[]) { return false; }
 	toString() { return ''; }
 	toJSON() { return this.toString(); }
 
@@ -43,14 +43,17 @@ export class Operation<TValue = any, TExecValue = TValue> {
 	// ope.redo()  操作opeを一手進める
 	// ope.exec()  操作opeを反映する
 	//---------------------------------------------------------------------------
-	undo() { this.exec(this.old as unknown as TExecValue); }
-	redo() { this.exec(this.num as unknown as TExecValue); }
-	exec(num: TExecValue, d: any = null) { }
+	undo() { this.exec(this.old); }
+	redo() { this.exec(this.num); }
+	exec(num: TValue, d?: IRange) { }
+	isModify(lastope: this) {
+		return false
+	}
 }
 
 // ObjectOperationクラス
 export class ObjectOperation extends Operation<number> {
-	constructor(puzzle: Puzzle, piece: BoardPiece, property: any, old: any, num: any) {
+	constructor(puzzle: Puzzle, piece: BoardPiece, property: string, old: number, num: number) {
 		super(puzzle);
 		this.group = piece.group;
 		this.property = property;
@@ -60,7 +63,7 @@ export class ObjectOperation extends Operation<number> {
 		this.num = num;
 		if (property.length > 4 && property.substr(0, 4) === 'snum') {
 			this.property = 'snum';
-			this.pos = property.substr(4);
+			this.pos = +property.substr(4);
 		}
 	}
 	group: IGroup2
@@ -117,7 +120,7 @@ export class ObjectOperation extends Operation<number> {
 	//---------------------------------------------------------------------------
 	// ope.isModify()  前の履歴をこのオブジェクトで更新するかどうか確認する
 	//---------------------------------------------------------------------------
-	isModify(lastope: ObjectOperation) {
+	override isModify(lastope: this) {
 		// 前回と同じ場所なら前回の更新のみ
 		const property = this.property;
 		if (lastope.group === this.group &&
@@ -140,7 +143,7 @@ export class ObjectOperation extends Operation<number> {
 	//---------------------------------------------------------------------------
 	// ope.exec()  操作opeを反映する。ope.undo(),ope.redo()から内部的に呼ばれる
 	//---------------------------------------------------------------------------
-	override exec(num: any, d: any = null) {
+	override exec(num: number, d?: IRange) {
 		const bd = this.puzzle.board;
 		const piece = bd.getObjectPos(this.group, this.bx, this.by);
 		if (this.group !== piece.group) { return true; }
@@ -180,14 +183,14 @@ export class BoardClearOperation extends Operation<any> {
 }
 
 // BoardAdjustOperationクラス
-export class BoardAdjustOperation extends Operation<IBoardOperation, number> {
+export class BoardAdjustOperation extends Operation<IBoardOperation> {
 
 	constructor(puzzle: Puzzle, ope: IBoardOperation) {
 		super(puzzle);
 		this.old = ope
 		this.num = ope;
 	}
-	prefix = 'AJ'
+	prefix = 'AJ' as const
 	override reqReset = true
 	//---------------------------------------------------------------------------
 	// ope.setData()  オブジェクトのデータを設定する
@@ -211,13 +214,13 @@ export class BoardAdjustOperation extends Operation<IBoardOperation, number> {
 	//---------------------------------------------------------------------------
 	override undo() {
 		const key_undo = this.puzzle.board.exec.boardtype[this.old][0];
-		this.exec(key_undo);
+		this.exec_ba(key_undo);
 	}
 	override redo() {
 		const key_redo = this.puzzle.board.exec.boardtype[this.num][1];
-		this.exec(key_redo);
+		this.exec_ba(key_redo);
 	}
-	override exec(num: number, d: any = null) {
+	exec_ba(num: number, d?: IRange) {
 		const puzzle = this.puzzle;
 		const bd = puzzle.board;
 		d = d || { x1: 0, y1: 0, x2: 2 * bd.cols, y2: 2 * bd.rows };
@@ -227,8 +230,8 @@ export class BoardAdjustOperation extends Operation<IBoardOperation, number> {
 }
 
 // BoardFlipOperationクラス
-export class BoardFlipOperation extends Operation<IBoardOperation, number> {
-	prefix = 'AT'
+export class BoardFlipOperation extends Operation<IBoardOperation> {
+	prefix = 'AT' as const
 	override reqReset = true
 	area = {
 		x1: 0,
@@ -238,7 +241,7 @@ export class BoardFlipOperation extends Operation<IBoardOperation, number> {
 	}
 	TURN = 0x40
 
-	constructor(puzzle: Puzzle, d: { x1: number, x2: number, y1: number, y2: number }, name: IBoardOperation) {
+	constructor(puzzle: Puzzle, d: IRange, name: IBoardOperation) {
 		super(puzzle)
 		this.area = d;
 		this.old = this.num = name;
@@ -274,16 +277,16 @@ export class BoardFlipOperation extends Operation<IBoardOperation, number> {
 		const d = { x1: d0.x1, y1: d0.y1, x2: d0.x2, y2: d0.y2 };
 		const key_undo = this.puzzle.board.exec.boardtype[this.old][0];
 		if (key_undo & this.TURN) { const tmp = d.x1; d.x1 = d.y1; d.y1 = tmp; }
-		this.exec(key_undo, d);
+		this.exec_bf(key_undo, d);
 	}
 	override redo() {
 		// とりあえず盤面全部の対応だけ
 		const d0 = this.area;
 		const d = { x1: d0.x1, y1: d0.y1, x2: d0.x2, y2: d0.y2 };
 		const key_redo = this.puzzle.board.exec.boardtype[this.num][1];
-		this.exec(key_redo, d);
+		this.exec_bf(key_redo, d);
 	}
-	override exec(num: number, d: any) {
+	exec_bf(num: number, d: IRange) {
 		const puzzle = this.puzzle;
 		puzzle.board.exec.execadjust_main(num, d);
 		puzzle.redraw();
@@ -322,14 +325,14 @@ export class TrialEnterOperation extends Operation<number> {
 }
 
 // TrialFinalizeOperationクラス
-class TrialFinalizeOperation extends Operation<any> {
-	constructor(puzzle: Puzzle, old: any) {
+class TrialFinalizeOperation extends Operation<number[]> {
+	constructor(puzzle: Puzzle, old: number[]) {
 		super(puzzle)
 		this.old = old
 	}
-	override num: any[] = []
+	//override num: number[] = []
 
-	override exec(num: any, d: any) {
+	override exec(num: number[], d: IRange) {
 		this.manager.trialpos = num.concat();
 		if (num.length === 0) {
 			this.puzzle.board.trialclear();
@@ -357,7 +360,7 @@ class TrialFinalizeOperation extends Operation<any> {
 //---------------------------------------------------------------------------
 // ★OperationListクラス OperationのListと時刻を保持する
 //---------------------------------------------------------------------------
-export class OperationList extends Array<Operation<any>> {
+export class OperationList extends Array<IOperation> {
 	puzzle: Puzzle
 	time: number
 	constructor(puzzle: Puzzle) {
@@ -372,11 +375,27 @@ export class OperationList extends Array<Operation<any>> {
 // ★OperationManagerクラス 操作情報を扱い、Undo/Redoの動作を実装する
 //---------------------------------------------------------------------------
 // OperationManagerクラス
+
+type IOperation = {
+	reqReset: boolean
+	redo: () => void
+	undo: () => void
+}
+
 export type OperationManagerOption = Partial<OperationManager>
+
+export type HistoryInfo = {
+	type: string
+	version: number
+	time?: number
+	current?: number
+	datas?: ({ time: number, ope: string[] } | string[])[]
+	trialpos?: number[]
+}
 export class OperationManager {
 	puzzle: Puzzle
-	lastope: Operation<any> | null = null;	// this.opeの最後に追加されたOperationへのポインタ
-	history: (OperationList | Operation<any>[])[] = [];		// OperationListのオブジェクトを保持する配列
+	lastope: Operation | null = null;	// this.opeの最後に追加されたOperationへのポインタ
+	history: (OperationList | IOperation[])[] = [];		// OperationListのオブジェクトを保持する配列
 	position = 0;		// 現在の表示操作番号を保持する
 	trialpos: number[] = [];		// TrialModeの位置を保持する配列
 	disEmitTrial = 0;	// Trial eventの呼び出し有効無効フラグ
@@ -398,7 +417,7 @@ export class OperationManager {
 	redoExec = false;		// Redo中
 	reqReset = false;		// Undo/Redo時に盤面回転等が入っていた時、resize,rebuildInfo関数のcallを要求する
 
-	operationlist: any[] = [];
+	operationlist: (new (...args: any[]) => Operation)[] = [];
 
 	constructor(puzzle: Puzzle) {
 		this.puzzle = puzzle;
@@ -493,7 +512,7 @@ export class OperationManager {
 	//---------------------------------------------------------------------------
 	// um.add()  指定された操作を追加する(共通操作)
 	//---------------------------------------------------------------------------
-	add(newope: any) {
+	add(newope: Operation) {
 		if (!this.puzzle.ready || (!this.forceRecord && this.disrec > 0)) { return; }
 
 		/* Undoした場所で以降の操作がある時に操作追加された場合、以降の操作は消去する */
@@ -527,7 +546,7 @@ export class OperationManager {
 	// um.decodeHistory() オブジェクトを履歴情報に変換する
 	// um.encodeHistory() 履歴情報をオブジェクトに変換する
 	//---------------------------------------------------------------------------
-	decodeHistory(historyinfo: any) {
+	decodeHistory(historyinfo: HistoryInfo) {
 		this.allerase();
 
 		this.initpos = this.position = historyinfo.current || 0;
@@ -537,7 +556,7 @@ export class OperationManager {
 			const opelist = new OperationList(this.puzzle);
 			this.history.push(opelist);
 			let array = datas[i];
-			if (array.time !== void 0) {
+			if ("time" in array) {
 				opelist.time = array.time;
 				array = array.ope;
 			}
@@ -564,16 +583,16 @@ export class OperationManager {
 			this.limitTrialUndo = true;
 		}
 	}
-	encodeHistory(extoption: any) {
+	encodeHistory(extoption: { time: boolean }): HistoryInfo {
 		extoption = extoption || {};
 		this.initpos = this.position;
-		const historyinfo = {
+		const historyinfo: HistoryInfo = {
 			type: 'pzpr',
 			version: 0.4,
-			time: null as number | null,
-			current: null as any,
-			trialpos: null as any,
-			datas: null as any
+			time: undefined,
+			current: undefined,
+			trialpos: undefined,
+			datas: undefined
 		};
 		if (extoption.time) {
 			historyinfo.time = this.puzzle.getTime();
@@ -583,7 +602,7 @@ export class OperationManager {
 			if (this.trialpos.length > 0) {
 				historyinfo.trialpos = this.trialpos;
 			}
-			const history = [];
+			const history: HistoryInfo["datas"] = [];
 			for (let i = 0; i < this.history.length; ++i) {
 				const array = Array.prototype.slice.call(this.history[i]);
 				if (!extoption.time) {
@@ -655,7 +674,7 @@ export class OperationManager {
 	// um.preproc()  Undo/Redo実行前の処理を行う
 	// um.postproc() Undo/Redo実行後の処理を行う
 	//---------------------------------------------------------------------------
-	checkReqReset(opes: Operation<any>[]) {
+	checkReqReset(opes: IOperation[]) {
 		return opes.some(function (ope) { return ope.reqReset; });
 	}
 	preproc(opes: any = null) {

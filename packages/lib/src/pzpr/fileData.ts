@@ -4,6 +4,7 @@
 import * as Constants from "./constants"
 import * as MetaData from "./metadata";
 import { pzpr } from "./core";
+import { HistoryInfo } from "../puzzle/Operation";
 
 export class FileData {
     constructor(fstr: string, variety: string) {
@@ -17,9 +18,9 @@ export class FileData {
     cols = 0
     rows = 0
     body = ""
-    history: any = {}
+    history!: HistoryInfo
     metadata: MetaData.IMetaData
-    xmldoc: any = null
+    //xmldoc: any = null
 
     isurl = false
     isfile = true
