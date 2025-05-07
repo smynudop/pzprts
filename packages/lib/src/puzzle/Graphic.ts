@@ -1720,7 +1720,7 @@ export class Graphic<TBoard extends Board = Board> {
 		return null;
 	}
 
-	getCircleFillColor(cell: Cell) {
+	getCircleFillColor(cell: CellOfBoard<TBoard>): string | null {
 		switch (this.circlefillcolor_func) {
 			case "qnum":
 				return this.getCircleFillColor_qnum(cell)
@@ -1728,6 +1728,8 @@ export class Graphic<TBoard extends Board = Board> {
 				return this.getCircleFillColor_qnum2(cell)
 			case "qcmp":
 				return this.getCircleFillColor_qcmp(cell)
+			default:
+				throw new Error("circlefillcolor_func is invalid.")
 		}
 	}
 

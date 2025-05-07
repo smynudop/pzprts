@@ -85,10 +85,6 @@ export class AnsCheck<
 			let item = checklist[i];
 			const isexist = true;
 			let prio = 0;
-			// if (item.match('@')) {
-			// 	isexist = checkpid(item.substr(item.indexOf('@') + 1), this.puzzle.pid);
-			// 	item = item.substr(0, item.indexOf('@'));
-			// }
 			if (isexist) {
 				prio = (item.match(/\+/) || []).length;
 				item = item.replace(/\+/g, "");

@@ -88,6 +88,7 @@ export const Pencils = createVariety({
                 dir1: IDir | 0 = 0;
             if (border.isvert) {
                 switch (dir) {
+                    //biome-ignore lint: 
                     case 0:
                         if (!blocked) {
                             dir0 = DIRS.LT;
@@ -105,6 +106,7 @@ export const Pencils = createVariety({
                 }
             } else {
                 switch (dir) {
+                    //biome-ignore lint: 
                     case 0:
                         if (!blocked) {
                             dir0 = DIRS.UP;

@@ -5,6 +5,7 @@ import type { Board } from "../puzzle/Board";
 import { border, roomNumber16 } from "../puzzle/Encode";
 import type { Cell } from "../puzzle/Piece";
 import type { CellList } from "../puzzle/PieceList";
+import type { IConfig } from "../puzzle/Puzzle";
 import { createVariety } from "./createVariety";
 export const Heyawake = createVariety({
 	pid: "heyawake",
@@ -185,4 +186,20 @@ const isBorderCount = (clist: CellList, info: any, bd: Board) => {
 	const result = (count <= 1);
 	if (!result) { clist.seterr(1); }
 	return result;
+}
+
+export class Ayaheya extends Heyawake {
+	constructor(option?: IConfig) {
+		super(option)
+
+		this.checker.checklist = [
+			"checkShadeCellExist",
+			"checkAdjacentShadeCell",
+			"checkConnectUnshadeRB",
+			"checkFractal",
+			"checkShadeCellCount",
+			"checkCountinuousUnshadeCell"
+		]
+		this.checker.makeCheckList()
+	}
 }
