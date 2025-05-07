@@ -50,6 +50,6 @@
     "vitest": "^3.1.2"
   },
   "dependencies": {
-    "@udop/penpa-player-lib": "0.2.1"
+    "@udop/penpa-player-lib": "workspace: *"
   }
 }

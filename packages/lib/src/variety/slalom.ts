@@ -825,7 +825,7 @@ class StartposOperation extends Operation {
 		return ['PS', this.bx1, this.by1, this.bx2, this.by2].join(',');
 	}
 
-	isModify(lastope: this) {
+	override isModify(lastope: this) {
 		// 1回の入力でstartposが連続して更新されているなら前回の更新のみ
 		if (this.manager.changeflag && lastope.bx2 === this.bx1 && lastope.by2 === this.by1) {
 			lastope.bx2 = this.bx2;

@@ -640,7 +640,7 @@ class StartGoalOperation extends Operation {
 		return [(this.property === 'start' ? 'PS' : 'PG'), this.bx1, this.by1, this.bx2, this.by2].join(',');
 	}
 
-	isModify(lastope: this) {
+	override isModify(lastope: this) {
 		// 1回の入力でstartpos, goalposが連続して更新されているなら前回の更新のみ
 		if (this.manager.changeflag && lastope.bx2 === this.bx1 && lastope.by2 === this.by1 && lastope.property === this.property) {
 			lastope.bx2 = this.bx2;

@@ -4,7 +4,7 @@
 import * as Constants from "./constants"
 import * as MetaData from "./metadata";
 import { pzpr } from "./core";
-import { HistoryInfo } from "../puzzle/Operation";
+import type { HistoryInfo } from "../puzzle/Operation";
 
 export class FileData {
     constructor(fstr: string, variety: string) {

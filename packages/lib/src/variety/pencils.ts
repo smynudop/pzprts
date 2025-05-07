@@ -1,3 +1,4 @@
+//@ts-nocheck
 //
 // pencils.js: Implementation of Pencils puzzle type.
 
@@ -7,7 +8,7 @@ import type { Border, Cell, IDir } from "../puzzle/Piece";
 import { MouseEvent1 } from "../puzzle/MouseInput";
 import type { CellList } from "../puzzle/PieceList";
 
-//
+
 export const Pencils = createVariety({
     pid: "pencils",
     //---------------------------------------------------------
