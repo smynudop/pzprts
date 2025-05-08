@@ -1,0 +1,19 @@
+{
+  "name": "demo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.9.0",
+  "devDependencies": {
+    "@udop/penpa-player": "workspace:^",
+    "vite": "^6.3.5"
+  }
+}

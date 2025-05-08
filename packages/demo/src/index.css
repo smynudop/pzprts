@@ -1,0 +1,39 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    font-family: ui-sans-serif;
+}
+
+h1,
+.repo,
+.filter {
+    text-align: center;
+}
+
+h1 {
+    font-weight: normal;
+}
+
+.container {
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.container>* {
+    flex-basis: 360px;
+    flex-shrink: 0;
+}
+
+input {
+    font-size: 110%;
+    padding: 3px .25em;
+    border-radius: 3px;
+    border: 1px solid #999;
+    font-family: ui-sans-serif;
+
+}

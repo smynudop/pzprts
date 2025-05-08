@@ -1,27 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        .container {
-            margin: 0 auto;
-            width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-
-        .container>* {
-            flex-basis: 360px;
-            flex-shrink: 0;
-        }
-    </style>
+    <title>@udop/penpa-player demo</title>
 </head>
 
 <body>
+    <h1><a href="https://github.com/smynudop/pzprts" target="_blank">@udop/penpa-player</a> Demo</h1>
+    <div class="filter">
+        <input id="filter-text" type="text" placeholder="filter" autocomplete="off">
+    </div>
     <div class="container">
         <slitherlink-player src="http://pzv.jp/p.html?slither/5/5/cbcbcddad"></slitherlink-player>
         <mashu-player src="http://pzv.jp/p.html?mashu/6/6/1063000i3000"></mashu-player>
@@ -51,7 +41,7 @@
         <kurotto-player src="http://pzv.jp/p.html?kurotto/5/5/30m4h6h4m02"></kurotto-player>
 
     </div>
-    <script type="module" src="./src/debug.ts">
+    <script type="module" src="./src/main.ts">
     </script>
 </body>
 

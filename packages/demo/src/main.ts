@@ -1,4 +1,6 @@
-import * as PenpaPlayer from "./player"
+import "./index.css"
+
+import * as PenpaPlayer from "@udop/penpa-player"
 
 customElements.define('slitherlink-player', PenpaPlayer.SlitherlinkPlayer);
 customElements.define("mashu-player", PenpaPlayer.MashuPlayer)
@@ -26,3 +28,11 @@ customElements.define("cbanana-player", PenpaPlayer.CbananaPlayer)
 customElements.define("ayaheya-player", PenpaPlayer.AyaheyaPlayer)
 customElements.define("nurimisaki-player", PenpaPlayer.NurimisakiPlayer)
 customElements.define("kurotto-player", PenpaPlayer.KurottoPlayer)
+
+document.getElementById("filter-text")?.addEventListener("input", (e) => {
+    const text = (e.target as HTMLInputElement).value.toUpperCase().trim()
+    for (const puz of document.querySelectorAll(".container > *")) {
+        const el = (puz as HTMLElement)
+        el.style.display = el.tagName.includes(text) || text === "" ? "" : "none"
+    }
+})

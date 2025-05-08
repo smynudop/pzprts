@@ -3,7 +3,7 @@ import type { IConfig, Puzzle } from "@udop/penpa-player-lib";
 import PlayerBase from "../components/Player.svelte"
 import * as Lib from "@udop/penpa-player-lib";
 
-const createPlayer = (puzzleClass: new (info: IConfig) => Puzzle) => {
+const createPlayer = (puzzleClass: new (info: IConfig) => Puzzle): (new () => HTMLElement) => {
     return class extends HTMLElement {
         constructor() {
             super()

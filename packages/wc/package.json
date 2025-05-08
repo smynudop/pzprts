@@ -25,6 +25,10 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    "import": "./dist/index.es.js",
+    "require": "./dist/index.umd.cjs"
+  },
   "main": "dist/index.es.js",
   "scripts": {
     "dev": "vite",

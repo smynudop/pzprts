@@ -111,7 +111,7 @@ export const createVariety = <
     AnsCheckExtend,
     OperationManagerExtend,
     GraphComponentExtend
->) => {
+>): new (option?: IConfig) => Puzzle => {
     return class extends Puzzle {
         constructor(option?: IConfig) {
             super({ ...option, pid: varietyOption.pid }, varietyOption)

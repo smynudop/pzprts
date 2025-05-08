@@ -5,16 +5,13 @@ import { fileURLToPath } from "node:url"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-//import dts from 'vite-plugin-dts'
+import dts from 'vite-plugin-dts'
 
 export default defineConfig({
     plugins: [
-        svelte({ compilerOptions: { customElement: true } })
+        svelte({ compilerOptions: { customElement: true } }),
+        dts({ include: "./src" })
     ],
-    server: {
-        port: 7638,
-        host: true
-    },
     resolve: {
         alias: {
             "@udop/penpa-player-lib": path.resolve(__dirname, "../lib/src")
@@ -27,7 +24,7 @@ export default defineConfig({
             ],
             name: "PenpaPlayer",
             fileName: (format, entry) => `${entry}.${format}.js`,
-            formats: ["umd"]
+            formats: ["es", "umd"]
         },
         outDir: "./dist",
         minify: "esbuild",
