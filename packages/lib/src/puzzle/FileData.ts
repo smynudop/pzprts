@@ -262,17 +262,17 @@ export class FileIO<TBoard extends Board = Board> {
 	// fio.encodeBorder()  個別Borderデータから個別文字列の設定を行う
 	// fio.encodeCellExcell()  個別セル/Excellデータから個別文字列の設定を行う
 	//---------------------------------------------------------------------------
-	encodeObj(func: IEncodeFunc<string>, group: IGroup2, startbx: number, startby: number, endbx: number, endby: number) {
+	encodeObj<T extends BoardPiece>(func: IEncodeFunc<string, T>, group: IGroup2, startbx: number, startby: number, endbx: number, endby: number) {
 		const step = 2;
 		for (let by = startby; by <= endby; by += step) {
 			let data = '';
 			for (let bx = startbx; bx <= endbx; bx += step) {
-				data += func.call(this, this.puzzle.board.getObjectPos(group, bx, by));
+				data += func.call(this, this.puzzle.board.getObjectPos(group, bx, by) as T);
 			}
 			this.writeLine(data);
 		}
 	}
-	encodeCell(func: IEncodeFunc<string, BoardPiece>) {
+	encodeCell(func: IEncodeFunc<string, CellOfBoard<TBoard>>) {
 		this.encodeObj(func, 'cell', 1, 1, 2 * this.puzzle.board.cols - 1, 2 * this.puzzle.board.rows - 1);
 	}
 	encodeCross(func: IEncodeFunc<string>) {

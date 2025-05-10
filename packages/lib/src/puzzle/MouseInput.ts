@@ -520,7 +520,7 @@ export class MouseEvent1<TBoard extends Board = Board> {
 
 		cell.draw();
 	}
-	decIC(cell: Cell) {
+	decIC(cell: CellOfBoard<TBoard>) {
 		if (this.inputMode === 'shade') {
 			this.inputData = ((cell.qans !== 1) ? 1 : 0);
 		}
