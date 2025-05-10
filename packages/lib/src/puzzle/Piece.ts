@@ -519,6 +519,22 @@ export class Cell extends BoardPiece {
 	isEmpty() { return (this.isnull || this.ques === 7); }
 	isValid() { return (!this.isnull && this.ques !== 7); }
 
+	/**
+	 * From robx/pzprjs
+	 * @param inputData 
+	 */
+	setValid(inputData: number) {
+		this.setQues(inputData);
+		this.setQnum(-1);
+		this.setQans(0);
+		this.setQsub(0);
+		for (const dir in this.adjborder) {
+			this.adjborder[dir as "top" | "bottom" | "left" | "right"].setQans(0);
+		}
+		this.drawaround();
+		this.board.roommgr.rebuild();
+	}
+
 	//---------------------------------------------------------------------------
 	// cell.isDeparture()   オブジェクトを動かすパズルで移動元セルかどうか判定する
 	// cell.isDestination() オブジェクトを動かすパズルで移動先セルかどうか判定する

@@ -14,6 +14,7 @@
   "packageManager": "pnpm@10.9.0",
   "devDependencies": {
     "@udop/penpa-player": "workspace:^",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-plugin-query-hash": "^1.0.0"
   }
 }

@@ -5,6 +5,7 @@ import { URLData } from "../pzpr/urlData"
 import { parseURL } from "../pzpr/parser"
 import { URL_PZPRV3 } from "../pzpr/constants"
 import type { Board } from "./Board"
+import { Cell } from "./Piece"
 //---------------------------------------------------------------------------
 // ★Encodeクラス URLのエンコード/デコードを扱う
 //---------------------------------------------------------------------------
@@ -622,5 +623,86 @@ export class Encode<TBoard extends Board = Board> {
         }
 
         this.outbstr = bstr.substr(i);
+    }
+
+    decodeEmpty() {
+        this.decodeBinary("ques", 7);
+    }
+    encodeEmpty() {
+        return this.encodeBinary("ques", 7, true);
+    }
+
+    /**
+     * from robx/pzprjs 
+     * @param prop 
+     * @param val 
+     */
+    decodeBinary(prop: any, val: number) {
+        const bd = this.board;
+        this.genericDecodeBinary(bd.cell.length, function (c, newval) {
+            if (newval) {
+                //@ts-ignore
+                bd.cell[c][prop] = val;
+            }
+        });
+    }
+    genericDecodeBinary(length: number, set_func: (c: number, newval: any) => void) {
+        const bstr = this.outbstr;
+
+        let c = 0,
+            twi = [16, 8, 4, 2, 1];
+        let i = 0
+        for (i = 0; i < bstr.length; i++) {
+            const num = Number.parseInt(bstr.charAt(i), 32);
+            for (let w = 0; w < 5; w++) {
+                if (c < length) {
+                    set_func(c, !!(num & twi[w]));
+                    c++;
+                }
+            }
+            if (c >= length) {
+                break;
+            }
+        }
+        this.outbstr = bstr.substr(i + 1);
+    }
+    encodeBinary(prop: any, val: number, skipnone: boolean) {
+        const bd = this.board;
+        this.genericEncodeBinary(
+            bd.cell.length,
+            function (c) {
+                //@ts-ignore
+                return bd.cell[c][prop] === val;
+            },
+            skipnone
+        );
+    }
+    genericEncodeBinary(length: number, get_func: (cell: number) => boolean, skipnone: boolean) {
+        let cm = "",
+            num = 0,
+            pass = 0,
+            twi = [16, 8, 4, 2, 1];
+        let found = false;
+        for (let c = 0; c < length; c++) {
+            if (get_func(c)) {
+                pass += twi[num];
+                found = true;
+            }
+            num++;
+            if (num === 5) {
+                cm += pass.toString(32);
+                num = 0;
+                pass = 0;
+            }
+        }
+        if (num > 0) {
+            cm += pass.toString(32);
+        }
+
+        if (found || !skipnone) {
+            this.outbstr += cm;
+            return true;
+        }
+        return false;
     }
 }

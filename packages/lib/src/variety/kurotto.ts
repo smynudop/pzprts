@@ -84,7 +84,7 @@ export const Kurotto = createVariety({
 		circleratio: [0.45, 0.40],
 
 		// オーバーライド
-		setRange: function (x1, y1, x2, y2) {
+		setRange: function (x1, y1, x2, y2): void {
 			const puzzle = this.puzzle, bd = puzzle.board;
 			if (puzzle.execConfig('autocmp')) {
 				x1 = bd.minbx - 2;

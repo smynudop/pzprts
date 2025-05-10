@@ -166,6 +166,10 @@ export class AnsCheck<
 	checkAllCell(func: (cell: CellOfBoard<TBoard>) => boolean, code: string) {
 		for (let c = 0; c < this.board.cell.length; c++) {
 			const cell = this.board.cell[c];
+			//from robx
+			if (cell.ques === 7) {
+				continue;
+			}
 			if (!func(cell)) { continue; }
 
 			this.failcode.add(code);
