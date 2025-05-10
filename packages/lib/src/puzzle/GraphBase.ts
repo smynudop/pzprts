@@ -24,10 +24,10 @@ export abstract class GraphBase<
 	coloring = false
 	components: TComponent[] = null!
 	modifyNodes: GraphNode<TComponent>[] = null!
-	puzzle: Puzzle
+	puzzle: Puzzle<TBoard>
 	gcoption: GraphComponentOption | undefined
 
-	get board() {
+	get board(): TBoard {
 		return this.puzzle.board
 	}
 	constructor(puzzle: Puzzle<TBoard>, gcoption?: GraphComponentOption) {
@@ -443,7 +443,7 @@ export abstract class GraphBase<
 	// graph.resetExtraData() 指定されたオブジェクトの拡張データをリセットする
 	// graph.setExtraData()   指定された領域の拡張データを設定する
 	//--------------------------------------------------------------------------------
-	resetExtraData(nodeobj: BoardPiece) { }
+	resetExtraData(nodeobj: ComponentPiece<TComponent>) { }
 	setExtraData(component: TComponent) { }
 
 	//--------------------------------------------------------------------------------
@@ -495,14 +495,15 @@ export abstract class GraphBase<
 	}
 }
 
+type ComponentPiece<T extends GraphComponent> = T["clist"][number]
 export type GraphComponentOption = Partial<GraphComponent>
-export class GraphComponent {
+export class GraphComponent<TCell extends Cell = Cell> {
 	nodes: GraphNode<this>[]
 	color: string | null
 	circuits: number
 	puzzle: Puzzle
 	cmp: boolean = false
-	clist: CellList = null!
+	clist: CellList<TCell> = null!
 	departure: Cell | null = null
 	destination: Cell | null = null
 	movevalid: boolean = false

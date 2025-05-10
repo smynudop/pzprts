@@ -206,7 +206,7 @@ export const Tentaisho = createVariety({
 			return flag;
 		},
 		getAreaStarInfo: function (clist: CellList) {
-			let ret = { star: null as Star | null, err: -1 };
+			let ret: { star: Star | null, err: number } = { star: null, err: -1 };
 			for (let i = 0; i < clist.length; i++) {
 				const cell = clist[i];
 				const slist = this.starinside(cell.bx, cell.by, cell.bx + 1, cell.by + 1);
@@ -232,8 +232,7 @@ export const Tentaisho = createVariety({
 		enabled: true,
 
 		setExtraData: function (component) {
-			component.clist = new CellList(component.getnodeobjs());
-			// @ts-ignore
+			component.clist = new CellList(component.getnodeobjs()) as any;
 			const ret = this.puzzle.board.getAreaStarInfo(component.clist);
 			component.star = ret.star;
 			component.error = ret.err;
@@ -506,7 +505,7 @@ class Star extends BoardPiece {
 		let cell: Cell = null!;
 		if (isCell(piece)) { cell = piece; }
 		else if (isCross(piece) && piece.lcnt === 0) { cell = piece.relcell(-1, -1); }
-		else if (isBorder(piece) && piece.qans === 0) { cell = piece.sidecell[0] as Cell; }
+		else if (isBorder(piece) && piece.qans === 0) { cell = piece.sidecell[0]; }
 		return cell;
 	}
 

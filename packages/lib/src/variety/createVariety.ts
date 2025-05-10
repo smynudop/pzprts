@@ -25,12 +25,12 @@ export type VarityOption<
     KeyExtend extends KeyEventOption,
     EncodeExtend extends EncodeOption,
     FileIOExtend extends FileIOOption,
-    GraphicExtend extends GraphicOption,
+    GraphicExtend extends GraphicOption<Cell & CellExtend>,
     AnsCheckExtend extends AnsCheckOption,
     OperationManagerExtend extends OperationManagerOption,
     GraphComponentExtend //extends GraphComponentOption
 > = VarityOptionInner<
-    Board<Cell & CellExtend, Cross, Border & BorderExtend, EXCell, GraphComponent & GraphComponentExtend> & BoardExtend,
+    Board<Cell & CellExtend, Cross, Border & BorderExtend, EXCell, GraphComponent<Cell & CellExtend> & GraphComponentExtend> & BoardExtend,
     CellExtend,
     BorderExtend,
     BoardExtend,
@@ -55,7 +55,7 @@ export type VarityOptionInner<
     KeyExtend extends KeyEventOption,
     EncodeExtend extends EncodeOption,
     FileIOExtend extends FileIOOption,
-    GraphicExtend extends GraphicOption,
+    GraphicExtend extends GraphicOption<Cell & CellExtend>,
     AnsCheckExtend extends AnsCheckOption,
     OperationManagerExtend extends OperationManagerOption,
     GraphComponentExtend //extends GraphComponentOption
@@ -74,7 +74,7 @@ export type VarityOptionInner<
     LineGraph?: LineGraphOption
     AreaShadeGraph?: AreaShadeGraphOption
     AreaUnshadeGraph?: AreaUnshadeGraphOption
-    AreaRoomGraph?: AreaRoomGraphOption<GraphComponent & GraphComponentExtend> & ThisType<AreaRoomGraph<GraphComponent & GraphComponentExtend>>
+    AreaRoomGraph?: AreaRoomGraphOption<GraphComponent<Cell & CellExtend> & GraphComponentExtend, TBoard> & ThisType<AreaRoomGraph<GraphComponent & GraphComponentExtend, TBoard>>
     Graphic: ExtendClass<Graphic<TBoard>, GraphicExtend>,
     Encode: (ExtendClass<Encode<TBoard>, EncodeExtend>) | Converter[]
     FileIO: ExtendClass<FileIO<TBoard>, FileIOExtend>
@@ -94,7 +94,7 @@ export const createVariety = <
     KeyExtend extends KeyEventOption,
     EncodeExtend extends EncodeOption,
     FileIOExtend extends FileIOOption,
-    GraphicExtend extends GraphicOption,
+    GraphicExtend extends GraphicOption<Cell & CellExtend>,
     AnsCheckExtend extends AnsCheckOption,
     OperationManagerExtend extends OperationManagerOption,
     GraphComponentExtend //extends GraphComponentOption

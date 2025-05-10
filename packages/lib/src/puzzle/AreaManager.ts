@@ -196,10 +196,16 @@ export class AreaNumberGraph<TComponent extends GraphComponent = GraphComponent>
 //--------------------------------------------------------------------------------
 // ☆AreaRoomGraphクラス 部屋情報オブジェクトのクラス
 //--------------------------------------------------------------------------------
-export type AreaRoomGraphOption<TComponent extends GraphComponent = GraphComponent> = Partial<AreaRoomGraph<TComponent>>
+export type AreaRoomGraphOption<
+	TComponent extends GraphComponent = GraphComponent,
+	TBoard extends Board = Board
+> = Partial<AreaRoomGraph<TComponent, TBoard>>
 
-export class AreaRoomGraph<TComponent extends GraphComponent = GraphComponent> extends AreaGraphBase<TComponent> {
-	constructor(puzzle: Puzzle, option?: AreaRoomGraphOption, gcoption?: GraphComponentOption) {
+export class AreaRoomGraph<
+	TComponent extends GraphComponent = GraphComponent,
+	TBoard extends Board = Board
+> extends AreaGraphBase<TComponent, TBoard> {
+	constructor(puzzle: Puzzle<TBoard>, option?: any, gcoption?: GraphComponentOption) {
 		super(puzzle, gcoption)
 		Object.assign(this, option)
 	}

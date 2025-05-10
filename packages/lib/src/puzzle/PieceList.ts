@@ -41,7 +41,9 @@ export class PieceList<T extends BoardPiece> extends Array<T> {
 	// list.filter()   条件がtrueとなるオブジェクトを抽出したclistを新たに作成する
 	// list.notnull()  nullではないオブジェクトを抽出したclistを新たに作成する
 	//--------------------------------------------------------------------------------
-	/* constructorが変わってしまうので、Array.prototypeが使用できない */
+	override filter(predicate: (value: T, index: number, array: T[]) => unknown, thisArg?: any): this {
+		return super.filter(predicate, thisArg) as any
+	}
 
 	notnull() { return this.filter(function (piece) { return !piece.isnull; }); }
 

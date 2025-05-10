@@ -330,7 +330,7 @@ export const Pencils = createVariety({
                 return;
             }
 
-            const dirs = {} as Record<IDir, any>;
+            const dirs: Record<IDir, any> = {};
             dirs[DIRS.UP] = {
                 inv: DIRS.DN,
                 border: this.adjborder.bottom,
@@ -952,7 +952,7 @@ export const Pencils = createVariety({
                 const comp = comps[c];
                 const ends = comp.clist.filter(function (cell) {
                     return cell.isTip() && cell.lcnt === 1;
-                }) as CellList;
+                });
                 if (func(ends)) {
                     this.failcode.add(code);
                     if (this.checkOnly) {

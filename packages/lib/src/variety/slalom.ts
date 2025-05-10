@@ -77,7 +77,7 @@ export const Slalom = createVariety({
 			}
 		},
 		inputGate: function (cell: Cell): void {
-			let pos = cell.getaddr() as any, input = false;
+			let pos = cell.getaddr(), input = false;
 
 			// 黒マス上なら何もしない
 			if (cell.ques === 1) { }
@@ -114,7 +114,7 @@ export const Slalom = createVariety({
 				}
 			}
 
-			this.prevPos = pos;
+			this.prevPos = pos as any;
 
 			// 描画・後処理
 			if (input) {
@@ -884,9 +884,13 @@ class AreaHurdleGraph extends AreaGraphBase<GateGraphComponent> {
 		for (let r = 0; r < gates.length; r++) { gates[r].number = -1; }
 
 		// 旗門につながる数字を保持する構造体
-		const decnumber = {
-			nums: [] as number[][], // 旗門rにつながる数字
-			done: [] as boolean[], // すでにどこかの旗門へアサイン済みの数字かどうか
+		const decnumber: {
+			nums: number[][]
+			done: boolean[]
+			erase: () => void
+		} = {
+			nums: [], // 旗門rにつながる数字
+			done: [], // すでにどこかの旗門へアサイン済みの数字かどうか
 			erase: function () {
 				const doneobj = this.done;
 				for (let r = 0; r < gates.length; r++) {

@@ -185,7 +185,7 @@ export const Hitokure = createVariety({
 
 		checkRowsColsSameQuesNumber: function () {
 			this.checkRowsCols((clist) => {
-				const clist2 = clist.filter(function (cell) { return (cell.isUnshade() && cell.isNum()); }) as CellList;
+				const clist2 = clist.filter(function (cell) { return (cell.isUnshade() && cell.isNum()); });
 				return this.isIndividualObject(clist2, function (cell) { return cell.qnum; });
 			}, "nmDupRow");
 		},

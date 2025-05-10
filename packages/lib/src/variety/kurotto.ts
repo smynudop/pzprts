@@ -48,7 +48,7 @@ export const Kurotto = createVariety({
 		},
 		minnum: 0,
 
-		checkComplete: function () {
+		checkComplete: function (): boolean {
 			if (!this.isValidNum()) { return true; }
 
 			let cnt = 0, arealist = [], list = this.getdir4clist();

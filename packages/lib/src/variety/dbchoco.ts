@@ -408,7 +408,7 @@ class AreaTileGraph extends AreaGraphBase {
 }
 
 
-type BlockGraphComponent = GraphComponent & {
+type BlockGraphComponent = GraphComponent<Cell & { tile: any }> & {
     dotcnt: number
     size: number
 }
@@ -433,10 +433,8 @@ class AreaBlockGraph extends AreaRoomGraph<BlockGraphComponent> {
 
     override setExtraData(component: BlockGraphComponent) {
         let cnt = 0;
-        component.clist = new CellList(
-            component.getnodeobjs()
-        )
-        const clist = component.clist as CellList<Cell & { tile: any }>;
+        component.clist = new CellList(component.getnodeobjs()) as any
+        const clist = component.clist;
         component.size = clist.length;
 
         //@ts-ignore

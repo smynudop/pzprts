@@ -36,7 +36,7 @@ export type PaintRange<TBoard extends Board = Board> = {
 	borders: BorderList,
 	excells: EXCellList
 }
-export type GraphicOption = Partial<Graphic>
+export type GraphicOption<TCell extends Cell = Cell> = Partial<Graphic<Board<TCell>>>
 
 export class Graphic<TBoard extends Board = Board> {
 	puzzle: Puzzle<TBoard>
@@ -855,11 +855,16 @@ export class Graphic<TBoard extends Board = Board> {
 
 	getAllowParameter() {
 		return {
-			al: this.cw * 0.35,		// ArrowLength
-			aw: this.cw * 0.12,		// ArrowWidth
-			tl: 0,					// 矢じりの長さの座標(中心-長さ)
-			tw: this.cw * 0.35		// 矢じりの幅
+			al: this.cw * 0.4,		// ArrowLength
+			aw: this.cw * 0.03,		// ArrowWidth
+			tl: this.cw * 0.16,		// 矢じりの長さの座標(中心-長さ)
+			tw: this.cw * 0.16,		// 矢じりの幅
 		}
+		//流れるループ
+		// al: this.cw * 0.35,		// ArrowLength
+		// aw: this.cw * 0.12,		// ArrowWidth
+		// tl: 0,					// 矢じりの長さの座標(中心-長さ)
+		// tw: this.cw * 0.35		// 矢じりの幅
 	}
 
 	//---------------------------------------------------------------------------
@@ -1693,12 +1698,15 @@ export class Graphic<TBoard extends Board = Board> {
 		}
 	}
 
-	getCircleStrokeColor(cell: Cell) {
+	getCircleStrokeColor(cell: CellOfBoard<TBoard>): string | null {
 		switch (this.circlestrokecolor_func) {
 			case "qnum":
 				return this.getCircleStrokeColor_qnum(cell)
 			case "qnum2":
 				return this.getCircleStrokeColor_qnum2(cell)
+			default:
+				console.warn("circlestrokecolor_func is invalid ")
+				return null
 		}
 	}
 	getCircleStrokeColor_qnum(cell: Cell) {
@@ -1729,7 +1737,8 @@ export class Graphic<TBoard extends Board = Board> {
 			case "qcmp":
 				return this.getCircleFillColor_qcmp(cell)
 			default:
-				throw new Error("circlefillcolor_func is invalid.")
+				console.warn("circlefillcolor_func is invalid.")
+				return null
 		}
 	}
 
