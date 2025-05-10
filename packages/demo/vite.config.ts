@@ -12,6 +12,7 @@ export default defineConfig({
         port: 7638,
         host: true
     },
+    base: "/pzprts",
     build: {
         outDir: "../../docs",
         emptyOutDir: true,
