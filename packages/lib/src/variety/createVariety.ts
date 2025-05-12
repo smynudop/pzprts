@@ -8,7 +8,7 @@ import type { Encode, EncodeOption } from "../puzzle/Encode2"
 import type { FileIO, FileIOOption } from "../puzzle/FileData"
 import type { Graphic, GraphicOption } from "../puzzle/Graphic"
 import type { KeyEvent, KeyEventOption, TargetCursor } from "../puzzle/KeyInput"
-import type { LineGraphOption } from "../puzzle/LineManager"
+import type { LineGraph, LineGraphOption } from "../puzzle/LineManager"
 import type { MouseEvent1, MouseEventOption } from "../puzzle/MouseInput"
 import type { OperationManager, OperationManagerOption } from "../puzzle/Operation"
 import type { Border, BorderOption, Cell, CellOption, Cross, CrossOption, EXCell, EXCellOption } from "../puzzle/Piece"
@@ -77,7 +77,7 @@ export type VarityOptionInner<
     BoardExec?: ExtendClass<BoardExec<TBoard>, BoardExecExtend>
     TargetCursor?: { [key: string]: any } & ThisType<TargetCursor<TBoard>>
     GraphComponent?: ExtendClass<GraphComponent, GraphComponentExtend>
-    LineGraph?: LineGraphOption
+    LineGraph?: LineGraphOption & ThisType<LineGraph>
     AreaShadeGraph?: AreaShadeGraphOption
     AreaUnshadeGraph?: AreaUnshadeGraphOption
     AreaRoomGraph?: AreaRoomGraphOption<GraphComponent<Cell & CellExtend> & GraphComponentExtend, TBoard> & ThisType<AreaRoomGraph<GraphComponent & GraphComponentExtend, TBoard>>

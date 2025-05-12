@@ -1,7 +1,7 @@
 //
 // パズル固有スクリプト部 Tapa版 tapa.js
 
-import { BoardPiece, Cell } from "../puzzle/Piece";
+import { type BoardPiece, Cell } from "../puzzle/Piece";
 import { createVariety } from "./createVariety";
 import { Operation } from "../puzzle/Operation"
 import type { Puzzle } from "../puzzle/Puzzle";

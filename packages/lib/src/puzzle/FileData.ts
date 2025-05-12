@@ -6,14 +6,14 @@ import {
 	OperationList
 
 } from "./Operation";
-import type { BoardPiece, Cell } from "./Piece";
+import type { BoardPiece, Border, Cell } from "./Piece";
 import { type Board, IGroup, type IGroup2 } from "./Board";
 import { pzpr } from "../pzpr/core";
 import { parseFile } from "../pzpr/parser";
 import { FileData } from "../pzpr/fileData";
 import * as Constants from "../pzpr/constants"
 import * as MetaData from "../pzpr/metadata"
-import type { CellOfBoard } from "./Answer";
+import type { BorderOfBoard, CellOfBoard } from "./Answer";
 
 type IDecodeFunc<TValue, TPiece extends BoardPiece = BoardPiece> = (piece: TPiece, str: TValue) => void
 type IEncodeFunc<TValue, TPiece extends BoardPiece = BoardPiece> = (piece: TPiece) => TValue
@@ -232,7 +232,7 @@ export class FileIO<TBoard extends Board = Board> {
 	decodeCross(func: IDecodeFunc<string>) {
 		this.decodeObj(func, 'cross', 0, 0, 2 * this.puzzle.board.cols, 2 * this.puzzle.board.rows);
 	}
-	decodeBorder(func: IDecodeFunc<string>) {
+	decodeBorder(func: IDecodeFunc<string, BorderOfBoard<TBoard>>) {
 		const puzzle = this.puzzle;
 		const bd = puzzle.board;
 		if (bd.hasborder === 1 || puzzle.pid === 'bosanowa' || (puzzle.pid === 'fourcells' && this.filever === 0)) {
@@ -278,7 +278,7 @@ export class FileIO<TBoard extends Board = Board> {
 	encodeCross(func: IEncodeFunc<string>) {
 		this.encodeObj(func, 'cross', 0, 0, 2 * this.puzzle.board.cols, 2 * this.puzzle.board.rows);
 	}
-	encodeBorder(func: IEncodeFunc<string>) {
+	encodeBorder(func: IEncodeFunc<string, BorderOfBoard<TBoard>>) {
 		const puzzle = this.puzzle;
 		const bd = puzzle.board;
 		if (bd.hasborder === 1 || puzzle.pid === 'bosanowa') {

@@ -9,7 +9,7 @@ import { getEnv } from "../pzpr/env";
 import type { WrapperBase } from "../candle";
 import { getRect } from "../pzpr/util";
 import type { Board } from "./Board";
-import type { CellOfBoard } from "./Answer";
+import type { BorderOfBoard, CellOfBoard } from "./Answer";
 import { DIRS } from "./Constants";
 
 
@@ -33,7 +33,7 @@ export type PaintRange<TBoard extends Board = Board> = {
 	y2: number,
 	cells: CellList<CellOfBoard<TBoard>>,
 	crosses: CrossList,
-	borders: BorderList,
+	borders: BorderList<BorderOfBoard<TBoard>>,
 	excells: EXCellList
 }
 export type GraphicOption<TCell extends Cell = Cell> = Partial<Graphic<Board<TCell>>>

@@ -4,10 +4,7 @@ import { CellList, BorderList } from "./PieceList";
 import type { Puzzle } from "./Puzzle";
 import type { Border, Cell } from "./Piece";
 
-export type LineGraphOption = {
-	enabled?: boolean
-	makeClist?: boolean
-}
+export type LineGraphOption = Partial<LineGraph>
 
 //---------------------------------------------------------------------------
 // ★LineGraphクラス 主に線や色分けの情報を管理する
