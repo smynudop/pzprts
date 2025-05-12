@@ -17,20 +17,26 @@ import type { GraphComponent, GraphComponentOption } from "../puzzle/GraphBase"
 
 type ExtendClass<TBase, TExtend> = TExtend & ThisType<TBase & TExtend>
 export type VarityOption<
-    CellExtend extends CellOption,
-    BorderExtend extends BorderOption,
-    BoardExtend extends BoardOption,
-    BoardExecExtend extends BoardExecOption,
-    MouseExtend extends MouseEventOption,
-    KeyExtend extends KeyEventOption,
-    EncodeExtend extends EncodeOption,
-    FileIOExtend extends FileIOOption,
-    GraphicExtend extends GraphicOption<Cell & CellExtend>,
-    AnsCheckExtend extends AnsCheckOption,
-    OperationManagerExtend extends OperationManagerOption,
-    GraphComponentExtend //extends GraphComponentOption
+    CellExtend,
+    BorderExtend,
+    BoardExtend,
+    BoardExecExtend,
+    MouseExtend,
+    KeyExtend,
+    EncodeExtend,
+    FileIOExtend,
+    GraphicExtend,
+    AnsCheckExtend,
+    OperationManagerExtend,
+    GraphComponentExtend
 > = VarityOptionInner<
-    Board<Cell & CellExtend, Cross, Border & BorderExtend, EXCell, GraphComponent<Cell & CellExtend> & GraphComponentExtend> & BoardExtend,
+    Board<
+        Cell & CellExtend,
+        Cross,
+        Border & BorderExtend,
+        EXCell,
+        GraphComponent<Cell & CellExtend> & GraphComponentExtend
+    > & BoardExtend,
     CellExtend,
     BorderExtend,
     BoardExtend,
@@ -47,17 +53,17 @@ export type VarityOption<
 
 export type VarityOptionInner<
     TBoard extends Board,
-    CellExtend extends CellOption,
-    BorderExtend extends BorderOption,
-    BoardExtend extends BoardOption,
-    BoardExecExtend extends BoardExecOption,
-    MouseExtend extends MouseEventOption,
-    KeyExtend extends KeyEventOption,
-    EncodeExtend extends EncodeOption,
-    FileIOExtend extends FileIOOption,
-    GraphicExtend extends GraphicOption<Cell & CellExtend>,
-    AnsCheckExtend extends AnsCheckOption,
-    OperationManagerExtend extends OperationManagerOption,
+    CellExtend,
+    BorderExtend,
+    BoardExtend,
+    BoardExecExtend,
+    MouseExtend,
+    KeyExtend,
+    EncodeExtend,
+    FileIOExtend,
+    GraphicExtend,
+    AnsCheckExtend,
+    OperationManagerExtend,
     GraphComponentExtend //extends GraphComponentOption
 > = {
     pid?: string
@@ -70,7 +76,7 @@ export type VarityOptionInner<
     Board?: ExtendClass<TBoard, BoardExtend>
     BoardExec?: ExtendClass<BoardExec<TBoard>, BoardExecExtend>
     TargetCursor?: { [key: string]: any } & ThisType<TargetCursor<TBoard>>
-    GraphComponent?: GraphComponentExtend & ThisType<GraphComponent & GraphComponentExtend>
+    GraphComponent?: ExtendClass<GraphComponent, GraphComponentExtend>
     LineGraph?: LineGraphOption
     AreaShadeGraph?: AreaShadeGraphOption
     AreaUnshadeGraph?: AreaUnshadeGraphOption

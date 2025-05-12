@@ -1,7 +1,7 @@
 //
 // パズル固有スクリプト部 Tapa版 tapa.js
 
-import { Cell } from "../puzzle/Piece";
+import { BoardPiece, Cell } from "../puzzle/Piece";
 import { createVariety } from "./createVariety";
 import { Operation } from "../puzzle/Operation"
 import type { Puzzle } from "../puzzle/Puzzle";
@@ -55,6 +55,7 @@ export const Tapa = createVariety({
 				else if (this.btn === 'right') { this.inputData = ((cell.qsub !== 1) ? 2 : 0); }
 			}
 			else if (this.puzzle.getConfig('use') === 2) {
+				//@ts-ignore
 				if (cell.numberRemainsUnshaded && cell.qnums.length !== 0) {
 					this.inputData = ((cell.qsub !== 1) ? 2 : 0);
 				}
@@ -84,8 +85,10 @@ export const Tapa = createVariety({
 			this.mouseCell = cell;
 		},
 		inputqnum_tapa_main: function (cell: Cell): void {
+			//@ts-ignore
 			let states = cell.qnum_states, state = 0;
 			for (let i = 0; i < states.length; i++) {
+				//@ts-ignore
 				if (sameArray(cell.qnums, states[i])) { state = i; break; }
 			}
 
@@ -98,6 +101,7 @@ export const Tapa = createVariety({
 				if (state > 0) { state--; }
 				else { state = states.length - 1; }
 			}
+			//@ts-ignore
 			cell.setNums(states[state]);
 
 			cell.draw();
@@ -150,7 +154,7 @@ export const Tapa = createVariety({
 	Cell: {
 		minnum: 0,
 		qnums: [] as number[], // Array型
-		propques: ['ques', 'qdir', 'qnum', 'qnum2', 'qnums', 'qchar'] as any[],
+		propques: ['ques', 'qdir', 'qnum', 'qnum2', 'qnums', 'qchar'] as unknown as (keyof BoardPiece)[],
 		qnum_states: (function () {
 			let states = [[], [-2], [0], [1], [2], [3], [4], [5], [6], [7], [8]], sum = 0;
 			for (let n1 = 0; n1 <= 5; n1++) {

@@ -38,6 +38,7 @@ script.addEventListener("load", () => {
     customElements.define("kurotto-player", PenpaPlayer.KurottoPlayer)
     customElements.define("simpleloop-player", PenpaPlayer.SimpleLoopPlayer)
     customElements.define("sashigane-player", PenpaPlayer.SashiganePlayer)
+    customElements.define("tapa-player", PenpaPlayer.TapaPlayer)
 })
 
 

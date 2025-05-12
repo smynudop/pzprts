@@ -51,7 +51,8 @@ export type InputMode =
 	| 'info-blk'
 	| "akari"
 
-export type MouseEventOption = Partial<MouseEvent1>
+export type MouseEventOption<TBoard extends Board = Board> = Partial<MouseEvent1<TBoard>>
+
 
 export class MouseEvent1<TBoard extends Board = Board> {
 	puzzle: Puzzle<TBoard>
