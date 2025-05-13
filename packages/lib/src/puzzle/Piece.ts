@@ -6,6 +6,7 @@ import { ObjectOperation } from "./Operation";
 import { CellList } from "./PieceList";
 import type { GraphComponent } from "./GraphBase";
 import { DIRS } from "./Constants";
+import { CellOfBoard } from "./Answer";
 //---------------------------------------------------------------------------
 // ★BoardPieceクラス Cell, Cross, Border, EXCellクラスのベース
 //---------------------------------------------------------------------------
@@ -33,7 +34,7 @@ const Q_NURIMAZE_WRONG = 42
 const Q_KAKKURO = 51
 
 export type IDir = 1 | 2 | 3 | 4
-export class BoardPiece extends Position {
+export class BoardPiece<TBoard extends Board = Board> extends Position<TBoard> {
 	group!: IGroup
 	id: number = null!
 	isnull = true
@@ -129,7 +130,7 @@ export class BoardPiece extends Position {
 	room!: GraphComponent
 	pureObject: this
 
-	constructor(puzzle: Puzzle) {
+	constructor(puzzle: Puzzle<TBoard>) {
 		super(puzzle)
 		this.pureObject = { ...this }
 	}
@@ -320,7 +321,7 @@ type Adjacent<T> = {
 //---------------------------------------------------------------------------
 // ボードメンバデータの定義(1)
 // Cellクラスの定義
-export class Cell extends BoardPiece {
+export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
 	override group: IGroup = 'cell'
 
 	lcnt = 0		// セルに存在する線の本数
@@ -345,7 +346,7 @@ export class Cell extends BoardPiece {
 	adjacent: Adjacent<this> = null!	// 隣接するセルの情報を保持する
 
 
-	constructor(puzzle: Puzzle, option?: CellOption) {
+	constructor(puzzle: Puzzle<TBoard>, option?: CellOption) {
 		super(puzzle)
 		Object.assign(this, option)
 
@@ -679,12 +680,12 @@ export class Cross extends BoardPiece {
 // ボードメンバデータの定義(3)
 
 export type BorderOption = Partial<Border>
-export class Border extends BoardPiece {
-	sidecell: [Cell, Cell]
+export class Border<TBoard extends Board = any> extends BoardPiece<TBoard> {
+	sidecell: [CellOfBoard<TBoard>, CellOfBoard<TBoard>]
 	//sidecell: [Cell | EXCell, Cell | EXCell]
 	sidecross: [Cross, Cross]
 	sideobj: any[]	// LineManager用
-	constructor(puzzle: Puzzle, option?: any) {
+	constructor(puzzle: Puzzle<TBoard>, option?: any) {
 		super(puzzle)
 		this.sidecell = [null!, null!];	// 隣接セルのオブジェクト
 		this.sidecross = [null!, null!];	// 隣接交点のオブジェクト

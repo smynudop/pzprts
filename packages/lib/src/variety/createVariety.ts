@@ -69,7 +69,7 @@ export type VarityOptionInner<
     pid?: string
     Cell?: ExtendClass<Cell, CellExtend>,
     Cross?: CrossOption,
-    Border?: ExtendClass<Border, BorderExtend>
+    Border?: ExtendClass<Border<TBoard>, BorderExtend>
     MouseEvent: ExtendClass<MouseEvent1<TBoard>, MouseExtend>,
     KeyEvent?: ExtendClass<KeyEvent<TBoard>, KeyExtend>,
     EXCell?: EXCellOption & { [key: string]: any } & ThisType<EXCell>

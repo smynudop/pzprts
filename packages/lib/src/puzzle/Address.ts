@@ -4,6 +4,7 @@ import type { Board } from "./Board"
 import type { Puzzle } from "./Puzzle"
 import { DIRS } from "./Constants"
 import type { BorderOfBoard, CellOfBoard } from "./Answer"
+import { Border } from "./Piece"
 //----------------------------------------------------------------------------
 // ★Positionクラス Address, Pieceクラスのベースクラス
 //---------------------------------------------------------------------------
@@ -43,7 +44,7 @@ export class Position<TBoard extends Board = Board> {
 	//---------------------------------------------------------------------------
 	relcell(dx: number, dy: number) { return this.board.getc(this.bx + dx, this.by + dy); }
 	relcross(dx: number, dy: number) { return this.board.getx(this.bx + dx, this.by + dy); }
-	relbd(dx: number, dy: number) { return this.board.getb(this.bx + dx, this.by + dy); }
+	relbd(dx: number, dy: number): BorderOfBoard<TBoard> { return this.board.getb(this.bx + dx, this.by + dy); }
 	relexcell(dx: number, dy: number) { return this.board.getex(this.bx + dx, this.by + dy); }
 	relobj(dx: number, dy: number) { return this.board.getobj(this.bx + dx, this.by + dy); }
 
@@ -96,7 +97,7 @@ export class Position<TBoard extends Board = Board> {
 	// pos.getnb()         上下左右に隣接する境界線のIDを取得する
 	// pos.getborderobj()  入力対象となる境界線オブジェクトを取得する
 	//---------------------------------------------------------------------------
-	getnb(pos: Position) {
+	getnb(pos: Position): BorderOfBoard<TBoard> {
 		if (pos.bx - this.bx === 0 && pos.by - this.by === -2) { return this.relbd(0, -1); }
 		if (pos.bx - this.bx === 0 && pos.by - this.by === 2) { return this.relbd(0, 1); }
 		if (pos.bx - this.bx === -2 && pos.by - this.by === 0) { return this.relbd(-1, 0); }

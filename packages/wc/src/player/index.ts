@@ -2,6 +2,7 @@ import { mount } from "svelte";
 import type { IConfig, Puzzle } from "@udop/penpa-player-lib";
 import PlayerBase from "../components/Player.svelte"
 import * as Lib from "@udop/penpa-player-lib";
+import { create } from "node:domain";
 
 const createPlayer = (puzzleClass: new (info: IConfig) => Puzzle): (new () => HTMLElement) => {
     return class extends HTMLElement {
@@ -51,3 +52,4 @@ export const KurottoPlayer = createPlayer(Lib.Kurotto)
 export const SimpleLoopPlayer = createPlayer(Lib.SimpleLoop)
 export const SashiganePlayer = createPlayer(Lib.Sashigane)
 export const TapaPlayer = createPlayer(Lib.Tapa)
+export const IcebarnPlayer = createPlayer(Lib.Icebarn)

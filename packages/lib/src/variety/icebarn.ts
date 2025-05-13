@@ -3,6 +3,7 @@
 
 import { Address } from "../puzzle/Address";
 import { AreaGraphBase } from "../puzzle/AreaManager";
+import { Board } from "../puzzle/Board";
 import { REDUCE } from "../puzzle/BoardExec";
 import { DIRS } from "../puzzle/Constants";
 import { LineGraph } from "../puzzle/LineManager";
@@ -15,7 +16,8 @@ import { URL_PZPRV3 } from "../pzpr/constants";
 import { createVariety } from "./createVariety";
 
 //
-const Icebarn = createVariety({
+export const Icebarn = createVariety({
+	pid: "icebarn",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {
@@ -78,7 +80,7 @@ const Icebarn = createVariety({
 			}
 			this.prevPos = pos;
 		},
-		inputarrow_inout: function (border: Border, dir: IDir | 0): void {
+		inputarrow_inout: function (border: IcebarnBorder, dir: IDir | 0): void {
 			const val = this.checkinout(border, dir), bd = this.board;
 			if (val > 0) {
 				if (val === 1) { bd.arrowin.input(border); }
@@ -177,8 +179,8 @@ const Icebarn = createVariety({
 		},
 
 		exchangeinout: function () {
-			const old_in = this.arrowin.getb();
-			const old_out = this.arrowout.getb();
+			const old_in = this.arrowin.getb() as IcebarnBorder;
+			const old_out = this.arrowout.getb() as IcebarnBorder;
 			old_in.setArrow(0);
 			old_out.setArrow(0);
 			this.arrowin.set(old_out);
@@ -694,10 +696,10 @@ const Icebarn = createVariety({
 		},
 
 		getTraceInfo: function (): TraceInfo {
-			let border = this.board.arrowin.getb(), dir: IDir = border.qdir as IDir, pos = border.getaddr();
+			let border = this.board.arrowin.getb() as IcebarnBorder, dir: IDir = border.qdir as IDir, pos = border.getaddr();
 			const info: TraceInfo = {
 				lastcell: this.board.emptycell,
-				lastborder: border,
+				lastborder: border as IcebarnBorder,
 				blist: (new BorderList()),
 				dir: dir,
 				count: 1
@@ -729,7 +731,8 @@ const Icebarn = createVariety({
 					// }
 				}
 				else {
-					border = info.lastborder = pos.getb();
+					info.lastborder = pos.getb() as IcebarnBorder;
+					border = info.lastborder;
 					if (!border.isLine()) { break; }
 
 					info.blist.add(border);
@@ -758,10 +761,15 @@ const Icebarn = createVariety({
 });
 type TraceInfo = {
 	lastcell: Cell
-	lastborder: Border,
+	lastborder: IcebarnBorder,
 	blist: BorderList
 	dir: IDir,
 	count: 1
+}
+
+type IcebarnBorder = Border & {
+	getArrow: () => number
+	setArrow: (a: number) => void
 }
 
 /*
@@ -789,26 +797,27 @@ class InOutAddress extends Address {
 
 	constructor(puzzle: Puzzle, bx: number, by: number) {
 		super(puzzle, bx, by)
-		if (!!this.board) { this.setarrow(this.getb()); }
+		if (!!this.board) { this.setarrow(this.getb() as IcebarnBorder); }
 	}
 
-	setarrow(border: Border) { }
+	setarrow(border: IcebarnBorder) { }
 
 	getid() {
 		return this.getb().id;
 	}
 	setid(id: number) {
-		this.input(this.board.border[id]);
+		this.input(this.board.border[id] as IcebarnBorder);
 	}
 
-	input(border: Border) {
+	input(border: IcebarnBorder) {
 		if (!this.partner.equals(border)) {
 			if (!this.equals(border)) {
-				this.getb().setArrow(0);
+				(this.getb() as IcebarnBorder).setArrow(0);
 				this.set(border);
 			}
 		}
 		else {
+			//@ts-ignore
 			this.board.exchangeinout();
 		}
 	}
@@ -818,7 +827,7 @@ class InOutAddress extends Address {
 
 		this.bx = pos.bx;
 		this.by = pos.by;
-		this.setarrow(this.getb());
+		this.setarrow(this.getb() as IcebarnBorder);
 
 		pos0.draw();
 		this.draw();
@@ -835,7 +844,7 @@ class InOutAddress extends Address {
 class InAddress extends InOutAddress {
 	override type = "in"
 
-	override setarrow(border: Border) {
+	override setarrow(border: IcebarnBorder) {
 		// setarrowin_arrow 
 		const bd = this.board;
 		if (border.by === bd.maxby - 2) { border.setArrow(DIRS.UP); }
@@ -847,7 +856,7 @@ class InAddress extends InOutAddress {
 class OutAddress extends InOutAddress {
 	override type = "out"
 
-	override setarrow(border: Border) {
+	override setarrow(border: IcebarnBorder) {
 		// setarrowout_arrow
 		const bd = this.board;
 		if (border.by === bd.minby + 2) { border.setArrow(DIRS.UP); }
@@ -888,7 +897,9 @@ class InOutOperation extends Operation {
 	override redo() { this.exec_io(this.bx2, this.by2); }
 	exec_io(bx: number, by: number) {
 		const bd = this.board, border = bd.getb(bx, by);
+		//@ts-ignore
 		if (this.property === 'in') { bd.arrowin.set(border); }
+		//@ts-ignore
 		else if (this.property === 'out') { bd.arrowout.set(border); }
 	}
 }
