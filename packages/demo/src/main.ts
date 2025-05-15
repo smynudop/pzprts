@@ -40,6 +40,8 @@ script.addEventListener("load", () => {
     customElements.define("sashigane-player", PenpaPlayer.SashiganePlayer)
     customElements.define("tapa-player", PenpaPlayer.TapaPlayer)
     customElements.define("icebarn-player", PenpaPlayer.IcebarnPlayer)
+    customElements.define("icelom-player", PenpaPlayer.IcelomPlayer)
+    customElements.define("icelom2-player", PenpaPlayer.Icelom2Player)
 })
 
 

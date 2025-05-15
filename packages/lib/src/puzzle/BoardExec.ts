@@ -61,7 +61,7 @@ export type IRange = {
 export type BoardExecOption = Partial<BoardExec>
 export class BoardExec<TBoard extends Board = Board> {
 	// 拡大縮小・回転反転用定数
-
+	REDUCE = REDUCE
 
 
 	boardtype = {

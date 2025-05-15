@@ -1,12 +1,12 @@
 // Piece.js v3.4.1
 import { Position } from "./Address";
-import { Board, type IGroup, type IGroup2 } from "./Board";
+import type { Board, IGroup, IGroup2 } from "./Board";
 import type { Puzzle } from "./Puzzle";
 import { ObjectOperation } from "./Operation";
 import { CellList } from "./PieceList";
 import type { GraphComponent } from "./GraphBase";
 import { DIRS } from "./Constants";
-import { CellOfBoard } from "./Answer";
+import type { CellOfBoard } from "./Answer";
 //---------------------------------------------------------------------------
 // ★BoardPieceクラス Cell, Cross, Border, EXCellクラスのベース
 //---------------------------------------------------------------------------
@@ -35,6 +35,12 @@ const Q_KAKKURO = 51
 
 export type IDir = 1 | 2 | 3 | 4
 export class BoardPiece<TBoard extends Board = Board> extends Position<TBoard> {
+	NDIR = DIRS.NDIR
+	UP = DIRS.UP
+	DN = DIRS.DN
+	LT = DIRS.LT
+	RT = DIRS.RT
+
 	group!: IGroup
 	id: number = null!
 	isnull = true

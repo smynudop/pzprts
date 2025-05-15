@@ -1,38 +1,33 @@
 //
 // パズル固有スクリプト部 アイスバーン・アイスローム・アイスローム２版 icebarn.js
 
-import { Address } from "../puzzle/Address";
-import { AreaGraphBase } from "../puzzle/AreaManager";
-import { Board } from "../puzzle/Board";
-import { REDUCE } from "../puzzle/BoardExec";
-import { DIRS } from "../puzzle/Constants";
 import { LineGraph } from "../puzzle/LineManager";
 import { MouseEvent1 } from "../puzzle/MouseInput";
-import { Operation } from "../puzzle/Operation";
-import type { Border, Cell, IDir } from "../puzzle/Piece";
+import type { Border, IDir } from "../puzzle/Piece";
 import { BorderList } from "../puzzle/PieceList";
-import type { Puzzle } from "../puzzle/Puzzle";
-import { URL_PZPRV3 } from "../pzpr/constants";
+import { IConfig } from "../puzzle/Puzzle";
 import { createVariety } from "./createVariety";
+import { AreaIcebarnGraph, type IcebarnBorder, InAddress, InOutOperation, OutAddress, type TraceInfo } from "./icebarn";
 
 //
-export const Icebarn = createVariety({
-	pid: "icebarn",
+export const Icelom = createVariety({
+	pid: "icelom",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {
-		inputModes: { edit: ['ice', 'arrow', 'info-line'], play: ['line', 'peke', 'diraux', 'info-line'] },
-		mouseinput: function (): void { // オーバーライド
+		inputModes: { edit: ['ice', 'arrow', 'number', 'clear', 'info-line'], play: ['line', 'peke', 'diraux', 'info-line'] },
+
+		mouseinput: function () { // オーバーライド
 			if (this.inputMode === 'arrow') { this.inputarrow_line(); }
 			else { MouseEvent1.prototype.mouseinput.call(this); }
 		},
-		mouseinput_other: function (): void {
+		mouseinput_other: function () {
 			if (this.inputMode === 'diraux') {
 				if (this.mousestart || this.mousemove) { this.inputmark_mousemove(); }
 				else if (this.mouseend && this.notInputted()) { this.clickmark(); }
 			}
 		},
-		mouseinput_auto: function (): void {
+		mouseinput_auto: function () {
 			if (this.puzzle.playmode) {
 				if (this.btn === 'left') {
 					if (this.mousestart || this.mousemove) { this.inputLine(); }
@@ -61,7 +56,7 @@ export const Icebarn = createVariety({
 			}
 		},
 
-		inputarrow_line: function (): void {
+		inputarrow_line: function () {
 			const pos = this.getpos(0);
 			if (this.prevPos.equals(pos)) { return; }
 
@@ -70,8 +65,10 @@ export const Icebarn = createVariety({
 				const dir = this.prevPos.getdir(pos, 2);
 
 				if (border.inside) {
-					if (this.inputData === null) { this.inputData = ((border.getArrow() !== dir) ? 1 : 0); }
-					border.setArrow((this.inputData === 1) ? dir : 0);
+					if (this.pid === 'icebarn') {
+						if (this.inputData === null) { this.inputData = ((border.getArrow() !== dir) ? 1 : 0); }
+						border.setArrow((this.inputData === 1) ? dir : 0);
+					}
 				}
 				else if (this.inputData === null) {
 					this.inputarrow_inout(border, dir);
@@ -80,7 +77,7 @@ export const Icebarn = createVariety({
 			}
 			this.prevPos = pos;
 		},
-		inputarrow_inout: function (border: IcebarnBorder, dir: IDir | 0): void {
+		inputarrow_inout: function (border: IcebarnBorder, dir: IDir | 0) {
 			const val = this.checkinout(border, dir), bd = this.board;
 			if (val > 0) {
 				if (val === 1) { bd.arrowin.input(border); }
@@ -89,17 +86,17 @@ export const Icebarn = createVariety({
 			}
 		},
 		/* 0:どちらでもない 1:IN 2:OUT */
-		checkinout: function (border: Border, dir: IDir | 0): number {
+		checkinout: function (border: IcebarnBorder, dir: IDir | 0): number {
 			if (border.isnull) { return 0; }
 			const bd = this.board, bx = border.bx, by = border.by;
-			if ((bx === bd.minbx + 2 && dir === DIRS.RT) || (bx === bd.maxbx - 2 && dir === DIRS.LT) ||
-				(by === bd.minby + 2 && dir === DIRS.DN) || (by === bd.maxby - 2 && dir === DIRS.UP)) { return 1; }
-			else if ((bx === bd.minbx + 2 && dir === DIRS.LT) || (bx === bd.maxbx - 2 && dir === DIRS.RT) ||
-				(by === bd.minby + 2 && dir === DIRS.UP) || (by === bd.maxby - 2 && dir === DIRS.DN)) { return 2; }
+			if ((bx === bd.minbx + 2 && dir === border.RT) || (bx === bd.maxbx - 2 && dir === border.LT) ||
+				(by === bd.minby + 2 && dir === border.DN) || (by === bd.maxby - 2 && dir === border.UP)) { return 1; }
+			else if ((bx === bd.minbx + 2 && dir === border.LT) || (bx === bd.maxbx - 2 && dir === border.RT) ||
+				(by === bd.minby + 2 && dir === border.UP) || (by === bd.maxby - 2 && dir === border.DN)) { return 2; }
 			return 0;
 		},
 
-		inputmark_mousemove: function (): void {
+		inputmark_mousemove: function () {
 			const pos = this.getpos(0);
 			if (pos.getc().isnull) { return; }
 
@@ -116,7 +113,7 @@ export const Icebarn = createVariety({
 			}
 			this.prevPos = pos;
 		},
-		clickmark: function (): void {
+		clickmark: function () {
 			const pos = this.getpos(0.22);
 			if (this.prevPos.equals(pos)) { return; }
 
@@ -133,12 +130,39 @@ export const Icebarn = createVariety({
 			border.draw();
 		}
 	},
+
+	//---------------------------------------------------------
+	// キーボード入力系
+	KeyEvent: {
+		enablemake: true,
+
+		keyinput: function (ca) {
+			if (this.key_inputIcebarn(ca)) { return; }
+			this.key_inputqnum(ca);
+		},
+		key_inputIcebarn: function (ca: string): boolean {
+			const cell = this.cursor.getc();
+
+			if (ca === 'q') {
+				cell.setQues(cell.ice() ? 0 : 6);
+			}
+			else if (ca === ' ' && cell.noNum()) {
+				cell.setQues(0);
+			}
+			else { return false; }
+
+			cell.drawaround();
+			this.prev = cell;
+			return true;
+		}
+	},
+
 	//---------------------------------------------------------
 	// 盤面管理系
 	Border: {
 		group: "border",
 		getArrow: function (): number { return this.qdir; },
-		setArrow: function (val: number): void { this.setQdir(val); },
+		setArrow: function (val: number) { this.setQdir(val); },
 		isArrow: function (): boolean { return (this.qdir > 0); }
 	},
 
@@ -150,6 +174,7 @@ export const Icebarn = createVariety({
 
 		hasborder: 2,
 		hasexcell: 2, /* LineGraph用 */
+
 		icegraph: null! as AreaIcebarnGraph,
 
 		addExtraInfo: function () {
@@ -165,10 +190,12 @@ export const Icebarn = createVariety({
 			this.arrowin.partner = this.arrowout;
 			this.arrowout.partner = this.arrowin;
 		},
-		initExtraObject: function (col: number, row: number) {
+		initExtraObject: function (col, row) {
 			this.disableInfo();
 			if (col >= 3) {
-				this.arrowin.init(1, 0);
+				//this.arrowin.init(1, 0);
+				this.arrowin.set({ bx: 1, by: 0 })
+
 				this.arrowout.init(5, 0);
 			}
 			else {
@@ -202,16 +229,16 @@ export const Icebarn = createVariety({
 		},
 		adjustBoardData2: function (key, d) {
 			const puzzle = this.puzzle, bd = puzzle.board, opemgr = puzzle.opemgr;
-			const info1 = this.posinfo_in, info2 = this.posinfo_out
+			let info1 = this.posinfo_in, info2 = this.posinfo_out, isrec: boolean;
 
 			bd.disableInfo();
 
-			let isrec = ((key & REDUCE) && (info1.isdel) && (!opemgr.undoExec && !opemgr.redoExec));
+			isrec = ((key & this.REDUCE) && (info1.isdel) && (!opemgr.undoExec && !opemgr.redoExec));
 			if (isrec) { opemgr.forceRecord = true; }
 			bd.arrowin.set(info1.pos);
 			if (isrec) { opemgr.forceRecord = false; }
 
-			isrec = ((key & REDUCE) && (info2.isdel) && (!opemgr.undoExec && !opemgr.redoExec));
+			isrec = ((key & this.REDUCE) && (info2.isdel) && (!opemgr.undoExec && !opemgr.redoExec));
 			if (isrec) { opemgr.forceRecord = true; }
 			bd.arrowout.set(info2.pos);
 			if (isrec) { opemgr.forceRecord = false; }
@@ -219,9 +246,6 @@ export const Icebarn = createVariety({
 			bd.enableInfo();
 		}
 	},
-
-
-
 	OperationManager: {
 		addExtraOperation: function () {
 			this.operationlist.push(InOutOperation);
@@ -232,7 +256,7 @@ export const Icebarn = createVariety({
 		enabled: true,
 		isLineCross: true,
 
-		rebuild2: function (): void {
+		rebuild2: function () {
 			const excells = this.board.excell;
 			for (let c = 0; c < excells.length; c++) {
 				this.setComponentRefs(excells[c], null);
@@ -242,9 +266,6 @@ export const Icebarn = createVariety({
 			LineGraph.prototype.rebuild2.call(this);
 		}
 	},
-
-
-
 	//---------------------------------------------------------
 	// 画像表示系
 	Graphic: {
@@ -260,7 +281,7 @@ export const Icebarn = createVariety({
 
 		maxYdeg: 0.70,
 
-		paint: function (): void {
+		paint: function () {
 			this.drawBGCells();
 			this.drawDashedGrid();
 
@@ -270,9 +291,13 @@ export const Icebarn = createVariety({
 			this.drawPekes();
 			this.drawBorderAuxDir();
 
+			this.drawQuesNumbers();
+
 			this.drawBorderArrows();
 
 			this.drawChassis();
+
+			this.drawTarget();
 
 			this.drawInOut();
 		},
@@ -305,7 +330,7 @@ export const Icebarn = createVariety({
 			return (bd.maxby - bd.minby) / 2 - 2;
 		},
 
-		getOffsetCols: function (): number {
+		getOffsetCols: function () {
 			let bd = this.board, cols = 0;
 			if (this.puzzle.playeronly) {
 				if (bd.arrowin.bx === bd.minbx + 2 || bd.arrowout.bx === bd.minbx + 2) { cols += 0.35; }
@@ -313,7 +338,7 @@ export const Icebarn = createVariety({
 			}
 			return cols;
 		},
-		getOffsetRows: function (): number {
+		getOffsetRows: function () {
 			let bd = this.board, rows = 0;
 			if (this.puzzle.playeronly) {
 				if (bd.arrowin.by === bd.minby + 2 || bd.arrowout.by === bd.minby + 2) { rows += 0.35; }
@@ -322,7 +347,7 @@ export const Icebarn = createVariety({
 			return rows;
 		},
 
-		drawBorderArrows: function (): void {
+		drawBorderArrows: function () {
 			const g = this.vinc('border_arrow', 'crispEdges', true);
 
 			const ll = this.cw * 0.35;				//LineLength
@@ -336,43 +361,43 @@ export const Icebarn = createVariety({
 
 				g.fillStyle = (border.error === 4 ? this.errcolor1 : this.quescolor);
 				g.vid = "b_ar_" + border.id;
-				if (dir !== DIRS.NDIR) {
+				if (dir !== border.NDIR) {
 					switch (dir) {
-						case DIRS.UP: case DIRS.DN: g.fillRectCenter(px, py, lm, ll); break;
-						case DIRS.LT: case DIRS.RT: g.fillRectCenter(px, py, ll, lm); break;
+						case border.UP: case border.DN: g.fillRectCenter(px, py, lm, ll); break;
+						case border.LT: case border.RT: g.fillRectCenter(px, py, ll, lm); break;
 					}
 				}
 				else { g.vhide(); }
 
 				/* 1つのidでは2方向しかとれないはず */
 				g.vid = "b_tipa_" + border.id;
-				if (dir === DIRS.UP || dir === DIRS.LT) {
+				if (dir === border.UP || dir === border.LT) {
 					g.beginPath();
 					switch (dir) {
-						case DIRS.UP: g.setOffsetLinePath(px, py, 0, -ll, -ll / 2, -ll * 0.4, ll / 2, -ll * 0.4, true); break;
-						case DIRS.LT: g.setOffsetLinePath(px, py, -ll, 0, -ll * 0.4, -ll / 2, -ll * 0.4, ll / 2, true); break;
+						case border.UP: g.setOffsetLinePath(px, py, 0, -ll, -ll / 2, -ll * 0.4, ll / 2, -ll * 0.4, true); break;
+						case border.LT: g.setOffsetLinePath(px, py, -ll, 0, -ll * 0.4, -ll / 2, -ll * 0.4, ll / 2, true); break;
 					}
 					g.fill();
 				}
 				else { g.vhide(); }
 
 				g.vid = "b_tipb_" + border.id;
-				if (dir === DIRS.DN || dir === DIRS.RT) {
+				if (dir === border.DN || dir === border.RT) {
 					g.beginPath();
 					switch (dir) {
-						case DIRS.DN: g.setOffsetLinePath(px, py, 0, +ll, -ll / 2, ll * 0.4, ll / 2, ll * 0.4, true); break;
-						case DIRS.RT: g.setOffsetLinePath(px, py, ll, 0, ll * 0.4, -ll / 2, ll * 0.4, ll / 2, true); break;
+						case border.DN: g.setOffsetLinePath(px, py, 0, +ll, -ll / 2, ll * 0.4, ll / 2, ll * 0.4, true); break;
+						case border.RT: g.setOffsetLinePath(px, py, ll, 0, ll * 0.4, -ll / 2, ll * 0.4, ll / 2, true); break;
 					}
 					g.fill();
 				}
 				else { g.vhide(); }
 			}
 		},
-		drawInOut: function (): void {
-			let g = this.context, bd = this.board, border: Border;
+		drawInOut: function () {
+			let g = this.context, bd = this.board, border: IcebarnBorder;
 
 			g.vid = "string_in";
-			border = bd.arrowin.getb();
+			border = bd.arrowin.getb() as IcebarnBorder;
 			if (!border.inside && border.id < bd.border.length) {
 				let bx = border.bx, by = border.by, px = bx * this.bw, py = by * this.bh;
 				if (by === bd.minby + 2) { py -= 1.2 * this.bh; }
@@ -385,7 +410,7 @@ export const Icebarn = createVariety({
 			else { g.vhide(); }
 
 			g.vid = "string_out";
-			border = bd.arrowout.getb();
+			border = bd.arrowout.getb() as IcebarnBorder;
 			if (!border.inside && border.id < bd.border.length) {
 				let bx = border.bx, by = border.by, px = bx * this.bw, py = by * this.bh;
 				if (by === bd.minby + 2) { py -= 1.2 * this.bh; }
@@ -398,13 +423,13 @@ export const Icebarn = createVariety({
 			else { g.vhide(); }
 		},
 
-		repaintParts: function (blist): void {
+		repaintParts: function (blist) {
 			this.range.borders = blist as any;
 
 			this.drawBorderArrows();
 		},
 
-		drawBorderAuxDir: function (): void {
+		drawBorderAuxDir: function () {
 			const g = this.vinc('border_dirsub', 'crispEdges');
 			const ssize = this.cw * 0.10;
 
@@ -420,10 +445,10 @@ export const Icebarn = createVariety({
 					g.strokeStyle = (!border.trial ? "rgb(64,64,64)" : this.trialcolor);
 					g.beginPath();
 					switch (dir) {
-						case DIRS.UP: g.setOffsetLinePath(px, py, -ssize * 2, +ssize, 0, -ssize, +ssize * 2, +ssize, false); break;
-						case DIRS.DN: g.setOffsetLinePath(px, py, -ssize * 2, -ssize, 0, +ssize, +ssize * 2, -ssize, false); break;
-						case DIRS.LT: g.setOffsetLinePath(px, py, +ssize, -ssize * 2, -ssize, 0, +ssize, +ssize * 2, false); break;
-						case DIRS.RT: g.setOffsetLinePath(px, py, -ssize, -ssize * 2, +ssize, 0, -ssize, +ssize * 2, false); break;
+						case border.UP: g.setOffsetLinePath(px, py, -ssize * 2, +ssize, 0, -ssize, +ssize * 2, +ssize, false); break;
+						case border.DN: g.setOffsetLinePath(px, py, -ssize * 2, -ssize, 0, +ssize, +ssize * 2, -ssize, false); break;
+						case border.LT: g.setOffsetLinePath(px, py, +ssize, -ssize * 2, -ssize, 0, +ssize, +ssize * 2, false); break;
+						case border.RT: g.setOffsetLinePath(px, py, -ssize, -ssize * 2, +ssize, 0, -ssize, +ssize * 2, false); break;
 					}
 					g.stroke();
 				}
@@ -435,85 +460,19 @@ export const Icebarn = createVariety({
 	//---------------------------------------------------------
 	// URLエンコード/デコード処理
 	Encode: {
-		decodePzpr: function (type): void {
+		decodePzpr: function (type) {
 			this.decodeIce();
-			this.decodeBorderArrow();
+			this.decodeNumber16();
 			this.decodeInOut();
 		},
-		encodePzpr: function (type): void {
-			this.encodeIce()
-			this.encodeBorderArrow();
+		encodePzpr: function (type) {
+			this.encodeIce();
+			this.encodeNumber16();
 			this.encodeInOut();
+
+			this.outpflag = "a";
 		},
-
-		decodeBorderArrow: function (): void {
-			const bstr = this.outbstr, bd = this.board;
-			const bdinside = 2 * bd.cols * bd.rows - bd.cols - bd.rows;
-
-			bd.disableInfo();
-			let id = 0, a = 0;
-			for (let i = a; i < bstr.length; i++) {
-				const ca = bstr.charAt(i);
-				if (ca !== 'z') {
-					id += Number.parseInt(ca, 36);
-					if (id < bdinside) {
-						const border = bd.border[id];
-						border.setArrow(border.isHorz() ? DIRS.UP : DIRS.LT);
-					}
-					id++;
-				}
-				else { id += 35; }
-				if (id >= bdinside) { a = i + 1; break; }
-			}
-
-			id = 0;
-			for (let i = a; i < bstr.length; i++) {
-				const ca = bstr.charAt(i);
-				if (ca !== 'z') {
-					id += Number.parseInt(ca, 36);
-					if (id < bdinside) {
-						const border = bd.border[id];
-						border.setArrow(border.isHorz() ? DIRS.DN : DIRS.RT);
-					}
-					id++;
-				}
-				else { id += 35; }
-				if (id >= bdinside) { a = i + 1; break; }
-			}
-			bd.enableInfo();
-
-			this.outbstr = bstr.substr(a);
-		},
-		encodeBorderArrow: function (): void {
-			let cm = "", num = 0, bd = this.board;
-			const bdinside = 2 * bd.cols * bd.rows - bd.cols - bd.rows;
-			for (let id = 0; id < bdinside; id++) {
-				const border = bd.border[id];
-				const dir = border.getArrow();
-				if (dir === DIRS.UP || dir === DIRS.LT) { cm += num.toString(36); num = 0; }
-				else {
-					num++;
-					if (num >= 35) { cm += "z"; num = 0; }
-				}
-			}
-			if (num > 0) { cm += num.toString(36); }
-
-			num = 0;
-			for (let id = 0; id < bdinside; id++) {
-				const border = bd.border[id];
-				const dir = border.getArrow();
-				if (dir === DIRS.DN || dir === DIRS.RT) { cm += num.toString(36); num = 0; }
-				else {
-					num++;
-					if (num >= 35) { cm += "z"; num = 0; }
-				}
-			}
-			if (num > 0) { cm += num.toString(36); }
-
-			this.outbstr += cm;
-		},
-
-		decodeInOut: function (): void {
+		decodeInOut: function () {
 			const barray = this.outbstr.split("/"), bd = this.board;
 			const idoffset = (2 * bd.cols * bd.rows - bd.cols - bd.rows);
 
@@ -522,7 +481,7 @@ export const Icebarn = createVariety({
 
 			this.outbstr = "";
 		},
-		encodeInOut: function (): void {
+		encodeInOut: function () {
 			const bd = this.board;
 			const idoffset = (2 * bd.cols * bd.rows - bd.cols - bd.rows);
 			this.outbstr += ("/" + (bd.arrowin.getid() - idoffset) + "/" + (bd.arrowout.getid() - idoffset));
@@ -530,51 +489,37 @@ export const Icebarn = createVariety({
 	},
 	//---------------------------------------------------------
 	FileIO: {
-		decodeData: function (): void {
+		decodeData: function () {
 			const bd = this.board;
 			bd.arrowin.setid(+this.readLine());
 			bd.arrowout.setid(+this.readLine());
+			this.readLine();
 
 			this.decodeCell(function (cell, ca) {
-				if (ca === "1") { cell.ques = 6; }
+				if (ca.charAt(0) === 'i') { cell.ques = 6; ca = ca.substr(1); }
+
+				if (ca !== '' && ca !== '.') {
+					cell.qnum = (ca !== '?' ? +ca : -2);
+				}
 			});
-			this.decodeBorderArrow();
 			this.decodeBorderLine_icebarn();
 		},
-		encodeData: function (): void {
+		encodeData: function () {
 			const bd = this.board;
 			this.writeLine(bd.arrowin.getid());
 			this.writeLine(bd.arrowout.getid());
+			this.writeLine((this.puzzle.pid === 'icelom' ? "allwhite" : "skipwhite"));
+
 			this.encodeCell(function (cell) {
-				return (cell.ques === 6 ? "1 " : "0 ");
+				let istr = (cell.ques === 6 ? "i" : ""), qstr = '';
+				if (cell.qnum === -1) { qstr = (istr === "" ? ". " : " "); }
+				else if (cell.qnum === -2) { qstr = "? "; }
+				else { qstr = cell.qnum + " "; }
+				return istr + qstr;
 			});
-			this.encodeBorderArrow();
 			this.encodeBorderLine_icebarn();
 		},
-
-		decodeBorderArrow: function (): void {
-			const bd = this.board;
-			bd.disableInfo();
-			this.decodeBorder(function (border, ca) {
-				if (ca !== "0") {
-					const val = +ca, isvert = border.isVert();
-					if (val === 1 && !isvert) { border.setArrow(DIRS.UP); }
-					if (val === 2 && !isvert) { border.setArrow(DIRS.DN); }
-					if (val === 1 && isvert) { border.setArrow(DIRS.LT); }
-					if (val === 2 && isvert) { border.setArrow(DIRS.RT); }
-				}
-			});
-			bd.enableInfo();
-		},
-		encodeBorderArrow: function (): void {
-			this.encodeBorder(function (border) {
-				const dir = border.getArrow();
-				if (dir === DIRS.UP || dir === DIRS.LT) { return "1 "; }
-				else if (dir === DIRS.DN || dir === DIRS.RT) { return "2 "; }
-				else { return "0 "; }
-			});
-		},
-		decodeBorderLine_icebarn: function (): void {
+		decodeBorderLine_icebarn: function () {
 			this.decodeBorder(function (border, ca) {
 				const lca = ca.charAt(ca.length - 1);
 				if (lca >= "a" && lca <= "z") {
@@ -591,7 +536,7 @@ export const Icebarn = createVariety({
 				}
 			});
 		},
-		encodeBorderLine_icebarn: function (): void {
+		encodeBorderLine_icebarn: function () {
 			this.encodeBorder(function (border) {
 				let ca = "";
 				if (border.qsub === 2) { ca += "" + (-1 - border.line); }
@@ -616,31 +561,32 @@ export const Icebarn = createVariety({
 			"checkLineOnStart",
 			"checkDeadendRoad",
 			"checkKeepInside",
-			"checkFollowArrow",
+			"checkNumberOrder",
 
 			"checkOneLoop",
 
-			"checkIgnoreIcebarn",
+			"checkUnreachedUnshadeCell",
+			//"checkIgnoreIcebarn@!icelom",
 
-			"checkAllArrow",
+			"checkNoLineNumber",
 
 			"checkDeadendLine+"
 		],
 
-		checkCrossOutOfIce: function (): void {
+		checkCrossOutOfIce: function () {
 			this.checkAllCell(function (cell) { return (cell.lcnt === 4 && !cell.ice()); }, "lnCrossExIce");
 		},
-		checkUnreachedUnshadeCell: function (): void {
+		checkUnreachedUnshadeCell: function () {
 			this.checkAllCell(function (cell) { return (cell.ques === 0 && cell.lcnt === 0); }, "cuNoLine");
 		},
-		checkIgnoreIcebarn: function (): void {
+		checkIgnoreIcebarn: function () {
 			this.checkLinesInArea(this.board.icegraph, function (w, h, a, n) { return (a !== 0); }, "bkNoLine");
 		},
-		checkNoLineNumber: function (): void {
+		checkNoLineNumber: function () {
 			this.checkAllCell(function (cell) { return (cell.lcnt === 0 && cell.isNum()); }, "nmUnpass");
 		},
 
-		checkAllArrow: function (): void {
+		checkAllArrow: function () {
 			const bd = this.board;
 			for (let id = 0; id < bd.border.length; id++) {
 				const border = bd.border[id];
@@ -652,13 +598,13 @@ export const Icebarn = createVariety({
 			}
 		},
 
-		checkValidStart: function (): void {
+		checkValidStart: function () {
 			const bd = this.board, border = bd.arrowin.getb();
 			if (!(border.by !== bd.minby + 2 || border.by !== bd.maxby - 2 || border.bx !== bd.minbx + 2 || border.bx !== bd.maxbx - 2)) {
 				this.failcode.add("stInvalid");
 			}
 		},
-		checkLineOnStart: function (): void {
+		checkLineOnStart: function () {
 			const border = this.board.arrowin.getb();
 			if (!border.isLine()) {
 				border.seterr(4);
@@ -666,19 +612,19 @@ export const Icebarn = createVariety({
 			}
 		},
 
-		checkDeadendRoad: function (): void {
+		checkDeadendRoad: function () {
 			this.checkTrace(function (info) { return info.lastborder.isLine(); }, "lrDeadEnd");
 		},
-		checkFollowArrow: function (): void {
+		checkFollowArrow: function () {
 			this.checkTrace(function (info) { return (info.lastborder.getArrow() === info.dir); }, "lrReverse");
 		},
-		checkKeepInside: function (): void {
+		checkKeepInside: function () {
 			this.checkTrace(function (info) {
 				const border = info.lastborder, bd = border.puzzle.board;
 				return (border.inside || border.id === bd.arrowout.getid());
 			}, "lrOffField");
 		},
-		checkNumberOrder: function (): void {
+		checkNumberOrder: function () {
 			this.checkTrace(function (info) {
 				const cell = info.lastcell;
 				if (cell.qnum < 0 || cell.qnum === info.count) { return true; }
@@ -686,7 +632,7 @@ export const Icebarn = createVariety({
 				return false;
 			}, "lrOrder");
 		},
-		checkTrace: function (evalfunc: (info: TraceInfo) => boolean, code: string): void {
+		checkTrace: function (evalfunc: (info: TraceInfo) => boolean, code: string) {
 			const info = this.getTraceInfo();
 			if (!evalfunc(info)) {
 				this.failcode.add(code);
@@ -695,21 +641,24 @@ export const Icebarn = createVariety({
 			}
 		},
 
-		getTraceInfo: function (): TraceInfo {
-			let border = this.board.arrowin.getb() as IcebarnBorder, dir: IDir = border.qdir as IDir, pos = border.getaddr();
+		getTraceInfo: function () {
+			let border = this.board.arrowin.getb() as IcebarnBorder, dir = border.qdir as IDir, pos = border.getaddr();
 			const info: TraceInfo = {
 				lastcell: this.board.emptycell,
-				lastborder: border as IcebarnBorder,
+				lastborder: border,
 				blist: (new BorderList()),
 				dir: dir,
 				count: 1
 			};
+			if (dir < 1) {
+				throw new Error("dir is invalid!")
+			}
 			info.blist.add(border);
-
 			while (1) {
 				pos.movedir(dir, 1);
+
 				if (pos.oncell()) {
-					info.lastcell = pos.getc();
+					info.lastcell = pos.getc()
 					const cell = info.lastcell;
 					if (cell.isnull) { break; }
 					else if (!cell.ice()) {
@@ -722,22 +671,20 @@ export const Icebarn = createVariety({
 						info.dir = dir;
 					}
 
-					// if (this.pid !== 'icebarn') {
-					// 	const num = cell.getNum();
-					// 	if (num !== -1) {
-					// 		if (num !== -2 && num !== info.count) { break; }
-					// 		info.count++;
-					// 	}
-					// }
+					const num = cell.getNum();
+					if (num !== -1) {
+						if (num !== -2 && num !== info.count) { break; }
+						info.count++;
+					}
 				}
 				else {
-					info.lastborder = pos.getb() as IcebarnBorder;
+					info.lastborder = pos.getb()
 					border = info.lastborder;
 					if (!border.isLine()) { break; }
 
 					info.blist.add(border);
 					const arrow = border.getArrow();
-					if (arrow !== DIRS.NDIR && dir !== arrow) { break; }
+					if (arrow !== border.NDIR && dir !== arrow) { break; }
 				}
 			}
 
@@ -759,147 +706,31 @@ export const Icebarn = createVariety({
 		cuNoLine: ["通過していない白マスがあります。", "The line doesn't pass all of the non-icy cell."]
 	}
 });
-export type TraceInfo = {
-	lastcell: Cell
-	lastborder: IcebarnBorder,
-	blist: BorderList
-	dir: IDir,
-	count: 1
-}
 
-export type IcebarnBorder = Border & {
-	getArrow: () => number
-	setArrow: (a: number) => void
-}
+export class Icelom2 extends Icelom {
+	constructor(config?: IConfig) {
+		super(config)
+		this.pid = "icelom2"
+		this.checker.checklist = [
+			"checkBranchLine",
+			"checkCrossOutOfIce",
+			"checkIceLines",
 
-/*
-"CellList@icebarn":{
-	join : function(str){
-		var idlist = [];
-		for(var i=0;i<this.length;i++){ idlist.push(this[i].id);}
-		return idlist.join(str);
-	}
-},
-*/
+			"checkValidStart",
+			"checkLineOnStart",
+			"checkDeadendRoad",
+			"checkKeepInside",
+			"checkNumberOrder",
 
-export class AreaIcebarnGraph extends AreaGraphBase {
-	override enabled = true
-	override relation = { 'cell.ques': 'node' }
-	override setComponentRefs(obj: any, component: any) { obj.icebarn = component; }
-	override getObjNodeList(nodeobj: any) { return nodeobj.icebarnnodes; }
-	override resetObjNodeList(nodeobj: any) { nodeobj.icebarnnodes = []; }
-	override isnodevalid(cell: any) { return cell.ice(); }
-}
+			"checkOneLoop",
 
-export class InOutAddress extends Address {
-	type = ""
-	partner!: InOutAddress
+			//"checkUnreachedUnshadeCell",
+			"checkIgnoreIcebarn",
 
-	constructor(puzzle: Puzzle, bx: number, by: number) {
-		super(puzzle, bx, by)
-		if (!!this.board) { this.setarrow(this.getb() as IcebarnBorder); }
-	}
+			"checkNoLineNumber",
 
-	setarrow(border: IcebarnBorder) { }
-
-	getid() {
-		return this.getb().id;
-	}
-	setid(id: number) {
-		this.input(this.board.border[id] as IcebarnBorder);
-	}
-
-	input(border: IcebarnBorder) {
-		if (!this.partner.equals(border)) {
-			if (!this.equals(border)) {
-				(this.getb() as IcebarnBorder).setArrow(0);
-				this.set(border);
-			}
-		}
-		else {
-			//@ts-ignore
-			this.board.exchangeinout();
-		}
-	}
-	override set<T extends { bx: number, by: number }>(pos: T) {
-		const pos0 = this.getaddr();
-		this.addOpe(pos.bx, pos.by);
-
-		this.bx = pos.bx;
-		this.by = pos.by;
-		this.setarrow(this.getb() as IcebarnBorder);
-
-		pos0.draw();
-		this.draw();
-
-		return this
-	}
-
-	addOpe(bx: number, by: number) {
-		if (this.bx === bx && this.by === by) { return; }
-		this.puzzle.opemgr.add(new InOutOperation(this.puzzle, this.type, this.bx, this.by, bx, by));
-	}
-}
-
-export class InAddress extends InOutAddress {
-	override type = "in"
-
-	override setarrow(border: IcebarnBorder) {
-		// setarrowin_arrow 
-		const bd = this.board;
-		if (border.by === bd.maxby - 2) { border.setArrow(DIRS.UP); }
-		else if (border.by === bd.minby + 2) { border.setArrow(DIRS.DN); }
-		else if (border.bx === bd.maxbx - 2) { border.setArrow(DIRS.LT); }
-		else if (border.bx === bd.minbx + 2) { border.setArrow(DIRS.RT); }
-	}
-}
-export class OutAddress extends InOutAddress {
-	override type = "out"
-
-	override setarrow(border: IcebarnBorder) {
-		// setarrowout_arrow
-		const bd = this.board;
-		if (border.by === bd.minby + 2) { border.setArrow(DIRS.UP); }
-		else if (border.by === bd.maxby - 2) { border.setArrow(DIRS.DN); }
-		else if (border.bx === bd.minbx + 2) { border.setArrow(DIRS.LT); }
-		else if (border.bx === bd.maxbx - 2) { border.setArrow(DIRS.RT); }
-	}
-}
-
-export class InOutOperation extends Operation {
-	bx1: number
-	bx2: number
-	by1: number
-	by2: number
-
-	constructor(puzzle: Puzzle, property: string, x1: number, y1: number, x2: number, y2: number) {
-		super(puzzle)
-		this.property = property;
-		this.bx1 = x1;
-		this.by1 = y1;
-		this.bx2 = x2;
-		this.by2 = y2;
-	}
-	override decode(strs: string[]) {
-		if (strs[0] !== 'PI' && strs[0] !== 'PO') { return false; }
-		this.property = (strs[0] === 'PI' ? 'in' : 'out');
-		this.bx1 = +strs[1];
-		this.by1 = +strs[2];
-		this.bx2 = +strs[3];
-		this.by2 = +strs[4];
-		return true;
-	}
-	override toString() {
-		return [(this.property === 'in' ? 'PI' : 'PO'), this.bx1, this.by1, this.bx2, this.by2].join(',');
-	}
-
-	override undo() { this.exec_io(this.bx1, this.by1); }
-	override redo() { this.exec_io(this.bx2, this.by2); }
-	exec_io(bx: number, by: number) {
-		const bd = this.board, border = bd.getb(bx, by);
-		//@ts-ignore
-		if (this.property === 'in') { bd.arrowin.set(border); }
-		//@ts-ignore
-		else if (this.property === 'out') { bd.arrowout.set(border); }
+			"checkDeadendLine+"
+		]
+		this.checker.makeCheckList()
 	}
 }

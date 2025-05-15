@@ -4,7 +4,7 @@ import type { Board } from "./Board"
 import type { Puzzle } from "./Puzzle"
 import { DIRS } from "./Constants"
 import type { BorderOfBoard, CellOfBoard } from "./Answer"
-import { Border } from "./Piece"
+import { Border, IDir } from "./Piece"
 //----------------------------------------------------------------------------
 // ★Positionクラス Address, Pieceクラスのベースクラス
 //---------------------------------------------------------------------------
@@ -77,7 +77,7 @@ export class Position<TBoard extends Board = Board> {
 	// pos.getdir() 指定されたPositionがどの方向にいるか判定する
 	// pos.getvert() 指定されたPositionが縦か横か判定する
 	//---------------------------------------------------------------------------
-	getdir<T extends { bx: number, by: number }>(pos: T, diff: number) {
+	getdir<T extends { bx: number, by: number }>(pos: T, diff: number): IDir | 0 {
 		const dx = (pos.bx - this.bx);
 		const dy = (pos.by - this.by);
 		if (dx === 0 && dy === -diff) { return DIRS.UP; }
