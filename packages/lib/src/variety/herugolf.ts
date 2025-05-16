@@ -79,6 +79,7 @@ export const Herugolf = createVariety({
 				const border = this.prevPos.getnb(pos);
 				if (!border.isnull && ((!border.isLine() && cell.lcnt === 0) || (border.isLine() && cell0.lcnt === 1))) {
 					/* この条件を追加 */
+					//@ts-ignore
 					if (border.isLine() || border.sidecell[0].distance > 0 || border.sidecell[1].distance > 0) {
 						this.mouseCell = cell;
 						this.prevPos = pos;
@@ -313,6 +314,7 @@ export const Herugolf = createVariety({
 				else if (border.trial) { return (this.puzzle.execConfig('dispmove') ? this.movetrialcolor : this.trialcolor); }
 
 				const cells = border.sidecell;
+				//@ts-ignore
 				const isvalidline = (cells[0].distance >= 0 && cells[1].distance >= 0);
 				if (this.puzzle.execConfig('dispmove')) {
 					return (isvalidline ? this.movelinecolor : this.errlinecolor);
@@ -495,11 +497,13 @@ export const Herugolf = createVariety({
 				const border = bd.border[id];
 				if (!border.isLine()) { continue; }
 				const cell1 = border.sidecell[0], cell2 = border.sidecell[1];
+				//@ts-ignore
 				if (cell1.distance >= 0 && cell2.distance >= 0) { continue; }
 
 				result = false;
 				if (this.checkOnly) { break; }
 				border.seterr(1);
+				//@ts-ignore
 				(this.board.puzzle.execConfig('dispmove') ? cell1.getDestination() : cell1.getDeparture()).seterr(1);
 			}
 			if (!result) {

@@ -697,12 +697,12 @@ export class Cross extends BoardPiece {
 // ボードメンバデータの定義(3)
 
 export type BorderOption = Partial<Border>
-export class Border<TBoard extends Board = any> extends BoardPiece<TBoard> {
-	sidecell: [CellOfBoard<TBoard>, CellOfBoard<TBoard>]
+export class Border extends BoardPiece {
+	sidecell: [Cell, Cell]
 	//sidecell: [Cell | EXCell, Cell | EXCell]
 	sidecross: [Cross, Cross]
 	sideobj: any[]	// LineManager用
-	constructor(puzzle: Puzzle<TBoard>, option?: any) {
+	constructor(puzzle: Puzzle, option?: any) {
 		super(puzzle)
 		this.sidecell = [null!, null!];	// 隣接セルのオブジェクト
 		this.sidecross = [null!, null!];	// 隣接交点のオブジェクト

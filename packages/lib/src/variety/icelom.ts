@@ -620,8 +620,9 @@ export const Icelom = createVariety({
 			this.checkTrace(function (info) { return (info.lastborder.getArrow() === info.dir); }, "lrReverse");
 		},
 		checkKeepInside: function () {
+			const bd = this.board
 			this.checkTrace(function (info) {
-				const border = info.lastborder, bd = border.puzzle.board;
+				const border = info.lastborder
 				return (border.inside || border.id === bd.arrowout.getid());
 			}, "lrOffField");
 		},
@@ -679,7 +680,7 @@ export const Icelom = createVariety({
 					}
 				}
 				else {
-					info.lastborder = pos.getb()
+					info.lastborder = pos.getb() as IcebarnBorder
 					border = info.lastborder;
 					if (!border.isLine()) { break; }
 

@@ -33,7 +33,7 @@ export const inputModeText = {
     "akari": "照明"
 } satisfies { [key in InputMode]: string }
 
-export const puzzleName = {
+export const puzzleName: Record<string, string> = {
     aho: "アホになり切れ",
     amibo: "あみぼー",
     armyants: "ぐんたいあり",

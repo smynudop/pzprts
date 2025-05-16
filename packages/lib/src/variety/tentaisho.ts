@@ -234,11 +234,14 @@ export const Tentaisho = createVariety({
 		setExtraData: function (component) {
 			component.clist = new CellList(component.getnodeobjs()) as any;
 			const ret = this.puzzle.board.getAreaStarInfo(component.clist);
+			//@ts-ignore
 			component.star = ret.star;
+			//@ts-ignore
 			component.error = ret.err;
 		}
 	},
 	GraphComponent: {
+		cmp: false,
 		error: 0,
 		star: null as (Star | null),
 	},

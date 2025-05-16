@@ -194,10 +194,12 @@ export const Sashigane = createVariety({
 
 		// オーバーライド
 		resetExtraData: function (cell) {
+			//@ts-ignore
 			cell.place = 0;
 		},
 		setExtraData: function (component) {
 			component.clist = new CellList(component.getnodeobjs()) as any;
+			//@ts-ignore
 			component.shape = 0;
 
 			const clist = component.clist, d = clist.getRectSize(), bd = this.board;
@@ -207,11 +209,15 @@ export const Sashigane = createVariety({
 			const subclist = this.board.cellinside(d.x1, d.y1, d.x2, d.y2).filter(function (cell) { return (cell.room !== component); });
 			const dl = subclist.getRectSize();
 			if (subclist.length === 0 || (dl.cols * dl.rows !== dl.cnt) || ((d.cols - 1) !== dl.cols) || ((d.rows - 1) !== dl.rows)) {
+				//@ts-ignore
 				component.shape = 0;
+				//@ts-ignore
 				for (let i = 0; i < clist.length; i++) { clist[i].place = 0; }
 			}
 			else {
+				//@ts-ignore
 				component.shape = 1; /* 幅が1のL字型 */
+				//@ts-ignore
 				for (let i = 0; i < clist.length; i++) { clist[i].place = 1; } /* L字型ブロックのセル */
 
 				/* 端のセル */
@@ -267,6 +273,7 @@ export const Sashigane = createVariety({
 		},
 
 		getCircleStrokeColor: function (cell): string | null {
+			//@ts-ignore
 			if (cell.isCircle()) { return this.quescolor; }
 			return null;
 		},
