@@ -103,7 +103,7 @@ export const getMouseButton = function (e: MouseEvent | TouchEvent | PointerEven
 		/* pointerイベントだった場合 */
 		return (e.isPrimary ? 'left' : '');
 	}
-	return ['left', 'middle', 'right'][(e.button !== void 0 ? e.button : e.which - 1)] || '';
+	return (['left', 'middle', 'right'] as const)[(e.button !== void 0 ? e.button : e.which - 1)] || '';
 }
 
 //----------------------------------------------------------------------

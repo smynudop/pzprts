@@ -1,7 +1,7 @@
 // KeyInput.js v3.4.1
 import { Address, type Position } from "./Address.js";
 import type { Puzzle } from "./Puzzle.js";
-import { type BoardPiece, Cell, EXCell, type IDir } from "./Piece.js";
+import { type BoardPiece, Cell, EXCell, type IDir, isCell, isEXCell } from "./Piece.js";
 import type { Board } from "./Board.js";
 import { DIRS } from "./Constants.js";
 //---------------------------------------------------------------------------
@@ -445,7 +445,7 @@ export class KeyEvent<TBoard extends Board = Board> {
 		const cursor = this.cursor;
 		if (ca === 'shift') { cursor.chtarget(); return; }
 
-		const piece = cursor.getobj(); /* cell or excell */
+		const piece = cursor.getobj() as Cell | EXCell; /* cell or excell */
 		const target = cursor.detectTarget(piece);
 		if (target === 0 || (piece.group === 'cell' && piece.is51cell())) {
 			if (ca === 'q' && !piece.isnull) {
@@ -457,7 +457,7 @@ export class KeyEvent<TBoard extends Board = Board> {
 		}
 		if (target === 0) { return; }
 
-		const def = Cell.prototype[(target === DIRS.RT ? 'qnum' : 'qnum2')]; // TODO
+		const def = piece.pureObject[(target === DIRS.RT ? 'qnum' : 'qnum2')];
 		const max = piece.getmaxnum();
 		let val = def;
 
@@ -499,8 +499,8 @@ export class TargetCursor<TBoard extends Board> extends Address<TBoard> {
 		this.pid = puzzle.pid
 		this.bx = 1;
 		this.by = 1;
-		this.mode51 = (EXCell.prototype.ques === 51);
-		this.modesnum = (Cell.prototype.enableSubNumberArray);
+		this.mode51 = (puzzle.board.emptyexcell.pureObject.ques === 51);
+		this.modesnum = (puzzle.board.emptycell.pureObject.enableSubNumberArray);
 		if (this.mode51 && this.puzzle.editmode) { this.targetdir = 4; } // right
 	}
 	override init(bx: number, by: number) {
@@ -644,8 +644,8 @@ export class TargetCursor<TBoard extends Board> extends Address<TBoard> {
 		piece = piece || this.getobj();
 		const bd = this.board;
 		if (piece.isnull) { return 0; }
-		if (piece.group === 'cell') {
-			const adc = (piece as Cell).adjacent;
+		if (isCell(piece)) {
+			const adc = piece.adjacent;
 			if (piece.ques !== 51 || piece.id === bd.cell.length - 1) { return 0; }
 
 			const invalidRight = (adc.right.isnull || adc.right.ques === 51);
@@ -654,8 +654,8 @@ export class TargetCursor<TBoard extends Board> extends Address<TBoard> {
 			if (invalidBottom) { return DIRS.RT; }
 			if (invalidRight) { return DIRS.DN; }
 		}
-		else if (piece.group === 'excell') {
-			const adc = (piece as EXCell).adjacent;
+		else if (isEXCell(piece)) {
+			const adc = piece.adjacent;
 			if (piece.id === bd.cols + bd.rows) { return 0; }
 			if ((piece.by === -1 && adc.bottom.ques === 51) ||
 				(piece.bx === -1 && adc.right.ques === 51)) { return 0; }
@@ -663,7 +663,6 @@ export class TargetCursor<TBoard extends Board> extends Address<TBoard> {
 			if (piece.bx === -1) { return DIRS.RT; }
 		}
 		else { return 0; }
-
 		return this.targetdir;
 	}
 	getNumOfTarget(piece: BoardPiece) {

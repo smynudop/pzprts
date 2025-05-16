@@ -112,6 +112,7 @@ export abstract class Puzzle<
 			graphComponent: varietyOption?.GraphComponent,
 			lineGraph: varietyOption?.LineGraph,
 			cell: varietyOption?.Cell,
+			cross: varietyOption?.Cross,
 			border: varietyOption?.Border,
 			excell: varietyOption?.EXCell
 		});		// 盤面オブジェクト
@@ -373,7 +374,7 @@ export abstract class Puzzle<
 			return this.encode.encodeURL(URL_PZPRV3)
 		}
 	}
-	getFileData(type: number, option?: any) {
+	getFileData(type?: number, option?: any) {
 		return this.fio.fileencode(type, option);
 	}
 

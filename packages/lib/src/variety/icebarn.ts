@@ -168,8 +168,10 @@ export const Icebarn = createVariety({
 		initExtraObject: function (col: number, row: number) {
 			this.disableInfo();
 			if (col >= 3) {
-				this.arrowin.init(1, 0);
-				this.arrowout.init(5, 0);
+				//this.arrowin.init(1, 0);
+				this.arrowin.set({ bx: 1, by: 0 });
+				//this.arrowout.init(5, 0);
+				this.arrowout.set({ bx: 5, by: 0 });
 			}
 			else {
 				this.arrowin.init(1, 0);

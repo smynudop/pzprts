@@ -6,7 +6,7 @@ import {
 	OperationList
 
 } from "./Operation";
-import type { BoardPiece, Border, Cell } from "./Piece";
+import { EXCell, isCell, type BoardPiece, type Border, type Cell } from "./Piece";
 import { type Board, IGroup, type IGroup2 } from "./Board";
 import { pzpr } from "../pzpr/core";
 import { parseFile } from "../pzpr/parser";
@@ -85,7 +85,7 @@ export class FileIO<TBoard extends Board = Board> {
 	//---------------------------------------------------------------------------
 	// fio.fileencode() ファイルデータ(文字列)へのエンコード実行関数
 	//---------------------------------------------------------------------------
-	fileencode(filetype: number, option?: any) {
+	fileencode(filetype?: number, option?: any) {
 		const puzzle = this.puzzle;
 		const bd = puzzle.board;
 		const pzl = new FileData('', puzzle.pid);
@@ -251,7 +251,7 @@ export class FileIO<TBoard extends Board = Board> {
 			}
 		}
 	}
-	decodeCellExcell(func: IDecodeFunc<string>) {
+	decodeCellExcell(func: IDecodeFunc<string, Cell | EXCell>) {
 		this.decodeObj(func, 'obj', -1, -1, this.puzzle.board.maxbx - 1, this.puzzle.board.maxby - 1);
 	}
 
@@ -604,7 +604,7 @@ export class FileIO<TBoard extends Board = Board> {
 				if (obj.bx !== -1 && obj.by === -1) { obj.qnum2 = +ca; }
 				else if (obj.bx === -1 && obj.by !== -1) { obj.qnum = +ca; }
 			}
-			else if (obj.group === 'cell') {
+			else if (isCell(obj)) {
 				const inp = ca.split(",");
 				obj.set51cell();
 				obj.qnum = +inp[0];

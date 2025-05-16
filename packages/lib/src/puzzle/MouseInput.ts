@@ -64,7 +64,7 @@ export class MouseEvent1<TBoard extends Board = Board> {
 	firstPoint: RawAddress;	// mousedownされた時のborder座標 ※端数あり
 
 	prevPos: Address<TBoard>;	// 前回のマウス入力イベントのborder座標
-	btn: string;	// 押されているボタン
+	btn: "left" | "middle" | "right" | "";	// 押されているボタン
 	inputData: any;	// 入力中のデータ番号(実装依存)
 	bordermode: boolean;	// 境界線を入力中かどうか
 	mousestart: boolean;	// mousedown/touchstartイベントかどうか
@@ -119,7 +119,7 @@ export class MouseEvent1<TBoard extends Board = Board> {
 	pid: string;	// puzzle ID
 
 	get board(): TBoard {
-		return this.board
+		return this.puzzle.board
 	}
 
 	//---------------------------------------------------------------------------
@@ -898,7 +898,7 @@ export class MouseEvent1<TBoard extends Board = Board> {
 			this.inputselect_cell51(piece);
 		}
 	}
-	inputselect_cell51(cell: any) { // todo
+	inputselect_cell51(cell: Cell | EXCell) {
 		if (this.mousestart) {
 			this.prevPos = this.getpos(0);
 		}

@@ -119,13 +119,13 @@ export const SlitherLink = createVariety({
 	FileIO: {
 		decodeData: function () {
 			this.decodeCellQnum();
-			//this.decodeCellQsub();
+			if (this.filever === 1) this.decodeCellQsub();
 			this.decodeBorderLine();
 		},
 		encodeData: function () {
 			this.filever = 1;
 			this.encodeCellQnum();
-			//this.encodeCellQsub();
+			this.encodeCellQsub();
 			this.encodeBorderLine();
 		}
 	},

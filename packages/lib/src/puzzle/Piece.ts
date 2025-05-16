@@ -653,6 +653,13 @@ export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
 // Crossクラスの定義
 export type CrossOption = Partial<Cross>
 export class Cross extends BoardPiece {
+
+	constructor(puzzle: Puzzle, option?: any) {
+		super(puzzle)
+		Object.assign(this, option)
+		this.pureObject = { ...this }
+	}
+
 	override group: IGroup = 'cross'
 
 	lcnt = 0		// 交点に存在する線の本数
@@ -697,6 +704,7 @@ export class Border<TBoard extends Board = any> extends BoardPiece<TBoard> {
 		this.sidecross = [null!, null!];	// 隣接交点のオブジェクト
 		this.sideobj = [];			// LineManager用
 		Object.assign(this, option)
+		this.pureObject = { ...this }
 	}
 	override group: IGroup = 'border'
 

@@ -8,7 +8,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const Akari = createVariety({
-	pid: "akari",
+	pid: "lightup",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

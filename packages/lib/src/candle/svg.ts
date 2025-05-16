@@ -101,6 +101,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		const rect = metrics.getRectSize(this.canvas);
 		this.child = _doc.createElementNS(SVGNS, 'svg');
 		const root = this.child
+		root.setAttribute("part", "board")
 		root.setAttribute('xmlns', SVGNS);
 		root.setAttribute('xmlns:xlink', XLINKNS);
 		root.setAttribute('font-size', "10px");
@@ -109,6 +110,14 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		// root.setAttribute('width', rect.width.toString());
 		// root.setAttribute('height', rect.height.toString());
 		root.setAttribute('viewBox', [0, 0, 500, 500].join(' '));
+
+		const defs = _doc.createElementNS(SVGNS, "defs")
+		defs.innerHTML = `
+	<filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+		<feDropShadow dx="4" dy="4" stdDeviation="4" flood-color="black" flood-opacity="0.5"/>
+	</filter>
+		`
+		root.appendChild(defs)
 		if (!!this.canvas.appendChild) {
 			this.canvas.appendChild(root);
 		}
@@ -145,8 +154,12 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 
 	clear() {
 		const root = this.child;
-		let el = root.firstChild;
-		while (!!el) { root.removeChild(el); el = root.firstChild; }
+		const children = Array.from(root.children)
+		for (const el of children) {
+			if (el.tagName.toUpperCase() === "DEFS") continue;
+
+			root.removeChild(el)
+		}
 
 		/* resetElement */
 		this.vid = '';
@@ -165,6 +178,9 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 			let layer = this.layers[layerid];
 			if (!layer) {
 				layer = this.layers[layerid] = newEL('g');
+				layer.setAttribute("data-layer", layerid)
+				layer.setAttribute("part", `g-${layerid}`)
+
 				this.child.appendChild(layer);
 			}
 			this.target = layer;
@@ -539,9 +555,15 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 
 		if (!this.freezepath || newel) {
 			const path = this.cpath.join(' ');
-			const linewidth = (isstroke ? this.lineWidth : null);
+			const linewidth = (isstroke ? this.strLineWidth : null);
 			if (el.getAttribute(S_ATT_PATH) !== path) { el.setAttribute(S_ATT_PATH, path); }
-			if (el.getAttribute(S_ATT_STROKEWIDTH) !== linewidth?.toString()) { el.setAttribute(S_ATT_STROKEWIDTH, linewidth?.toString()!); }
+			if (el.getAttribute(S_ATT_STROKEWIDTH) !== linewidth) {
+				linewidth ? el.setAttribute(S_ATT_STROKEWIDTH, linewidth) : el.removeAttribute(S_ATT_STROKEWIDTH);
+			}
+		}
+
+		if (this.filter) {
+			el.setAttribute("filter", `url(#${this.filter})`)
 		}
 
 		const fillcolor = (isfill ? this.fillStyle : S_NONE);

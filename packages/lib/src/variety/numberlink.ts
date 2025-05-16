@@ -6,7 +6,7 @@ import { createVariety } from "./createVariety";
 
 //
 export const Numberlink = createVariety({
-	pid: "numberlink",
+	pid: "numlin",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {

@@ -8,7 +8,7 @@ let _counter = -1;
 export default abstract class WrapperBase<ChildElement> {
 	fillStyle = 'black';
 	strokeStyle = 'black';
-	lineWidth = 1;
+	lineWidth: number = 1;
 	font = '14px system';
 	textAlign: CanvasTextAlign = 'center';
 	textBaseline: CanvasTextBaseline | "candle-top" = 'middle';
@@ -17,6 +17,11 @@ export default abstract class WrapperBase<ChildElement> {
 	child: ChildElement;
 	enableTextLengthWA = false;
 	use: any
+	filter = ""
+
+	get strLineWidth() {
+		return this.lineWidth.toString()
+	}
 	constructor(parent: HTMLElement) {
 		// canvasに存在するプロパティ＆デフォルト値
 

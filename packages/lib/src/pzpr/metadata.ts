@@ -32,5 +32,7 @@ export const createEmtpyMetaData = (): IMetaData => {
 	}
 }
 export const isEmpty = (data: IMetaData) => {
-	return !!data.author || !!data.comment || !!data.hard || !!data.source;
+	return !(
+		!!data.author || !!data.comment || !!data.hard || !!data.source
+	);
 }

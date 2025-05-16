@@ -469,8 +469,9 @@ export const Icelom = createVariety({
 			this.encodeIce();
 			this.encodeNumber16();
 			this.encodeInOut();
-
-			this.outpflag = "a";
+			if (this.board.puzzle.pid === "icelom") {
+				this.outpflag = "a";
+			}
 		},
 		decodeInOut: function () {
 			const barray = this.outbstr.split("/"), bd = this.board;
