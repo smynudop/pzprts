@@ -19,6 +19,8 @@
   let enableUndo = false
   let enableRedo = false
 
+  const puzzleName = ja.puzzleName[puzzle.pid] || puzzle.pid
+
   onMount(() => {
     try {
       if (!src) {
@@ -72,7 +74,7 @@
 </script>
 
 <div class="container">
-  <h1>{puzzle.pid}</h1>
+  <h1>{puzzleName}</h1>
   <div class="mode">
 
     <div>
