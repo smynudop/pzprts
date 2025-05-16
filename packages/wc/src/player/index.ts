@@ -56,3 +56,5 @@ export const IcebarnPlayer = createPlayer(Lib.Icebarn)
 export const IcelomPlayer = createPlayer(Lib.Icelom)
 export const Icelom2Player = createPlayer(Lib.Icelom2)
 export const FireflyPlayer = createPlayer(Lib.Firefly)
+
+export const YinyangPlayer = createPlayer(Lib.Yinyang)

@@ -478,7 +478,7 @@ export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
 		if (this.isNum() && num !== -1) { return; }
 		if (!this.enableSubNumberArray) {
 			this.setdata('snum', num);	// 1つ目の数字のみ
-			console.warn(`snumがセットされましたが、候補数字が無効です。`)
+			//console.warn(`snumがセットされましたが、候補数字が無効です。`)
 			return
 		}
 		this.setdata2('snum', pos, num);
