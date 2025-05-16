@@ -5,7 +5,7 @@ import { LineGraph } from "../puzzle/LineManager";
 import { MouseEvent1 } from "../puzzle/MouseInput";
 import type { Border, IDir } from "../puzzle/Piece";
 import { BorderList } from "../puzzle/PieceList";
-import { IConfig } from "../puzzle/Puzzle";
+import type { IConfig } from "../puzzle/Puzzle";
 import { createVariety } from "./createVariety";
 import { AreaIcebarnGraph, type IcebarnBorder, InAddress, InOutOperation, OutAddress, type TraceInfo } from "./icebarn";
 

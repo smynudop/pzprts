@@ -6,7 +6,7 @@ import {
 	OperationList
 
 } from "./Operation";
-import { EXCell, isCell, type BoardPiece, type Border, type Cell } from "./Piece";
+import { type EXCell, isCell, type BoardPiece, type Border, type Cell } from "./Piece";
 import { type Board, IGroup, type IGroup2 } from "./Board";
 import { pzpr } from "../pzpr/core";
 import { parseFile } from "../pzpr/parser";

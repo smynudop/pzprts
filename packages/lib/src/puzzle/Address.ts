@@ -4,7 +4,7 @@ import type { Board } from "./Board"
 import type { Puzzle } from "./Puzzle"
 import { DIRS } from "./Constants"
 import type { BorderOfBoard, CellOfBoard } from "./Answer"
-import { Border, IDir } from "./Piece"
+import { Border, type IDir } from "./Piece"
 //----------------------------------------------------------------------------
 // ★Positionクラス Address, Pieceクラスのベースクラス
 //---------------------------------------------------------------------------

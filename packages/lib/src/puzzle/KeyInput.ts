@@ -1,7 +1,7 @@
 // KeyInput.js v3.4.1
 import { Address, type Position } from "./Address.js";
 import type { Puzzle } from "./Puzzle.js";
-import { type BoardPiece, Cell, EXCell, type IDir, isCell, isEXCell } from "./Piece.js";
+import { type BoardPiece, type Cell, type EXCell, type IDir, isCell, isEXCell } from "./Piece.js";
 import type { Board } from "./Board.js";
 import { DIRS } from "./Constants.js";
 //---------------------------------------------------------------------------
