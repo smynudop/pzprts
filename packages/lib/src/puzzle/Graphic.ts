@@ -948,7 +948,7 @@ export class Graphic<TBoard extends Board = Board> {
 				if (info === 1) { color = this.errcolor1; }
 				else if (info === 2) { color = this.errcolor2; }
 				else if (info === -1) { color = this.noerrcolor; }
-				else if (irowake && cell.path.color) { color = cell.path.color; }
+				else if (irowake && cell.path?.color) { color = cell.path.color; }
 				else if (cell.trial) { color = this.trialcolor; }
 				else { color = "black"; }
 

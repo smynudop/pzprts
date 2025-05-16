@@ -186,7 +186,7 @@ export class LineGraph extends GraphBase {
 			else { this.createNodeIfEmpty(cell); }
 		}
 		else {
-			if (haspath) { this.setComponentInfo(cell.path); }
+			if (haspath) { this.setComponentInfo(cell.path!); }
 			else { this.resetExtraData(cell); }
 		}
 	}

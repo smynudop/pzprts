@@ -12,6 +12,7 @@ import type { IBoardOperation, IRange } from "./BoardExec";
 // ★Operation(派生)クラス 単体の操作情報を保持する
 //---------------------------------------------------------------------------
 export class Operation<TValue = any> {
+	opeid: string = ""
 	puzzle: Puzzle
 	manager: OperationManager
 	old: TValue = null!
@@ -51,8 +52,13 @@ export class Operation<TValue = any> {
 	}
 }
 
+export const isObjectOperation = (ope: Operation | null): ope is ObjectOperation => {
+	return ope != null && ope.opeid === "obj"
+}
 // ObjectOperationクラス
 export class ObjectOperation extends Operation<number> {
+	override opeid: string = "obj"
+
 	constructor(puzzle: Puzzle, piece: BoardPiece, property: string, old: number, num: number) {
 		super(puzzle);
 		this.group = piece.group;

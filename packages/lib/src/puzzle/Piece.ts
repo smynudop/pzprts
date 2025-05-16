@@ -345,8 +345,10 @@ export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
 	numberRemainsUnshaded = false
 	enableSubNumberArray = false	// 補助数字の配列を作るパズル
 
-
-	path: any
+	/**
+	 * LineGraphで使う
+	 */
+	path!: GraphComponent<this> | null
 	sblk: any = null
 
 	adjacent: Adjacent<this> = null!	// 隣接するセルの情報を保持する
@@ -642,7 +644,9 @@ export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
 				if (!border.isnull) { border.removeLine(); count++; }
 			}
 		}
-		if (count > 0) { clist.draw(); }
+		if (count > 0) {
+			clist.forEach(c => c.draw());
+		}
 	}
 }
 
