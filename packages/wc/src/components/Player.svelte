@@ -103,6 +103,7 @@
     <div class="error">{err}</div>
   {/if}
   {#if showDialog}
+    <!-- svelte-ignore a11y-click-events-have-key-events a11y_no_static_element_interactions -->
     <div class="dialog" on:click={hideDialog}>
       <div class="message">
         {resultText}
@@ -189,9 +190,11 @@
     justify-content: center;
   }
 
+  /*
   .result {
     text-align: center;
   }
+  */
 
   .dialog{
     position: absolute;

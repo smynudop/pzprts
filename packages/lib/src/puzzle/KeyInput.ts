@@ -372,7 +372,7 @@ export class KeyEvent<TBoard extends Board = Board> {
 		cell0.draw();
 		this.prev = cell;
 	}
-	getNewNumber(cell: Cell, ca: string, cur: number) {
+	getNewNumber(cell: BoardPiece, ca: string, cur: number) {
 		const max = cell.getmaxnum();
 		const min = cell.getminnum();
 		let val = null;

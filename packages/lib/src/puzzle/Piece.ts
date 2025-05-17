@@ -99,6 +99,26 @@ export class BoardPiece<TBoard extends Board = Board> extends Position<TBoard> {
 	qinfo = 0
 	trial = 0	// TrialModeのstateを保持する変数
 
+	/**
+	 * qnum==-2を入力できないようにする(cell向け)
+	 */
+	disInputHatena = false
+
+	/**
+	 * 回答の数字と○×が入るパズル(○は数字が入っている扱いされる)(cell向け)
+	 */
+	numberWithMB = false
+
+	/**
+	 *  数字以外でqnum/anumを使用する(同じ値を入力で消去できたり、回答で・が入力できる)(cell向け)
+	 */
+	numberAsObject = false
+
+	/**
+	 * 数字の代わりにアルファベットを入力する(cell向け)
+	 */
+	numberAsLetter = false
+
 	propques: (keyof BoardPiece)[] = ['ques', 'qdir', 'qnum', 'qnum2', 'qchar']
 	propans: (keyof BoardPiece)[] = ['qans', 'anum', 'line', 'trial']
 	propsub: (keyof BoardPiece)[] = ['qsub', 'qcmp', 'snum']
@@ -332,12 +352,6 @@ export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
 
 	lcnt = 0		// セルに存在する線の本数
 	base: Cell | null = null	// 丸数字やアルファベットが移動してきた場合の移動元のセルを示す (移動なし時は自分自身を指す)
-
-	disInputHatena = false	// qnum==-2を入力できないようにする
-
-	numberWithMB = false	// 回答の数字と○×が入るパズル(○は数字が入っている扱いされる)
-	numberAsObject = false	// 数字以外でqnum/anumを使用する(同じ値を入力で消去できたり、回答で・が入力できる)
-	numberAsLetter = false	// 数字の代わりにアルファベットを入力する
 
 	/** 
 	 * 数字のあるマスが黒マスにならないパズル 

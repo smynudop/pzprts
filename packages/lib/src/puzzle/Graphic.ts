@@ -504,7 +504,7 @@ export class Graphic<TBoard extends Board = Board> {
 	//---------------------------------------------------------------------------
 	// pc.copyBufferData()    Bufferに描画したデータを盤面へコピーする
 	//---------------------------------------------------------------------------
-	copyBufferData(g: CanvasRenderingContext2D | WrapperBase<any>, g2: any, x1: number, y1: number, x2: number, y2: number) {
+	copyBufferData(g: WrapperBase<any>, g2: any, x1: number, y1: number, x2: number, y2: number) {
 		// source側はtaranslateのぶん足されていないので、加算しておきます
 		let sx1 = this.x0 + x1 * this.bw - 1;
 		let sy1 = this.y0 + y1 * this.bh - 1;

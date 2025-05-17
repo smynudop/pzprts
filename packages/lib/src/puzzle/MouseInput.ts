@@ -9,7 +9,7 @@ import type { Puzzle } from "./Puzzle";
 import { RawAddress, Address, type Position } from "./Address";
 import type { TargetCursor } from "./KeyInput";
 import { CellList, CrossList } from "./PieceList";
-import type { Border, Cell, Cross, EXCell } from "./Piece";
+import type { BoardPiece, Border, Cell, Cross, EXCell } from "./Piece";
 import { pzpr } from "../pzpr/core";
 import { getMouseButton, getPagePos, getRect } from "../pzpr/util";
 import type { Board } from "./Board";
@@ -616,7 +616,7 @@ export class MouseEvent1<TBoard extends Board = Board> {
 		}
 		cell0.draw();
 	}
-	getNewNumber(cell: Cell, num: number) {
+	getNewNumber(cell: BoardPiece, num: number) {
 		const puzzle = this.puzzle;
 		const ishatena = (puzzle.editmode && !cell.disInputHatena);
 		const max = cell.getmaxnum();
