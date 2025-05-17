@@ -1,7 +1,7 @@
 //
 // パズル固有スクリプト部 遠い誓い版 toichika.js
 
-import { Cell } from "../puzzle/Piece";
+import type { Cell } from "../puzzle/Piece";
 import { createVariety } from "./createVariety";
 
 //
