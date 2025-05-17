@@ -1,4 +1,3 @@
-import { TaskBase } from "vitest"
 import type { AnsCheck, AnsCheckOption } from "../puzzle/Answer"
 import type { AreaRoomGraph, AreaRoomGraphOption, AreaShadeGraph, AreaShadeGraphOption, AreaUnshadeGraphOption } from "../puzzle/AreaManager"
 import type { Board, BoardOption } from "../puzzle/Board"
@@ -15,10 +14,21 @@ import type { Border, BorderOption, Cell, CellOption, Cross, CrossOption, EXCell
 import { type IConfig, Puzzle } from "../puzzle/Puzzle"
 import type { GraphComponent, GraphComponentOption } from "../puzzle/GraphBase"
 
+/**
+ * クラスを拡張する
+ */
 type ExtendClass<TBase, TExtend> = TExtend & ThisType<TBase & TExtend>
+
+/**
+ * クラスの初期値を定義（カスタムメソッドはなし)
+ */
+type InitialClass<T> = Partial<T> & ThisType<T>
+
 export type VarityOption<
     CellExtend,
+    CrossExtend,
     BorderExtend,
+    ExCellExtend,
     BoardExtend,
     BoardExecExtend,
     MouseExtend,
@@ -28,18 +38,20 @@ export type VarityOption<
     GraphicExtend,
     AnsCheckExtend,
     OperationManagerExtend,
+    GraphComponentExtend,
     AreaRoomGraphExtend,
-    GraphComponentExtend
 > = VarityOptionInner<
     Board<
         Cell & CellExtend,
         Cross,
         Border & BorderExtend,
-        EXCell,
+        EXCell & ExCellExtend,
         GraphComponent<Cell & CellExtend> & GraphComponentExtend
     > & BoardExtend,
     CellExtend,
+    CrossExtend,
     BorderExtend,
+    ExCellExtend,
     BoardExtend,
     BoardExecExtend,
     MouseExtend,
@@ -49,14 +61,16 @@ export type VarityOption<
     GraphicExtend,
     AnsCheckExtend,
     OperationManagerExtend,
-    AreaRoomGraphExtend,
-    GraphComponentExtend
+    GraphComponentExtend,
+    AreaRoomGraphExtend
 >
 
 export type VarityOptionInner<
     TBoard extends Board,
     CellExtend,
+    CrossExtend,
     BorderExtend,
+    ExCellExtend,
     BoardExtend,
     BoardExecExtend,
     MouseExtend,
@@ -66,37 +80,39 @@ export type VarityOptionInner<
     GraphicExtend,
     AnsCheckExtend,
     OperationManagerExtend,
+    GraphComponentExtend, //extends GraphComponentOption
     AreaRoomGraphExtend,
-    GraphComponentExtend //extends GraphComponentOption
 > = {
     pid?: string
     Cell?: ExtendClass<Cell, CellExtend>,
-    Cross?: CrossOption,
+    Cross?: ExtendClass<Cross, CrossExtend>,
     Border?: ExtendClass<Border, BorderExtend>
+    EXCell?: ExtendClass<EXCell, ExCellExtend>,
     MouseEvent: ExtendClass<MouseEvent1<TBoard>, MouseExtend>,
     KeyEvent?: ExtendClass<KeyEvent<TBoard>, KeyExtend>,
-    EXCell?: EXCellOption & { [key: string]: any } & ThisType<EXCell>
     Board?: ExtendClass<TBoard, BoardExtend>
     BoardExec?: ExtendClass<BoardExec<TBoard>, BoardExecExtend>
-    TargetCursor?: { [key: string]: any } & ThisType<TargetCursor<TBoard>>
+    TargetCursor?: InitialClass<TargetCursor<TBoard>>
     GraphComponent?: ExtendClass<GraphComponent, GraphComponentExtend>
-    LineGraph?: LineGraphOption & ThisType<LineGraph>
+    LineGraph?: InitialClass<LineGraph>
     AreaShadeGraph?: AreaShadeGraphOption
     AreaUnshadeGraph?: AreaUnshadeGraphOption
-    AreaRoomGraph?: AreaRoomGraphExtend & ThisType<AreaRoomGraph<GraphComponent & GraphComponentExtend, TBoard> & AreaRoomGraphExtend>
+    AreaRoomGraph?: ExtendClass<AreaRoomGraph<GraphComponent & GraphComponentExtend, TBoard>, AreaRoomGraphExtend>
     Graphic: ExtendClass<Graphic<TBoard>, GraphicExtend>,
     Encode: (ExtendClass<Encode<TBoard>, EncodeExtend>) | Converter[]
     FileIO: ExtendClass<FileIO<TBoard>, FileIOExtend>
     AnsCheck: ExtendClass<AnsCheck<TBoard>, AnsCheckExtend>
-    FailCode?: { [key: string]: [string, string] }
     OperationManager?: ExtendClass<OperationManager, OperationManagerExtend>
+    FailCode?: { [key: string]: [string, string] }
 }
 
-export type VarietyAnyOption = VarityOption<any, any, any, any, any, any, any, any, any, any, any, any, any>
+export type VarietyAnyOption = VarityOption<any, any, any, any, any, any, any, any, any, any, any, any, any, any, any>
 
 export const createVariety = <
     CellExtend extends CellOption,
+    CrossExtend extends CrossOption,
     BorderExtend extends BorderOption,
+    ExCellExtend extends EXCellOption,
     BoardExtend extends BoardOption,
     BoardExecExtend extends BoardExecOption,
     MouseExtend extends MouseEventOption,
@@ -106,11 +122,13 @@ export const createVariety = <
     GraphicExtend extends GraphicOption<Cell & CellExtend>,
     AnsCheckExtend extends AnsCheckOption,
     OperationManagerExtend extends OperationManagerOption,
-    AreaRoomGraphExtend extends AreaRoomGraphOption,
-    GraphComponentExtend //extends GraphComponentOption
+    GraphComponentExtend, //extends GraphComponentOption,
+    AreaRoomGraphExtend extends AreaRoomGraphOption<GraphComponent & GraphComponentExtend>
 >(varietyOption: VarityOption<
     CellExtend,
+    CrossExtend,
     BorderExtend,
+    ExCellExtend,
     BoardExtend,
     BoardExecExtend,
     MouseExtend,
@@ -120,8 +138,8 @@ export const createVariety = <
     GraphicExtend,
     AnsCheckExtend,
     OperationManagerExtend,
-    AreaRoomGraphExtend,
-    GraphComponentExtend
+    GraphComponentExtend,
+    AreaRoomGraphExtend
 >): new (option?: IConfig) => Puzzle => {
     return class extends Puzzle {
         constructor(option?: IConfig) {
