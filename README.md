@@ -22,11 +22,17 @@
 
 <slitherlink-player src="/* your url */"/>
 
-<script src="https://cdn.jsdelivr.net/npm/@udop/penpa-player/dist/index.umd.js"></script>
-<script> 
-const { SlitherlinkPlayer } = PenpaPlayer;
+<script type="module">
+import { SlitherlinkPlayer } from "https://cdn.jsdelivr.net/npm/@udop/penpa-player/dist/index.es.js";
+customElements.define('slitherlink-player', SlitherlinkPlayer);
+
+// or 
+
+import { SlitherlinkPlayer } from "https://cdn.jsdelivr.net/npm/@udop/penpa-player/dist/slither.es.js";
 customElements.define('slitherlink-player', SlitherlinkPlayer);
 </script>
+
+
 ```
 
 ## LICENSE
