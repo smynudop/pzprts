@@ -362,7 +362,7 @@ const fall = function (board: Board, clist: CellList<any>, isdrop: boolean = tru
 }
 
 
-class AreaStoneGraph extends AreaShadeGraph { // Same as LITS AreaTetrominoGraph
+export class AreaStoneGraph extends AreaShadeGraph { // Same as LITS AreaTetrominoGraph
 	override enabled = true
 	override relation = { 'cell.qans': 'node', 'border.ques': 'separator' }
 	override setComponentRefs(obj: any, component: any) { obj.stone = component; }
