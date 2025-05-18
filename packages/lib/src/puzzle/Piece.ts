@@ -351,7 +351,11 @@ export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
 	override group: IGroup = 'cell'
 
 	lcnt = 0		// セルに存在する線の本数
-	base: Cell | null = null	// 丸数字やアルファベットが移動してきた場合の移動元のセルを示す (移動なし時は自分自身を指す)
+
+	/*
+	 * 丸数字やアルファベットが移動してきた場合の移動元のセルを示す (移動なし時は自分自身を指す)
+	 */
+	base: this | null = null
 
 	/** 
 	 * 数字のあるマスが黒マスにならないパズル 
@@ -396,6 +400,10 @@ export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
 
 	override relobj(bx: number, by: number) {
 		return super.relobj(bx, by) as Cell
+	}
+
+	override relcell(dx: number, dy: number): this {
+		return super.relcell(dx, dy) as this
 	}
 
 	isCmp() {

@@ -61,7 +61,7 @@ export class KeyEvent<TBoard extends Board = Board> {
 	pid: string
 
 	get board(): TBoard {
-		return this.board
+		return this.puzzle.board
 	}
 
 	//---------------------------------------------------------------------------
