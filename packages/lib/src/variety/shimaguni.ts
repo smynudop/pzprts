@@ -1,7 +1,7 @@
 //
 // パズル固有スクリプト部 島国・チョコナ・ストストーン版 shimaguni.js
 
-import { GraphComponent } from "../puzzle/GraphBase";
+import type { GraphComponent } from "../puzzle/GraphBase";
 import { createVariety } from "./createVariety";
 import { AreaStoneGraph } from "./stostone";
 

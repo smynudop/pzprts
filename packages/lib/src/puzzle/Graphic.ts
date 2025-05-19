@@ -436,8 +436,8 @@ export class Graphic<TBoard extends Board = Board> {
 	prepaint(option: { y1margin: number } | null = null) {
 		if (this.suspended || !this.context) { return; }
 
-		this.isSupportMaxWidth = ((this.context.use.svg && pzpr.env.API.svgTextLength) ||
-			(this.context.use.canvas && pzpr.env.API.maxWidth));
+		// this.isSupportMaxWidth = ((this.context.use.svg && pzpr.env.API.svgTextLength) ||
+		// 	(this.context.use.canvas && pzpr.env.API.maxWidth));
 
 		const bd = this.puzzle.board;
 		const bm = 2 * this.margin;
