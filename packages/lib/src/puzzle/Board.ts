@@ -117,6 +117,7 @@ export class Board<
 	 * 補助記号の消去中にtrue
 	 */
 	subclearmode: boolean = false
+	gcoption: any
 
 	constructor(puzzle: Puzzle, option?: { board?: BoardOption } & BoardChildOption) {
 		this.puzzle = puzzle;
@@ -173,6 +174,7 @@ export class Board<
 		this.roommgr = this.addInfoListInstance(this.createAreaRoomGraph(option?.areaRoomGraph, option?.graphComponent));			// 部屋情報を保持する
 		this.sblkmgr = this.addInfoListInstance(this.createAreaShadeGraph(option?.areaShadeGraph, option?.graphComponent));		// 黒マス情報を保持する
 		this.ublkmgr = this.addInfoListInstance(this.createAreaUnshadeGraph(option?.areaUnshadeGraph, option?.graphComponent));		// 白マス情報を保持する
+		this.gcoption = option?.graphComponent
 		this.nblkmgr = this.addInfoList(AreaNumberGraph);		// 数字情報を保持する
 
 		this.addExtraInfo();
@@ -214,8 +216,8 @@ export class Board<
 		return instance;
 	}
 
-	addInfoList<T extends GraphBase>(Klass: { new(puzzle: Puzzle): T }): T {
-		const instance = new Klass(this.puzzle);
+	addInfoList<T extends GraphBase>(Klass: { new(puzzle: Puzzle, gcoption: any): T }): T {
+		const instance = new Klass(this.puzzle, this.gcoption);
 		if (instance.enabled) {
 			this.infolist.push(instance);
 		}

@@ -352,10 +352,11 @@ export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
 
 	lcnt = 0		// セルに存在する線の本数
 
-	/*
-	 * 丸数字やアルファベットが移動してきた場合の移動元のセルを示す (移動なし時は自分自身を指す)
+	/**
+	 * 丸数字やアルファベットが移動してきた場合の移動元のセルを示す (移動なし時は自分自身を指す
+	 * linegraphが有効じゃないと意味がないが、linegraphがあるときは確定でcellが入っているので、|nullにはしない
 	 */
-	base: this | null = null
+	base!: this
 
 	/** 
 	 * 数字のあるマスが黒マスにならないパズル 

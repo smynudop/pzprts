@@ -234,8 +234,14 @@ export class Graphic<TBoard extends Board = Board> {
 	}
 	setColor(name: string, color: string) {
 		if (!color) return;
-		if (name === 'bgcolor') { color = ((typeof color === 'string' && color !== 'white') ? color : this.constructor.prototype[name]); }
-		else { color = (color || this.constructor.prototype[name]); }
+		// if (name === 'bgcolor') {
+		// 	color = ((typeof color === 'string' && color !== 'white')
+		// 		? color
+		// 		: this.constructor.prototype[name]);
+		// }
+		// else {
+		color = (color || this.constructor.prototype[name]);
+		// }
 		//@ts-ignore
 		this[name] = color;
 		if (!this.suspended) { this.paintAll(); }
