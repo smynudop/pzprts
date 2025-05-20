@@ -8,7 +8,6 @@ import {
 } from "./Operation";
 import { type EXCell, isCell, type BoardPiece, type Border, type Cell } from "./Piece";
 import { type Board, IGroup, type IGroup2 } from "./Board";
-import { pzpr } from "../pzpr/core";
 import { parseFile } from "../pzpr/parser";
 import { FileData } from "../pzpr/fileData";
 import * as Constants from "../pzpr/constants"

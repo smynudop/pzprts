@@ -10,7 +10,6 @@ import { RawAddress, Address, type Position } from "./Address";
 import type { TargetCursor } from "./KeyInput";
 import { CellList, CrossList } from "./PieceList";
 import type { BoardPiece, Border, Cell, Cross, EXCell } from "./Piece";
-import { pzpr } from "../pzpr/core";
 import { getMouseButton, getPagePos, getRect } from "../pzpr/util";
 import type { Board } from "./Board";
 import type { CellOfBoard } from "./Answer";
@@ -227,15 +226,15 @@ export class MouseEvent1<TBoard extends Board = Board> {
 			const svgP = pt.matrixTransform(svg.getScreenCTM()!.inverse());
 			pix = { px: svgP.x + pc.x0, py: svgP.y + pc.y0 }
 		}
-		else if (!pzpr.env.API.touchevent || pzpr.env.API.pointerevent || pzpr.env.OS.iOS) {
-			if (!Number.isNaN(e.offsetX)) { pix = { px: e.offsetX, py: e.offsetY }; }
-			else { pix = { px: e.layerX, py: e.layerY }; }  // Firefox 39以前, iOSはこちら
-		}
-		else {
-			const pagePos = getPagePos(e);
-			const rect = getRect(pc.context.child);
-			pix = { px: (pagePos.px - rect.left), py: (pagePos.py - rect.top) };
-		}
+		// else if (!pzpr.env.API.touchevent || pzpr.env.API.pointerevent || pzpr.env.OS.iOS) {
+		// 	if (!Number.isNaN(e.offsetX)) { pix = { px: e.offsetX, py: e.offsetY }; }
+		// 	else { pix = { px: e.layerX, py: e.layerY }; }  // Firefox 39以前, iOSはこちら
+		// }
+		// else {
+		// 	const pagePos = getPagePos(e);
+		// 	const rect = getRect(pc.context.child);
+		// 	pix = { px: (pagePos.px - rect.left), py: (pagePos.py - rect.top) };
+		// }
 		return { bx: (pix.px - pc.x0) / pc.bw, by: (pix.py - pc.y0) / pc.bh };
 	}
 

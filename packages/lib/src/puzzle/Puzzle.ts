@@ -15,8 +15,6 @@ import { Encode, type EncodeOption } from './Encode2';
 import Candle from '../candle/';
 
 import type { WrapperBase } from '../candle/';
-
-import { pzpr } from '../pzpr/core.js';
 import { getRect, currentTime, addEvent, unselectable } from '../pzpr/util.js';
 import type { VarietyAnyOption, VarityOption } from '../variety/createVariety.js';
 import { URL_PZPRV3 } from '../pzpr/constants.js';

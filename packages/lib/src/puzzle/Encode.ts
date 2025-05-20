@@ -1,8 +1,6 @@
 // Encode.js v3.4.1
 
 import type { Puzzle } from "./Puzzle"
-import { FileIO } from "./FileData"
-import { pzpr } from "../pzpr/core"
 import { parseURL } from "../pzpr/parser"
 import { URLData } from "../pzpr/urlData"
 import * as Constants from "../pzpr/constants"

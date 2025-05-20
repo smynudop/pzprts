@@ -1,38 +1,12 @@
 // util.js v3.4.0
 
 import type { Puzzle } from "../puzzle/Puzzle";
-import { getEnv } from "./env";
-const env = getEnv();
-const api = env.API;
-let eventMouseDown = ["mousedown"];
-let eventMouseMove = ["mousemove"];
-let eventMouseUp = ["mouseup"];
-let eventMouseCancel = [""];
+const eventMouseDown = ["pointerdown"];
+const eventMouseMove = ["pointermove"];
+const eventMouseUp = ["pointerup"];
+const eventMouseCancel = ["pointercancel"];
 
-if (env.bz.AndroidBrowser) {
-	eventMouseDown = [""];
-	eventMouseMove = [""];
-	eventMouseUp = [""];
-}
 
-if (api.pointerevent) {
-	eventMouseDown = ["pointerdown"];
-	eventMouseMove = ["pointermove"];
-	eventMouseUp = ["pointerup"];
-	eventMouseCancel = ["pointercancel"];
-}
-else if (api.mspointerevent) {
-	eventMouseDown = ["MSPointerDown"];
-	eventMouseMove = ["MSPointerMove"];
-	eventMouseUp = ["MSPointerUp"];
-	eventMouseCancel = ["MSPointerCancel"];
-}
-else if (api.touchevent) {
-	eventMouseDown.push("touchstart");
-	eventMouseMove.push("touchmove");
-	eventMouseUp.push("touchend");
-	eventMouseCancel.push("touchcancel");
-}
 
 //----------------------------------------------------------------------
 // EventやDOM関連のツール的関数群
@@ -157,9 +131,9 @@ export const pageY = function (e: MouseEvent | TouchEvent) {
 // pzpr.util.getRect()   エレメントの四辺の座標を返す
 //--------------------------------------------------------------------------------
 export const getRect = function (el: HTMLElement) {
-	if (!env.browser) {
-		return { top: 0, bottom: 0, left: 0, right: 0, height: 0, width: 0 };
-	}
+	// if (!env.browser) {
+	// 	return { top: 0, bottom: 0, left: 0, right: 0, height: 0, width: 0 };
+	// }
 	const rect = el.getBoundingClientRect();
 	let scrollLeft: number;
 	let scrollTop: number;

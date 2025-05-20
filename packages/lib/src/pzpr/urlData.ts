@@ -1,8 +1,6 @@
 //---------------------------------------------------------------------------
 // ★ URLData() URLデータのencode/decodeのためのオブジェクト
 //---------------------------------------------------------------------------
-import { pzpr } from "./core";
-
 import * as Constants from "./constants"
 
 export class URLData {

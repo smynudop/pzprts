@@ -1,10 +1,8 @@
 // Graphic.js v3.4.1
 
-import { Position } from "./Address";
 import type { Puzzle } from "./Puzzle";
 import { CellList, CrossList, BorderList, EXCellList } from "./PieceList";
 import type { BoardPiece, Border, Cell, EXCell } from "./Piece";
-import { pzpr } from "../pzpr/core";
 import { getEnv } from "../pzpr/env";
 import type { WrapperBase } from "../candle";
 import { getRect } from "../pzpr/util";
