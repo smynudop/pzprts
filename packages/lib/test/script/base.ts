@@ -126,7 +126,6 @@ export const testPuzzle = (puzzle: Puzzle, info: TestInfo) => {
             const relyon90deg = (pid === 'stostone');
 
             if (puzzle.pid === 'tawa') { return; }
-            if (puzzle.pid === 'stostone') { return; }
 
             it('turn right', function () {
                 puzzle.readFile(fullfile)
