@@ -66,6 +66,7 @@ export class BoardExec<TBoard extends Board = Board> {
 	TURNR = TURNR
 	FLIPX = FLIPX
 	FLIPY = FLIPY
+	TURNFLIP = TURNFLIP
 
 	boardtype = {
 		expandup: [REDUCE | UP, EXPAND | UP],
