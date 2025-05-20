@@ -35,9 +35,7 @@
     "build": "svelte-check && vite build",
     "check": "svelte-check",
     "lint": "biome lint",
-    "lint-fix": "biome lint --write",
-    "lint-fix-unsafe": "biome lint --write --unsafe",
-    "test": "vitest"
+    "makeIndex": "node --experimental-strip-types .\\tools\\makeIndex.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
