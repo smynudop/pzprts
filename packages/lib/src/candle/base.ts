@@ -97,5 +97,7 @@ export default abstract class WrapperBase<ChildElement> {
 	abstract fillText(text: string, x: number, y: number, maxLength?: number | null): void
 
 	abstract closePath(): void
+	abstract arc(cx: number, cy: number, r: number, startRad: number, endRad: number, antiClockWise: boolean): void
+
 }
 
