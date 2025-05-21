@@ -46,6 +46,7 @@ export * from './starbattle';
 export * from './stostone';
 export * from './sudoku';
 export * from './tapa';
+export * from './tasquare';
 export * from './tentaisho';
 export * from './tilepaint';
 export * from './toichika';
