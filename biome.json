@@ -22,7 +22,8 @@
       "recommended": true,
       "suspicious": {
         "noExplicitAny": "off",
-        "noGlobalIsNan": "info"
+        "noGlobalIsNan": "info",
+        "noRedeclare": "warn"
       },
       "complexity": {
         "noExtraBooleanCast": "off",
@@ -37,10 +38,12 @@
         "useImportType": "info",
         "useSingleVarDeclarator": "off",
         "useTemplate": "off",
-        "noUselessElse": "off"
+        "noUselessElse": "off",
+        "noVar": "warn"
       },
       "correctness": {
-        "noConstantCondition": "off"
+        "noConstantCondition": "off",
+        "noInnerDeclarations": "warn"
       }
     }
   },

@@ -2,7 +2,7 @@
 // パズル固有スクリプト部 マイナリズム・Kropki版 minarism.js
 
 import { MouseEvent1 } from "../puzzle/MouseInput";
-import { Border, IDir } from "../puzzle/Piece";
+import type { Border, IDir } from "../puzzle/Piece";
 import { createVariety } from "./createVariety";
 
 //
