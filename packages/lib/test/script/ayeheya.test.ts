@@ -1,8 +1,8 @@
 /* test_ayeheya.js */
 import { testPuzzle } from "./base"
-import { Ayaheya } from "../../src/variety/heyawake";
+import { Ayeheya } from "../../src/variety/heyawake";
 
-testPuzzle(new Ayaheya(), {
+testPuzzle(new Ayeheya(), {
 	url: '6/6/99aa8c0vu0ufk2k',
 	failcheck: [
 		['brNoShade', "pzprv3/ayeheya/6/6"],

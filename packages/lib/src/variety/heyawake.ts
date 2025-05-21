@@ -188,10 +188,10 @@ const isBorderCount = (clist: CellList, info: any, bd: Board) => {
 	return result;
 }
 
-export class Ayaheya extends Heyawake {
+export class Ayeheya extends Heyawake {
 	constructor(option?: IConfig) {
 		super(option)
-
+		this.pid = "ayeheya"
 		this.checker.checklist = [
 			"checkShadeCellExist",
 			"checkAdjacentShadeCell",
