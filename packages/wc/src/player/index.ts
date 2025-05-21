@@ -21,6 +21,7 @@ export * from './icelom';
 export * from './kaero';
 export * from './kakkuro';
 export * from './kropki';
+export * from './kurodoko';
 export * from './kurotto';
 export * from './lits';
 export * from './mashu';
