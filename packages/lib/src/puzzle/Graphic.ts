@@ -2,7 +2,7 @@
 
 import type { Puzzle } from "./Puzzle";
 import { CellList, CrossList, BorderList, EXCellList } from "./PieceList";
-import type { BoardPiece, Border, Cell, EXCell } from "./Piece";
+import type { BoardPiece, Border, Cell, Cross, EXCell } from "./Piece";
 import { getEnv } from "../pzpr/env";
 import type { WrapperBase } from "../candle";
 import { getRect } from "../pzpr/util";
@@ -34,7 +34,10 @@ export type PaintRange<TBoard extends Board = Board> = {
 	borders: BorderList<BorderOfBoard<TBoard>>,
 	excells: EXCellList
 }
-export type GraphicOption<TCell extends Cell = Cell> = Partial<Graphic<Board<TCell>>>
+export type GraphicOption<
+	TCell extends Cell = Cell,
+	TBorder extends Border = Border
+> = Partial<Graphic<Board<TCell, Cross, TBorder>>>
 
 export class Graphic<TBoard extends Board = Board> {
 	puzzle: Puzzle<TBoard>
