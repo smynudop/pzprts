@@ -143,9 +143,11 @@ export const testPuzzle = (puzzle: Puzzle, info: TestInfo) => {
 
                 for (let i = 0; i < 4; i++) {
                     puzzle.undo();
+                    const r = puzzle.check()
                     if (relyonupdn && i !== 3) { continue; }
                     if (relyon90deg && (i !== 1 && i !== 3)) { continue; }
-                    assert.equal(puzzle.check().list[0], null);
+                    if (i === 1) console.log(puzzle.getFileData())
+                    assert(r.list.length === 0, `undo check failed! i: ${i}, list: ${r.list} `);
                 }
                 assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
             });

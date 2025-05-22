@@ -25,6 +25,7 @@ export * from './kurodoko';
 export * from './kurotto';
 export * from './lits';
 export * from './mashu';
+export * from './minarism';
 export * from './moonsun';
 export * from './nagenawa';
 export * from './nawabari';

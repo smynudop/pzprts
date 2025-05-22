@@ -358,6 +358,7 @@ const fall = function (board: Board, clist: CellList<any>, isdrop: boolean = tru
 		clist[i].destination = newcell;
 		newcell.base = clist[i];
 	}
+
 	return length;
 }
 
