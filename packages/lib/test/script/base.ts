@@ -146,7 +146,6 @@ export const testPuzzle = (puzzle: Puzzle, info: TestInfo) => {
                     const r = puzzle.check()
                     if (relyonupdn && i !== 3) { continue; }
                     if (relyon90deg && (i !== 1 && i !== 3)) { continue; }
-                    if (i === 1) console.log(puzzle.getFileData())
                     assert(r.list.length === 0, `undo check failed! i: ${i}, list: ${r.list} `);
                 }
                 assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")

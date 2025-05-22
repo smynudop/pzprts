@@ -58,3 +58,6 @@ export * from './tilepaint';
 export * from './toichika';
 export * from './yajilin';
 export * from './yinyang';
+export * from "./nuribou"
+export * from "./mochikoro"
+export * from "./mochinyoro"
