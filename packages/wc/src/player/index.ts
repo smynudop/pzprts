@@ -27,6 +27,7 @@ export * from './lits';
 export * from './mashu';
 export * from './minarism';
 export * from './moonsun';
+export * from './nagare';
 export * from './nagenawa';
 export * from './nawabari';
 export * from './norinori';
