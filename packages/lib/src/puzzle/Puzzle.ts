@@ -441,21 +441,29 @@ export abstract class Puzzle<
 		return this.opemgr.resetModifiedState();
 	}
 
-	//---------------------------------------------------------------------------
-	// puzzle.enterTrial()      TrialModeに設定する (多重設定可能)
-	// puzzle.acceptTrial()     TrialModeを確定する
-	// puzzle.rejectTrial()     TrialModeの履歴をすべて破棄する
-	// puzzle.rejectCurrentTrial() TrialModeの現在の履歴を破棄して一つ前のTrial mode stageに戻る
-	//---------------------------------------------------------------------------
+	/**
+	 * 仮置きを開始する(多重仮置きも可能)
+	 */
 	enterTrial() {
 		this.opemgr.enterTrial();
 	}
+
+	/**
+	 * 仮置きを確定する
+	 */
 	acceptTrial() {
 		this.opemgr.acceptTrial();
 	}
+
+	/**
+	 * 仮置きをすべて破棄する
+	 */
 	rejectTrial() {
 		this.opemgr.rejectTrial(true);
 	}
+	/**
+	 * 仮置きを1段階破棄する
+	 */
 	rejectCurrentTrial() {
 		this.opemgr.rejectTrial(false);
 	}
@@ -476,21 +484,25 @@ export abstract class Puzzle<
 		return result
 	}
 
-	//------------------------------------------------------------------------------
-	// owner.ansclear()       回答を消去する
-	// owner.subclear()       補助記号を消去する
-	// owner.errclear()       エラー表示を消去する
-	// owner.clear()          回答・履歴を消去する
-	//------------------------------------------------------------------------------
+	/**
+	 * 回答を消去する
+	 */
 	ansclear() {
 		this.board.ansclear();
 		this.board.rebuildInfo();
 		this.redraw();
 	}
+	/**
+	 * 補助記号を消去する
+	 */
 	subclear() {
 		this.board.subclear();
 		this.redraw();
 	}
+	/**
+	 * エラー表示を消去する
+	 * @returns 
+	 */
 	errclear() {
 		const isclear = this.board.errclear();
 		if (isclear) {
@@ -498,6 +510,10 @@ export abstract class Puzzle<
 		}
 		return isclear;
 	}
+
+	/**
+	 * 回答・履歴を消去する
+	 */
 	clear() {
 		if (this.playeronly) {
 			this.ansclear();

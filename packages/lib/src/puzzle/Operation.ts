@@ -780,7 +780,7 @@ export class OperationManager {
 			this.disEmitTrial--;
 		}
 	}
-	emitTrial(num = 0) {
+	emitTrial(num?: number) {
 		if (this.disEmitTrial === 0) {
 			this.puzzle.emit('trial', ((num === void 0) ? this.trialpos.length : num));
 		}
