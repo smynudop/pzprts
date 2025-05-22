@@ -1,7 +1,20 @@
 /* test_stostone.js */
+
+//@ts-nocheck
+
 import { Stostone } from "../../src/variety";
 import { testPuzzle } from "./base";
-testPuzzle(new Stostone(), {
+
+//override checkans
+
+const stostone = new Stostone()
+const checkAns_orig = stostone.checker.checkAns
+stostone.checker.checkAns = function (...args) {
+	checkAns_orig.call(stostone.checker, ...args)
+	this.board.drop(false)
+}
+
+testPuzzle(stostone, {
 	url: '6/6/433aaqv064p03g433h',
 	failcheck: [
 		['cbShade', "pzprv3/stostone/6/6/7/0 0 0 1 1 1 /2 2 2 2 3 1 /2 2 2 2 3 1 /4 4 2 2 3 3 /4 4 5 5 3 3 /6 4 5 5 3 3 /3 . . . . . /4 . . . 3 . /. . . . . . /3 . . . . . /. . . . . . /. . . . . . /# . . . . . /# . . . . . /. . . . . . /. . . . . . /. . . . . . /. . . . . . /"],
