@@ -1,6 +1,7 @@
 export * from './akari';
 export * from './armyants';
 export * from './barns';
+export * from './bdblock';
 export * from './cbanana';
 export * from './chocona';
 export * from './country';
