@@ -60,5 +60,6 @@ export * from './tentaisho';
 export * from './tilepaint';
 export * from './toichika';
 export * from './usoone';
+export * from './yajikazu';
 export * from './yajilin';
 export * from './yinyang';
