@@ -1,7 +1,7 @@
 //
 // パズル固有スクリプト部 ボックス版 box.js
 
-import { Cell, IDir } from "../puzzle/Piece";
+import type { Cell, IDir } from "../puzzle/Piece";
 import { CellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 

@@ -4,6 +4,7 @@ export * from './bag';
 export * from './barns';
 export * from './bdblock';
 export * from './box';
+export * from './building';
 export * from './cbanana';
 export * from './chocona';
 export * from './country';

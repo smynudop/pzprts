@@ -296,7 +296,7 @@ export class FileIO<TBoard extends Board = Board> {
 			}
 		}
 	}
-	encodeCellExcell(func: IEncodeFunc<string, BoardPiece>) {
+	encodeCellExcell(func: IEncodeFunc<string, Cell | EXCell>) {
 		this.encodeObj(func, 'obj', -1, -1, this.puzzle.board.maxbx - 1, this.puzzle.board.maxby - 1);
 	}
 
@@ -451,7 +451,7 @@ export class FileIO<TBoard extends Board = Board> {
 	// fio.setCellSnum() 補助数字のデコードを行う   (decodeCellAnumsubで内部的に使用)
 	// fio.getCellSnum() 補助数字のエンコードを行う (encodeCellAnumsubで内部的に使用)
 	//---------------------------------------------------------------------------
-	setCellSnum(cell: Cell, ca: string) {
+	setCellSnum(cell: Cell | EXCell, ca: string) {
 		const snumtext = ca.substring(ca.indexOf('[') + 1, ca.indexOf(']'));
 		const list = snumtext.split(/,/);
 		for (let i = 0; i < list.length; ++i) {
@@ -459,7 +459,7 @@ export class FileIO<TBoard extends Board = Board> {
 		}
 		return ca.substr(0, ca.indexOf('['));
 	}
-	getCellSnum(cell: Cell) {
+	getCellSnum(cell: Cell | EXCell) {
 		const list = [];
 		for (let i = 0; i < cell.snum.length; ++i) {
 			list[i] = (cell.snum[i] !== -1 ? "" + cell.snum[i] : '');

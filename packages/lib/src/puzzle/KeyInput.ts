@@ -339,7 +339,7 @@ export class KeyEvent<TBoard extends Board = Board> {
 			this.key_inputqnum_main(cell, ca);
 		}
 	}
-	key_inputqnum_main(cell: Cell, ca: string) {
+	key_inputqnum_main(cell: any, ca: string) { // TODO
 		let cell0 = cell;
 		const puzzle = this.puzzle;
 		const bd = puzzle.board;
