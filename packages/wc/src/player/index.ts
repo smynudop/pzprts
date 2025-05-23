@@ -21,6 +21,7 @@ export * from './icebarn';
 export * from './icelom';
 export * from './kaero';
 export * from './kakkuro';
+export * from './kinkonkan';
 export * from './kropki';
 export * from './kurodoko';
 export * from './kurotto';

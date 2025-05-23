@@ -584,7 +584,7 @@ export class MouseEvent1<TBoard extends Board = Board> {
 		}
 		this.mouseCell = cell;
 	}
-	inputqnum_main(cell: Cell) { // todo
+	inputqnum_main(cell: any) { // todo
 		let cell0 = cell;
 		const puzzle = this.puzzle;
 		if (puzzle.playmode && cell.qnum !== cell.pureObject.qnum && puzzle.pid !== 'factors') { return; }

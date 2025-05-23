@@ -137,7 +137,7 @@ export class Graphic<TBoard extends Board = Board> {
 	// その他サイズ指定
 	textoption: any = null
 	fontsizeratio = 0.8				// Fontサイズのcellsizeとの比率
-	fontwidth = [0.5, 0.4, 0.33]	// 2文字以上のTextの横幅 (2文字〜の文字単位横幅を指定する)
+	fontwidth: (number | null)[] = [0.5, 0.4, 0.33]	// 2文字以上のTextの横幅 (2文字〜の文字単位横幅を指定する)
 	fontfamily = ''
 	isSupportMaxWidth = true			// maxWidthサポートブラウザ
 	crosssize = 0.4
@@ -836,8 +836,9 @@ export class Graphic<TBoard extends Board = Board> {
 		}
 	}
 
-	getBGEXcellColor(excell: EXCell) {
+	getBGEXcellColor(excell: EXCell): string | null {
 		if (excell.error === 1 || excell.qinfo === 1) { return this.errbcolor1; }
+		return null
 	}
 
 	//---------------------------------------------------------------------------
