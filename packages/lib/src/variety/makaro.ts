@@ -2,7 +2,7 @@
 // パズル固有スクリプト部 マカロ版 makaro.js
 
 import { MouseEvent1 } from "../puzzle/MouseInput";
-import { Cell, IDir } from "../puzzle/Piece";
+import type { Cell, IDir } from "../puzzle/Piece";
 import { createVariety } from "./createVariety";
 
 //

@@ -22,6 +22,7 @@ export * from './heyawake';
 export * from './hitori';
 export * from './icebarn';
 export * from './icelom';
+export * from './juosan';
 export * from './kaero';
 export * from './kakkuro';
 export * from './kinkonkan';
