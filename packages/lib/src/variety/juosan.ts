@@ -1,8 +1,8 @@
 //
 // パズル固有スクリプト部 縦横さん版 juosan.js
 
-import { Cell } from "../puzzle/Piece";
-import { CellList } from "../puzzle/PieceList";
+import type { Cell } from "../puzzle/Piece";
+import type { CellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 
 //
