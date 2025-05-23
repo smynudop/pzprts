@@ -29,6 +29,7 @@ export * from './kropki';
 export * from './kurodoko';
 export * from './kurotto';
 export * from './lits';
+export * from './makaro';
 export * from './mashu';
 export * from './minarism';
 export * from './mochikoro';

@@ -635,10 +635,10 @@ export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
 	//---------------------------------------------------------------------------
 	getdir4clist() {
 		const adc = this.adjacent;
-		const list: [Cell, number][] = [];
+		const list: [Cell, IDir][] = [];
 		const cells = [adc.top, adc.bottom, adc.left, adc.right];
 		for (let i = 0; i < 4; i++) {
-			if (cells[i].group === "cell" && !cells[i].isnull) { list.push([cells[i] as Cell, (i + 1)]); } /* i+1==dir */
+			if (cells[i].group === "cell" && !cells[i].isnull) { list.push([cells[i] as Cell, (i + 1) as IDir]); } /* i+1==dir */
 		}
 		return list;
 	}
