@@ -169,7 +169,7 @@ export class BoardPiece<TBoard extends Board = Board> extends Position<TBoard> {
 	setQues(val: any) { this.setdata('ques', val); }
 	setQans(val: any) { this.setdata('qans', val); }
 	setQdir(val: any) { this.setdata('qdir', val); }
-	setQnum(val: any) { this.setdata('qnum', val); }
+	setQnum(val: number) { this.setdata('qnum', val); }
 	setQnum2(val: any) { this.setdata('qnum2', val); }
 	setQchar(val: any) { this.setdata('qchar', val); }
 	setAnum(val: any) { this.setdata('anum', val); }
@@ -855,14 +855,7 @@ export class Border extends BoardPiece {
 // ボードメンバデータの定義(4)
 // EXCellクラスの定義
 
-export type EXCellOption = {
-	ques?: number,
-	qnum?: number
-	qnum2?: number
-	maxnum?: number
-	minnum?: number
-	disInputHatena?: boolean
-}
+export type EXCellOption = Partial<EXCell>
 export class EXCell extends BoardPiece {
 	constructor(puzzle: Puzzle, option?: EXCellOption) {
 		super(puzzle)
