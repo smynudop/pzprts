@@ -39,6 +39,15 @@ export type GraphicOption<
 	TBorder extends Border = Border
 > = Partial<Graphic<Board<TCell, Cross, TBorder>>>
 
+export type TextOption = {
+	ratio?: number
+	width?: number[]
+	style?: string
+	hoffset?: number
+	voffset?: number
+	position?: number
+}
+
 export class Graphic<TBoard extends Board = Board> {
 	puzzle: Puzzle<TBoard>
 	//pid: string
@@ -633,7 +642,7 @@ export class Graphic<TBoard extends Board = Board> {
 	TOPRIGHT = TOPRIGHT
 	TOPLEFT = TOPLEFT
 
-	disptext(text: string, px: number, py: number, option: any = null) {
+	disptext(text: string, px: number, py: number, option?: TextOption) {
 		option = option || {};
 		const g = this.context;
 
@@ -641,7 +650,7 @@ export class Graphic<TBoard extends Board = Board> {
 		let maxLength: number | null = null;
 		const widtharray = option.width || this.fontwidth;
 		const widthratiopos = (text.length <= widtharray.length + 1 ? text.length - 2 : widtharray.length - 1);
-		const widthratio = (widthratiopos >= 0 ? widtharray[widthratiopos] * text.length : null);
+		const widthratio = (widthratiopos >= 0 ? widtharray[widthratiopos]! * text.length : null);
 		if (this.isSupportMaxWidth) {	// maxLengthサポートブラウザ
 			maxLength = (!!widthratio ? (realsize * widthratio) : null);
 		}
@@ -1977,7 +1986,7 @@ export class Graphic<TBoard extends Board = Board> {
 		let adj: Cell;
 		const px = piece.bx * this.bw;
 		const py = piece.by * this.bh;
-		const option = { ratio: 0.45, position: null as number | null };
+		const option: TextOption = { ratio: 0.45 };
 		g.fillStyle = (piece.error === 1 || piece.qinfo === 1 ? this.errcolor1 : this.quescolor);
 
 		adj = piece.relcell(2, 0);

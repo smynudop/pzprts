@@ -455,7 +455,7 @@ export class AnsCheck<
 	// ans.checkAllArea()    すべてのエリアがevalfuncを満たすかどうか判定する
 	// ans.checkAllArea2()   すべてのエリアがareaを引数に取るevalfuncを満たすかどうか判定する
 	//---------------------------------------------------------------------------
-	checkAllArea(graph: AreaGraphBase, evalfunc: AreaCheck, code: string) { this.checkAllBlock(graph, null, evalfunc, code); }
+	checkAllArea(graph: GraphBase, evalfunc: AreaCheck, code: string) { this.checkAllBlock(graph, null, evalfunc, code); }
 
 	/**
 	 * すべてのfuncを満たすマスで構成されるエリアがevalfuncを満たすかどうか判定する
@@ -465,7 +465,7 @@ export class AnsCheck<
 	 * @param code 
 	 * @param errCode tateyokoでは4
 	 */
-	checkAllBlock(graph: AreaGraphBase, filterfunc: CellCheck<CellOfBoard<TBoard>> | null, evalfunc: AreaCheck, code: string, errCode: number = 1) {
+	checkAllBlock(graph: GraphBase, filterfunc: CellCheck<CellOfBoard<TBoard>> | null, evalfunc: AreaCheck, code: string, errCode: number = 1) {
 		const areas = graph.components;
 		for (let id = 0; id < areas.length; id++) {
 			const area = areas[id];

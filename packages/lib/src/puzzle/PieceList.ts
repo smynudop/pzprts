@@ -199,6 +199,8 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 	// 	const d = this.getRectSize();
 	// 	this.puzzle.painter.paintRange(d.x1 - 1, d.y1 - 1, d.x2 + 1, d.y2 + 1);
 	// }
+
+	getDeparture() { return new CellList(this.map(function (cell) { return cell.base; })).notnull() }
 }
 
 //----------------------------------------------------------------------------

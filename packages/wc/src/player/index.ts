@@ -65,3 +65,4 @@ export * from './usoone';
 export * from './yajikazu';
 export * from './yajilin';
 export * from './yinyang';
+export * from './yosenabe';

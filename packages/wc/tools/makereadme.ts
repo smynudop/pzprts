@@ -33,11 +33,13 @@ function parseExports(filePath: string): string[] {
     const exportRegex = /export\s+(?:const|let|var|function|class|type|interface|enum)\s+([A-Za-z0-9_]+)/g;
     const exportList: string[] = [];
     let match: RegExpExecArray | null;
+    // biome-ignore lint:
     while ((match = exportRegex.exec(content)) !== null) {
         exportList.push(match[1]);
     }
     // export { foo, bar } 形式も対応
     const exportListRegex = /export\s*{\s*([^}]+)\s*}/g;
+    // biome-ignore lint:
     while ((match = exportListRegex.exec(content)) !== null) {
         const names = match[1].split(',').map(s => s.trim().split(' as ')[0]);
         exportList.push(...names);
