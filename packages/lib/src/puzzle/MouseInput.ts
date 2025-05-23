@@ -1200,7 +1200,7 @@ export class MouseEvent1<TBoard extends Board = Board> {
 	inputDot() {
 
 	}
-	inputqcmp() {
+	inputqcmp(val?: any) {
 
 	}
 }

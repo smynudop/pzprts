@@ -2,9 +2,9 @@
 // パズル固有スクリプト部 ぬりかべ・ぬりぼう・モチコロ・モチにょろ版 nurikabe.js
 
 import { AreaUnshadeGraph } from "../puzzle/AreaManager";
-import { GraphComponentOption } from "../puzzle/GraphBase";
+import type { GraphComponentOption } from "../puzzle/GraphBase";
 import type { Cell } from "../puzzle/Piece";
-import { IConfig, Puzzle } from "../puzzle/Puzzle";
+import type { IConfig, Puzzle } from "../puzzle/Puzzle";
 import { createVariety } from "./createVariety";
 
 //

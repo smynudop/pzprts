@@ -26,12 +26,15 @@ export * from './kurotto';
 export * from './lits';
 export * from './mashu';
 export * from './minarism';
+export * from './mochikoro';
+export * from './mochinyoro';
 export * from './moonsun';
 export * from './nagare';
 export * from './nagenawa';
 export * from './nawabari';
 export * from './norinori';
 export * from './numlin';
+export * from './nuribou';
 export * from './nurikabe';
 export * from './nurimaze';
 export * from './nurimisaki';
@@ -56,8 +59,6 @@ export * from './tasquare';
 export * from './tentaisho';
 export * from './tilepaint';
 export * from './toichika';
+export * from './usoone';
 export * from './yajilin';
 export * from './yinyang';
-export * from "./nuribou"
-export * from "./mochikoro"
-export * from "./mochinyoro"

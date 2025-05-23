@@ -465,7 +465,7 @@ export class AnsCheck<
 	 * @param code 
 	 * @param errCode tateyokoでは4
 	 */
-	checkAllBlock(graph: AreaGraphBase, filterfunc: CellCheck | null, evalfunc: AreaCheck, code: string, errCode: number = 1) {
+	checkAllBlock(graph: AreaGraphBase, filterfunc: CellCheck<CellOfBoard<TBoard>> | null, evalfunc: AreaCheck, code: string, errCode: number = 1) {
 		const areas = graph.components;
 		for (let id = 0; id < areas.length; id++) {
 			const area = areas[id];
