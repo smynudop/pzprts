@@ -5,9 +5,9 @@ import { Board } from "../puzzle/Board";
 import { Graphic, PaintRange } from "../puzzle/Graphic";
 import { KeyEvent, TargetCursor } from "../puzzle/KeyInput";
 import { Operation } from "../puzzle/Operation";
-import { BoardPiece, EXCell } from "../puzzle/Piece";
-import { CellList } from "../puzzle/PieceList";
-import { Puzzle } from "../puzzle/Puzzle";
+import { BoardPiece, type EXCell } from "../puzzle/Piece";
+import type { CellList } from "../puzzle/PieceList";
+import type { Puzzle } from "../puzzle/Puzzle";
 import { createVariety } from "./createVariety";
 
 //

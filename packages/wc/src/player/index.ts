@@ -18,6 +18,7 @@ export * from './firefly';
 export * from './fivecells';
 export * from './fourcells';
 export * from './goishi';
+export * from './hakoiri';
 export * from './hashikake';
 export * from './hebi';
 export * from './herugolf';

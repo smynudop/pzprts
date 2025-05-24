@@ -163,7 +163,12 @@ export class AreaUnshadeGraph extends AreaGraphBase {
 	override isnodevalid(cell: Cell) { return cell.isUnshade(); }
 }
 
+export type AreaNumberGraphOption = Partial<AreaNumberGraph>
 export class AreaNumberGraph<TComponent extends GraphComponent = GraphComponent> extends AreaGraphBase<TComponent> {
+	constructor(puzzle: Puzzle, option?: AreaNumberGraphOption, gcoption?: GraphComponentOption) {
+		super(puzzle, gcoption)
+		this.enabled = option?.enabled || false
+	}
 	override relation: Record<string, string> = { 'cell.qnum': 'node', 'cell.anum': 'node', 'cell.qsub': 'node' }
 	override setComponentRefs(obj: any, component: GraphComponent) { obj.nblk = component; }
 	override getObjNodeList(nodeobj: any) { return nodeobj.nblknodes; }

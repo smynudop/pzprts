@@ -107,6 +107,7 @@ export abstract class Puzzle<
 			areaRoomGraph: varietyOption?.AreaRoomGraph,
 			areaShadeGraph: varietyOption?.AreaShadeGraph,
 			areaUnshadeGraph: varietyOption?.AreaUnshadeGraph,
+			areaNumberGraph: varietyOption?.AreaNumberGraph,
 			graphComponent: varietyOption?.GraphComponent,
 			lineGraph: varietyOption?.LineGraph,
 			cell: varietyOption?.Cell,

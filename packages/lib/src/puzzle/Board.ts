@@ -26,7 +26,8 @@ import {
 	AreaNumberGraph,
 	type AreaRoomGraphOption,
 	type AreaShadeGraphOption,
-	type AreaUnshadeGraphOption
+	type AreaUnshadeGraphOption,
+	AreaNumberGraphOption
 } from './AreaManager';
 import type { GraphBase, GraphComponent, GraphComponentOption } from './GraphBase';
 import { BoardExec, type IBoardOperation } from './BoardExec';
@@ -46,6 +47,7 @@ export type BoardChildOption = {
 	areaRoomGraph?: AreaRoomGraphOption,
 	areaShadeGraph?: AreaShadeGraphOption
 	areaUnshadeGraph?: AreaUnshadeGraphOption
+	areaNumberGraph?: Partial<AreaNumberGraph>
 	graphComponent?: GraphComponentOption
 	cell?: CellOption
 	cross?: CrossOption
@@ -174,8 +176,9 @@ export class Board<
 		this.roommgr = this.addInfoListInstance(this.createAreaRoomGraph(option?.areaRoomGraph, option?.graphComponent));			// 部屋情報を保持する
 		this.sblkmgr = this.addInfoListInstance(this.createAreaShadeGraph(option?.areaShadeGraph, option?.graphComponent));		// 黒マス情報を保持する
 		this.ublkmgr = this.addInfoListInstance(this.createAreaUnshadeGraph(option?.areaUnshadeGraph, option?.graphComponent));		// 白マス情報を保持する
+		this.nblkmgr = this.addInfoListInstance(this.createAreaNumberGraph(option?.areaNumberGraph, option?.graphComponent));		// 数字情報を保持する
+
 		this.gcoption = option?.graphComponent
-		this.nblkmgr = this.addInfoList(AreaNumberGraph);		// 数字情報を保持する
 
 		this.addExtraInfo();
 
@@ -202,6 +205,11 @@ export class Board<
 	createAreaUnshadeGraph(option: AreaUnshadeGraphOption | undefined, gcoption: GraphComponentOption | undefined) {
 		if (option) option.enabled = true
 		return new AreaUnshadeGraph(this.puzzle, option, gcoption)
+	}
+
+	createAreaNumberGraph(option: AreaNumberGraphOption | undefined, gcoption: GraphComponentOption | undefined) {
+		if (option) option.enabled = true
+		return new AreaNumberGraph(this.puzzle, option, gcoption)
 	}
 
 	createBoardExec(option?: any) {

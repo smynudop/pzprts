@@ -1,5 +1,5 @@
 import type { AnsCheck, AnsCheckOption } from "../puzzle/Answer"
-import type { AreaRoomGraph, AreaRoomGraphOption, AreaShadeGraph, AreaShadeGraphOption, AreaUnshadeGraphOption } from "../puzzle/AreaManager"
+import type { AreaNumberGraph, AreaRoomGraph, AreaRoomGraphOption, AreaShadeGraph, AreaShadeGraphOption, AreaUnshadeGraphOption } from "../puzzle/AreaManager"
 import type { Board, BoardOption } from "../puzzle/Board"
 import type { BoardExec, BoardExecOption } from "../puzzle/BoardExec"
 import type { Converter } from "../puzzle/Encode"
@@ -98,6 +98,7 @@ export type VarityOptionInner<
     AreaShadeGraph?: AreaShadeGraphOption
     AreaUnshadeGraph?: AreaUnshadeGraphOption
     AreaRoomGraph?: ExtendClass<AreaRoomGraph<GraphComponent & GraphComponentExtend, TBoard>, AreaRoomGraphExtend>
+    AreaNumberGraph?: Partial<AreaNumberGraph>
     Graphic: ExtendClass<Graphic<TBoard>, GraphicExtend>,
     Encode: (ExtendClass<Encode<TBoard>, EncodeExtend>) | Converter[]
     FileIO: ExtendClass<FileIO<TBoard>, FileIOExtend>
