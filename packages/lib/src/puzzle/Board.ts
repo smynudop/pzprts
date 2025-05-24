@@ -27,7 +27,7 @@ import {
 	type AreaRoomGraphOption,
 	type AreaShadeGraphOption,
 	type AreaUnshadeGraphOption,
-	AreaNumberGraphOption
+	type AreaNumberGraphOption
 } from './AreaManager';
 import type { GraphBase, GraphComponent, GraphComponentOption } from './GraphBase';
 import { BoardExec, type IBoardOperation } from './BoardExec';
