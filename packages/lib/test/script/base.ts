@@ -230,7 +230,7 @@ export const testPuzzle = (puzzle: Puzzle, info: TestInfo) => {
         const inps = info.inputs || [];
         if (inps.length === 0) { return; }
         let testcount = 0;
-        inps.forEach(function (data) {
+        inps.forEach(function (data, i) {
             testcount++;
             it('execinput ' + testcount, function () {
                 const action = data.input || [];

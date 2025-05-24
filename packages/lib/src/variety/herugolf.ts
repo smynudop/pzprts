@@ -71,7 +71,7 @@ export const Herugolf = createVariety({
 			/* 初回はこの中に入ってきます。 */
 			if (this.mousestart && cell.isDestination()) {
 				this.mouseCell = cell;
-				this.prevPos = pos;
+				this.prevPos = pos as any;
 				cell.draw();
 			}
 			/* 移動中の場合 */
@@ -82,7 +82,7 @@ export const Herugolf = createVariety({
 					//@ts-ignore
 					if (border.isLine() || border.sidecell[0].distance > 0 || border.sidecell[1].distance > 0) {
 						this.mouseCell = cell;
-						this.prevPos = pos;
+						this.prevPos = pos as any;
 						if (!border.isLine()) { border.setLine(); } else { border.removeLine(); }
 						border.draw();
 					}
@@ -243,6 +243,7 @@ export const Herugolf = createVariety({
 				const cell = pos.getc(), adb = cell.adjborder;
 				if (cell.isnull || cell.lcnt >= 3 || cell.lcnt === 0) { break; }
 
+				//@ts-ignore
 				cell.distance = --n;
 				if (cell === component.destination) { break; }
 				else if (dir !== 1 && adb.bottom.isLine()) { dir = 2; }

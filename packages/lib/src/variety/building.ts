@@ -3,7 +3,7 @@
 
 import { TargetCursor } from "../puzzle/KeyInput";
 import { MouseEvent1 } from "../puzzle/MouseInput";
-import { EXCell } from "../puzzle/Piece";
+import type { EXCell } from "../puzzle/Piece";
 import { EXCellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 

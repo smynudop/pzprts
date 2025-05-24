@@ -347,7 +347,7 @@ type Adjacent<T> = {
 //---------------------------------------------------------------------------
 // ボードメンバデータの定義(1)
 // Cellクラスの定義
-export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
+export class Cell extends BoardPiece {
 	override group: IGroup = 'cell'
 
 	lcnt = 0		// セルに存在する線の本数
@@ -373,7 +373,7 @@ export class Cell<TBoard extends Board = any> extends BoardPiece<TBoard> {
 	adjacent: Adjacent<this> = null!	// 隣接するセルの情報を保持する
 
 
-	constructor(puzzle: Puzzle<TBoard>, option?: CellOption) {
+	constructor(puzzle: Puzzle, option?: CellOption) {
 		super(puzzle)
 		Object.assign(this, option)
 

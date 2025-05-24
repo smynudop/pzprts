@@ -11,6 +11,7 @@ export * from './country';
 export * from './creek';
 export * from './dbchoco';
 export * from './dosufuwa';
+export * from './easyasabc';
 export * from './factors';
 export * from './fillomino';
 export * from './firefly';

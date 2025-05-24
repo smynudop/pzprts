@@ -338,7 +338,7 @@ export const Hebi = createVariety({
 				clist2.add(cell);
 				while (!cell.isnull) {
 					pos.movedir(dir, 2);
-					cell = pos.getc();
+					cell = pos.getc() as any;
 
 					if (!cell.isnull) { clist2.add(cell); }
 					if (cell.isnull || cell.qnum !== -1 || cell.anum !== -1) { break; }
