@@ -56,6 +56,7 @@ export * from './pencils';
 export * from './reflect';
 export * from './ringring';
 export * from './ripple';
+export * from './roma';
 export * from './sashigane';
 export * from './shakashaka';
 export * from './shikaku';

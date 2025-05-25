@@ -1,8 +1,8 @@
 //
 // パズル固有スクリプト部 シロクロリンク版 wblink.js
 
-import { Address } from "../puzzle/Address";
-import { IRange } from "../puzzle/BoardExec";
+import type { Address } from "../puzzle/Address";
+import type { IRange } from "../puzzle/BoardExec";
 import { createVariety } from "./createVariety";
 
 //
