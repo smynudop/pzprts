@@ -35,6 +35,7 @@ export const inputModeText = {
 
 export const puzzleName: Record<string, string> = {
     aho: "アホになり切れ",
+    akari: "美術館",
     amibo: "あみぼー",
     armyants: "ぐんたいあり",
     arukone: "アルコネ",
@@ -81,6 +82,7 @@ export const puzzleName: Record<string, string> = {
     kazunori: "かずのりのへや",
     kaero: "お家に帰ろう",
     kakuro: "カックロ",
+    kakkuro: "カックロ",
     kakuru: "カックル",
     kinkonkan: "キンコンカン",
     kouchoku: "交差は直角に限る",
@@ -156,6 +158,7 @@ export const puzzleName: Record<string, string> = {
     walllogic: "ウォールロジック",
     wblink: "シロクロリンク",
     yajikazu: "やじさんかずさん",
+    yajilin: "ヤジリン",
     yajirin: "ヤジリン",
     yajitatami: "ヤジタタミ",
     yinyang: "しろまるくろまる",

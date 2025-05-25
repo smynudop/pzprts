@@ -5,7 +5,7 @@ import type { Cell } from "../puzzle/Piece";
 import { createVariety } from "./createVariety";
 
 //
-export const Numberlink = createVariety({
+export const Numlin = createVariety({
 	pid: "numlin",
 	//---------------------------------------------------------
 	// マウス入力系

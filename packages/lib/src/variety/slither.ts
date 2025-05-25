@@ -6,7 +6,7 @@ import type { BorderList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 
 //
-export const SlitherLink = createVariety({
+export const Slither = createVariety({
 	pid: "slither",
 	//---------------------------------------------------------
 	// マウス入力系

@@ -1,7 +1,7 @@
 /* test_numlin.js */
 import { testPuzzle } from "./base";
-import { Numberlink } from "../../src/variety/numberlink";
-testPuzzle(new Numberlink(), {
+import { Numlin } from "../../src/variety/numberlink";
+testPuzzle(new Numlin(), {
 	url: '5/5/1j2h3m1h2j3',
 	failcheck: [
 		['brNoLine', "pzprv3/numlin/5/5"],

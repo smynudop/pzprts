@@ -1,8 +1,8 @@
 /* test_slither.js */
-import { SlitherLink } from "../../src/variety/slither";
+import { Slither } from "../../src/variety";
 import { testPuzzle } from "./base";
 
-testPuzzle(new SlitherLink(), {
+testPuzzle(new Slither(), {
 	url: '5/5/cbcbcddad',
 	failcheck: [
 		['brNoLine', "pzprv3/slither/5/5"],
