@@ -936,7 +936,7 @@ export class Graphic<TBoard extends Board = Board> {
 	/**
 	 * ごきげんななめでオーバーライドされる
 	 */
-	slashWidth() {
+	slashWidth(cell: Cell) {
 		return Math.max(this.bw / 4, 2)
 	}
 
@@ -946,7 +946,6 @@ export class Graphic<TBoard extends Board = Board> {
 	drawSlashes() {
 		const g = this.vinc('cell_slash', 'auto');
 
-		const slashwidth = this.slashWidth()
 		const irowake = this.puzzle.execConfig('irowake');
 
 		const clist = this.range.cells;
@@ -955,13 +954,9 @@ export class Graphic<TBoard extends Board = Board> {
 			g.vid = `c_slash_${cell.id}`;
 			if (cell.qans !== 0) {
 				const info = cell.error || cell.qinfo;
-				//let addwidth = 0;
-				let color: string;
-				// if (this.pid === 'gokigen' || this.pid === 'wagiri') {
-				// 	if (cell.trial && this.puzzle.execConfig('irowake')) { addwidth = -basewidth / 2; }
-				// 	else if (info === 1 || info === 3) { addwidth = basewidth / 2; }
-				// }
+				const slashwidth = this.slashWidth(cell)
 
+				let color: string;
 				if (info === 1) { color = this.errcolor1; }
 				else if (info === 2) { color = this.errcolor2; }
 				else if (info === -1) { color = this.noerrcolor; }

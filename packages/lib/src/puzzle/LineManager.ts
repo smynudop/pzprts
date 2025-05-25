@@ -3,6 +3,7 @@ import { GraphBase, type GraphComponentOption, type GraphComponent } from "./Gra
 import { CellList, BorderList } from "./PieceList";
 import type { Puzzle } from "./Puzzle";
 import type { Border, Cell } from "./Piece";
+import type { IGroup } from "./Board";
 
 export type LineGraphOption = Partial<LineGraph>
 
@@ -21,7 +22,7 @@ export class LineGraph extends GraphBase {
 	override relation: Record<string, string> = { 'border.line': 'link' }
 
 	pointgroup: 'cell' | "cross" = 'cell'
-	linkgroup = 'border' as const
+	linkgroup: IGroup = 'border'
 
 	isLineCross = false	// 線が交差するパズル
 
@@ -77,13 +78,16 @@ export class LineGraph extends GraphBase {
 	//---------------------------------------------------------------------------
 	resetLineCount() {
 		const cells = this.puzzle.board[this.pointgroup];
+		//@ts-ignore
 		const borders = this.puzzle.board[this.linkgroup];
 		this.ltotal = [cells.length];
 		for (let c = 0; c < cells.length; c++) {
 			cells[c].lcnt = 0;
 		}
 		for (let id = 0; id < borders.length; id++) {
+			//@ts-ignore
 			if (this.isedgevalidbylinkobj(borders[id])) {
+				//@ts-ignore
 				this.incdecLineCount(borders[id], true);
 			}
 		}
