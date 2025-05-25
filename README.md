@@ -14,26 +14,33 @@
 ## Demo
 [こちら](https://smynudop.github.io/pzprts/)
 
+## Usage
+```ts
+import { Slither } from "@udop/penpa-player-lib";
+
+const puzzle = new Slither({
+    type: "player"
+})
+puzzle.readURL("/* your url */")
+puzzle.mount(document.querySelector("#puzzle"));
+
+puzzle.setMode("play");
+
+//change input mode
+puzzle.mouse.setInputMode("auto");
+
+//set cell Size
+puzzle.setCanvasSizeByCellSize(36);
+
+//refresh
+puzzle.redraw(true);
+```
+
 ## WebComponents 使い方
 
-ぱずぷれv3形式のURLのみに対応しています。
+ライブラリの他に、Web Componentsを提供しています。
 
-```html
-
-<slitherlink-player src="/* your url */"/>
-
-<script type="module">
-import { SlitherlinkPlayer } from "https://cdn.jsdelivr.net/npm/@udop/penpa-player/dist/index.es.js";
-customElements.define('slitherlink-player', SlitherlinkPlayer);
-
-// or 
-
-import { SlitherlinkPlayer } from "https://cdn.jsdelivr.net/npm/@udop/penpa-player/dist/slither.es.js";
-customElements.define('slitherlink-player', SlitherlinkPlayer);
-</script>
-
-
-```
+使用方法は[こちらを参照してください](./packages/wc/README.md)
 
 ## LICENSE
 MIT

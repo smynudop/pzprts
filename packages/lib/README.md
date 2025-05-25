@@ -31,7 +31,7 @@ puzzle.redraw(true);
 ```
 
 ## パズルの追加・コンバート方法
-[こちら](docs/variety.md)を参照。
+[こちら](./docs/variety.md)を参照。
 
 ## LICENSE
 MIT
