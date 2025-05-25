@@ -20,6 +20,9 @@ export default defineConfig({
 			// Optionally, preprocess components with svelte.preprocess:
 			// https://svelte.dev/docs#compile-time-svelte-preprocess
 			emitCss: false,
+			compilerOptions: {
+				css: "injected",
+			},
 		}),
 		typescript(),
 		resolve({

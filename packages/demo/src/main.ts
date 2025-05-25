@@ -1,6 +1,6 @@
 import "./index.css"
 
-import * as PenpaPlayer from "https://cdn.jsdelivr.net/npm/@udop/penpa-player/dist/index.es.js"
+import * as PenpaPlayer from "https://cdn.jsdelivr.net/npm/@udop/penpa-player@0.5.2/dist/index.es.js"
 
 for (const [key, cl] of Object.entries(PenpaPlayer)) {
     const tagName = key.toLowerCase().replace("player", "-player")
