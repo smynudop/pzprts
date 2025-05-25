@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- add many puzzles.
+
+### Patch Changes
+
+- Updated dependencies
+  - @udop/penpa-player-lib@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes

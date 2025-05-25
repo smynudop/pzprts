@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.5.0
+
+### Minor Changes
+
+- add many puzzles.
+
 ## 0.4.0
 
 ### Minor Changes
