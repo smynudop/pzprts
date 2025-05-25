@@ -1,7 +1,7 @@
 import PlayerBase from "../components/Player.svelte"
 import type { IConfig, Puzzle } from "@udop/penpa-player-lib";
 import { mount } from "svelte";
-export const createPlayer = (puzzleClass: new (info: IConfig) => Puzzle): (new () => HTMLElement) => {
+export const createPlayer = /*#__PURE__*/ (puzzleClass: new (info: IConfig) => Puzzle): (new () => HTMLElement) => {
     return class extends HTMLElement {
         constructor() {
             super()

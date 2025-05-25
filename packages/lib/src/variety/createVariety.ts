@@ -109,7 +109,7 @@ export type VarityOptionInner<
 
 export type VarietyAnyOption = VarityOption<any, any, any, any, any, any, any, any, any, any, any, any, any, any, any>
 
-export const createVariety = <
+export const /*#__PURE__*/ createVariety = <
     CellExtend extends CellOption,
     CrossExtend extends CrossOption,
     BorderExtend extends BorderOption,
