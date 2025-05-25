@@ -66,6 +66,8 @@ export * from './slither';
 export * from './starbattle';
 export * from './stostone';
 export * from './sudoku';
+export * from './sukoro';
+export * from './sukororoom';
 export * from './tapa';
 export * from './tasquare';
 export * from './tatamibari';
