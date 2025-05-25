@@ -2,8 +2,8 @@
 // パズル固有スクリプト部 ウォールロジック版 walllogic.js
 
 import { AreaGraphBase } from "../puzzle/AreaManager";
-import { IRange } from "../puzzle/BoardExec";
-import { GraphComponent } from "../puzzle/GraphBase";
+import type { IRange } from "../puzzle/BoardExec";
+import type { GraphComponent } from "../puzzle/GraphBase";
 import { MouseEvent1 } from "../puzzle/MouseInput";
 import { Cell, IDir } from "../puzzle/Piece";
 import { CellList } from "../puzzle/PieceList";
