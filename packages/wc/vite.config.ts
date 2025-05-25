@@ -7,10 +7,9 @@ import terser from "@rollup/plugin-terser";
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-import dts from 'vite-plugin-dts'
 
 const entryFiles = (await fs.readdir(path.join(__dirname, "./src/player")))
-    //.filter(x => !x.includes("index.ts"))
+    .filter(x => !x.includes("index.ts"))
     .map(f => path.join(`./src/player/`, f))
 
 export default defineConfig((opt) => {
@@ -22,7 +21,7 @@ export default defineConfig((opt) => {
     return {
         plugins: [
             svelte({ compilerOptions: { customElement: true } }),
-            dts({ include: "./src/player" }),
+            //dts({ include: "./src/player" }),
             //terser()
         ],
         resolve: {
@@ -39,10 +38,10 @@ export default defineConfig((opt) => {
                 ]
             },
             rollupOptions: {
-                plugins: [terser()]
+                plugins: [terser()],
             },
             outDir: "./dist",
-            minify: "terser",
+            minify: false,
             //sourcemap: true
         },
         define: {
