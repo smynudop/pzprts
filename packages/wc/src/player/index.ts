@@ -80,6 +80,7 @@ export * from './usoone';
 export * from './view';
 export * from './wagiri';
 export * from './walllogic';
+export * from './wblink';
 export * from './yajikazu';
 export * from './yajilin';
 export * from './yinyang';

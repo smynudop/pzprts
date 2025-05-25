@@ -3,7 +3,7 @@
 
 import { Graphic } from "../puzzle/Graphic";
 import { LineGraph } from "../puzzle/LineManager";
-import { Cross } from "../puzzle/Piece";
+import type { Cross } from "../puzzle/Piece";
 import { URL_PZPRAPP, URL_PZPRV3 } from "../pzpr/constants";
 import { createVariety } from "./createVariety";
 
