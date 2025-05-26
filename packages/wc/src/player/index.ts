@@ -65,6 +65,7 @@ export * from './ringring';
 export * from './ripple';
 export * from './roma';
 export * from './sashigane';
+export * from './sato';
 export * from './shakashaka';
 export * from './shikaku';
 export * from './shimaguni';
