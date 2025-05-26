@@ -72,7 +72,7 @@ export abstract class GraphBase<
 	//--------------------------------------------------------------------------------
 	// graph.calcNodeCount()    そのセルにあるべきNode数を返す
 	//--------------------------------------------------------------------------------
-	calcNodeCount(cell: Cell) { return (this.isnodevalid(cell) ? 1 : 0); }
+	calcNodeCount(cell: Cell): number { return (this.isnodevalid(cell) ? 1 : 0); }
 
 	//---------------------------------------------------------------------------
 	// graph.rebuild()  既存の情報からデータを再設定する

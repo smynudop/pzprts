@@ -1,4 +1,5 @@
 export * from './akari';
+export * from './amibo';
 export * from './armyants';
 export * from './arukone';
 export * from './bag';

@@ -2,7 +2,7 @@
 // パズル固有スクリプト部 コンビブロック版 cbblock.js
 
 import { AreaGraphBase, AreaRoomGraph } from "../puzzle/AreaManager";
-import { Board } from "../puzzle/Board";
+import type { Board } from "../puzzle/Board";
 import type { GraphComponent } from "../puzzle/GraphBase";
 import type { Border } from "../puzzle/Piece";
 import { CellList } from "../puzzle/PieceList";
