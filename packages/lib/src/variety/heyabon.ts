@@ -9,8 +9,8 @@ import { CellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 
 //
-export const Sato = createVariety({
-	pid: "sato",
+export const Heyabon = createVariety({
+	pid: "heyabon",
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {
@@ -59,7 +59,7 @@ export const Sato = createVariety({
 		},
 		inputautodark: function () {
 			/* 最後に入力した線を取得する */
-			const opemgr = this.puzzle.opemgr, lastope = opemgr.lastope! as ObjectOperation;
+			const opemgr = this.puzzle.opemgr, lastope = opemgr.lastope as ObjectOperation;
 			if (lastope.group !== 'border' || lastope.property !== 'line') { return; }
 			const border = this.board.getb(lastope.bx, lastope.by);
 
@@ -143,46 +143,7 @@ export const Sato = createVariety({
 			const row = (((by < (bd.maxby >> 1)) ? (bd.maxby - by) : by) >> 1);
 			return Math.max(col, row);
 		},
-		minnum: 0,
-		posthook: {
-			qnum: function (num) { this.room.checkAutoCmp(); },
-			qcmp: function (num) { this.path.destination.room.checkAutoCmp(); }
-		},
-
-		distance: null,
-
-		// pencilbox互換関数 ここではファイル入出力用
-		getState: function () {
-			const adc = this.adjacent, adb = this.adjborder, direc = this.distance! - 1;
-			if (this.isDestination()) { return 8; }
-			else if (adb.top.isLine() && adc.top.distance === direc) { return 0; }
-			else if (adb.left.isLine() && adc.left.distance === direc) { return 1; }
-			else if (adb.bottom.isLine() && adc.bottom.distance === direc) { return 2; }
-			else if (adb.right.isLine() && adc.right.distance === direc) { return 3; }
-			return -1;
-		},
-		setState: function (val: number) {
-			if (Number.isNaN(val)) { return; }
-			const adb = this.adjborder;
-			if (val === 0) { adb.top.line = 1; }
-			else if (val === 1) { adb.left.line = 1; }
-			else if (val === 2) { adb.bottom.line = 1; }
-			else if (val === 3) { adb.right.line = 1; }
-		}
-	},
-
-	Border: {
-		posthook: {
-			line: function (num: number) {
-				const opemgr = this.puzzle.opemgr;
-				if (!opemgr.undoExec && !opemgr.redoExec) { return; }
-				const room1 = this.sidecell[0].room, room2 = this.sidecell[1].room;
-				room1.checkAutoCmp();
-				if (room1 !== room2) {
-					room2.checkAutoCmp();
-				}
-			}
-		}
+		minnum: 0
 	},
 
 	Board: {
@@ -219,6 +180,7 @@ export const Sato = createVariety({
 				pos.movedir(dir, 2);
 				const cell = pos.getc(), adb = cell.adjborder;
 				if (cell.isnull || cell.lcnt >= 3 || cell.lcnt === 0) { break; }
+
 				//@ts-ignore
 				cell.distance = --n;
 				if (cell === component.destination) { break; }
@@ -234,13 +196,17 @@ export const Sato = createVariety({
 		enabled: true
 	},
 
+
 	//---------------------------------------------------------
 	// 画像表示系
 	Graphic: {
 		hideHatena: true,
 
+		autocmp: "number",
+
 		gridcolor_type: "LIGHT",
 
+		bgcellcolor_func: "qsub2",
 		numbercolor_func: "move",
 		qsubcolor1: "rgb(224, 224, 255)",
 		qsubcolor2: "rgb(255, 255, 144)",
@@ -250,7 +216,7 @@ export const Sato = createVariety({
 		paint: function () {
 			this.drawBGCells();
 			this.drawGrid();
-			this.drawBorders()
+			this.drawBorders();
 
 			this.drawTip();
 			this.drawDepartures();
@@ -261,11 +227,8 @@ export const Sato = createVariety({
 			this.drawChassis();
 
 			this.drawTarget();
-		},
-		autocmp: "room_number",
-		bgcellcolor_func: "qcmp"
+		}
 	},
-
 
 	//---------------------------------------------------------
 	// URLエンコード/デコード処理
@@ -279,7 +242,6 @@ export const Sato = createVariety({
 			this.encodeNumber16();
 		}
 	},
-
 	//---------------------------------------------------------
 	FileIO: {
 		decodeData: function () {
@@ -308,7 +270,7 @@ export const Sato = createVariety({
 			this.encodeCell(function (cell) {
 				return (cell.qsub + (cell.qcmp << 4)) + " ";
 			});
-		},
+		}
 	},
 
 	//---------------------------------------------------------
@@ -325,8 +287,7 @@ export const Sato = createVariety({
 
 			"checkLineLength",
 
-			"checkPluralObjectBlock",
-			"checkNoObjectBlock",
+			"checkFractal",
 
 			"checkNoMoveCircle",
 			"checkDisconnectLine"
@@ -379,15 +340,3 @@ export const Sato = createVariety({
 		nmNoMove: ["○から線が出ていません。", "A circle doesn't start any line."]
 	},
 });
-
-/*
-	"CellList@sato": {
-		checkCmp: function () {
-			var scnt = 0;
-			for (var i = 0; i < this.length; i++) {
-				if (this[i].base.checkCmp()) { scnt++; }
-			}
-			return (scnt === 1);
-		}
-	},
-	*/

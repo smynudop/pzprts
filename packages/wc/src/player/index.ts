@@ -27,6 +27,7 @@ export * from './hanare';
 export * from './hashikake';
 export * from './hebi';
 export * from './herugolf';
+export * from './heyabon';
 export * from './heyawake';
 export * from './hitori';
 export * from './icebarn';
