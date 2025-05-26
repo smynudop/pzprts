@@ -2,7 +2,7 @@
 // パズル固有スクリプト部 ろーま版 roma.js
 
 import { MouseEvent1 } from "../puzzle/MouseInput";
-import { CellList } from "../puzzle/PieceList";
+import type { CellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 
 //

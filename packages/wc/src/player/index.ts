@@ -36,6 +36,7 @@ export * from './kropki';
 export * from './kurodoko';
 export * from './kurotto';
 export * from './lits';
+export * from './loute';
 export * from './makaro';
 export * from './mashu';
 export * from './minarism';
@@ -86,5 +87,3 @@ export * from './yajikazu';
 export * from './yajilin';
 export * from './yinyang';
 export * from './yosenabe';
-
-console.warn("index.es.jsからのimportは推奨されません。可能な限り個別ファイルからのimportを使用してください。")
