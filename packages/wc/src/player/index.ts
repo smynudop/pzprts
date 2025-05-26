@@ -5,6 +5,7 @@ export * from './arukone';
 export * from './bag';
 export * from './barns';
 export * from './bdblock';
+export * from './bonsan';
 export * from './box';
 export * from './building';
 export * from './cbanana';
