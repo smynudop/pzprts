@@ -215,7 +215,7 @@ export class AreaRoomGraph<
 		Object.assign(this, option)
 	}
 
-	override relation = { 'cell.ques': 'node', 'border.ques': 'separator', 'border.qans': 'separator' }
+	override relation: Record<string, string> = { 'cell.ques': 'node', 'border.ques': 'separator', 'border.qans': 'separator' }
 
 	hastop = false
 

@@ -48,6 +48,7 @@ export * from './mochinyoro';
 export * from './moonsun';
 export * from './nagare';
 export * from './nagenawa';
+export * from './nanro';
 export * from './nawabari';
 export * from './nondango';
 export * from './norinori';
