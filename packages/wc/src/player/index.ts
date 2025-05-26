@@ -21,6 +21,7 @@ export * from './fourcells';
 export * from './goishi';
 export * from './gokigen';
 export * from './hakoiri';
+export * from './hanare';
 export * from './hashikake';
 export * from './hebi';
 export * from './herugolf';
