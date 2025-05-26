@@ -2,7 +2,7 @@
 // パズル固有スクリプト部 ナンロー版 nanro.js
 
 import { AreaRoomGraph } from "../puzzle/AreaManager";
-import { GraphComponent } from "../puzzle/GraphBase";
+import type { GraphComponent } from "../puzzle/GraphBase";
 import { createVariety } from "./createVariety";
 
 //

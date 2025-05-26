@@ -95,7 +95,7 @@ export type VarityOptionInner<
     TargetCursor?: InitialClass<TargetCursor<TBoard>>
     GraphComponent?: ExtendClass<GraphComponent, GraphComponentExtend>
     LineGraph?: InitialClass<LineGraph>
-    AreaShadeGraph?: AreaShadeGraphOption
+    AreaShadeGraph?: InitialClass<AreaShadeGraph>
     AreaUnshadeGraph?: AreaUnshadeGraphOption
     AreaRoomGraph?: ExtendClass<AreaRoomGraph<GraphComponent & GraphComponentExtend, TBoard>, AreaRoomGraphExtend>
     AreaNumberGraph?: Partial<AreaNumberGraph>

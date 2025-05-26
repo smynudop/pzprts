@@ -6,9 +6,7 @@ import { BoardPiece, type Border, type Cell } from './Piece'
 import type { GraphComponent, GraphComponentOption } from "./GraphBase"
 import type { Board, IGroup } from './Board';
 
-export type AreaShadeGraphOption = {
-	enabled?: boolean
-}
+export type AreaShadeGraphOption = Partial<AreaShadeGraph>
 
 export type AreaUnshadeGraphOption = {
 	enabled?: boolean
@@ -119,9 +117,9 @@ export class AreaGraphBase<
 export class AreaShadeGraph<TComponent extends GraphComponent = GraphComponent> extends AreaGraphBase<TComponent> {
 	constructor(puzzle: Puzzle, option?: AreaShadeGraphOption, gcoption?: GraphComponentOption) {
 		super(puzzle, gcoption)
-		this.enabled = option?.enabled || false
+		Object.assign(this, option)
 	}
-	override relation = { 'cell.qans': 'node' }
+	override relation: Record<string, string> = { 'cell.qans': 'node' }
 	override setComponentRefs(obj: any, component: any) { obj.sblk = component; }
 	override getObjNodeList(nodeobj: any) { return nodeobj.sblknodes; }
 	override resetObjNodeList(nodeobj: any) { nodeobj.sblknodes = []; }
