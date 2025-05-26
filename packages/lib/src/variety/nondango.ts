@@ -2,7 +2,7 @@
 // パズル固有スクリプト部 ノンダンゴ版 nondango.js
 
 import { MouseEvent1 } from "../puzzle/MouseInput";
-import { Cell } from "../puzzle/Piece";
+import type { Cell } from "../puzzle/Piece";
 import { CellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 

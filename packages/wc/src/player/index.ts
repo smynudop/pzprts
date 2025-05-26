@@ -7,6 +7,7 @@ export * from './bdblock';
 export * from './box';
 export * from './building';
 export * from './cbanana';
+export * from './cbblock';
 export * from './chocona';
 export * from './country';
 export * from './creek';
