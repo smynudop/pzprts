@@ -47,6 +47,7 @@ export * from './moonsun';
 export * from './nagare';
 export * from './nagenawa';
 export * from './nawabari';
+export * from './nondango';
 export * from './norinori';
 export * from './numlin';
 export * from './nuribou';

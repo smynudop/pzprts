@@ -1,7 +1,7 @@
 //
 // パズル固有スクリプト部 はなれ組版 hanare.js
 
-import { Cell } from "../puzzle/Piece";
+import type { Cell } from "../puzzle/Piece";
 import { createVariety } from "./createVariety";
 
 //
