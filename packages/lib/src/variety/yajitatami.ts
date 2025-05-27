@@ -1,7 +1,7 @@
 //
 // パズル固有スクリプト部 ヤジタタミ版 yajitatami.js
 
-import { BorderList } from "../puzzle/PieceList";
+import type { BorderList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 
 //

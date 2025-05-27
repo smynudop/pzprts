@@ -44,6 +44,7 @@ export * from './kurodoko';
 export * from './kurotto';
 export * from './lits';
 export * from './lookair';
+export * from './loopsp';
 export * from './loute';
 export * from './makaro';
 export * from './mashu';
