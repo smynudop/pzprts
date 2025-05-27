@@ -98,5 +98,6 @@ export * from './walllogic';
 export * from './wblink';
 export * from './yajikazu';
 export * from './yajilin';
+export * from './yajitatami';
 export * from './yinyang';
 export * from './yosenabe';
