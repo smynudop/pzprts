@@ -42,6 +42,7 @@ export * from './kinkonkan';
 export * from './kropki';
 export * from './kurodoko';
 export * from './kurotto';
+export * from './kusabi';
 export * from './lits';
 export * from './lookair';
 export * from './loopsp';

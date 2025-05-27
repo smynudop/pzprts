@@ -3,8 +3,8 @@
 
 import { AreaGraphBase } from "../puzzle/AreaManager";
 import { Board } from "../puzzle/Board";
-import { GraphComponent } from "../puzzle/GraphBase";
-import { BorderList } from "../puzzle/PieceList";
+import type { GraphComponent } from "../puzzle/GraphBase";
+import type { BorderList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 
 //

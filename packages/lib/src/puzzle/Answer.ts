@@ -802,7 +802,7 @@ export class AnsCheck<
 		if (this._info.num) { return this._info.num; }
 
 		const bd = this.board;
-		const pathsegs = [];
+		const pathsegs: IPathSeg[] = [];
 		const passed: boolean[] = [];
 		for (let id = 0; id < bd.border.length; id++) { passed[id] = false; }
 
@@ -852,7 +852,11 @@ export class AnsCheck<
 				pathseg.objs.add(border);
 				passed[border.id] = true;
 
-				if (Number.isNaN(pathseg.length[pathseg.ccnt])) { pathseg.length[pathseg.ccnt] = 1; } else { pathseg.length[pathseg.ccnt]++; }
+				if (isNaN(pathseg.length[pathseg.ccnt])) {
+					pathseg.length[pathseg.ccnt] = 1;
+				} else {
+					pathseg.length[pathseg.ccnt]++;
+				}
 			}
 		}
 
