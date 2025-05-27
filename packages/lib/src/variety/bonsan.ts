@@ -3,8 +3,8 @@
 
 import { LineGraph } from "../puzzle/LineManager";
 import { MouseEvent1 } from "../puzzle/MouseInput";
-import { ObjectOperation } from "../puzzle/Operation";
-import { Cell } from "../puzzle/Piece";
+import type { ObjectOperation } from "../puzzle/Operation";
+import type { Cell } from "../puzzle/Piece";
 import { CellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 
