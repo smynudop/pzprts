@@ -1,7 +1,7 @@
 //
 // パズル固有スクリプト部 るっくえあ版 lookair.js
 
-import { CellList } from "../puzzle/PieceList";
+import type { CellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 
 //

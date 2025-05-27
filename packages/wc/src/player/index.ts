@@ -37,6 +37,7 @@ export * from './icelom';
 export * from './juosan';
 export * from './kaero';
 export * from './kakkuro';
+export * from './kakuru';
 export * from './kinkonkan';
 export * from './kropki';
 export * from './kurodoko';
