@@ -48,6 +48,7 @@ export * from './loopsp';
 export * from './loute';
 export * from './makaro';
 export * from './mashu';
+export * from './mejilink';
 export * from './minarism';
 export * from './mochikoro';
 export * from './mochinyoro';
