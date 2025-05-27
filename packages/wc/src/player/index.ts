@@ -90,6 +90,7 @@ export * from './tateyoko';
 export * from './tentaisho';
 export * from './tilepaint';
 export * from './toichika';
+export * from './triplace';
 export * from './usoone';
 export * from './view';
 export * from './wagiri';
