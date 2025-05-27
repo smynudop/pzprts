@@ -65,6 +65,8 @@ export * from './nurimaze';
 export * from './nurimisaki';
 export * from './onsen';
 export * from './pencils';
+export * from './pipelink';
+export * from './pipelinkr';
 export * from './rectslider';
 export * from './reflect';
 export * from './ringring';

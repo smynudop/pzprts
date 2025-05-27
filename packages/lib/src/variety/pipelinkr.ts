@@ -1,18 +1,17 @@
 //
 // パズル固有スクリプト部 パイプリンク・帰ってきたパイプリンク・環状線スペシャル版 pipelink.js
 
-import type { Cell } from "../puzzle/Piece";
-import { BorderList, type CellList } from "../puzzle/PieceList";
+import { URL_PZPRV3 } from "../pzpr/constants";
 import { createVariety } from "./createVariety";
 
 //
-export const Loopsp = createVariety({
-	pid: "loopsp",
+export const Pipelinkr = createVariety({
+	pid: "pipelinkr",
+
 	//---------------------------------------------------------
 	// マウス入力系
 	MouseEvent: {
-		inputModes: { edit: ['quesmark', 'quesmark-', 'number', 'info-line'], play: ['line', 'peke', 'info-line'] }
-		,
+		inputModes: { edit: ['quesmark', 'quesmark-', 'ice', 'info-line'], play: ['line', 'peke', 'info-line'] },
 		mouseinput_other: function () {
 			if (this.inputMode.match(/quesmark/)) {
 				if (this.mousestart) { this.inputQuesMark(); }
@@ -33,47 +32,7 @@ export const Loopsp = createVariety({
 			}
 		},
 		inputQuesMark: function () {
-			if (this.pid !== 'loopsp') {
-				this.inputQues([0, 11, 12, 13, 14, 15, 16, 17, -2]);
-			}
-			else { this.inputLoopsp(); }
-		},
-		inputLoopsp: function () {
-			const cell = this.getcell();
-			if (cell.isnull || cell === this.mouseCell) { return; }
-
-			if (cell !== this.cursor.getc()) {
-				this.setcursor(cell);
-			}
-			else {
-				this.inputcell_loopsp(cell);
-			}
-			this.mouseCell = cell;
-		},
-		inputcell_loopsp: function (cell: Cell) {
-			let qu = cell.ques, qn = cell.qnum, val: number;
-			// -8to-2:IneqMark -1:何もなし 0:丸のみ 1以上:数字
-			if (qn !== -1) { val = (qn > 0 ? qn : 0); }
-			else if (qu > 0) { val = qu - 19; }
-			else { val = -1; }
-
-			let max = cell.getmaxnum(), min = -8;
-			if (this.inputMode.match(/number/)) { min = -1; }
-			if (this.inputMode.match(/quesmark/)) { max = -1; }
-
-			if (this.btn === 'left') {
-				if (min <= val && val < max) { val++; }
-				else { val = min; }
-			}
-			else if (this.btn === 'right') {
-				if (min < val && val <= max) { val--; }
-				else { val = max; }
-			}
-
-			if (val >= 0) { cell.setQues(0); cell.setQnum(val >= 1 ? val : -2); }
-			else if (val === -1) { cell.setQues(0); cell.setQnum(-1); }
-			else { cell.setQues(val + 19); cell.setQnum(-1); }
-			cell.draw();
+			this.inputQues([0, 11, 12, 13, 14, 15, 16, 17, -2]);
 		}
 	},
 
@@ -194,15 +153,19 @@ export const Loopsp = createVariety({
 
 		gridcolor_type: "LIGHT",
 
+		circleratio: [0.42, 0.37],
+
+		minYdeg: 0.42,
+
 		paint: function () {
 			this.drawBGCells();
 			this.drawDashedGrid();
+			this.drawBorders();
 
-
+			this.drawCircles();
+			this.drawHatenas();
 
 			this.drawLines();
-
-			this.drawCircledNumbers();
 
 			this.drawPekes();
 
@@ -216,61 +179,92 @@ export const Loopsp = createVariety({
 		repaintParts: function (blist) {
 			this.range.cells = blist.cellinside() as any;
 
-			this.drawCircledNumbers();
 			this.drawLineParts();
 		},
-		circleratio: [0.40, 0.35],
+		getBGCellColor: function (cell) {
+			if (cell.error === 1) { return this.errbcolor1; }
+			else if (cell.ques === 6 && this.puzzle.getConfig('disptype_pipelinkr') === 2) { return this.icecolor; }
+			return null;
+		},
+		getBorderColor: function (border) {
+			if (this.puzzle.getConfig('disptype_pipelinkr') === 2) {
+				const cell1 = border.sidecell[0], cell2 = border.sidecell[1];
+				if (!cell1.isnull && !cell2.isnull && (cell1.ice() !== cell2.ice())) {
+					return this.quescolor;
+				}
+			}
+			return null;
+		},
 
-		numbercolor_func: "qnum",
-
-		minYdeg: 0.36,
-		maxYdeg: 0.74
+		getCircleStrokeColor: function (cell) {
+			if ((this.puzzle.getConfig('disptype_pipelinkr') === 1) && cell.ques === 6) {
+				return this.quescolor;
+			}
+			return null;
+		},
+		circlefillcolor_func: "null"
 	},
 
 	//---------------------------------------------------------
 	// URLエンコード/デコード処理
 	Encode: {
 		decodePzpr: function (type) {
-			this.decodeLoopsp();
+			this.decodePipelink();
+
+			this.puzzle.setConfig('disptype_pipelinkr', (!this.checkpflag('i') ? 1 : 2));
 		},
 		encodePzpr: function (type) {
-			this.encodeLoopsp();
+			this.encodePipelink(type);
+
+			this.outpflag = ((this.puzzle.getConfig('disptype_pipelinkr') === 2) ? "i" : null);
 		},
 
-		decodeLoopsp: function () {
+		decodePipelink: function () {
 			let c = 0, bstr = this.outbstr, bd = this.board;
 			let i: number
 			for (i = 0; i < bstr.length; i++) {
-				const ca = bstr.charAt(i), cell = bd.cell[c];
+				const ca = bstr.charAt(i);
 
-				if (ca === '.') { cell.qnum = -2; }
-				if (this.include(ca, "0", "9") || this.include(ca, "a", "f")) { cell.qnum = Number.parseInt(ca, 16); }
-				else if (ca === '-') { cell.qnum = Number.parseInt(bstr.substr(i + 1, 2), 16); i += 2; }
-				else if (ca === '+') { cell.qnum = Number.parseInt(bstr.substr(i + 1, 3), 16); i += 3; }
-				else if (ca >= 'g' && ca <= 'm') { cell.ques = Number.parseInt(ca, 36) - 5; }
-				else if (ca >= 'n' && ca <= 'z') { c += (Number.parseInt(ca, 36) - 23); }
+				if (ca === '.') { bd.cell[c].ques = -2; }
+				else if (ca >= '0' && ca <= '9') {
+					for (let n = 0, max = Number.parseInt(ca, 10) + 1; n < max; n++) {
+						if (!!bd.cell[c]) { bd.cell[c].ques = 6; c++; }
+					}
+					c--;
+				}
+				else if (ca >= 'a' && ca <= 'g') { bd.cell[c].ques = Number.parseInt(ca, 36) + 1; }
+				else if (ca >= 'h' && ca <= 'z') { c += (Number.parseInt(ca, 36) - 17); }
 
 				c++;
 				if (!bd.cell[c]) { break; }
 			}
 
-			this.outbstr = bstr.substr(i + 1);
+			this.outbstr = bstr.substr(i);
 		},
-		encodeLoopsp: function () {
-			let cm = "", pstr = "", count = 0, bd = this.board;
+		encodePipelink: function (type: number) {
+			let count: number, cm = "", bd = this.board;
+
+			count = 0;
 			for (let c = 0; c < bd.cell.length; c++) {
-				const qn = bd.cell[c].qnum, qu = bd.cell[c].ques;
-				if (qn === -2) { pstr = "."; }
-				else if (qn >= 0 && qn < 16) { pstr = qn.toString(16); }
-				else if (qn >= 16 && qn < 256) { pstr = "-" + qn.toString(16); }
-				else if (qn >= 256 && qn < 4096) { pstr = "+" + qn.toString(16); }
-				else if (qu >= 11 && qu <= 17) { pstr = (qu + 5).toString(36); }
-				else { pstr = ""; count++; }
+				let pstr = "", qu = bd.cell[c].ques;
+
+				if (qu === -2) { pstr = "."; }
+				else if (qu === 6) {
+					if (type === URL_PZPRV3) {
+						let n: number
+						for (n = 1; n < 10; n++) {
+							if (!bd.cell[c + n] || bd.cell[c + n].ques !== 6) { break; }
+						}
+						pstr = (n - 1).toString(10); c = (c + n - 1);
+					}
+				}
+				else if (qu >= 11 && qu <= 17) { pstr = (qu - 1).toString(36); }
+				else { count++; }
 
 				if (count === 0) { cm += pstr; }
-				else if (pstr || count === 13) { cm += ((22 + count).toString(36) + pstr); count = 0; }
+				else if (pstr || count === 19) { cm += ((16 + count).toString(36) + pstr); count = 0; }
 			}
-			if (count > 0) { cm += (22 + count).toString(36); }
+			if (count > 0) { cm += (16 + count).toString(36); }
 
 			this.outbstr += cm;
 		}
@@ -278,12 +272,24 @@ export const Loopsp = createVariety({
 	//---------------------------------------------------------
 	FileIO: {
 		decodeData: function () {
+			this.decodeDispType();
 			this.decodePipelink();
 			this.decodeBorderLine();
 		},
 		encodeData: function () {
+			this.encodeDispType();
 			this.encodePipelink();
 			this.encodeBorderLine();
+		},
+
+		decodeDispType: function () {
+			const disptype = this.readLine();
+			this.puzzle.setConfig('disptype_pipelinkr', (disptype === "circle" ? 1 : 2));
+		},
+		encodeDispType: function () {
+			let puzzle = this.puzzle, disptype = 'pipe';
+			disptype = (puzzle.getConfig('disptype_pipelinkr') === 1 ? "circle" : "ice");
+			this.writeLine(disptype);
 		},
 		decodePipelink: function () {
 			this.decodeCell(function (cell, ca) {
@@ -310,73 +316,20 @@ export const Loopsp = createVariety({
 			"checkenableLineParts",
 
 			"checkBranchLine",
-			"checkCrossOnNumber",
+			"checkCrossOutOfMark",
+			"checkIceLines",
 
-			"checkLoopNumber",
-			"checkNumberLoop",
-			"checkNumberInLoop",
+			"checkOneLoop",
 
 			"checkNotCrossOnMark",
 			"checkNoLine+",
 			"checkDeadendLine++"
 		],
-		checkCrossOnNumber: function () {
-			this.checkAllCell(function (cell) { return (cell.lcnt === 4 && cell.isNum()); }, "lnCrossOnNum");
-		},
-
-		checkLoopNumber: function () {
-			this.checkAllLoops(function (cells) {
-				const sublist = cells.filter(function (cell) { return cell.isValidNum(); });
-				let number = null;
-				for (let n = 0; n < sublist.length; n++) {
-					if (number === null) { number = sublist[n].getNum(); }
-					else if (number !== sublist[n].getNum()) {
-						sublist.seterr(1);
-						return false;
-					}
-				}
-				return true;
-			}, "lpPlNum");
-		},
-		checkNumberLoop: function () {
-			const boardcell = this.board.cell;
-			this.checkAllLoops(function (cells) {
-				const sublist = cells.filter(function (cell) { return cell.isValidNum(); });
-				if (sublist.length === 0) { return true; }
-				const number = sublist[0].getNum();
-
-				for (let c = 0; c < boardcell.length; c++) {
-					const cell = boardcell[c];
-					if (cell.getNum() === number && !sublist.includes(cell)) {
-						sublist.seterr(1);
-						return false;
-					}
-				}
-				return true;
-			}, "lpSepNum");
-		},
-		checkNumberInLoop: function () {
-			this.checkAllLoops(function (cells) {
-				return (cells.filter(function (cell) { return cell.isNum(); }).length > 0);
-			}, "lpNoNum");
-		},
-		checkAllLoops: function (func: (cells: CellList) => boolean, code: string) {
-			let result = true;
-			const paths = this.board.linegraph.components;
-			for (let r = 0; r < paths.length; r++) {
-				const blist = new BorderList(paths[r].getedgeobjs());
-				if (func(blist.cellinside())) { continue; }
-
-				result = false;
-				if (this.checkOnly) { break; }
-				blist.seterr(1);
-			}
-			if (!result) {
-				this.failcode.add(code);
-				if (!this.checkOnly) { this.board.border.setnoerr(); }
-			}
+		checkCrossOutOfMark: function () {
+			this.checkAllCell(function (cell) { return (cell.lcnt === 4 && cell.ques !== 6 && cell.ques !== 11); }, "lnCrossExIce");
 		}
 	},
+
 	FailCode: {
 		lnCrossExCir: ["○の部分以外で線が交差しています。", "There is a crossing line out of circles."],
 		lnCurveOnCir: ["○の部分で線が曲がっています。", "A line curves on circles."],
@@ -386,3 +339,23 @@ export const Loopsp = createVariety({
 		lpNoNum: ["○を含んでいないループがあります。", "A loop has no numbers."]
 	}
 });
+
+/*
+	"CheckInfo@pipelinkr": {
+		text: function (lang) {
+			var puzzle = this.puzzle, texts = [];
+			var langcode = ((lang || this.puzzle.pzpr.lang) === "ja" ? 0 : 1);
+			var isdispice = (puzzle.getConfig('disptype_pipelinkr') === 2);
+			if (this.length === 0) { return puzzle.faillist.complete[langcode]; }
+			for (var i = 0; i < this.length; i++) {
+				var code = this[i];
+				if (!isdispice) {
+					if (code === "lnCrossExIce") { code = "lnCrossExCir"; }
+					else if (code === "lnCurveOnIce") { code = "lnCurveOnCir"; }
+				}
+				texts.push(puzzle.faillist[code][langcode]);
+			}
+			return texts.join("\n");
+		}
+	},
+	*/
