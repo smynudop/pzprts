@@ -37,6 +37,7 @@ export * from './heyawake';
 export * from './hitori';
 export * from './icebarn';
 export * from './icelom';
+export * from './ichimaga';
 export * from './juosan';
 export * from './kaero';
 export * from './kakkuro';
