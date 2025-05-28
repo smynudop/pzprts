@@ -62,6 +62,12 @@ export class Graphic<TBoard extends Board = Board> {
 
 		this.initColor();
 		this.initFont();
+
+		this.initExtraObject()
+	}
+
+	initExtraObject() {
+
 	}
 
 	context: WrapperBase<any> = null!

@@ -2,7 +2,7 @@
 // パズル固有スクリプト部 かずのりのへや版 kazunori.js
 
 import { AreaGraphBase } from "../puzzle/AreaManager";
-import { Border, Cell } from "../puzzle/Piece";
+import type { Border, Cell } from "../puzzle/Piece";
 import { createVariety } from "./createVariety";
 
 //

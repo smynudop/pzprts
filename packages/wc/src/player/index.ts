@@ -84,6 +84,7 @@ export * from './shakashaka';
 export * from './shikaku';
 export * from './shimaguni';
 export * from './shugaku';
+export * from './shwolf';
 export * from './simpleloop';
 export * from './slalom';
 export * from './slither';
