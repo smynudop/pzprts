@@ -1,7 +1,7 @@
 //
 // パズル固有スクリプト部 イチマガ・磁石イチマガ・一回曲がって交差もするの版 ichimaga.js
 
-import { IConfig } from "../puzzle/Puzzle";
+import type { IConfig } from "../puzzle/Puzzle";
 import { createVariety } from "./createVariety";
 
 //

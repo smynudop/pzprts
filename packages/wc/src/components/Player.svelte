@@ -110,7 +110,7 @@
     showDialog = false
   }
   
-  const rotate = () => puzzle.board.operate("turnr")
+  const rotate = () => puzzle.board.operate("flipx")
   const enterTrial = () => puzzle.enterTrial()
   const acceptTrial = () => puzzle.acceptTrial()
   const rejectTrial = () => puzzle.rejectCurrentTrial()

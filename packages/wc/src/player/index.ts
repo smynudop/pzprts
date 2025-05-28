@@ -103,6 +103,7 @@ export * from './tapa';
 export * from './tasquare';
 export * from './tatamibari';
 export * from './tateyoko';
+export * from './tawa';
 export * from './tentaisho';
 export * from './tilepaint';
 export * from './toichika';

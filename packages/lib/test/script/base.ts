@@ -36,7 +36,7 @@ function execinput(puzzle: Puzzle, str: string) {
     switch (strs[0]) {
         case 'newboard':
             urls = [puzzle.pid, strs[1], strs[2]];
-            //if (puzzle.pid === 'tawa') { urls.push(strs[3]); }
+            if (puzzle.pid === 'tawa') { urls.push(strs[3]); }
             puzzle.readURL(urls.join("/"));
             break;
         case 'clear':
@@ -180,7 +180,7 @@ export const testPuzzle = (puzzle: Puzzle, info: TestInfo) => {
                 for (let i = 0; i < 4; i++) {
                     puzzle.board.operate('flipx');
                     if (relyonanydir && i !== 3) { continue; }
-                    assert.equal(puzzle.check().list[0], null);
+                    assert(puzzle.check().list.length === 0, `flipX check failed! i: ${i}, list: ${puzzle.check().list}`);
                 }
                 assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
 
