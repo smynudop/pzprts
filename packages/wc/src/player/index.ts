@@ -72,6 +72,7 @@ export * from './pipelink';
 export * from './pipelinkr';
 export * from './rectslider';
 export * from './reflect';
+export * from './renban';
 export * from './ringring';
 export * from './ripple';
 export * from './roma';

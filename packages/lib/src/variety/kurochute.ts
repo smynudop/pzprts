@@ -1,7 +1,7 @@
 //
 // パズル固有スクリプト部 クロシュート版 kurochute.js
 
-import { Cell } from "../puzzle/Piece";
+import type { Cell } from "../puzzle/Piece";
 import { CellList } from "../puzzle/PieceList";
 import { createVariety } from "./createVariety";
 
