@@ -106,6 +106,7 @@ export * from './tilepaint';
 export * from './toichika';
 export * from './triplace';
 export * from './usoone';
+export * from './usotatami';
 export * from './view';
 export * from './wagiri';
 export * from './walllogic';
