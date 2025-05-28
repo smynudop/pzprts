@@ -67,6 +67,7 @@ export * from './nurikabe';
 export * from './nurimaze';
 export * from './nurimisaki';
 export * from './onsen';
+export * from './paintarea';
 export * from './pencils';
 export * from './pipelink';
 export * from './pipelinkr';
