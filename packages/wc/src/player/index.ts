@@ -1,3 +1,4 @@
+export * from './aho';
 export * from './akari';
 export * from './amibo';
 export * from './armyants';
