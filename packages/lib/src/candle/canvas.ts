@@ -371,7 +371,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 	}
 
 	/* Canvas API functions (for image) */
-	drawImage(image: CanvasImageSource, dx: number, dy: number) {
+	drawImage(image: CanvasImageSource | null, dx: number, dy: number) {
 		if (!image) { return; }
 		this.context.drawImage(image, dx, dy);
 	}

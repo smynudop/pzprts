@@ -20,6 +20,7 @@ export * from './dbchoco';
 export * from './dosufuwa';
 export * from './easyasabc';
 export * from './factors';
+export * from './fillmat';
 export * from './fillomino';
 export * from './firefly';
 export * from './fivecells';
