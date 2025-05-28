@@ -40,6 +40,7 @@ export * from './kakkuro';
 export * from './kakuru';
 export * from './kinkonkan';
 export * from './kropki';
+export * from './kurochute';
 export * from './kurodoko';
 export * from './kurotto';
 export * from './kusabi';
