@@ -12,6 +12,7 @@ export * from './building';
 export * from './cbanana';
 export * from './cbblock';
 export * from './chocona';
+export * from './cojun';
 export * from './country';
 export * from './creek';
 export * from './dbchoco';

@@ -2,7 +2,7 @@
 // パズル固有スクリプト部 快刀乱麻・新・快刀乱麻・ヤギとオオカミ版 kramma.js
 
 import { Address } from "../puzzle/Address";
-import { IDir } from "../puzzle/Piece";
+import type { IDir } from "../puzzle/Piece";
 import { createVariety } from "./createVariety";
 
 //
