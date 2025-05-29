@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.6.0
+
+### Minor Changes
+
+- pzv.jp のすべてのパズル種に仮対応。
+
 ## 0.5.0
 
 ### Minor Changes

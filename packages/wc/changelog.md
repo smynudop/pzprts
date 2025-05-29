@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- pzv.jp のすべてのパズル種に仮対応。
+
+### Patch Changes
+
+- Updated dependencies
+  - @udop/penpa-player-lib@0.6.0
+
 ## 0.5.2
 
 ### Patch Changes
