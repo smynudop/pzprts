@@ -43,7 +43,7 @@ export type VarityOption<
 > = VarityOptionInner<
     Board<
         Cell & CellExtend,
-        Cross,
+        Cross & CrossExtend,
         Border & BorderExtend,
         EXCell & ExCellExtend,
         GraphComponent<Cell & CellExtend> & GraphComponentExtend

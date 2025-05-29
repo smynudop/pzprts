@@ -73,7 +73,7 @@ export class Board<
 	haserror: boolean
 	hasinfo: boolean
 	cell: CellList<TCell>
-	cross: CrossList
+	cross: CrossList<TCross>
 	border: BorderList<TBorder>
 	excell: EXCellList
 	nullobj: BoardPiece

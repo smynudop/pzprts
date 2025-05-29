@@ -44,6 +44,7 @@ export * from './kakkuro';
 export * from './kakuru';
 export * from './kazunori';
 export * from './kinkonkan';
+export * from './kouchoku';
 export * from './kramma';
 export * from './kramman';
 export * from './kropki';

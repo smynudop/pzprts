@@ -206,7 +206,7 @@ export class CellList<T extends Cell = Cell> extends PieceList<T> {
 //----------------------------------------------------------------------------
 // ★CrossListクラス Crossの配列を扱う
 //---------------------------------------------------------------------------
-export class CrossList extends PieceList<Cross> { }
+export class CrossList<TCross extends Cross = Cross> extends PieceList<TCross> { }
 
 //----------------------------------------------------------------------------
 // ★BorderListクラス Borderの配列を扱う

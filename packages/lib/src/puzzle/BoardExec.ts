@@ -62,6 +62,10 @@ export type BoardExecOption = Partial<BoardExec>
 export class BoardExec<TBoard extends Board = Board> {
 	// 拡大縮小・回転反転用定数
 	REDUCE = REDUCE
+	REDUCEUP = REDUCEUP
+	REDUCEDN = REDUCEDN
+	REDUCELT = REDUCELT
+	REDUCERT = REDUCERT
 	TURN = TURN
 	TURNL = TURNL
 	TURNR = TURNR
@@ -69,6 +73,11 @@ export class BoardExec<TBoard extends Board = Board> {
 	FLIPY = FLIPY
 	TURNFLIP = TURNFLIP
 	EXPAND = EXPAND
+	EXPANDUP = EXPANDUP
+	EXPANDDN = EXPANDDN
+	EXPANDLT = EXPANDLT
+	EXPANDRT = EXPANDRT
+
 	UP = UP
 	DN = DN
 	LT = LT
