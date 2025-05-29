@@ -171,12 +171,13 @@ export const testPuzzle = (puzzle: Puzzle, info: TestInfo) => {
             });
         });
         describe('Flip', function () {
-            puzzle.readFile(fullfile);
             const relyonupdn = (pid === 'dosufuwa' || pid === 'box' || pid === 'cojun' || pid === 'shugaku' || pid === 'tawa');
             const relyonanydir = (pid === 'box' || pid === 'shugaku');
 
             it('flipX', function () {
+                puzzle.readFile(fullfile);
                 const bd2 = puzzle.board.freezecopy();
+
                 for (let i = 0; i < 4; i++) {
                     puzzle.board.operate('flipx');
                     if (relyonanydir && i !== 3) { continue; }
@@ -192,6 +193,7 @@ export const testPuzzle = (puzzle: Puzzle, info: TestInfo) => {
                 assert(assert_equal_board(puzzle.board, bd2) === 0, "not equal!")
             });
             it('flipY', function () {
+                puzzle.readFile(fullfile);
                 const bd2 = puzzle.board.freezecopy();
                 for (let i = 0; i < 4; i++) {
                     puzzle.board.operate('flipy');

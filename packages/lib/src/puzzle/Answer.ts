@@ -852,7 +852,8 @@ export class AnsCheck<
 				pathseg.objs.add(border);
 				passed[border.id] = true;
 
-				if (Number.isNaN(pathseg.length[pathseg.ccnt])) {
+				//biome-ignore lint:
+				if (isNaN(pathseg.length[pathseg.ccnt])) {
 					pathseg.length[pathseg.ccnt] = 1;
 				} else {
 					pathseg.length[pathseg.ccnt]++;
