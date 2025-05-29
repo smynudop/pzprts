@@ -46,6 +46,7 @@
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@types/node": "^22.15.3",
     "rollup": "^4.41.1",
+    "rollup-plugin-cleandir": "^3.0.0",
     "rollup-plugin-import-css": "^3.5.8",
     "rollup-plugin-serve": "^3.0.0",
     "rollup-plugin-svelte": "^7.2.2",
