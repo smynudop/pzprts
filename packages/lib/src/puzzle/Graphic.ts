@@ -1722,8 +1722,10 @@ export class Graphic<TBoard extends Board = Board> {
 				return this.getCircleStrokeColor_qnum(cell)
 			case "qnum2":
 				return this.getCircleStrokeColor_qnum2(cell)
+			case "null":
+				return null // 黒マルを描画する場合
 			default:
-				console.warn("circlestrokecolor_func is invalid ")
+				console.warn(`circlestrokecolor_func is invalid(${this.circlestrokecolor_func}) pid: (${this.puzzle.pid})`)
 				return null
 		}
 	}
@@ -1754,8 +1756,10 @@ export class Graphic<TBoard extends Board = Board> {
 				return this.getCircleFillColor_qnum2(cell)
 			case "qcmp":
 				return this.getCircleFillColor_qcmp(cell)
+			case "null":
+				return null // 塗りつぶさない
 			default:
-				console.warn("circlefillcolor_func is invalid.")
+				console.warn(`circlefillcolor_func is invalid(${this.circlefillcolor_func}) pid: (${this.puzzle.pid})`)
 				return null
 		}
 	}

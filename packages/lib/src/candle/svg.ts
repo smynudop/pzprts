@@ -104,8 +104,8 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		root.setAttribute("part", "board")
 		root.setAttribute('xmlns', SVGNS);
 		root.setAttribute('xmlns:xlink', XLINKNS);
-		root.setAttribute('font-size', "10px");
-		root.setAttribute('font-family', "sans-serif");
+		// root.setAttribute('font-size', "10px");
+		// root.setAttribute('font-family', "sans-serif");
 		//root.style.maxWidth = `${rect.width}px`
 		// root.setAttribute('width', rect.width.toString());
 		// root.setAttribute('height', rect.height.toString());

@@ -7,13 +7,13 @@ for (const [key, cl] of Object.entries(PenpaPlayer)) {
     customElements.define(tagName, cl)
 }
 
-const container = document.querySelector(".container")
-for (const el of Array.from(document.querySelectorAll(".container > *")).toSorted((a, b) => a.tagName.localeCompare(b.tagName))) {
-    const details = document.createElement("details")
-    const summary = document.createElement("summary")
-    const puzzleName = el.tagName.toLowerCase().replace("-player", "")
-    summary.innerHTML = ja.puzzleName[puzzleName] || puzzleName
-    details.appendChild(summary)
-    el.parentNode?.insertBefore(details, null)
-    details.appendChild(el)
-}
+// const container = document.querySelector(".container")
+// for (const el of Array.from(document.querySelectorAll(".container > *")).toSorted((a, b) => a.tagName.localeCompare(b.tagName))) {
+//     const details = document.createElement("details")
+//     const summary = document.createElement("summary")
+//     const puzzleName = el.tagName.toLowerCase().replace("-player", "")
+//     summary.innerHTML = ja.puzzleName[puzzleName] || puzzleName
+//     details.appendChild(summary)
+//     el.parentNode?.insertBefore(details, null)
+//     details.appendChild(el)
+// }

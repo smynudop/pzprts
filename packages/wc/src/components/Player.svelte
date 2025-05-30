@@ -14,25 +14,28 @@
   let resultText = "";
   let complete = false;
   let err: string | null = null;
-  let showDialog = false
+  let showDialog = false;
 
-  let enableUndo = false
-  let enableRedo = false
+  let enableUndo = false;
+  let enableRedo = false;
 
-  const puzzleName = ja.puzzleName[puzzle.pid] || puzzle.pid
+  const puzzleName = ja.puzzleName[puzzle.pid] || puzzle.pid;
   let trialLevel = 0;
+
+  let use = 1;
+
   onMount(() => {
     try {
       if (!src) {
         throw new Error(`URLが指定されていません。`);
       }
       puzzle.on("history", () => {
-        enableUndo = puzzle.opemgr.enableUndo
-        enableRedo = puzzle.opemgr.enableRedo
-      })
+        enableUndo = puzzle.opemgr.enableUndo;
+        enableRedo = puzzle.opemgr.enableRedo;
+      });
       puzzle.on("trial", (puzzle: Puzzle, num: number) => {
-        trialLevel = num
-      })
+        trialLevel = num;
+      });
       puzzle.readURL(src);
       puzzle.mount(element!);
 
@@ -45,6 +48,8 @@
       }
 
       playModes = ["auto", ...puzzle.mouse.inputModes.play] as InputMode[];
+      use = puzzle.getConfig("use") || 1;
+
       puzzle.redraw(true);
     } catch (e: any) {
       console.error(e);
@@ -52,12 +57,12 @@
     }
   });
 
-  const changeMode = (newMode: string) => {
-    if (nowMode === newMode) return;
-    nowMode = newMode;
-    if (puzzle) {
-      puzzle.mouse.setInputMode(newMode);
-    }
+  const changeMode = (m: string) => {
+    puzzle?.mouse.setInputMode(m);
+  };
+
+  const changeConfig = (type: string, value: any) => {
+    puzzle?.setConfig(type, value);
   };
 
   const check = () => {
@@ -65,77 +70,103 @@
     resultText = result.text;
     complete = result.complete;
 
-    showDialog = true
+    showDialog = true;
   };
 
-  const undo = () => puzzle.undo()
-  const redo = () => puzzle.redo()
+  const undo = () => puzzle.undo();
+  const redo = () => puzzle.redo();
   const clear = async () => {
-    const r = await confirm("クリアしてよろしいですか？")
-    if(!r) return;
+    const r = await confirm("クリアしてよろしいですか？");
+    if (!r) return;
 
-    puzzle.ansclear()
-  }
-  const clearsub = () => puzzle.subclear()
+    puzzle.ansclear();
+  };
+  const clearsub = () => puzzle.subclear();
 
-  let confirmResolver: ((val: boolean) => void) | null = null
-  
-  let confirming = false
+  const irowake = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    console.log(target.checked);
+    puzzle.setConfig("irowake", target.checked);
+  };
+
+  let confirmResolver: ((val: boolean) => void) | null = null;
+
+  let confirming = false;
   const confirm = async (message: string) => {
-    confirming = true
+    confirming = true;
 
-    resultText = message
-    showDialog = true
-    const { promise, resolve } = Promise.withResolvers<boolean>()
-    confirmResolver = resolve
-    const result = await promise
+    resultText = message;
+    showDialog = true;
+    const { promise, resolve } = Promise.withResolvers<boolean>();
+    confirmResolver = resolve;
+    const result = await promise;
 
-    confirmResolver = null
-    confirming = false
-    showDialog = false
-    return result
-  }
+    confirmResolver = null;
+    confirming = false;
+    showDialog = false;
+    return result;
+  };
   const dialog_ok = () => {
-    if(!confirmResolver) return;
+    if (!confirmResolver) return;
 
-    confirmResolver(true)
-  }
+    confirmResolver(true);
+  };
   const dialog_cancel = () => {
-    if(!confirmResolver) return;
+    if (!confirmResolver) return;
 
-    confirmResolver(false)
-  }
-  const clickDialog = () =>{
-    if(confirming) return;
-    showDialog = false
-  }
-  
-  const rotate = () => puzzle.board.operate("flipx")
-  const enterTrial = () => puzzle.enterTrial()
-  const acceptTrial = () => puzzle.acceptTrial()
-  const rejectTrial = () => puzzle.rejectCurrentTrial()
-  const rejectTrialAll = () => puzzle.rejectTrial()
+    confirmResolver(false);
+  };
+  const clickDialog = () => {
+    if (confirming) return;
+    showDialog = false;
+  };
 
-  
+  const rotate = () => puzzle.board.operate("flipx");
+  const enterTrial = () => puzzle.enterTrial();
+  const acceptTrial = () => puzzle.acceptTrial();
+  const rejectTrial = () => puzzle.rejectCurrentTrial();
+  const rejectTrialAll = () => puzzle.rejectTrial();
+
+  $: {
+    changeMode(nowMode);
+  }
+  $: {
+    changeConfig("use", use);
+  }
 </script>
 
 <div class="container">
   <h1>{puzzleName}</h1>
   <div class="mode">
-
-    <div>
-      入力モード｜
-    </div>
+    <div>入力モード｜</div>
     {#each playModes as mode}
-      <!-- svelte-ignore a11y-click-events-have-key-events a11y_no_static_element_interactions -->
-      <div
-        class="mode-item"
-        class:active={nowMode === mode}
-        on:click={() => changeMode(mode)}
-      >
+      <label class="mode-item">
         {ja.inputModeText[mode] ?? mode}
-      </div>
+        <input type="radio" name="mode" bind:group={nowMode} value={mode} />
+      </label>
     {/each}
+  </div>
+  <div class="options">
+    {#if puzzle.validConfig("use")}
+      <div>
+        操作方法｜
+        <label class="mode-item">
+          左右ボタン
+          <input type="radio" name="use" bind:group={use} value={1} />
+        </label>
+        <label class="mode-item">
+          1ボタン
+          <input type="radio" name="use" bind:group={use} value={2} />
+        </label>
+      </div>
+    {/if}
+    {#if puzzle.validConfig("irowake")}
+      <div>
+        <label
+          ><input type="checkbox" on:change={irowake} />線の色分けをする</label
+        >
+      </div>
+    {/if}
   </div>
 
   <div id="puzzle" bind:this={element}></div>
@@ -145,16 +176,18 @@
     <button on:click={redo} disabled={!enableRedo}>進</button>
     <button on:click={clear}>クリア</button>
     <button on:click={clearsub}>補助削除</button>
-    <button on:click={rotate} >回</button>
+    <!-- <button on:click={rotate}>回</button> -->
   </div>
   <div class="tool">
-      <button on:click={enterTrial}>仮置き開始</button>
+    <button on:click={enterTrial}>仮置き開始</button>
     {#if trialLevel > 0}
       <button on:click={acceptTrial} class="check-button">仮置き確定</button>
       <button on:click={rejectTrial} class="delete-button">仮置き破棄</button>
     {/if}
     {#if trialLevel > 1}
-      <button on:click={rejectTrialAll} class="delete-button">全仮置き破棄</button>
+      <button on:click={rejectTrialAll} class="delete-button"
+        >全仮置き破棄</button
+      >
     {/if}
   </div>
   {#if err != null}
@@ -166,10 +199,10 @@
       <div class="message">
         {resultText}
         {#if confirming}
-        <div>
-          <button on:click={dialog_cancel}>キャンセル</button>
-          <button on:click={dialog_ok}>OK</button>
-        </div>
+          <div>
+            <button on:click={dialog_cancel}>キャンセル</button>
+            <button on:click={dialog_ok}>OK</button>
+          </div>
         {/if}
       </div>
     </div>
@@ -177,10 +210,10 @@
 </div>
 
 <style>
-  h1{
+  h1 {
     font-size: 150%;
     text-align: center;
-    margin: .5em 0;
+    margin: 0.5em 0;
     font-weight: normal;
   }
   .container {
@@ -188,8 +221,6 @@
     margin: 0 auto;
     position: relative;
   }
-
-
 
   #puzzle {
     margin: 0 auto;
@@ -205,6 +236,7 @@
 
   :global(svg) {
     display: block;
+    font-family: var(--penpa-player-font-family, inherit);
   }
 
   .mode {
@@ -214,41 +246,49 @@
     gap: 2px;
   }
 
-  .mode > div{
+  .mode > div {
     user-select: none;
-    padding: 2px;
+    /*padding: 2px;*/
   }
 
   .mode-item {
+    margin-right: 0.2em;
     cursor: pointer;
   }
+  .mode-item input {
+    display: none; /* ラジオボタンを非表示 */
+  }
 
-  .active {
+  .mode-item:has(input:checked) {
     background-color: #efefef;
     color: maroon;
     font-weight: bold;
   }
 
+  .options {
+    text-align: center;
+  }
+
   button {
     border: 1px solid #ccc;
     border-radius: 0.5em;
-    padding: .25em .5em;
+    padding: 0.25em 0.5em;
     transition: all 0.2s;
     cursor: pointer;
     background: linear-gradient(to bottom, white, silver);
   }
 
-  button.check-button{
-    background:linear-gradient(to bottom, #83bdff, rgb(53, 56, 209)) ;
+  button.check-button {
+    background: linear-gradient(to bottom, #83bdff, rgb(53, 56, 209));
     color: white;
   }
 
-  button.delete-button{
-    background:linear-gradient(to bottom, #ff8383, rgb(209, 53, 53)) ;
+  button.delete-button {
+    background: linear-gradient(to bottom, #ff8383, rgb(209, 53, 53));
     color: white;
   }
 
-  button:hover{
+  button:hover {
     filter: brightness(1.1); /* 1.1 = 少し明るく */
   }
 
@@ -265,23 +305,22 @@
   }
   */
 
-  .dialog{
+  .dialog {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.35);
-    padding: .25em;
+    background: rgba(0, 0, 0, 0.35);
+    padding: 0.25em;
     display: flex;
     align-items: flex-start;
     justify-content: center;
   }
 
-  .dialog .message{
+  .dialog .message {
     background-color: white;
     border-radius: 3px;
-    padding: .5em;
-
+    padding: 0.5em;
   }
 </style>
