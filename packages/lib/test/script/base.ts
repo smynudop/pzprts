@@ -3,7 +3,7 @@ import { test, expect, describe, it, assert } from "vitest"
 import { FILE_PZPR } from "../../src/pzpr/constants"
 import type { Board } from "../../src/puzzle/Board"
 import type { IBoardOperation } from "../../src/puzzle/BoardExec"
-
+import * as ja from "../../src/lang/ja"
 type TestInfo = {
     url: string
     failcheck: [code: string | null, board: string][],
@@ -72,6 +72,11 @@ export const testPuzzle = (puzzle: Puzzle, info: TestInfo) => {
 
     test("pid is set", () => {
         assert(puzzle.pid !== "", "pid is not set!")
+    })
+    test("mode text", () => {
+        for (const mode of puzzle.mouse.inputModes.play) {
+            assert(mode in ja.inputModeText, `input mode text not found: ${mode}`);
+        }
     })
     describe("fileio", () => {
         puzzle.readFile(fullfile)

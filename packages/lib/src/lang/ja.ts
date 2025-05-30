@@ -30,8 +30,30 @@ export const inputModeText = {
     'bar': "棒",
     'info-line': "線チェック",
     'info-blk': "白マスチェック",
-    "akari": "照明"
-} satisfies { [key in InputMode]: string }
+    "akari": "照明",
+    "futon": "布団",
+    "star": "星",
+    "copycircle": "コピー",
+    "mark-circle": "マル",
+    "mark-triangle": "三角",
+    "mark-rect": "四角",
+    "diraux": "線の向き補助",
+    "copynum": "数字コピー",
+    "subnumber": "補助数字",
+    "subnumber-": "補助数字(逆順)",
+    "balloon": "風船",
+    "ironball": "鉄球",
+    "dragnum+": "数字ドラッグ",
+    "dragnum-": "数字ドラッグ(逆順)",
+    "submark": "補助記号",
+    "info-road": "道チェック",
+    "lineblank": "?",
+
+
+
+
+
+} satisfies { [key in string]: string }
 
 export const puzzleName: Record<string, string> = {
     aho: "アホになり切れ",
