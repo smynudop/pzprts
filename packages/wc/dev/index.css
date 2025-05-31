@@ -4,6 +4,9 @@
 
 :root {
     font-family: ui-sans-serif;
+    color-scheme: light dark;
+    background-color: light-dark(white, rgb(49, 48, 59));
+    color: light-dark(black, rgb(224, 224, 224));
 }
 
 h1,

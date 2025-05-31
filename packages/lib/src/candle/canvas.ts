@@ -45,6 +45,45 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 	context: CanvasRenderingContext2D
 	currentLayerId: string
 	isedgearray: { [key: string]: boolean }
+
+	palette: Record<string, string | [string, string]> = {};
+
+	_fillStyle: string = "black"
+
+	override get fillStyle(): string {
+		return this._fillStyle;
+	}
+	override set fillStyle(value: string) {
+		const pvalue = this.palette[value.replace("__", "")];
+		if (!pvalue) {
+			this._fillStyle = value;
+			return;
+		}
+		if (Array.isArray(pvalue)) {
+			this._fillStyle = pvalue[0];
+		}
+		else {
+			this._fillStyle = pvalue;
+		}
+	}
+	_strokeStyle: string = "black"
+	override get strokeStyle(): string {
+		return this._strokeStyle;
+	}
+	override set strokeStyle(value: string) {
+		const pvalue = this.palette[value.replace("__", "")];
+		if (!pvalue) {
+			this._strokeStyle = value;
+			return;
+		}
+		if (Array.isArray(pvalue)) {
+			this._strokeStyle = pvalue[1];
+		}
+		else {
+			this._strokeStyle = pvalue;
+		}
+	}
+
 	constructor(parent: HTMLElement) {
 		super(parent);
 
@@ -374,6 +413,10 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 	drawImage(image: CanvasImageSource | null, dx: number, dy: number) {
 		if (!image) { return; }
 		this.context.drawImage(image, dx, dy);
+	}
+
+	preparePalette(palette: Record<string, string | [string, string]>) {
+		this.palette = palette;
 	}
 
 }

@@ -43,7 +43,7 @@ export class Config {
 
 		/* 表示色の設定 */
 		this.add('color_shadecolor', null);						/* 黒マスの表示色の表示 */
-		this.add('color_bgcolor', "white");						/* 背景色の設定 */
+		this.add('color_bgcolor', ["white", "#f0f0f0"]);						/* 背景色の設定 */
 
 		/* 入力方法設定 */
 		this.add('use', (!pzpr.env.OS.mobile ? 1 : 2), { option: [1, 2] });	/* 黒マスの入力方法 */

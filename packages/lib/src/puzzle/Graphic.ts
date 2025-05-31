@@ -48,13 +48,96 @@ export type TextOption = {
 	position?: number
 }
 
+const Palette: Record<string, string | [string, string]> = {
+	/**
+	 * 盤面の線など
+	 */
+	quescolor: "#252525",
+	/**
+	 * 解答の線・数字
+	 */
+	qanscolor: "rgb(0, 160, 0)",
+	qcmpcolor: "silver",
+	qcmpbgcolor: "rgb(224, 224, 255)",
+	trialcolor: "rgb(160, 160, 160)",
+	subcolor: "rgb(127, 127, 255)",
+
+	/**
+	 * 黒マスの色
+	 */
+	shadecolor: "#252525",
+	errcolor1: "rgb(192, 0, 0)",
+	errcolor2: "rgb(32, 32, 255)",
+	fontShadecolor: "rgb(224, 224, 224)",
+
+	// 白マス確定マスの背景色
+	bcolor: "rgb(160, 255, 160)",
+	errbcolor1: "rgb(255, 160, 160)",
+	errbcolor2: "rgb(64, 255, 64)",
+
+	qsubcolor1: "rgb(160,255,160)",
+	qsubcolor2: "rgb(255,255,127)",
+	qsubcolor3: "rgb(192,192,192)",	// 絵が出るパズルの背景入力
+
+	icecolor: "rgb(192, 224, 255)",
+	erricecolor: "rgb(224,  96, 160)",
+
+	// セルの丸数字内部の背景色
+	circlebasecolor: ["white", "#f0f0f0"],
+
+	// セルの○×の色(補助記号)
+	mbcolor: "rgb(0, 160, 0)",
+
+	// 線・×の色
+	linecolor: "rgb(0, 160, 0)",		// 色分けなしの場合
+	errlinecolor: "rgb(255, 0, 0)",
+	noerrcolor: "rgb(160, 160, 160)",		// エラー表示時, エラーでない線/境界線の描画色
+
+	movelinecolor: "silver",
+	movetrialcolor: "rgb(255, 160, 0)",
+
+	pekecolor: "rgb(0, 127, 0)",
+
+	// 境界線と黒マスを分ける色(BoxBorder)
+	bbcolor: "rgb(160, 160, 160)",
+
+	// 入力ターゲットの色
+	targetColor1: "rgb(255, 64,  64)",
+	targetColor3: "rgb(64,  64, 255)",
+	ttcolor: "rgb(127,255,127)",				// ques:51の入力ターゲット(TargetTriangle)
+
+	movecolor: "red",
+
+	// 盤面のCellを分ける色
+	gridcolor: "black",
+
+	// 盤面(枠の中)の背景色
+	bgcolor: ["white", "#f0f0f0"]
+
+}
+
 export class Graphic<TBoard extends Board = Board> {
 	puzzle: Puzzle<TBoard>
 	//pid: string
 	imgtile: any
+	palette: Record<string, string | [string, string]>
 	constructor(puzzle: Puzzle<TBoard>, option?: GraphicOption) {
 		this.puzzle = puzzle
-		Object.assign(this, option)
+		//Object.assign(this, option)
+
+		//override palette
+		this.palette = { ...Palette }
+		for (const key in option) {
+			//@ts-ignore
+			if (/color\d?$/.test(key) && typeof option[key] === 'string') {
+				//@ts-ignore
+				this.palette[key] = option[key];
+			} else {
+				//@ts-ignore
+				this[key] = option[key]; // 直接プロパティを上書き
+			}
+		}
+
 		//this.pid = puzzle.pid
 		this.gridcolor = this.gridcolor_list[this.gridcolor_type] || this.gridcolor;
 
@@ -82,60 +165,60 @@ export class Graphic<TBoard extends Board = Board> {
 	circlestrokecolor_func = "qnum"	// getCircleStrokeColor()の種類
 
 	// 標準の色設定
-	quescolor = "black"
-	qanscolor = "rgb(0, 160, 0)"
-	qcmpcolor = "silver"
-	qcmpbgcolor = "rgb(224, 224, 255)"
-	trialcolor = "rgb(160, 160, 160)"
-	subcolor = "rgb(127, 127, 255)"
+	quescolor = "__quescolor"
+	qanscolor = "__qanscolor"
+	qcmpcolor = "__qcmpcolor"
+	qcmpbgcolor = "__qcmpbgcolor"
+	trialcolor = "__trialcolor"
+	subcolor = "__subcolor"
 
 	// 黒マスの色
-	shadecolor = "black"
-	errcolor1 = "rgb(192, 0, 0)"
-	errcolor2 = "rgb(32, 32, 255)"
-	fontShadecolor = "rgb(224, 224, 224)"
+	shadecolor = "__shadecolor"
+	errcolor1 = "__errcolor1"
+	errcolor2 = "__errcolor2"
+	fontShadecolor = "__fontShadecolor"
 
 	// 白マス確定マスの背景色
 	enablebcolor = false
-	bcolor = "rgb(160, 255, 160)"
-	errbcolor1 = "rgb(255, 160, 160)"
-	errbcolor2 = "rgb(64, 255, 64)"
+	bcolor = "__bcolor"
+	errbcolor1 = "__errbcolor1"
+	errbcolor2 = "__errbcolor2"
 
-	qsubcolor1 = "rgb(160,255,160)"
-	qsubcolor2 = "rgb(255,255,127)"
-	qsubcolor3 = "rgb(192,192,192)"	// 絵が出るパズルの背景入力
+	qsubcolor1 = "__qsubcolor1"
+	qsubcolor2 = "__qsubcolor2"
+	qsubcolor3 = "__qsubcolor3"	// 絵が出るパズルの背景入力
 
-	icecolor = "rgb(192, 224, 255)"
-	erricecolor = "rgb(224,  96, 160)"
+	icecolor = "__icecolor"
+	erricecolor = "__erricecolor"
 
 	// セルの丸数字内部の背景色
-	circlebasecolor = "white"
+	circlebasecolor = "__circlebasecolor"
 
 	// セルの○×の色(補助記号)
-	mbcolor = "rgb(0, 160, 0)"
+	mbcolor = "__mbcolor"
 
 	// 線・×の色
-	linecolor = "rgb(0, 160, 0)"		// 色分けなしの場合
-	errlinecolor = "rgb(255, 0, 0)"
-	noerrcolor = "rgb(160, 160, 160)"		// エラー表示時, エラーでない線/境界線の描画色
+	linecolor = "__linecolor"		// 色分けなしの場合
+	errlinecolor = "__errlinecolor"
+	noerrcolor = "__noerrcolor"		// エラー表示時, エラーでない線/境界線の描画色
 
-	movelinecolor = "silver"
-	movetrialcolor = "rgb(255, 160, 0)"
+	movelinecolor = "__movelinecolor"
+	movetrialcolor = "__movetrialcolor"
 
-	pekecolor = "rgb(0, 127, 0)"
+	pekecolor = "__pekecolor"
 
 	// 境界線と黒マスを分ける色(BoxBorder)
-	bbcolor = "rgb(160, 160, 160)"
+	bbcolor = "__bbcolor"
 
 	// 入力ターゲットの色
-	targetColor1 = "rgb(255, 64,  64)"
-	targetColor3 = "rgb(64,  64, 255)"
-	ttcolor = "rgb(127,255,127)"				// ques=51の入力ターゲット(TargetTriangle)
+	targetColor1 = "__targetColor1"
+	targetColor3 = "__targetColor3"
+	ttcolor = "__ttcolor"				// ques=51の入力ターゲット(TargetTriangle)
 
-	movecolor = "red"
+	movecolor = "__movecolor"
 
 	// 盤面のCellを分ける色
-	gridcolor = "black"
+	gridcolor = "__gridcolor"
 	gridcolor_type: "DARK" | "LIGHT" | "DLIGHT" | "SLIGHT" | "THIN" = "DARK"
 	gridcolor_list = {
 		// 色々なパズルで定義してた固定色
@@ -147,7 +230,7 @@ export class Graphic<TBoard extends Board = Board> {
 	}
 
 	// 盤面(枠の中)の背景色
-	bgcolor = "white"
+	bgcolor = "__bgcolor"
 
 	// その他サイズ指定
 	textoption: any = null
@@ -219,6 +302,8 @@ export class Graphic<TBoard extends Board = Board> {
 	initCanvas() {
 		const puzzle = this.puzzle;
 		this.context = (!!puzzle.canvas ? puzzle.canvas.getContext("2d") : null);
+		this.context.preparePalette(this.palette)
+
 		const g = this.context
 		if (g.use.canvas) {
 			this.subcontext = (!!puzzle.subcanvas ? puzzle.subcanvas.getContext("2d") : null);
@@ -248,7 +333,7 @@ export class Graphic<TBoard extends Board = Board> {
 			if (key.substr(0, 6) === "color_") { this.setColor(key.substr(6), configlist[key].val); }
 		}
 	}
-	setColor(name: string, color: string) {
+	setColor(name: string, color: string | [string, string]) {
 		if (!color) return;
 		// if (name === 'bgcolor') {
 		// 	color = ((typeof color === 'string' && color !== 'white')
@@ -259,7 +344,7 @@ export class Graphic<TBoard extends Board = Board> {
 		color = (color || this.constructor.prototype[name]);
 		// }
 		//@ts-ignore
-		this[name] = color;
+		this.palette[name] = color;
 		if (!this.suspended) { this.paintAll(); }
 	}
 
@@ -1251,7 +1336,7 @@ export class Graphic<TBoard extends Board = Board> {
 			// ○の描画
 			g.vid = `x_cp_${cross.id}`;
 			if (cross.qnum !== -1) {
-				g.fillStyle = (cross.error === 1 || cross.qinfo === 1 ? this.errcolor1 : "white");
+				g.fillStyle = (cross.error === 1 || cross.qinfo === 1 ? this.errcolor1 : this.bgcolor);
 				g.strokeStyle = "black";
 				g.shapeCircle(px, py, csize);
 			}
@@ -1774,7 +1859,7 @@ export class Graphic<TBoard extends Board = Board> {
 	}
 	getCircleFillColor_qnum2(cell: Cell) {
 		if (cell.qnum === 1) {
-			return (cell.error === 1 ? this.errbcolor1 : "white");
+			return (cell.error === 1 ? this.errbcolor1 : this.bgcolor);
 		}
 		if (cell.qnum === 2) {
 			return (cell.error === 1 ? this.errcolor1 : this.quescolor);

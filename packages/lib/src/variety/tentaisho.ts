@@ -283,7 +283,7 @@ export const Tentaisho = createVariety({
 				g.vid = `s_star1_${star.id}`;
 				if (star.getStar() === 1) {
 					g.strokeStyle = (star.iserror() ? this.errcolor1 : this.quescolor);
-					g.fillStyle = "white";
+					g.fillStyle = this.bgcolor;
 					g.shapeCircle(bx * this.bw, by * this.bh, this.cw * 0.16);
 				}
 				else { g.vhide(); }

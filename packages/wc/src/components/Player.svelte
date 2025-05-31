@@ -231,7 +231,7 @@
 
   :global(#puzzle > div:focus) {
     outline: none; /* デフォルトの枠を消す */
-    box-shadow: 0 0 10px 5px rgba(0, 123, 255, 0.6); /* 青くぼやっと光る */
+    box-shadow: 0 0 10px 5px light-dark(rgba(0, 123, 255, 0.6), rgba(47, 224, 255, 0.6)); /* 青くぼやっと光る */
   }
 
   :global(svg) {
@@ -260,8 +260,8 @@
   }
 
   .mode-item:has(input:checked) {
-    background-color: #efefef;
-    color: maroon;
+    background-color: light-dark(#efefef, #5a5a5a);
+    color: light-dark(maroon, rgb(221, 109, 109));
     font-weight: bold;
   }
 
@@ -276,6 +276,7 @@
     transition: all 0.2s;
     cursor: pointer;
     background: linear-gradient(to bottom, white, silver);
+    color: black;
   }
 
   button.check-button {

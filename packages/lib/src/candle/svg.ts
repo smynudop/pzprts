@@ -70,6 +70,9 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 	lastpath: string;
 	freezepath: boolean;
 	override enableTextLengthWA: boolean
+	override fillStyle = "black"
+	override strokeStyle = "black";
+
 	constructor(parent: any) {
 		super(parent);
 
@@ -156,7 +159,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		const root = this.child;
 		const children = Array.from(root.children)
 		for (const el of children) {
-			if (el.tagName.toUpperCase() === "DEFS") continue;
+			if (el.tagName.toUpperCase() === "DEFS" || el.tagName.toUpperCase() === "STYLE") continue;
 
 			root.removeChild(el)
 		}
@@ -430,7 +433,9 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		if (!el) { el = newEL('text'); }
 		else { this.show(el); }
 
-		if (el.getAttribute(S_ATT_FILL) !== this.fillStyle) { el.setAttribute(S_ATT_FILL, this.fillStyle); }
+		setPaletteValue(el, S_ATT_FILL, this.fillStyle, "fill_");
+
+		//if (el.getAttribute(S_ATT_FILL) !== this.fillStyle) { el.setAttribute(S_ATT_FILL, this.fillStyle); }
 
 		if (_cache.x !== x || _cache.y !== y || _cache.ml !== maxLength || _cache.ta !== this.textAlign || _cache.tb !== this.textBaseline || _cache.font !== this.font) {
 			//@ts-ignore
@@ -548,8 +553,8 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 		const newel = !el;
 		if (!el) {
 			el = newEL('path');
-			el.setAttribute(S_ATT_FILL, S_NONE);
-			el.setAttribute(S_ATT_STROKE, S_NONE);
+			//el.setAttribute(S_ATT_FILL, S_NONE);
+			//el.setAttribute(S_ATT_STROKE, S_NONE);
 		}
 		else { this.show(el); }
 
@@ -568,8 +573,8 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 
 		const fillcolor = (isfill ? this.fillStyle : S_NONE);
 		const strokecolor = (isstroke ? this.strokeStyle : S_NONE);
-		if (el.getAttribute(S_ATT_FILL) !== fillcolor) { el.setAttribute(S_ATT_FILL, fillcolor); }
-		if (el.getAttribute(S_ATT_STROKE) !== strokecolor) { el.setAttribute(S_ATT_STROKE, strokecolor); }
+		setPaletteValue(el, S_ATT_FILL, fillcolor, "fill_");
+		setPaletteValue(el, S_ATT_STROKE, strokecolor, "stroke_");
 
 		if (newel) { this.target.appendChild(el); }
 		return el;
@@ -583,6 +588,44 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 
 	show(el: SVGElement) { el.removeAttribute('display'); }
 	hide(el: SVGElement) { el.setAttribute('display', 'none'); }
+
+	preparePalette(palette: Record<string, string | [string, string]>): void {
+		let styleText = ``
+		for (const [key, val] of Object.entries(palette)) {
+			if (typeof val === 'string') {
+				styleText += `.fill_${key} { fill: var(--penpa-player-${key}, ${val}) ;} \n`
+				styleText += `.stroke_${key} { stroke: var(--penpa-player-${key}, ${val}) ;} \n`
+			} else {
+				styleText += `.fill_${key} { fill: var(--penpa-player-${key}, light-dark(${val[0]}, ${val[1]})) ;} \n`
+				styleText += `.stroke_${key} { stroke: var(--penpa-player-${key}, light-dark(${val[0]}, ${val[1]})) ;} \n`
+			}
+		}
+		const styleEl = _doc.createElementNS(SVGNS, 'style');
+		styleEl.setAttribute('type', 'text/css');
+		styleEl.textContent = styleText;
+		this.child.appendChild(styleEl);
+	}
+
 }
+
+const setPaletteValue = (el: SVGSVGElement, attr: string, value: string, prefix: string) => {
+	if (value.startsWith("__")) {
+		const className = value.replace(/^__/, prefix);
+		if (!el.classList.contains(className)) {
+			removeClass(el, prefix);
+			el.classList.add(className);
+		}
+	} else {
+		removeClass(el, prefix);
+		if (el.getAttribute(attr) !== value) { el.setAttribute(attr, value); }
+	}
+}
+
+const removeClass = (el: SVGSVGElement, prefix: string) => {
+	for (const cls of Array.from(el.classList)) {
+		if (cls.startsWith(prefix)) { el.classList.remove(cls); }
+	}
+}
+
 
 export default { WrapperClass: SVGWrapper, wrapperType, isWrapperEnable };

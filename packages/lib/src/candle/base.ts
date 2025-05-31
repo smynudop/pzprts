@@ -6,8 +6,10 @@ let _counter = -1;
 /*  WrapperBaseクラス  */
 /* ------------------- */
 export default abstract class WrapperBase<ChildElement> {
-	fillStyle = 'black';
-	strokeStyle = 'black';
+	abstract get fillStyle(): string;
+	abstract set fillStyle(value: string);
+	abstract get strokeStyle(): string;
+	abstract set strokeStyle(value: string);
 	lineWidth: number = 1;
 	font = '14px system';
 	textAlign: CanvasTextAlign = 'center';
@@ -99,5 +101,6 @@ export default abstract class WrapperBase<ChildElement> {
 	abstract closePath(): void
 	abstract arc(cx: number, cy: number, r: number, startRad: number, endRad: number, antiClockWise: boolean): void
 
+	abstract preparePalette(palette: Record<string, string | [string, string]>): void
 }
 
