@@ -150,7 +150,7 @@ class CanvasWrapper extends WrapperBase<HTMLCanvasElement> {
 				callback(new Blob([buf.buffer], { type: RegExp.$1 }));
 			}
 		};
-		this.canvas.toBuffer = function (type: string, quality: number) {
+		this.canvas.toBuffer = function (type: string, quality: number | undefined) {
 			const dataurl = root.toDataURL(type || void 0, quality).replace(/^data:image\/\w+?;base64,/, '');
 			// if (env.node) {
 			// 	return new Buffer(dataurl, 'base64');

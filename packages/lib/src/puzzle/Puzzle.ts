@@ -8,13 +8,13 @@ import { MouseEvent1, type MouseEventOption } from './MouseInput';
 import { KeyEvent, type KeyEventOption, TargetCursor } from './KeyInput';
 import { Graphic, type GraphicOption } from './Graphic';
 import { decodeURL, encodeURL, type Converter } from './Encode.js';
-import { FileIO, type FileIOOption } from './FileData.js';
+import { FileEncodeOption, FileIO, type FileIOOption } from './FileData.js';
 import * as MetaData from '../pzpr/metadata.js';
 import type { Cell, Cross, Border, EXCell } from "./Piece"
 import { Encode, type EncodeOption } from './Encode2';
 import Candle from '../candle/';
 
-import type { WrapperBase } from '../candle/';
+import type { CandleWrapper, WrapperBase } from '../candle/';
 import { getRect, currentTime, addEvent, unselectable } from '../pzpr/util.js';
 import type { VarietyAnyOption, VarityOption } from '../variety/createVariety.js';
 import { URL_PZPRV3 } from '../pzpr/constants.js';
@@ -35,7 +35,8 @@ const MODE_EDITOR = 1
 const MODE_PLAYER = 3
 
 //---------------------------------------------------------------------------
-// ★Puzzleクラス ぱずぷれv3のベース処理やその他の処理を行う
+// ★Puzzleクラス
+// ぱずぷれv3のベース処理やその他の処理を行う
 //---------------------------------------------------------------------------
 export abstract class Puzzle<
 	TBoard extends Board = Board
@@ -62,9 +63,6 @@ export abstract class Puzzle<
 	constructor(option?: IConfig, varietyOption?: VarietyAnyOption) {
 
 		option = option || {};
-		if (!option.pid) {
-			//console.warn("pidを指定してください。")
-		}
 
 		this.pid = option?.pid ?? ""
 		this.instancetype = option.type || 'editor';
@@ -148,7 +146,6 @@ export abstract class Puzzle<
 	}
 
 	pid: string = null!		// パズルのID("creek"など)
-	info: any = {}		// VarietyInfoへの参照
 
 	ready = false	// 盤面の準備ができたかを示す (Canvas準備完了前にtrueになる)
 	editmode = false	// 問題配置モード
@@ -170,29 +167,58 @@ export abstract class Puzzle<
 	// モード設定用定数
 
 
+	/**
+	 * キー入力イベントオブジェクトを生成
+	 * @internal
+	 */
 	createKeyEvent(option: KeyEventOption | undefined) {
 		return new KeyEvent(this, option)
 	}
 
+	/**
+	 * マウス入力イベントオブジェクトを生成
+	 * @internal
+	 */
 	createMouseEvent(option: MouseEventOption | undefined) {
 		return new MouseEvent1(this, option)
 	}
 
+	/**
+	 * 盤面オブジェクトを生成
+	 * @internal
+	 */
 	createBoard(option: ({ board?: BoardOption } & BoardChildOption) | undefined) {
 		return new Board(this, option) as TBoard
 	}
 
+	/**
+	 * 描画系オブジェクトを生成
+	 * @internal
+	 */
 	createGraphic(option: GraphicOption | undefined) {
 		return new Graphic(this, option)
 	}
 
-	createAnsCheck(option: AnsCheckOption & { [key: string]: any } | undefined): AnsCheck<TBoard> {
+	/**
+	 * 正解判定オブジェクトを生成
+	 * @internal
+	 */
+	createAnsCheck(option: object): AnsCheck<TBoard> {
 		return new AnsCheck(this.board, option)
 	}
 
-	createEncode(option: EncodeOption & { [key: string]: any } | undefined): Encode {
+	/**
+	 * Encodeオブジェクトを生成
+	 * @internal
+	 */
+	createEncode(option: object | undefined): Encode {
 		return new Encode(this, option)
 	}
+
+	/**
+	 * FailCodeのMapを生成
+	 * @internal
+	 */
 	createFailCode(custom: Record<string, [string, string]> | undefined) {
 		let map = createFailCode()
 
@@ -215,18 +241,23 @@ export abstract class Puzzle<
 
 	/**
 	 * 追加分のFailCodeを返す
+	 * @internal
 	 */
 	getAdditionalFailCode(): Map<string, [string, string]> | Record<string, [string, string]> {
 		return {}
 	}
 
-
+	/**
+	 * FileIOオブジェクトを生成
+	 * @internal
+	 */
 	createFileIO(option: FileIOOption | undefined) {
 		return new FileIO(this, option)
 	}
 
 	/**
-	 * override用
+	 * (override用) コンバーター初期化
+	 * @internal
 	 */
 	initConverters() {
 		this.converters!.push(...this.getConverters())
@@ -234,12 +265,17 @@ export abstract class Puzzle<
 
 	/**
 	 * 使用するURLのコンバーターを返す
+	 * @internal
 	 */
 	getConverters(): Converter[] {
 		return []
 	}
 
-	createTargetCursor(option?: any) {
+	/**
+	 * 入力用カーソルオブジェクトを生成
+	 * @internal
+	 */
+	createTargetCursor(option?: object) {
 		return new TargetCursor(this, option)
 	}
 
@@ -251,22 +287,40 @@ export abstract class Puzzle<
 	// 	return this;
 	// }
 
-	//---------------------------------------------------------------------------
-	// owner.on()   イベントが発生した時に呼ぶ関数を登録する
-	// owner.once() イベントが発生した時に1回だけ呼ぶ関数を登録する
-	// owner.addListener() on, onceの共通処理
-	// owner.emit() イベントが発生した時に呼ぶ関数を実行する
-	//---------------------------------------------------------------------------
+	/**
+	 * owner.on()   イベントが発生した時に呼ぶ関数を登録する
+	 * @param eventname 
+	 * @param func 
+	 */
 	on(eventname: string, func: Handler) {
 		this.addListener(eventname, func, false);
 	}
+
+	/**
+	 * owner.once() イベントが発生した時に1回だけ呼ぶ関数を登録する
+	 * @param eventname 
+	 * @param func 
+	 */
 	once(eventname: string, func: Handler) {
 		this.addListener(eventname, func, true);
 	}
-	addListener(eventname: string, func: Handler, once: boolean) {
+
+	/**
+	 * owner.addListener() on, onceの共通処理
+	 * @param eventname 
+	 * @param func 
+	 * @param once 
+	 */
+	private addListener(eventname: string, func: Handler, once: boolean) {
 		if (!this.listeners[eventname]) { this.listeners[eventname] = []; }
 		this.listeners[eventname].push({ func: func, once: !!once });
 	}
+
+	/**
+	 * イベントが発生した時に呼ぶ関数を実行する
+	 * @param eventname 
+	 * @param args 
+	 */
 	emit(eventname: string, ...args: any[]) {
 		const evlist = this.listeners[eventname];
 		if (!!evlist) {
@@ -279,10 +333,13 @@ export abstract class Puzzle<
 		}
 	}
 
-	//---------------------------------------------------------------------------
-	// owner.setCanvas()  描画キャンバスをセットする
-	//---------------------------------------------------------------------------
-	setCanvas(el: HTMLElement, type?: string) {
+	/**
+	 * setCanvas()  描画キャンバスをセットする
+	 * @param el 
+	 * @param type 
+	 * @returns 
+	 */
+	private setCanvas(el: HTMLElement, type?: string) {
 		if (!el) { return; }
 
 		const rect = getRect(el);
@@ -296,10 +353,11 @@ export abstract class Puzzle<
 		setCanvas_main(this, (type || this.preInitCanvasInfo.type));
 	}
 
-	//---------------------------------------------------------------------------
-	// owner.setCanvasSize()           盤面のサイズを設定する
-	// owner.setCanvasSizeByCellSize() セルのサイズを指定して盤面のサイズを設定する
-	//---------------------------------------------------------------------------
+	/**
+	 * 盤面のサイズを設定する
+	 * @param width 
+	 * @param height 
+	 */
 	setCanvasSize(width: number, height: number) {
 		if (!this.preInitCanvasInfo) {
 			this.painter.resizeCanvas(width, height);
@@ -309,6 +367,11 @@ export abstract class Puzzle<
 			this.preInitCanvasInfo.height = height;
 		}
 	}
+
+	/**
+	 * セルのサイズを指定して盤面のサイズを設定する
+	 * @param cellsize 
+	 */
 	setCanvasSizeByCellSize(cellsize: number | null = null) {
 		if (!this.preInitCanvasInfo) {
 			this.painter.resizeCanvasByCellSize(cellsize);
@@ -318,14 +381,18 @@ export abstract class Puzzle<
 		}
 	}
 
-	//---------------------------------------------------------------------------
-	// owner.redraw()      盤面の再描画を行う
-	// owner.irowake()     色分けをする場合、色をふり直すルーチンを呼び出す
-	//---------------------------------------------------------------------------
+	/**
+	 * 盤面の再描画を行う
+	 * @param forcemode 
+	 */
 	redraw(forcemode = false) {
 		if (!forcemode) { this.painter.paintAll(); }     // 盤面キャッシュを保持して再描画
 		else { this.painter.resizeCanvas(); } // 盤面キャッシュを破棄して再描画
 	}
+
+	/**
+	 * 色分けをする場合、色をふり直すルーチンを呼び出す
+	 */
 	irowake() {
 		this.board.irowakeRemake();
 		if (this.execConfig('irowake') || this.execConfig('irowakeblk')) {
@@ -333,19 +400,29 @@ export abstract class Puzzle<
 		}
 	}
 
-	//---------------------------------------------------------------------------
-	// owner.toDataURL() 盤面画像をDataURLとして出力する
-	// owner.toBlob()    盤面画像をBlobとして出力する
-	// owner.toBuffer()  盤面画像をファイルデータそのままで出力する
-	//---------------------------------------------------------------------------
-	toDataURL(type: string, quality: number, option: any) {
+	/**
+	 * 盤面画像をDataURLとして出力する
+	 * @param type 
+	 * @param quality 
+	 * @param option 
+	 * @returns 
+	 */
+	toDataURL(type: string, quality: number, option: InputImageOption) {
 		const imageopt = parseImageOption(type, quality, option);
 		const canvas = getLocalCanvas(this, imageopt);
 		const dataurl = canvas.toDataURL(imageopt.mimetype, imageopt.quality);
 		if (!!canvas.parentNode) { canvas.parentNode.removeChild(canvas); }
 		return dataurl;
 	}
-	toBlob(callback: (blob: Blob | null) => void, type: string, quality: number, option: any) {
+
+	/**
+	 * 盤面画像をBlobとして出力する
+	 * @param callback 
+	 * @param type 
+	 * @param quality 
+	 * @param option 
+	 */
+	toBlob(callback: (blob: Blob | null) => void, type: string, quality: number, option: InputImageOption) {
 		const imageopt = parseImageOption(type, quality, option);
 		const canvas = getLocalCanvas(this, imageopt);
 		canvas.toBlob(function (blob) {
@@ -353,7 +430,15 @@ export abstract class Puzzle<
 			if (!!canvas.parentNode) { canvas.parentNode.removeChild(canvas); }
 		}, imageopt.mimetype, imageopt.quality);
 	}
-	toBuffer(type: string, quality: number, option: any) {
+
+	/**
+	 * 盤面画像をファイルデータそのままで出力する
+	 * @param type 
+	 * @param quality 
+	 * @param option 
+	 * @returns 
+	 */
+	toBuffer(type: string, quality: number, option: InputImageOption) {
 		const imageopt = parseImageOption(type, quality, option);
 		const canvas = getLocalCanvas(this, imageopt);
 		const data = canvas.toBuffer(imageopt.mimetype, imageopt.quality);
@@ -361,10 +446,10 @@ export abstract class Puzzle<
 		return data;
 	}
 
-	//---------------------------------------------------------------------------
-	// owner.getURL()      URLを取得する
-	// owner.getFileData() ファイルデータを取得する
-	//---------------------------------------------------------------------------
+	/**
+	 * URLを取得する
+	 * @returns 
+	 */
 	getURL() {
 		if (this.converters != null) {
 			return encodeURL(this, this.converters);
@@ -373,10 +458,20 @@ export abstract class Puzzle<
 			return this.encode.encodeURL(URL_PZPRV3)
 		}
 	}
-	getFileData(type?: number, option?: any) {
+
+	/**
+	 * ファイルデータを取得する
+	 * @param type 
+	 * @param option 
+	 * @returns 
+	 */
+	getFileData(type?: number, option?: FileEncodeOption) {
 		return this.fio.fileencode(type, option);
 	}
 
+	/**
+	 * URLから盤面データを読み込む
+	 */
 	readURL(url: string) {
 		if (this.converters != null) {
 			return decodeURL(this, url, this.converters);
@@ -386,6 +481,9 @@ export abstract class Puzzle<
 		}
 	}
 
+	/**
+	 * ファイルテキストから盤面データを読み込む
+	 */
 	readFile(txt: string) {
 		this.fio.filedecode(txt)
 	}
@@ -404,40 +502,66 @@ export abstract class Puzzle<
 	// 	return newpuzzle;
 	// }
 
-	//---------------------------------------------------------------------------
-	// owner.resetTime()      開始時間をリセットする
-	// owner.getTime()        開始からの時間をミリ秒単位で取得する
-	//---------------------------------------------------------------------------
+
+	/**
+	 * 開始時間をリセットする
+	 */
 	resetTime() {
 		this.starttime = currentTime();
 	}
+
+	/**
+	 * 開始からの時間をミリ秒単位で取得する
+	 * @returns 
+	 */
 	getTime() {
 		return (currentTime() - this.starttime);
 	}
 
-	//---------------------------------------------------------------------------
-	// owner.undo()  Undoを実行する
-	// owner.redo()  Redoを実行する
-	// owner.undoall()  Undoを最後まで実行する
-	// owner.redoall()  Redoを最後まで実行する
-	// owner.isModified() ファイルに保存されていない操作がある時にtrueを返す
-	// owner.saved()      ismodifiedで返す値をfalseに戻す
-	//---------------------------------------------------------------------------
+	/**
+	 * Undoを実行する
+	 * @returns 
+	 */
 	undo() {
 		return this.opemgr.undo();
 	}
+
+	/**
+	 * Redoを実行する
+	 * @returns 
+	 */
 	redo() {
 		return this.opemgr.redo();
 	}
+
+	/**
+	 * Undoを最後まで実行する
+	 * @returns 
+	 */
 	undoall() {
 		while (this.opemgr.undo()) { }
 	}
+
+	/**
+	 * Redoを最後まで実行する
+	 * @returns 
+	 */
 	redoall() {
 		while (this.opemgr.redo()) { }
 	}
+
+	/**
+	 * ファイルに保存されていない操作がある時にtrueを返す
+	 * @returns 
+	 */
 	ismodified() {
 		return this.opemgr.isModified();
 	}
+
+	/**
+	 * ismodifiedで返す値をfalseに戻す
+	 * @returns 
+	 */
 	saved() {
 		return this.opemgr.resetModifiedState();
 	}
@@ -469,9 +593,11 @@ export abstract class Puzzle<
 		this.opemgr.rejectTrial(false);
 	}
 
-	//------------------------------------------------------------------------------
-	// owner.check()          正答判定処理を行う
-	//------------------------------------------------------------------------------
+	/**
+	 * 正答判定処理を行う
+	 * @param activemode 
+	 * @returns 
+	 */
 	check(activemode: boolean = true) {
 		if (!!activemode) {
 			this.key.keyreset();
@@ -500,6 +626,7 @@ export abstract class Puzzle<
 		this.board.subclear();
 		this.redraw();
 	}
+
 	/**
 	 * エラー表示を消去する
 	 * @returns 
@@ -526,9 +653,11 @@ export abstract class Puzzle<
 		}
 	}
 
-	//------------------------------------------------------------------------------
-	// owner.setMode() モード変更時の処理を行う
-	//------------------------------------------------------------------------------
+	/**
+	 * モード変更時の処理を行う
+	 * @param newval 
+	 * @returns 
+	 */
 	setMode(newval: string | number) {
 		if (this.playeronly) { return; }
 		if (typeof newval === 'string') {
@@ -548,29 +677,49 @@ export abstract class Puzzle<
 		this.emit('mode');
 	}
 
-	//------------------------------------------------------------------------------
-	// owner.getConfig()  設定値の取得を行う
-	// owner.setConfig()  設定値の設定を行う
-	// owner.resetConfig()設定値を初期値に戻す
-	// owner.validConfig() 設定値が現在のパズルで有効な設定値かどうか返す
-	// owner.execConfig() 設定値と、パズルごとに有効かどうかの条件をANDして返す
-	//------------------------------------------------------------------------------
+	/**
+	 * 設定値の取得を行う
+	 * @param idname 
+	 * @returns 
+	 */
 	getConfig(idname: string) { return this.config.get(idname); }
+
+	/**
+	 * 設定値の設定を行う
+	 */
 	setConfig(idname: string, val: any) { return this.config.set(idname, val); }
+
+	/**
+	 * 設定値を初期値に戻す
+	 */
 	resetConfig(idname: string) { return this.config.reset(idname); }
+
+	/**
+	 * 設定値が現在のパズルで有効な設定値かどうか返す
+	 */
 	validConfig(idname: string) { return this.config.getexec(idname); }
+
+	/**
+	 * 設定値と、パズルごとに有効かどうかの条件をANDして返す
+	 */
 	execConfig(idname: string) {
 		return (this.config.get(idname) && this.config.getexec(idname));
 	}
 
-	//------------------------------------------------------------------------------
-	// owner.getCurrentConfig() 現在有効な設定と設定値を返す
-	// owner.saveConfig()     設定値の保存を行う
-	// owner.restoreConfig()  設定値の復帰を行う
-	//------------------------------------------------------------------------------
+	/**
+	 * 現在有効な設定と設定値を返す
+	 */
 	getCurrentConfig() { return this.config.getList(); }
+
+	/**
+	 * 設定値の保存を行う
+	 */
 	saveConfig() { return this.config.getAll(); }
-	restoreConfig(obj: any) { this.config.setAll(obj); }
+
+	/**
+	 * 設定値の復帰を行う
+	 */
+	restoreConfig(obj: object) { this.config.setAll(obj); }
 };
 
 
@@ -624,7 +773,7 @@ function setCanvas_main(puzzle: Puzzle, type: string) {
 	if (type === 'canvas' && !!Candle.enable.canvas && !CanvasRenderingContext2D.prototype.fillText) { type = 'svg'; }
 
 	Candle.start(puzzle.canvas, type, function (gg) {
-		const g = gg as WrapperBase<any>;
+		const g = gg as CandleWrapper;
 		unselectable(g.canvas);
 		g.child.style.pointerEvents = 'none';
 		if (g.use.canvas && !puzzle.subcanvas) {
@@ -681,19 +830,20 @@ export function postCanvasReady(puzzle: Puzzle) {
 //  exec????()        マウス入力へ分岐する(puzzle.mouseが不変でないためバイパスする)
 //---------------------------------------------------------------------------
 function setCanvasEvents(puzzle: Puzzle) {
-	function ae(type: string, func: (e: any) => void) { addEvent(puzzle.canvas, type, puzzle, func); }
+	function ae(type: string, func: (e: MouseEvent) => void) { addEvent(puzzle.canvas, type, puzzle, func); }
+
 
 	// マウス入力イベントの設定
-	ae("mousedown", (e: any) => {
+	ae("mousedown", (e) => {
 		if (!!puzzle.mouse) { puzzle.mouse.e_mousedown(e); }
 	});
-	ae("mousemove", (e: any) => {
+	ae("mousemove", (e) => {
 		if (!!puzzle.mouse) { puzzle.mouse.e_mousemove(e); }
 	});
-	ae("mouseup", (e: any) => {
+	ae("mouseup", (e) => {
 		if (!!puzzle.mouse) { puzzle.mouse.e_mouseup(e); }
 	});
-	ae("mousecancel", (e: any) => {
+	ae("mousecancel", (e) => {
 		if (!!puzzle.mouse) { puzzle.mouse.e_mousecancel(e); }
 	});
 
@@ -707,32 +857,27 @@ function setCanvasEvents(puzzle: Puzzle) {
 
 	// console.log(puzzle.canvas)
 	// // キー入力イベントの設定
-	// ae("keydown", (e: any) => {
+	// ae("keydown", (e) => {
 	// 	console.log("keydown!")
 	// 	if (!!puzzle.key) { puzzle.key.e_keydown(e); }
 	// });
-	// ae("keyup", (e: any) => {
+	// ae("keyup", (e) => {
 	// 	if (!!puzzle.key) { puzzle.key.e_keyup(e); }
 	// });
 }
 
-
-
-
-
-
-
 //---------------------------------------------------------------------------
 //  generateLocalCanvas()  toDataURL, toBlobの共通処理
 //---------------------------------------------------------------------------
-function getLocalCanvas(puzzle: Puzzle, imageopt: any) {
+
+function getLocalCanvas(puzzle: Puzzle, imageopt: ImageOption) {
 	const imgcanvas = createSubCanvas(imageopt.type);
 
 	const pc2 = new Graphic(puzzle);
 	pc2.context = imgcanvas.getContext("2d");
 	pc2.context.enableTextLengthWA = false;
 	pc2.outputImage = true;		/* 一部画像出力時に描画しないオブジェクトがあるパズル向け設定 */
-	if ('bgcolor' in imageopt) { pc2.bgcolor = imageopt.bgcolor; }
+	if ('bgcolor' in imageopt) { pc2.bgcolor = imageopt.bgcolor!; }
 	if (puzzle.pid === 'kramma') { pc2.imgtile = puzzle.painter.imgtile; }
 
 	// canvasの設定を適用して、再描画
@@ -742,11 +887,23 @@ function getLocalCanvas(puzzle: Puzzle, imageopt: any) {
 	return imgcanvas;
 }
 
+type InputImageOption = {
+	cellsize?: number | null
+	bgcolor?: string | null
+}
+
+type ImageOption = {
+	type: "svg" | "canvas"
+	mimetype: string
+	quality: number | undefined
+	cellsize: number | undefined
+	bgcolor: string | undefined
+}
 //---------------------------------------------------------------------------
 //  generateLocalCanvas()  toDataURL, toBlobの入力オプション解析処理
 //---------------------------------------------------------------------------
-function parseImageOption(type: string, quality: number | null, option: any) { // (type,quality,option)のはず
-	const imageopt = {} as any;
+function parseImageOption(type: string, quality: number | null, option: InputImageOption): ImageOption { // (type,quality,option)のはず
+	const imageopt: ImageOption = {} as ImageOption;
 
 	let cellsize = null
 	let bgcolor = null

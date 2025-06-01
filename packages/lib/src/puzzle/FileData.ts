@@ -22,6 +22,12 @@ function throwNoImplementation() { throw "no Implemention"; }
 // ★FileIOクラス ファイルのデータ形式エンコード/デコードを扱う
 //---------------------------------------------------------------------------
 
+export type FileEncodeOption = {
+	filetype?: number;
+	history?: boolean;
+	time?: boolean;
+	trial?: boolean;
+}
 //---------------------------------------------------------
 export type FileIOOption = Partial<FileIO>
 export class FileIO<TBoard extends Board = Board> {
@@ -84,7 +90,7 @@ export class FileIO<TBoard extends Board = Board> {
 	//---------------------------------------------------------------------------
 	// fio.fileencode() ファイルデータ(文字列)へのエンコード実行関数
 	//---------------------------------------------------------------------------
-	fileencode(filetype?: number, option?: any) {
+	fileencode(filetype?: number, option?: FileEncodeOption) {
 		const puzzle = this.puzzle;
 		const bd = puzzle.board;
 		const pzl = new FileData('', puzzle.pid);

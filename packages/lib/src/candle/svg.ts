@@ -143,7 +143,7 @@ class SVGWrapper extends WrapperBase<SVGSVGElement> {
 			callback(new Blob([xmldeclare + getOuterHTML(root)], { type: 'image/svg+xml' }));
 		};
 
-		this.canvas.toBuffer = function (type: string, quality: number) {
+		this.canvas.toBuffer = function (type: string, quality: number | undefined) {
 			return xmldeclare + getOuterHTML(root);
 		};
 	}

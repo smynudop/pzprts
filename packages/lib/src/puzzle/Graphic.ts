@@ -375,6 +375,8 @@ export class Graphic<TBoard extends Board = Board> {
 
 		this.pendingResize = true;
 		if (!insuspend) { this.unsuspend(); }
+
+		this.puzzle.emit('resizeCanvas', [this.canvasWidth, this.canvasHeight]);
 	}
 	resizeCanvasByCellSize(cellsize: number | null = null) {
 		const insuspend = this.suspended;
@@ -387,6 +389,8 @@ export class Graphic<TBoard extends Board = Board> {
 
 		this.pendingResize = true;
 		if (!insuspend) { this.unsuspend(); }
+
+		this.puzzle.emit('resizeCanvas', [this.canvasWidth, this.canvasHeight]);
 	}
 
 	//---------------------------------------------------------------------------

@@ -5,3 +5,5 @@ import WrapperBase from './base';
 export {
     WrapperBase
 }
+
+export type CandleWrapper = WrapperBase<any>

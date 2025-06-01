@@ -302,7 +302,6 @@ class ImageTile {
 			this.image_canvas.onload = function () { puzzle.painter.paintAll(); };
 		}
 		else {
-			console.log("undefined")
 			//@ts-ignore
 			this.image_canvas = {}
 			// this.image_canvas = (!!puzzle.pzpr.Candle.Canvas ? new puzzle.pzpr.Candle.Canvas.Image() : {});

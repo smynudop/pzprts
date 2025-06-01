@@ -42,10 +42,12 @@
       puzzle.setMode("play");
       puzzle.mouse.setInputMode("auto");
 
+      puzzle.on("resizeCanvas", (_, [width, number]: [number, number]) => {
+        if (element) {
+          element.style.maxWidth = `${width}px`;
+        }
+      });
       puzzle.setCanvasSizeByCellSize(36);
-      if (element) {
-        element.style.maxWidth = `${puzzle.painter.canvasWidth}px`;
-      }
 
       playModes = ["auto", ...puzzle.mouse.inputModes.play] as InputMode[];
       use = puzzle.getConfig("use") || 1;
@@ -85,7 +87,6 @@
 
   const irowake = (e: Event) => {
     const target = e.target as HTMLInputElement;
-    console.log(target.checked);
     puzzle.setConfig("irowake", target.checked);
   };
 
@@ -270,8 +271,8 @@
   }
 
   button {
-    border: 1px solid #ccc;
-    border-radius: 0.5em;
+    border: 1px solid light-dark(#ccc, #666);
+    border-radius: 3px;
     padding: 0.25em 0.5em;
     transition: all 0.2s;
     cursor: pointer;
@@ -280,7 +281,7 @@
   }
 
   button.check-button {
-    background: linear-gradient(to bottom, #83bdff, rgb(53, 56, 209));
+    background: linear-gradient(to bottom, #5aa0f0, rgb(53, 56, 209));
     color: white;
   }
 
@@ -317,6 +318,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
+    color: black;
   }
 
   .dialog .message {

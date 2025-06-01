@@ -403,7 +403,6 @@ export const Pencils = createVariety({
 
         isStart: function (dir: IDir | 0): boolean {
             if (!this.room) {
-                console.warn("room is null!")
                 return false
             }
             const rect = this.room.clist.getRectSize();
