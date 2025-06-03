@@ -4,6 +4,9 @@
 
 :root {
     font-family: ui-sans-serif;
+    color-scheme: light dark;
+    background-color: light-dark(white, rgb(49, 48, 59));
+    color: light-dark(black, rgb(224, 224, 224));
 }
 
 h1,
@@ -18,15 +21,18 @@ h1 {
 
 .container {
     margin: 0 auto;
-    width: 100%;
+    /*width: 400px;*/
+    max-width: 100%;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
 }
 
 .container>* {
-    flex-basis: 360px;
-    flex-shrink: 0;
+    flex: 1 1 360px;
+}
+
+summary {
+    padding: .5em 0;
 }
 
 input {
@@ -36,4 +42,11 @@ input {
     border: 1px solid #999;
     font-family: ui-sans-serif;
 
+}
+
+details {
+    border: 1px solid #ccc;
+    border-radius: .5em;
+    padding: .25em;
+    margin: .5em 0;
 }
