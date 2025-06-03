@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.2
+
+### Patch Changes
+
+- またビルド失敗してた...
+- Updated dependencies
+  - @udop/penpa-player-lib@0.7.2
+
 ## 0.7.1
 
 ### Patch Changes

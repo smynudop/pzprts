@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.7.2
+
+### Patch Changes
+
+- またビルド失敗してた...
+
 ## 0.7.1
 
 ### Patch Changes
