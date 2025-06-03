@@ -5,6 +5,7 @@ import svelte from "rollup-plugin-svelte";
 import css from "rollup-plugin-import-css";
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
+import { sass } from "svelte-preprocess-sass";
 
 export default defineConfig({
 	input: "./src/player/index.ts",
@@ -19,6 +20,9 @@ export default defineConfig({
 		svelte({
 			// Optionally, preprocess components with svelte.preprocess:
 			// https://svelte.dev/docs#compile-time-svelte-preprocess
+			preprocess: {
+				style: sass({ all: true }, { name: "scss" }),
+			},
 			emitCss: false,
 			compilerOptions: {
 				css: "injected",
