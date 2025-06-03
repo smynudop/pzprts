@@ -9,6 +9,7 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { cleandir } from "rollup-plugin-cleandir";
+import { sass } from "svelte-preprocess-sass";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,6 +30,10 @@ export default defineConfig({
 		svelte({
 			// Optionally, preprocess components with svelte.preprocess:
 			// https://svelte.dev/docs#compile-time-svelte-preprocess
+			preprocess: {
+				style: sass({ all: true }, { name: "scss" }),
+			},
+			dev: false,
 			emitCss: false,
 			compilerOptions: {
 				css: "injected",

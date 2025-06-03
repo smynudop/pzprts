@@ -23,6 +23,10 @@
   let trialLevel = 0;
 
   let use = 1;
+  let showMenu = false;
+  const toggleMenu = () => {
+    showMenu = !showMenu;
+  };
 
   onMount(() => {
     try {
@@ -134,10 +138,59 @@
   $: {
     changeConfig("use", use);
   }
+
+  let fileInput: HTMLInputElement | null = null;
+  const selectInputFile = () => {
+    if (!fileInput) return;
+    fileInput.value = ""; // Reset the file input to allow re-uploading the same file
+    fileInput.click();
+  }
+  const inputFile = () => {
+    const file = fileInput?.files?.[0];
+    if (!file) {
+      console.error("ファイルが選択されていません。");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      console.log(text)
+      try {
+        puzzle.readFile(text);
+        puzzle.redraw(true);
+        showMenu = false;
+      } catch (error) {
+        console.error("ファイルの読み込みに失敗しました:", error);
+        err = "ファイルの読み込みに失敗しました。";
+      }
+    };
+    reader.readAsText(file)
+  }
+
+  const outputFile = () => {
+    const text = puzzle.getFileData();
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${puzzle.pid || "puzzle"}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 0);
+  }
+
+  const openOriginal = () => {
+    window.open(src, "_blank");
+  }
 </script>
 
 <div class="container">
   <h1>{puzzleName}</h1>
+  <header>
   <div class="mode">
     <div>入力モード｜</div>
     {#each playModes as mode}
@@ -169,6 +222,8 @@
       </div>
     {/if}
   </div>
+  </header>
+
 
   <div id="puzzle" bind:this={element}></div>
   <div class="tool">
@@ -208,19 +263,38 @@
       </div>
     </div>
   {/if}
+  <button class="humberger_handle" on:click={toggleMenu} aria-label="humberger">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+    >
+      <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
+    </svg>
+  </button>
+  <div class="menu" class:hide={!showMenu}>
+    <div class="menu-item-list">
+      <button on:click={selectInputFile}>ファイル入力</button>
+      <button on:click={outputFile}>ファイル出力</button>
+      <button on:click={openOriginal}>元サイトで開く</button>
+    </div>
+  </div>
+  <input bind:this={fileInput} type="file" accept=".txt" style="display: none;" on:change={inputFile} />
 </div>
 
-<style>
+<style lang="scss">
   h1 {
     font-size: 150%;
     text-align: center;
-    margin: 0.5em 0;
+    margin: 0 0.5em .5em;
     font-weight: normal;
   }
   .container {
     max-width: 100%;
     margin: 0 auto;
     position: relative;
+    padding: .5em;
   }
 
   #puzzle {
@@ -228,6 +302,11 @@
     max-width: 100%;
     /*border: 1px solid black;*/
     padding: 4px;
+    box-sizing: content-box;
+  }
+
+  :global(*){
+    box-sizing: border-box;
   }
 
   :global(#puzzle > div:focus) {
@@ -240,29 +319,39 @@
     font-family: var(--penpa-player-font-family, inherit);
   }
 
+  header{
+    background-color:  light-dark(rgba(175, 175, 175, 0.15), rgba(238, 238, 238, 0.15));
+    max-width: 480px;
+    margin: 0 auto;
+    padding: .25em 0;
+    border-radius: .25em;
+    user-select: none;
+  }
+
   .mode {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 2px;
-  }
 
-  .mode > div {
-    user-select: none;
-    /*padding: 2px;*/
+    > div {
+      user-select: none;
+      /*padding: 2px;*/
+    }
   }
 
   .mode-item {
     margin-right: 0.2em;
     cursor: pointer;
-  }
-  .mode-item input {
-    display: none; /* ラジオボタンを非表示 */
+
+    input {
+      display: none; /* ラジオボタンを非表示 */
+    }
   }
 
   .mode-item:has(input:checked) {
     background-color: light-dark(#efefef, #5a5a5a);
-    color: light-dark(maroon, rgb(221, 109, 109));
+    color: light-dark(maroon, rgb(255, 128, 128));
     font-weight: bold;
   }
 
@@ -270,7 +359,8 @@
     text-align: center;
   }
 
-  button {
+  .tool button,
+  .dialog button {
     border: 1px solid light-dark(#ccc, #666);
     border-radius: 3px;
     padding: 0.25em 0.5em;
@@ -295,17 +385,11 @@
   }
 
   .tool {
-    padding: 0.5em 0;
+    margin: 0.5em 0;
     display: flex;
     gap: 0.5em;
     justify-content: center;
   }
-
-  /*
-  .result {
-    text-align: center;
-  }
-  */
 
   .dialog {
     position: absolute;
@@ -325,5 +409,65 @@
     background-color: white;
     border-radius: 3px;
     padding: 0.5em;
+  }
+
+  .humberger_handle {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    cursor: pointer;
+    z-index: 1000;
+    background-color: transparent;
+    border: 1px solid light-dark(#ccc, #666);
+    padding: 0.25em;
+    border-radius: .25em;
+    box-shadow: 0 0 5px rgba(136, 136, 136, 0.4);
+    fill: light-dark(#2c2c2c, #b1b1b1);
+  }
+
+  .menu{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .menu.hide{
+    display: none;
+  }
+
+  .menu .menu-item-list{
+    margin: 0;
+    width: min(50%, 300px);
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding-left: 0;
+    padding-top: 3em;
+  }
+
+  .menu .menu-item-list button{
+    display:block;
+    width: 100%;
+    background-color: transparent;
+    text-align: left;
+    padding: 0.5em;
+    border-width: 0;
+    border-top: 1px solid #ccc;
+    cursor: pointer;
+    user-select: none;
+    color: rgb(43, 43, 43);
+
+    &:hover{
+      background-color: #ccc;
+      color: maroon;
+      font-weight: bold;
+    }
+  }
+  .menu .menu-item-list button:last-child{
+    border-bottom: 1px solid #ccc;
   }
 </style>
