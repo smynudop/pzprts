@@ -1,6 +1,6 @@
 {
   "name": "@udop/penpa-player-lib",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "pzprjsをTypescript化したライブラリ",
   "type": "module",
   "sideEffects": false,

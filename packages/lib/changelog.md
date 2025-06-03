@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.7.1
+
+### Patch Changes
+
+- ビルドしてなかった
+
 ## 0.7.0
 
 ### Minor Changes
