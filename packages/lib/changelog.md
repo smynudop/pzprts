@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.7.0
+
+### Minor Changes
+
+- 警告の解消、プレーヤーの機能拡充、ダークモードに仮対応
+
 ## 0.6.0
 
 ### Minor Changes

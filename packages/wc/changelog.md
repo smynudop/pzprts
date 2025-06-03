@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.0
+
+### Minor Changes
+
+- 警告の解消、プレーヤーの機能拡充、ダークモードに仮対応
+
+### Patch Changes
+
+- Updated dependencies
+  - @udop/penpa-player-lib@0.7.0
+
 ## 0.6.0
 
 ### Minor Changes
