@@ -132,6 +132,8 @@ export class Graphic<TBoard extends Board = Board> {
 			if (/color\d?$/.test(key) && typeof option[key] === 'string') {
 				//@ts-ignore
 				this.palette[key] = option[key];
+				//@ts-ignore
+				this[key] = `__${key}`; // 直接プロパティを上書き
 			} else {
 				//@ts-ignore
 				this[key] = option[key]; // 直接プロパティを上書き
