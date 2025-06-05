@@ -18,7 +18,8 @@ export default defineConfig((opt) => {
             }
         },
         server: {
-            port: 7638
+            port: 7638,
+            host: true,  // すべてのIPアドレスからアクセス可能にする
         },
         define: {
             'process.env.NODE_ENV': JSON.stringify('production')  // または 'development'

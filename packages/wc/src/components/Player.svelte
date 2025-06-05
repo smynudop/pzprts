@@ -28,6 +28,7 @@
     showMenu = !showMenu;
   };
 
+  let mounted = false
   onMount(() => {
     try {
       if (!src) {
@@ -57,6 +58,7 @@
       use = puzzle.getConfig("use") || 1;
 
       puzzle.redraw(true);
+      mounted = true
     } catch (e: any) {
       console.error(e);
       err = e.toString();
@@ -136,7 +138,7 @@
     changeMode(nowMode);
   }
   $: {
-    changeConfig("use", use);
+    if(mounted) changeConfig("use", use);
   }
 
   let fileInput: HTMLInputElement | null = null;

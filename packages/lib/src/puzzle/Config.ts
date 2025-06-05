@@ -3,7 +3,7 @@
 import type { Puzzle } from "./Puzzle";
 import { pzpr } from "../pzpr/core";
 
-
+const isTouch = !!(window?.matchMedia("(pointer: coarse)").matches)
 //---------------------------------------------------------------------------
 // ★Configクラス 設定値の値などを保持する
 //---------------------------------------------------------------------------
@@ -46,7 +46,7 @@ export class Config {
 		//this.add('color_bgcolor', ["white", "rgba(255, 255, 255, 0.85)"]);						/* 背景色の設定 */
 
 		/* 入力方法設定 */
-		this.add('use', (!pzpr.env.OS.mobile ? 1 : 2), { option: [1, 2] });	/* 黒マスの入力方法 */
+		this.add('use', (!isTouch ? 1 : 2), { option: [1, 2] });	/* 黒マスの入力方法 */
 		this.add('use_tri', 1, { option: [1, 2, 3] });				/* shakashaka: 三角形の入力方法 */
 		this.add('support_tri', true);							/* shakashaka: 三角形の入力補助 (for 2つ以上の壁に接したCell) */
 
