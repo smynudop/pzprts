@@ -11,6 +11,9 @@ for (const [key, cl] of Object.entries(PenpaPlayer)) {
 document.querySelector("#lazy")!.addEventListener("ready", () => {
     console.log("lazy loaded")
 })
+document.querySelector("#lazy")!.addEventListener("complete", (e) => {
+    console.log("complete", e)
+})
 
 setTimeout(() => {
     document.querySelector("#lazy")?.setAttribute("src", "http://pzv.jp/p.html?slither/5/5/cbcbcddad")

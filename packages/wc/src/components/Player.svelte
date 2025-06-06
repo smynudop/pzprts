@@ -1,4 +1,8 @@
-<svelte:options customElement={{}} />
+<svelte:options customElement={{
+  props:{
+    autocheck: { type: "Boolean"},
+  }
+}} />
 
 <script lang="ts">
   import { onMount } from "svelte";
@@ -8,8 +12,9 @@
 
   let {
     src = "", 
-    puzzle = null! as Puzzle
-    } = $props()
+    puzzle = null! as Puzzle,
+    autocheck = false
+  } = $props()
 
   let element: HTMLDivElement | null = null;
 
@@ -33,6 +38,7 @@
   };
 
   let mounted = $state(false)
+  let timeout: NodeJS.Timeout | null = null;
 
   const initialize = () => {
     try {
@@ -66,8 +72,15 @@
 
       puzzle.redraw(true);
       mounted = true
+      if(autocheck){
+        timeout = setInterval(() => {
+          check(true)
+        }, 250)
+      }
+      puzzle.resetTime()
+
       $host().dispatchEvent(new CustomEvent("ready", {
-        detail: { puzzle }
+        detail: { time: puzzle.getTime() }
       }));
     } catch (e: any) {
       console.error(e);
@@ -86,13 +99,32 @@
     puzzle?.setConfig(type, value);
   };
 
-  const check = () => {
-    const result = puzzle.check(true);
+  const check = (silent: boolean) => {
+    const result = puzzle.check(!silent);
+    if(silent && !result.complete) {
+      return;
+    }
+
     resultText = result.text;
     complete = result.complete;
 
     showDialog = true;
+    if(result.complete) {
+      $host().dispatchEvent(new CustomEvent("complete", {
+        detail: { time: puzzle.getTime() }
+      }));
+    }
+
+    if(timeout)
+    {
+      clearInterval(timeout);
+      timeout = null;
+    }
   };
+
+  const check2 = () => {
+    check(false)
+  }
 
   const undo = () => puzzle.undo();
   const redo = () => puzzle.redo();
@@ -250,7 +282,7 @@
 
   <div id="puzzle" bind:this={element}></div>
   <div class="tool">
-    <button onclick={check} class="check-button">チェック</button>
+    <button onclick={check2} class="check-button">チェック</button>
     <button onclick={undo} disabled={!enableUndo}>戻</button>
     <button onclick={redo} disabled={!enableRedo}>進</button>
     <button onclick={clear}>クリア</button>
@@ -306,7 +338,9 @@
   <input bind:this={fileInput} type="file" accept=".txt" style="display: none;" onchange={inputFile} />
 </div>
 <div class="loading" class:hide={mounted}>
-  <slot name="fallback"></slot>
+  <slot name="fallback">
+    <p>Loading...</p>
+  </slot>
 </div>
 
 <style lang="scss">

@@ -122,7 +122,7 @@ export class AnsCheck<
 			}
 		}
 		/* activemodeでなく、前回の判定結果が残っていない場合はチェックします */
-		else if (this.failcode === void 0 || this.failcodemode !== activemode) {
+		else if (this.failcode == null || this.failcodemode !== activemode) {
 			bd.disableSetError();
 			this.checkOnly = true;
 			this.checkAns(activemode === false);
