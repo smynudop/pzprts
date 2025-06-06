@@ -1,3 +1,5 @@
+<svelte:options customElement={{}} />
+
 <script lang="ts">
   import { onMount } from "svelte";
   import type { Puzzle } from "@udop/penpa-player-lib";
@@ -7,7 +9,7 @@
   let {
     src = "", 
     puzzle = null! as Puzzle
-  } = $props()
+    } = $props()
 
   let element: HTMLDivElement | null = null;
 
@@ -30,12 +32,14 @@
     showMenu = !showMenu;
   };
 
-  let mounted = false
-  onMount(() => {
+  let mounted = $state(false)
+
+  const initialize = () => {
     try {
-      if (!src) {
-        throw new Error(`URLが指定されていません。`);
+      if(!src){
+        return;
       }
+
       puzzle.on("history", () => {
         enableUndo = puzzle.opemgr.enableUndo;
         enableRedo = puzzle.opemgr.enableRedo;
@@ -43,6 +47,7 @@
       puzzle.on("trial", (puzzle: Puzzle, num: number) => {
         trialLevel = num;
       });
+
       puzzle.readURL(src);
       puzzle.mount(element!);
 
@@ -61,10 +66,16 @@
 
       puzzle.redraw(true);
       mounted = true
+      $host().dispatchEvent(new CustomEvent("ready", {
+        detail: { puzzle }
+      }));
     } catch (e: any) {
       console.error(e);
       err = e.toString();
     }
+  }
+  onMount(() => {
+    initialize()
   });
 
   const changeMode = (m: string) => {
@@ -143,6 +154,15 @@
     if(mounted) changeConfig("use", use);
   })
 
+  $effect(() => {
+    if(mounted) {
+      puzzle.readURL(src)
+    } else {
+      // 初期化がまだなら、srcが変わったときに再度初期化を試みる
+      initialize();
+    }
+  });
+
   let fileInput: HTMLInputElement | null = null;
   const selectInputFile = () => {
     if (!fileInput) return;
@@ -159,7 +179,6 @@
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target?.result as string;
-      console.log(text)
       try {
         puzzle.readFile(text);
         puzzle.redraw(true);
@@ -192,7 +211,7 @@
   }
 </script>
 
-<div class="container">
+<div class="container" class:hide={!mounted}>
   <h1>{puzzleName}</h1>
   <header>
   <div class="mode">
@@ -285,6 +304,9 @@
     </div>
   </div>
   <input bind:this={fileInput} type="file" accept=".txt" style="display: none;" onchange={inputFile} />
+</div>
+<div class="loading" class:hide={mounted}>
+  <slot name="fallback"></slot>
 </div>
 
 <style lang="scss">
@@ -440,7 +462,7 @@
     justify-content: flex-end;
   }
 
-  .menu.hide{
+  .hide{
     display: none;
   }
 
@@ -473,5 +495,9 @@
   }
   .menu .menu-item-list button:last-child{
     border-bottom: 1px solid #ccc;
+  }
+
+  .loading{
+    text-align: center;
   }
 </style>
