@@ -4,26 +4,28 @@
   import { ja } from "@udop/penpa-player-lib";
   import { type InputMode } from "@udop/penpa-player-lib";
 
-  export let src: string;
-  export let puzzle: Puzzle;
+  let {
+    src = "", 
+    puzzle = null! as Puzzle
+  } = $props()
 
   let element: HTMLDivElement | null = null;
 
-  let playModes: InputMode[] = [];
-  let nowMode = "auto";
-  let resultText = "";
-  let complete = false;
-  let err: string | null = null;
-  let showDialog = false;
+  let playModes: InputMode[] = $state([]);
+  let nowMode = $state("auto");
+  let resultText = $state("");
+  let complete = $state(false);
+  let err: string | null = $state(null);
+  let showDialog = $state(false);
 
-  let enableUndo = false;
-  let enableRedo = false;
+  let enableUndo = $state(false);
+  let enableRedo = $state(false);
 
-  const puzzleName = ja.puzzleName[puzzle.pid] || puzzle.pid;
-  let trialLevel = 0;
+  const puzzleName = $derived(ja.puzzleName[puzzle.pid] || puzzle.pid);
+  let trialLevel = $state(0);
 
-  let use = 1;
-  let showMenu = false;
+  let use = $state(1);
+  let showMenu = $state(false);
   const toggleMenu = () => {
     showMenu = !showMenu;
   };
@@ -98,7 +100,7 @@
 
   let confirmResolver: ((val: boolean) => void) | null = null;
 
-  let confirming = false;
+  let confirming = $state(false);
   const confirm = async (message: string) => {
     confirming = true;
 
@@ -134,12 +136,12 @@
   const rejectTrial = () => puzzle.rejectCurrentTrial();
   const rejectTrialAll = () => puzzle.rejectTrial();
 
-  $: {
+  $effect(() => {
     changeMode(nowMode);
-  }
-  $: {
+  })
+  $effect(() => {
     if(mounted) changeConfig("use", use);
-  }
+  })
 
   let fileInput: HTMLInputElement | null = null;
   const selectInputFile = () => {
@@ -219,7 +221,7 @@
     {#if puzzle.validConfig("irowake")}
       <div>
         <label
-          ><input type="checkbox" on:change={irowake} />線の色分けをする</label
+          ><input type="checkbox" onchange={irowake} />線の色分けをする</label
         >
       </div>
     {/if}
@@ -229,21 +231,21 @@
 
   <div id="puzzle" bind:this={element}></div>
   <div class="tool">
-    <button on:click={check} class="check-button">チェック</button>
-    <button on:click={undo} disabled={!enableUndo}>戻</button>
-    <button on:click={redo} disabled={!enableRedo}>進</button>
-    <button on:click={clear}>クリア</button>
-    <button on:click={clearsub}>補助削除</button>
+    <button onclick={check} class="check-button">チェック</button>
+    <button onclick={undo} disabled={!enableUndo}>戻</button>
+    <button onclick={redo} disabled={!enableRedo}>進</button>
+    <button onclick={clear}>クリア</button>
+    <button onclick={clearsub}>補助削除</button>
     <!-- <button on:click={rotate}>回</button> -->
   </div>
   <div class="tool">
-    <button on:click={enterTrial}>仮置き開始</button>
+    <button onclick={enterTrial}>仮置き開始</button>
     {#if trialLevel > 0}
-      <button on:click={acceptTrial} class="check-button">仮置き確定</button>
-      <button on:click={rejectTrial} class="delete-button">仮置き破棄</button>
+      <button onclick={acceptTrial} class="check-button">仮置き確定</button>
+      <button onclick={rejectTrial} class="delete-button">仮置き破棄</button>
     {/if}
     {#if trialLevel > 1}
-      <button on:click={rejectTrialAll} class="delete-button"
+      <button onclick={rejectTrialAll} class="delete-button"
         >全仮置き破棄</button
       >
     {/if}
@@ -252,20 +254,20 @@
     <div class="error">{err}</div>
   {/if}
   {#if showDialog}
-    <!-- svelte-ignore a11y-click-events-have-key-events a11y_no_static_element_interactions -->
-    <div class="dialog" on:click={clickDialog}>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <div class="dialog" onclick={clickDialog} role="none">
       <div class="message">
         {resultText}
         {#if confirming}
           <div>
-            <button on:click={dialog_cancel}>キャンセル</button>
-            <button on:click={dialog_ok}>OK</button>
+            <button onclick={dialog_cancel}>キャンセル</button>
+            <button onclick={dialog_ok}>OK</button>
           </div>
         {/if}
       </div>
     </div>
   {/if}
-  <button class="humberger_handle" on:click={toggleMenu} aria-label="humberger">
+  <button class="humberger_handle" onclick={toggleMenu} aria-label="humberger">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
@@ -277,12 +279,12 @@
   </button>
   <div class="menu" class:hide={!showMenu}>
     <div class="menu-item-list">
-      <button on:click={selectInputFile}>ファイル入力</button>
-      <button on:click={outputFile}>ファイル出力</button>
-      <button on:click={openOriginal}>元サイトで開く</button>
+      <button onclick={selectInputFile}>ファイル入力</button>
+      <button onclick={outputFile}>ファイル出力</button>
+      <button onclick={openOriginal}>元サイトで開く</button>
     </div>
   </div>
-  <input bind:this={fileInput} type="file" accept=".txt" style="display: none;" on:change={inputFile} />
+  <input bind:this={fileInput} type="file" accept=".txt" style="display: none;" onchange={inputFile} />
 </div>
 
 <style lang="scss">
