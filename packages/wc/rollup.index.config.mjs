@@ -26,6 +26,7 @@ export default defineConfig({
 			emitCss: false,
 			compilerOptions: {
 				css: "injected",
+				customElement: true,
 			},
 		}),
 		typescript(),
