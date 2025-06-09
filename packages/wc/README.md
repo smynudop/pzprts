@@ -14,13 +14,21 @@ srcにURLを指定してください。pzv.jp/puzz.linkの形式URLのみに対�
 
 ```html
 
-<slitherlink-player src="/* your url */"/>
+<slither-player src="/* your url */"/></slither-player>
 
 <script type="module"> 
 import { SlitherlinkPlayer } from "https://cdn.jsdelivr.net/npm/@udop/penpa-player/dist/slither.es.js";
 customElements.define('slitherlink-player', SlitherlinkPlayer);
 </script>
 ```
+
+## 自動解答判定機能について
+タイマー・自動解答判定機能はデフォルトでオフです(1ページに複数のコンポーネントを配置した場合の負荷対策)。有効にするには `autocheck="true"` を指定してください。
+
+```html 
+<slither-player src="/* your url */" autocheck="true"></slither-player>
+```
+
 ## パズル種対応表
 `index.es.js`からすべてのコンポーネントを使用できますが、バンドル方法の都合上パフォーマンスが悪く、トラフィック量が増えるため推奨しません。
 可能なかぎり、各エントリファイルからimportを行ってください。

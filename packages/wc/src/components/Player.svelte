@@ -38,7 +38,20 @@
   };
 
   let mounted = $state(false)
+
+  //タイマー関連
   let timeout: NodeJS.Timeout | null = null;
+  let time = $state(0);
+  const format = (ms: number) => {
+    const sec = Math.floor(ms / 1000);
+    const min = Math.floor(sec / 60);
+    const secStr = String(sec % 60).padStart(2, '0');
+    return `${min}:${secStr}`;
+  };
+  const timer = $derived.by(() => {
+    return format(time)
+  });
+  let completeTime: string | null = $state(null)
 
   const initialize = () => {
     try {
@@ -75,6 +88,7 @@
       if(autocheck){
         timeout = setInterval(() => {
           check(true)
+          time=puzzle.getTime();
         }, 250)
       }
       puzzle.resetTime()
@@ -113,6 +127,9 @@
       $host().dispatchEvent(new CustomEvent("complete", {
         detail: { time: puzzle.getTime() }
       }));
+      if(!completeTime) {
+        completeTime = format(puzzle.getTime());
+      }
     }
 
     if(timeout)
@@ -275,6 +292,14 @@
           ><input type="checkbox" onchange={irowake} />線の色分けをする</label
         >
       </div>
+    {/if}
+    {#if autocheck}
+    <div>
+      経過時間：{timer}
+      {#if completeTime}
+        <span class="complete-time">正答時間：{completeTime}</span>
+      {/if}
+    </div>
     {/if}
   </div>
   </header>
@@ -533,5 +558,9 @@
 
   .loading{
     text-align: center;
+  }
+
+  .complete-time {
+    color: light-dark(green, rgb(106, 215, 106));
   }
 </style>
