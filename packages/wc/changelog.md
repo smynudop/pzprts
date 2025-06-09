@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.8.0
+
+### Minor Changes
+
+- コンポーネントの動作を改良
+
+### Patch Changes
+
+- Updated dependencies
+  - @udop/penpa-player-lib@0.8.0
+
 ## 0.7.3
 
 ### Patch Changes

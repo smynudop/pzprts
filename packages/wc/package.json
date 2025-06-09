@@ -1,6 +1,6 @@
 {
   "name": "@udop/penpa-player",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "description": "pzprv3形式のパズルをプレイできるWeb Components",
   "type": "module",
   "directories": {
