@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.8.2
+
+### Patch Changes
+
+- fix package.json
+
 ## 0.8.1
 
 ### Patch Changes

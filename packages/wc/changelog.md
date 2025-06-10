@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.2
+
+### Patch Changes
+
+- fix package.json
+- Updated dependencies
+  - @udop/penpa-player-lib@0.8.2
+
 ## 0.8.1
 
 ### Patch Changes
