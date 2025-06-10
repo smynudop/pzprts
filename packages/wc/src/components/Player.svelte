@@ -130,13 +130,14 @@
       if(!completeTime) {
         completeTime = format(puzzle.getTime());
       }
+      if(timeout)
+      {
+        clearInterval(timeout);
+        timeout = null;
+      }
     }
 
-    if(timeout)
-    {
-      clearInterval(timeout);
-      timeout = null;
-    }
+
   };
 
   const check2 = () => {
